@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@layer base {
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        @apply text-slate-900;
+    }
+}
+
+@theme {
+    --color-bluvi-purple: #3f4292;
+    --color-bluvi-light-purple: #b8bceb;
+    --background-image-bluvi-gradient: linear-gradient(to bottom right, #b4d9ff, #e2c9fb, #ffe5b4);
+}
