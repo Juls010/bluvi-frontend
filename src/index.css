@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Manrope:wght@200..800&display=swap');
 @layer base {
     body {
         -webkit-font-smoothing: antialiased;
@@ -13,3 +13,6 @@
     --color-bluvi-light-purple: #b8bceb;
     --background-image-bluvi-gradient: linear-gradient(to bottom right, #b4d9ff, #e2c9fb, #ffe5b4);
 }
+
+
+
