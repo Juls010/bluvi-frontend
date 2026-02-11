@@ -23,6 +23,7 @@ interface SettingsButtonProps {
             focus:outline-none 
             focus:ring-4 
             focus:ring-bluvi-light-purple/50
+            cursor-pointer
         "
         >
         <svg 

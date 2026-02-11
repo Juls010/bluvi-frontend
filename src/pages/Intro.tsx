@@ -6,7 +6,6 @@ export const Intro: React.FC = () => {
     const navigate = useNavigate();
 
     const handleAgree = () => {
-        // 1. Guardamos en la memoria del navegador que el usuario YA vio esto
         localStorage.setItem('hasSeenIntro', 'true');
         navigate('/landing');
     };
