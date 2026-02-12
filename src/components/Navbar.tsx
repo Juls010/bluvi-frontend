@@ -7,7 +7,6 @@ export const Navbar: React.FC = () => {
 
     const isActive = (path: string) => location.pathname.includes(path);
     
-    // Función para manejar las clases dinámicas de los iconos
     const iconClass = (path: string) => `w-6 h-6 transition-all duration-200 ${
         isActive(path) 
         ? 'text-bluvi-purple scale-110 stroke-[2.5px]' 
