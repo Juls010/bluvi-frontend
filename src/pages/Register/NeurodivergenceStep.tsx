@@ -101,7 +101,7 @@ export const NeurodivergenceStep: React.FC = () => {
 
         <div className="w-full max-w-md"> 
             <Button 
-                ariaLabel="Siguiente paso" 
+                aria-label="Siguiente paso" 
                 className="w-full py-3.5 text-lg shadow-md"
                 onClick={handleNext}
             >

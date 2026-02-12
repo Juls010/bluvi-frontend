@@ -11,7 +11,14 @@
 @theme {
     --color-bluvi-purple: #3f4292;
     --color-bluvi-light-purple: #b8bceb;
-    --background-image-bluvi-gradient: linear-gradient(to bottom right, #b4d9ff, #e2c9fb, #ffe5b4);
+    
+    /* Degradado con más presencia: Azul Sereno -> Malva Suave -> Naranja Atardecer */
+    --background-image-bluvi-gradient: linear-gradient(
+        to bottom right, 
+        #A5C9FF, /* Azul más definido (Océano claro) */
+        #D8D1FF, /* Un lila azulado que une ambos mundos */
+        #FFD5A1  /* Naranja melocotón con más fuerza */
+    );
 }
 
 .sr-only {
@@ -55,5 +62,4 @@ html, body, #root {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; 
 }

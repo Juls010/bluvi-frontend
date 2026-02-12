@@ -84,7 +84,7 @@ export const DocumentStep: React.FC = () => {
 
             <div className="w-full">
                 <Button 
-                    ariaLabel="Enviar documentación y finalizar" 
+                    aria-label="Enviar documentación y finalizar" 
                     className={`w-full py-3.5 text-lg shadow-md ${!fileName ? 'opacity-50 cursor-not-allowed' : ''}`}
                     onClick={handleNext}
                 >

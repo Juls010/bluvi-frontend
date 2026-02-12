@@ -1,13 +1,12 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
-import { Footer } from '../components/Footer';
 import { SettingsButton } from '../components/SettingsButton';
 import { BluAssistant } from '../components/BluAssistant';
 
 export const AppLayout: React.FC = () => {
   return (
-    <main className="min-h-screen w-full bg-bluvi-gradient flex flex-col font-sans relative overflow-hidden">
+    <main className="min-h-screen w-full bg-bluvi-gradient flex flex-col font-sans relative overflow-hidden" style={{ '--navbar-height': '80px' } as React.CSSProperties}>
 
       <div className="fixed top-0 left-0 w-full z-50 p-1 flex justify-center pointer-events-none">
           
@@ -25,9 +24,7 @@ export const AppLayout: React.FC = () => {
         <Outlet />
       </div>
 
-      <div className="relative z-10 w-full">
-        <Footer />
-      </div>
+      
       
       <BluAssistant />
 

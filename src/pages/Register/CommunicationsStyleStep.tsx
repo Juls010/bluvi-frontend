@@ -90,7 +90,7 @@ export const CommunicationStyleStep: React.FC = () => {
 
         <div className="w-full max-w-md">
             <Button 
-            ariaLabel="Siguiente paso" 
+            aria-label="Siguiente paso" 
             className={`w-full py-3.5 text-lg shadow-md transition-all duration-300 ${!isValid ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={handleNext}
             >

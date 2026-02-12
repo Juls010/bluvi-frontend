@@ -54,7 +54,7 @@ export const AgeStep: React.FC = () => {
 
             <div className="w-full">
                 <Button 
-                    ariaLabel="Ir al siguiente paso" 
+                    aria-label="Ir al siguiente paso" 
                     className={`w-full py-3.5 text-lg shadow-md ${!data.birthDate ? 'opacity-50' : ''}`}
                     onClick={handleNext}
                 >

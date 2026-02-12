@@ -48,7 +48,7 @@ export const NameStep: React.FC = () => {
             <div className="w-full">
                 <Button 
                     onClick={handleNext} 
-                    ariaLabel="Siguiente" 
+                    aria-label="Siguiente" 
                     className={`w-full py-3.5 shadow-md transition-all duration-300 ${!isValid ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                     Siguiente

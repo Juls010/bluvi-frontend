@@ -29,7 +29,7 @@ export const EmailStep: React.FC = () => {
 
     const handleNext = () => {
         if (!isEmailValid || !isPasswordValid) return;
-        navigate('/register/success');
+        navigate('/register/photos');
     };
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +92,7 @@ export const EmailStep: React.FC = () => {
 
             <div className="w-full">
                 <Button 
-                    ariaLabel="Continuar" 
+                    aria-label="Continuar" 
                     className={`w-full py-3.5 text-lg shadow-md transition-all duration-300 ${(!isEmailValid || !isPasswordValid) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     onClick={handleNext}
                 >
