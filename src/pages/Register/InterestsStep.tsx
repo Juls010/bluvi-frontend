@@ -1,20 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 
-const INTERESTS = [
-    "Comida", "Historia", "Anime", "Salud", "Naturaleza", "Feminismo", 
-    "Deporte", "Playa", "Magia", "Veganismo", "Música", "Mascotas",
-    "LGTBIQ+", "Matemáticas", "Poliamor", "Diseño", "Moda", "Trenes",
-    "Ciencia ficción", "Fotografía", "Videojuegos", "Humor", "Viajes", "Montaña",
-    "Muñecos", "Cosplay", "Religión", "Lectura", "Comics", "Tecnología", "Picnic",
-    "Puzzles", "Paseos", "Maquetas"
-];
+interface Interest {
+    id_interest: number;
+    name: string;
+}
 
 export const InterestsStep = () => {
     const navigate = useNavigate();
-    const [selected, setSelected] = useState<string[]>([]);
+    
+    const [interests, setInterests] = useState<Interest[]>([]);
+    const [selected, setSelected] = useState<number[]>([]); 
     const MIN_SELECTION = 2;
+
+    useEffect(() => {
+        fetch('http://localhost:3000/intereses')
+            .then(res => res.json())
+            .then(data => setInterests(data))
+            .catch(err => console.error("Error cargando intereses:", err));
+    }, []);
 
     const handleNext = () => {
         if (selected.length >= MIN_SELECTION) {
@@ -22,11 +27,11 @@ export const InterestsStep = () => {
         }
     };
 
-    const toggleInterest = (interest: string) => {
+    const toggleInterest = (id: number) => {
         setSelected(prev => 
-            prev.includes(interest) 
-                ? prev.filter(i => i !== interest) 
-                : [...prev, interest]
+            prev.includes(id) 
+                ? prev.filter(i => i !== id) 
+                : [...prev, id]
         );
     };
 
@@ -41,14 +46,13 @@ export const InterestsStep = () => {
 
                 <div className="flex-grow overflow-y-auto no-scrollbar py-4">
                     <div className="flex flex-wrap justify-center gap-3">
-                        {INTERESTS.map((interest) => {
-                            const isSelected = selected.includes(interest);
+                        {interests.map((interest) => {
+                            const isSelected = selected.includes(interest.id_interest);
                             return (
                                 <button
-                                    key={interest}
+                                    key={interest.id_interest}
                                     type="button"
-                                    onClick={() => toggleInterest(interest)}
-                                    aria-pressed={isSelected}
+                                    onClick={() => toggleInterest(interest.id_interest)}
                                     className={`
                                         px-6 py-2.5 rounded-full border-2 font-medium transition-all duration-300
                                         ${isSelected 
@@ -56,7 +60,7 @@ export const InterestsStep = () => {
                                             : 'bg-white/40 border-white/60 text-bluvi-purple hover:bg-white/60'}
                                     `}
                                 >
-                                    {interest}
+                                    {interest.name}
                                 </button>
                             );
                         })}

@@ -7,7 +7,6 @@ export default {
     theme: {
         extend: {
         colors: {
-            // ... tus colores bluvi ...
             'bluvi-purple': '#4D55A6', 
         },
         fontFamily: {
