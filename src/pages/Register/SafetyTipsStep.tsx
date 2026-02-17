@@ -37,7 +37,7 @@ export const SafetyTipsStep = () => {
 
         const handleCloseAndGoToLanding = () => {
             setIsModalOpen(false);
-            navigate('/landing'); // Te lleva a la landing
+            navigate('/landing');
         };
 
     return (

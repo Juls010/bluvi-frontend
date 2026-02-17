@@ -1,67 +1,75 @@
 import React from 'react';
-import { Button } from '../../components/Button';
-import { InputField } from '../../components/InputField';
 import { useNavigate } from 'react-router-dom';
-// 1. IMPORTAMOS EL CONTEXTO
+import { AnimatedStep } from '../../components/AnimatedStep';
+import { Button } from '../../components/Button';
+import { DatePicker } from '../../components/DatePicker'; 
 import { useRegister } from '../../context/RegisterContext';
+import { today, getLocalTimeZone } from '@internationalized/date';
+import { type DateValue } from 'react-aria-components';
 
 export const AgeStep: React.FC = () => {
     const navigate = useNavigate();
-    
     const { data, updateData } = useRegister();
 
     const handleNext = () => {
         const min_age = 16;
 
         if (data.birthDate) {
+            // data.birthDate ahora vendrá del DatePicker
             const birthYear = new Date(data.birthDate).getFullYear();
             const currentYear = new Date().getFullYear();
+            
             if (currentYear - birthYear < min_age) {
-                alert(`Debes tener al menos ${min_age}`);
+                alert(`Debes tener al menos ${min_age} años para unirte a Bluvi.`);
                 return;
             }
+            navigate('/register/gender');
         }
-
-        navigate('/register/gender');
     };
 
     return (
-        <div className="w-full max-w-md px-6 animate-fade-in">
+        <AnimatedStep>
+            <div className="w-full max-w-md px-6 flex flex-col items-center">
+                
+                <div className="w-full text-left mb-8">
+                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-bluvi-purple mb-2">
+                        ¿Cuándo naciste?
+                    </h1>
+                    <p className="text-bluvi-purple/70 text-lg font-medium">
+                        Esto nos ayuda a asegurar que Bluvi sea un espacio seguro.
+                    </p>
+                </div>
 
-            <div className="w-full text-left mb-8">
-                <h1 className="font-heading text-3xl md:text-4xl font-bold text-bluvi-purple mb-2">
-                    ¿Cuándo naciste?
-                </h1>
-                <p className="text-bluvi-purple/70 text-lg font-medium">
-                    Esto nos ayuda a asegurar que Bluvi sea un espacio seguro para tu edad.
-                </p>
+                <div className="w-full flex flex-col gap-6 mb-20">
+                    <DatePicker 
+                        label="Fecha de Nacimiento"
+                        maxValue={today(getLocalTimeZone())}
+                        onChange={(date: DateValue | null) => {
+                                    if (date) {
+                                        updateData({ birthDate: date.toString() });
+                                    }
+                                }}
+                            />
+
+                    <p className="text-sm text-bluvi-purple/60 italic font-medium ml-2">
+                        * Tu fecha de nacimiento no será pública en tu perfil.
+                    </p>
+                </div>
+
+                <div className="w-full">
+                    <Button 
+                        aria-label="Ir al siguiente paso" 
+                        disabled={!data.birthDate} 
+                        className={`w-full py-3.5 text-lg shadow-md transition-all ${
+                            !data.birthDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'
+                        }`}
+                        onClick={handleNext}
+                    >
+                        Siguiente
+                    </Button>
+                </div>
+
             </div>
-
-            <div className="w-full flex flex-col gap-6 mb-20">
-                <InputField 
-                    id="birthdate"
-                    label="Fecha de Nacimiento" 
-                    placeholder="" 
-                    type="date"
-                    value={data.birthDate}
-                    onChange={(e) => updateData({ birthDate: e.target.value })} 
-                />
-
-                <p className="text-sm text-bluvi-purple/60 italic font-medium">
-                    * Tu fecha de nacimiento no será pública en tu perfil.
-                </p>
-            </div>
-
-            <div className="w-full">
-                <Button 
-                    aria-label="Ir al siguiente paso" 
-                    className={`w-full py-3.5 text-lg shadow-md ${!data.birthDate ? 'opacity-50' : ''}`}
-                    onClick={handleNext}
-                >
-                    Siguiente
-                </Button>
-            </div>
-
-        </div>
+        </AnimatedStep>
     );
 };
