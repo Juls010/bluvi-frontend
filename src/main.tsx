@@ -22,6 +22,7 @@ import { DocumentStep } from './pages/Register/DocumentStep'
 import { PhotoUploadStep } from './pages/Register/PhotoUploadStep'
 import { LocationStep } from './pages/Register/LocationStep'
 import { InterestsStep } from './pages/Register/InterestsStep'
+import { ProfileDescriptionStep } from './pages/Register/ProfileDescriptionStep'
 import { SafetyTipsStep } from './pages/Register/SafetyTipsStep'
 
 
@@ -32,9 +33,6 @@ import { Discovery } from './pages/App/Discovery';
 import { Messages } from './pages/Messages';
 import { ChatDetail } from './pages/ChatDetails'
 import { ChatLayout } from './layouts/ChatLayout'
-
-
-
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -63,7 +61,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="photos" element={<PhotoUploadStep />} />
             <Route path="location" element={<LocationStep />} />
             <Route path="interests" element={<InterestsStep />} />
+            <Route path="description" element={<ProfileDescriptionStep />} />
             <Route path="safety-tips" element={<SafetyTipsStep />} />
+
             {/* <Route path="document" element={<DocumentStep />} /> */} 
         </Route> 
         

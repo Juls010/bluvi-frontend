@@ -23,7 +23,7 @@ export const InterestsStep = () => {
 
     const handleNext = () => {
         if (selected.length >= MIN_SELECTION) {
-            navigate('/register/safety-tips');
+            navigate('/register/description');
         }
     };
 
