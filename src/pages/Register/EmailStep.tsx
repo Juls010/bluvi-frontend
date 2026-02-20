@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/Button';
 import { InputField } from '../../components/InputField';
 import { useNavigate } from 'react-router-dom';
@@ -7,36 +6,32 @@ import { AnimatedStep } from '../../components/AnimatedStep';
 
 export const EmailStep: React.FC = () => {
     const navigate = useNavigate();
-    const { data, updateData } = useRegister();
+    const { formData, updateFormData } = useRegister();
 
-    const [isEmailValid, setIsEmailValid] = useState(false);
-    const [isPasswordValid, setIsPasswordValid] = useState(false);
+    const validateEmail = (email: string) => {
+        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return re.test(email.trim()); 
+    };
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const validatePassword = (pass: string) => {
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
+        return re.test(pass);
+    };
 
-    // REGEX PASSWORD 
-    // Explicación del jeroglífico:
-    // (?=.*[a-z]) -> Al menos una minúscula
-    // (?=.*[A-Z]) -> Al menos una mayúscula
-    // (?=.*\d)    -> Al menos un número
-    // (?=.*[\W_]) -> Al menos un carácter especial (!, @, #, $, etc.)
-    // .{8,16}     -> Longitud entre 8 y 16
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
-
-    useEffect(() => {
-        setIsEmailValid(emailRegex.test(data.email));
-        setIsPasswordValid(passwordRegex.test(data.password));
-    }, [data.email, data.password]);
+    const isEmailValid = validateEmail(formData.email);
+    const isPasswordValid = validatePassword(formData.password);
+    const canContinue = isEmailValid && isPasswordValid;
 
     const handleNext = () => {
-        if (!isEmailValid || !isPasswordValid) return;
-        navigate('/register/photos');
+        if (canContinue) {
+            navigate('/register/photos');
+        }
     };
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
         if (newValue.length <= 16) {
-            updateData({ password: newValue });
+            updateFormData({ password: newValue });
         }
     };
 
@@ -54,20 +49,19 @@ export const EmailStep: React.FC = () => {
                 </div>
 
                 <div className="w-full flex flex-col gap-6 mb-20">
-
                     <InputField 
                         id="email"
                         label="Correo Electrónico" 
                         placeholder="hola@bluvi.com" 
                         type="email"
-                        value={data.email}
-                        onChange={(e) => updateData({ email: e.target.value })}
+                        value={formData.email}
+                        onChange={(e) => updateFormData({ email: e.target.value })}
                         state={
-                            data.email.length === 0 ? 'default' : 
+                            formData.email.length === 0 ? 'default' : 
                             isEmailValid ? 'success' : 'error'
                         }
                         helperText={
-                            data.email.length > 0 && !isEmailValid 
+                            formData.email.length > 0 && !isEmailValid 
                             ? "Introduce un correo válido" 
                             : ""
                         }
@@ -78,14 +72,14 @@ export const EmailStep: React.FC = () => {
                         label="Contraseña" 
                         placeholder="••••••••"
                         type="password"
-                        value={data.password}
+                        value={formData.password}
                         onChange={handlePasswordChange}
                         state={
-                            data.password.length === 0 ? 'default' : 
+                            formData.password.length === 0 ? 'default' : 
                             isPasswordValid ? 'success' : 'default'
                         }
                         helperText={
-                            data.password.length > 0 && !isPasswordValid 
+                            formData.password.length > 0 && !isPasswordValid 
                             ? "Usa mayúscula, minúscula, número y símbolo." 
                             : "8-16 caracteres, mayús, minús, número y símbolo."
                         }
@@ -95,13 +89,13 @@ export const EmailStep: React.FC = () => {
                 <div className="w-full">
                     <Button 
                         aria-label="Continuar" 
-                        className={`w-full py-3.5 text-lg shadow-md transition-all duration-300 ${(!isEmailValid || !isPasswordValid) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={!canContinue}
+                        className={`w-full py-3.5 text-lg shadow-md transition-all duration-300 ${!canContinue ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'}`}
                         onClick={handleNext}
                     >
                         Continuar
                     </Button>
                 </div>
-
             </div>
         </AnimatedStep>
     );

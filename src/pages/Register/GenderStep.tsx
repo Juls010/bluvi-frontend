@@ -6,12 +6,12 @@ import { AnimatedStep } from '../../components/AnimatedStep';
 
 export const GenderStep: React.FC = () => {
     const navigate = useNavigate();
-    const { data, updateData } = useRegister();
+    const { formData, updateFormData } = useRegister();
 
     const genderOptions = ['Hombre', 'Mujer', 'No binarie'];
 
     const handleNext = () => {
-        if (!data.gender) return;
+        if (!formData.gender) return;
         navigate('/register/sexuality'); 
     };
 
@@ -31,23 +31,22 @@ export const GenderStep: React.FC = () => {
             <div className="w-full flex flex-col gap-4 mb-20">
                 {genderOptions.map((option) => {
                 
-                const isSelected = data.gender === option;
+                const isSelected = formData.gender === option;
 
                 return (
                     <button
-                        key={option}
-                        onClick={() => updateData({ gender: option })}
-                        className={`
+                    key={option}
+                    onClick={() => updateFormData({ gender: option })} 
+                    className={`
                         w-full py-4 px-6 rounded-2xl text-lg font-medium transition-all duration-300 border-2
                         ${isSelected 
                             ? 'bg-bluvi-purple/20 border-bluvi-purple text-bluvi-purple font-bold shadow-md scale-[1.02]' 
-                            
                             : 'bg-white/50 border-white/50 text-bluvi-purple hover:bg-white/80 hover:border-bluvi-purple/30'
                         }
-                        `}
-                    >
-                        {option}
-                    </button>
+                    `}
+                >
+                    {option}
+                </button>
                 );
                 })}
             </div>
@@ -55,7 +54,7 @@ export const GenderStep: React.FC = () => {
             <div className="w-full">
                 <Button 
                 aria-label="Siguiente paso" 
-                className={`w-full py-3.5 text-lg shadow-md transition-all duration-300 ${!data.gender ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full py-3.5 text-lg shadow-md transition-all duration-300 ${!formData.gender ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={handleNext}
                 >
                 Siguiente

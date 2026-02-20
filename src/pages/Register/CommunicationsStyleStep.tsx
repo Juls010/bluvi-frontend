@@ -6,7 +6,7 @@ import { AnimatedStep } from '../../components/AnimatedStep';
 
 export const CommunicationStyleStep: React.FC = () => {
     const navigate = useNavigate();
-    const { data, updateData } = useRegister();
+    const { formData, updateFormData } = useRegister();
 
     const styles = [
     'Mensajes de texto', 
@@ -26,27 +26,27 @@ export const CommunicationStyleStep: React.FC = () => {
     ];
 
     const toggleStyle = (style: string) => {
-        const currentList = data.communicationStyle;
+        const currentList = formData.communicationStyle || [];
         
         if (currentList.includes(style)) {
-        updateData({ 
-            communicationStyle: currentList.filter(s => s !== style) 
-        });
+            updateFormData({ 
+                communicationStyle: currentList.filter(s => s !== style) 
+            });
         } else {
-        updateData({ 
-            communicationStyle: [...currentList, style] 
-        });
+            updateFormData({ 
+                communicationStyle: [...currentList, style] 
+            });
         }
     };
 
     const handleNext = () => {
 
-        if (data.communicationStyle.length === 0) return;
+        if (formData.communicationStyle.length === 0) return;
         
         navigate('/register/email');
     };
 
-    const isValid = data.communicationStyle.length >= 1;
+    const isValid = formData.communicationStyle.length >= 1;
 
     return (
         <AnimatedStep>
@@ -68,7 +68,7 @@ export const CommunicationStyleStep: React.FC = () => {
 
                 <div className="flex flex-wrap justify-center gap-3">
                     {styles.map((style) => {
-                    const isSelected = data.communicationStyle.includes(style);
+                    const isSelected = formData.communicationStyle.includes(style);
                     
                     return (
                         <button

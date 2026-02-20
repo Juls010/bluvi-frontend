@@ -4,26 +4,36 @@ import { AnimatedStep } from '../../components/AnimatedStep';
 import { Button } from '../../components/Button';
 import { DatePicker } from '../../components/DatePicker'; 
 import { useRegister } from '../../context/RegisterContext';
-import { today, getLocalTimeZone } from '@internationalized/date';
-import { type DateValue } from 'react-aria-components';
+import { parseDate, CalendarDate } from '@internationalized/date';
 
 export const AgeStep: React.FC = () => {
     const navigate = useNavigate();
-    const { data, updateData } = useRegister();
+    const { formData, updateFormData } = useRegister();
+
+    let calendarValue: CalendarDate | null = null;
+    try {
+        if (formData.birthDate) {
+            calendarValue = parseDate(formData.birthDate);
+        }
+    } catch (e) {
+        console.error("Error parseando la fecha:", e);
+    }
 
     const handleNext = () => {
         const min_age = 16;
 
-        if (data.birthDate) {
-            // data.birthDate ahora vendrá del DatePicker
-            const birthYear = new Date(data.birthDate).getFullYear();
+        if (formData.birthDate) {
+            const birthDateObj = new Date(formData.birthDate);
+            const birthYear = birthDateObj.getFullYear();
             const currentYear = new Date().getFullYear();
-            
+
             if (currentYear - birthYear < min_age) {
                 alert(`Debes tener al menos ${min_age} años para unirte a Bluvi.`);
                 return;
             }
             navigate('/register/gender');
+        } else {
+            alert("Por favor, selecciona tu fecha de nacimiento.");
         }
     };
 
@@ -43,12 +53,12 @@ export const AgeStep: React.FC = () => {
                 <div className="w-full flex flex-col gap-6 mb-20">
                     <DatePicker 
                         label="Fecha de Nacimiento"
-                        maxValue={today(getLocalTimeZone())}
-                        onChange={(date: DateValue | null) => {
-                                    if (date) {
-                                        updateData({ birthDate: date.toString() });
-                                    }
-                                }}
+                        value={calendarValue} 
+                        onChange={(newDate) => {
+                            if (newDate) {
+                                updateFormData({ birthDate: newDate.toString() });
+                            }
+                        }}
                             />
 
                     <p className="text-sm text-bluvi-purple/60 italic font-medium ml-2">
@@ -59,9 +69,9 @@ export const AgeStep: React.FC = () => {
                 <div className="w-full">
                     <Button 
                         aria-label="Ir al siguiente paso" 
-                        disabled={!data.birthDate} 
+                        disabled={!formData.birthDate} 
                         className={`w-full py-3.5 text-lg shadow-md transition-all ${
-                            !data.birthDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'
+                            !formData.birthDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'
                         }`}
                         onClick={handleNext}
                     >

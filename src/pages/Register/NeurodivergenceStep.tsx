@@ -6,7 +6,8 @@ import { AnimatedStep } from '../../components/AnimatedStep';
 
 export const NeurodivergenceStep: React.FC = () => {
     const navigate = useNavigate();
-    const { data, updateData } = useRegister();
+    const { formData, updateFormData } = useRegister();
+    const MAX_NEURO_TRAITS = 4;
 
     const traits = [
     // Neurodesarrollo y Aprendizaje
@@ -37,21 +38,19 @@ export const NeurodivergenceStep: React.FC = () => {
 ];
 
     const toggleTrait = (trait: string) => {
-        const currentList = data.neurodivergences;
-        const max_feature = 4;
+    const currentList = formData.neurodivergences || []; 
+    const isSelected = currentList.includes(trait);
 
-        if (currentList.includes(trait)) {
-        updateData({ 
+    if (isSelected) {
+        updateFormData({ 
             neurodivergences: currentList.filter(t => t !== trait) 
         });
-        } else {
-        if (currentList.length < max_feature) {
-            updateData({ 
+    } else if (currentList.length < MAX_NEURO_TRAITS) {
+        updateFormData({ 
             neurodivergences: [...currentList, trait] 
-            });
-        }
-        }
-    };
+        });
+    }
+};
 
     const handleNext = () => {
         navigate('/register/communication');
@@ -69,15 +68,15 @@ export const NeurodivergenceStep: React.FC = () => {
 
             <div className="w-full relative mb-16">
                 <div className="flex justify-end mb-2">
-                    <span className={`text-sm font-medium ${data.neurodivergences.length === 4 ? 'text-red-400' : 'text-bluvi-purple/60'}`}>
+                    <span className={`text-sm font-medium ${formData.neurodivergences.length === 4 ? 'text-red-400' : 'text-bluvi-purple/60'}`}>
                         Máximo 4 
                     </span>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-3">
                     {traits.map((trait) => {
-                    const isSelected = data.neurodivergences.includes(trait);
-                    const isDisabled = !isSelected && data.neurodivergences.length >= 4;
+                    const isSelected = formData.neurodivergences.includes(trait);
+                    const isDisabled = !isSelected && formData.neurodivergences.length >= 4;
                     
                     return (
                         <button
@@ -107,7 +106,7 @@ export const NeurodivergenceStep: React.FC = () => {
                     className="w-full py-3.5 text-lg shadow-md"
                     onClick={handleNext}
                 >
-                    {data.neurodivergences.length === 0 ? 'Omitir' : 'Siguiente'}
+                    {formData.neurodivergences.length === 0 ? 'Omitir' : 'Siguiente'}
                 </Button>
             </div>
 

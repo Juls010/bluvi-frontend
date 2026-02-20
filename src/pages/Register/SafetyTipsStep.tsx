@@ -3,6 +3,7 @@ import { ShieldCheck, Heart, UserCheck, MessageCircleWarning, Info } from 'lucid
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { SuccessModal } from '../../components/SuccessModal';
+import { useRegister } from '../context/RegisterContext';
 
 const TIPS = [
     {
@@ -28,11 +29,18 @@ const TIPS = [
 ];
 
 export const SafetyTipsStep = () => {
+    const { sendToBackend, formData } = useRegister();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-        const handleFinishRegistration = () => {
-            setIsModalOpen(true); 
+        const handleFinishRegistration = async () => {
+            const success = await sendToBackend();
+
+            if (success) {
+                setIsModalOpen(true); 
+            } else {
+                alert("¡Ups! No hemos podido guardar tu perfil. Revisa tu conexión.");
+            }
         };
 
         const handleCloseAndGoToLanding = () => {

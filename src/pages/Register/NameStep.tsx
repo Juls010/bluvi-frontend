@@ -5,16 +5,17 @@ import { useNavigate } from 'react-router-dom';
 import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
 
+
 export const NameStep: React.FC = () => {
     const navigate = useNavigate();
     
-    const { data, updateData } = useRegister();
+    const { formData, updateFormData } = useRegister();
     
-    const isValid = data.firstName.trim().length > 0;
+    const isValid = formData.firstName?.trim().length > 0;
 
     const handleNext = () => {
         if (!isValid) return;
-        
+
         navigate('/register/age');
     };
 
@@ -34,15 +35,15 @@ export const NameStep: React.FC = () => {
                 <div className="w-full flex flex-col gap-6 mb-20">
                     <InputField 
                         id="nombre" label="Nombre" 
-                        value={data.firstName} 
-                        onChange={(e) => updateData({ firstName: e.target.value })}
+                        value={formData.firstName} 
+                        onChange={(e) => updateFormData({ firstName: e.target.value })}
                         placeholder='Aurora'
                     />
                     
                     <InputField 
                         id="apellidos" label="Apellidos" 
-                        value={data.lastName}
-                        onChange={(e) => updateData({ lastName: e.target.value })}
+                        value={formData.lastName}
+                        onChange={(e) => updateFormData({ lastName: e.target.value })}
                         placeholder='Montenegro'
                     />
                 </div>

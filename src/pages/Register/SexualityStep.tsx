@@ -6,7 +6,7 @@ import { AnimatedStep } from '../../components/AnimatedStep';
 
 export const SexualityStep: React.FC = () => {
     const navigate = useNavigate();
-    const { data, updateData } = useRegister();
+    const { formData, updateFormData } = useRegister();
 
     const options = [
         'Heterosexual', 
@@ -18,7 +18,7 @@ export const SexualityStep: React.FC = () => {
     ];
 
     const handleNext = () => {
-        if (!data.sexuality) return;
+        if (!formData.sexuality) return;
         
         navigate('/register/neurodivergence'); 
     };
@@ -35,12 +35,12 @@ export const SexualityStep: React.FC = () => {
 
             <div className="w-full flex flex-col gap-3 mb-12">
                 {options.map((option) => {
-                const isSelected = data.sexuality === option;
+                const isSelected = formData.sexuality === option;
                 
                 return (
                     <button
                     key={option}
-                    onClick={() => updateData({ sexuality: option })}
+                    onClick={() => updateFormData({ sexuality: option })}
                     className={`
                     w-full py-3.5 px-6 rounded-2xl text-lg font-medium transition-all duration-300 border-2
                     ${isSelected 
@@ -59,7 +59,7 @@ export const SexualityStep: React.FC = () => {
             <div className="w-full">
                 <Button 
                 aria-label="Siguiente paso" 
-                className={`w-full py-3.5 text-lg shadow-md transition-all duration-300 ${!data.sexuality ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full py-3.5 text-lg shadow-md transition-all duration-300 ${!formData.sexuality ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={handleNext}
                 >
                 Siguiente

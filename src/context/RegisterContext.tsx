@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState,  } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface RegisterData {
     firstName: string;
@@ -11,12 +11,12 @@ interface RegisterData {
     email: string;
     password: string;
     documentFile: File | null; 
-    
 }
 
 interface RegisterContextType {
-    data: RegisterData;
-    updateData: (newData: Partial<RegisterData>) => void;
+    formData: RegisterData; // Más descriptivo que 'data'
+    updateFormData: (newData: Partial<RegisterData>) => void; // Más descriptivo que 'updateData'
+    sendToBackend: () => Promise<boolean>;
 }
 
 const RegisterContext = createContext<RegisterContextType | undefined>(undefined);
@@ -39,9 +39,27 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setData((prev) => ({ ...prev, ...newData }));
     };
 
+    // Función para conectar con el servidor que creamos antes
+    const sendToBackend = async () => {
+        try {
+            console.log("🚀 Enviando datos a la API de Bluvi:", data);
+            
+            const response = await fetch('http://localhost:3000/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            return response.ok;
+        } catch (error) {
+            console.error("❌ Error de conexión con el Backend:", error);
+            return false;
+        }
+    };
+
     return (
-        <RegisterContext.Provider value={{ data, updateData }}>
-        {children}
+        <RegisterContext.Provider value={{ formData: data, updateFormData: updateData, sendToBackend }}>
+            {children}
         </RegisterContext.Provider>
     );
 };
