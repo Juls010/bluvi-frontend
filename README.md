@@ -14,7 +14,7 @@ Sigue estos pasos para configurar el proyecto en tu máquina local:
 
 1. **Clona el repositorio:**
    ```bash
-   git clone [URL-DE-TU-REPOSITORIO]
+   git clone https://github.com/Juls010/bluvi-frontend.git
    cd bluvi-frontend
    ```
 2. **Instala las dependencias:**
