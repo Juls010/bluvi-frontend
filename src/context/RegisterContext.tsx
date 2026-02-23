@@ -10,19 +10,22 @@ interface RegisterData {
     communicationStyle: string[];
     email: string;
     password: string;
-    documentFile: File | null; 
+    photos: (string | null)[];
+    city: string;
+    interests: number[]; 
+    description: string;
 }
 
 interface RegisterContextType {
-    formData: RegisterData; // Más descriptivo que 'data'
-    updateFormData: (newData: Partial<RegisterData>) => void; // Más descriptivo que 'updateData'
+    formData: RegisterData; 
+    updateFormData: (newData: Partial<RegisterData>) => void; 
     sendToBackend: () => Promise<boolean>;
 }
 
 const RegisterContext = createContext<RegisterContextType | undefined>(undefined);
 
 export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [data, setData] = useState<RegisterData>({
+    const [formData, setData] = useState<RegisterData>({
         firstName: '',
         lastName: '',
         birthDate: '',
@@ -32,33 +35,35 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         communicationStyle: [],
         email: '',
         password: '',
-        documentFile: null,
+        photos: [null, null, null, null, null],
+        city: '',
+        interests: [],
+        description: '',
     });
 
-    const updateData = (newData: Partial<RegisterData>) => {
+    const updateFormData = (newData: Partial<RegisterData>) => {
         setData((prev) => ({ ...prev, ...newData }));
     };
 
-    // Función para conectar con el servidor que creamos antes
     const sendToBackend = async () => {
         try {
-            console.log("🚀 Enviando datos a la API de Bluvi:", data);
+            console.log("Enviando datos a la API de Bluvi:", formData);
             
             const response = await fetch('http://localhost:3000/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+                body: JSON.stringify(formData),
             });
 
             return response.ok;
         } catch (error) {
-            console.error("❌ Error de conexión con el Backend:", error);
+            console.error("Error de conexión con el Backend:", error);
             return false;
         }
     };
 
     return (
-        <RegisterContext.Provider value={{ formData: data, updateFormData: updateData, sendToBackend }}>
+        <RegisterContext.Provider value={{ formData, updateFormData, sendToBackend }}>
             {children}
         </RegisterContext.Provider>
     );

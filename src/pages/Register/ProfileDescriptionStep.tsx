@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Button';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { useRegister } from '../../context/RegisterContext';
 
 
 export const ProfileDescriptionStep = () => {
     const navigate = useNavigate();
-    const [description, setDescription] = useState("");
+    const { formData, updateFormData } = useRegister();
+
     const MAX_CHARS = 200;
 
     return (
@@ -24,12 +26,12 @@ export const ProfileDescriptionStep = () => {
 
                     <div className="w-full max-w-md relative mt-10">
                         <span className="absolute -top-6 right-0 text-xs text-[#5b6bb1] opacity-80">
-                            Máx {MAX_CHARS}
+                            {formData.description.length} / {MAX_CHARS}
                         </span>
 
                         <textarea 
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value.slice(0, MAX_CHARS))}
+                            value={formData.description}
+                            onChange={(e) => updateFormData({description: e.target.value.slice(0, MAX_CHARS)})}
                             className="w-full h-64 p-6 rounded-3xl bg-white/40 border border-white/20 shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#3f4a9b]/20 text-gray-700 resize-none placeholder:text-gray-400/80 transition-all"
                             placeholder="Escribe aquí..."
                         />
@@ -39,7 +41,7 @@ export const ProfileDescriptionStep = () => {
                 <div className="w-full max-w-sm">
                     <Button 
                         onClick={() => navigate('/register/verificationemail')}
-                        disabled={description.length === 0}
+                        disabled={formData.description.length === 0}
                         className="w-full py-3 bg-[#3f4a9b] text-white rounded-lg shadow-md font-semibold"
                     >
                         Siguiente

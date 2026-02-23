@@ -3,19 +3,20 @@ import { Search, MapPin, CheckCircle2, ChevronRight } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { useRegister } from '../../context/RegisterContext'; 
 
 // Esto es un ejemplo, luego podrás conectarlo con una API de ciudades
 const MOCK_CITIES = ["Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga", "Murcia"];
 
 export const LocationStep = () => {
     const navigate = useNavigate();
-    
-    const [query, setQuery] = useState('');
-    const [selectedCity, setSelectedCity] = useState<string | null>(null);
+    const { formData, updateFormData } = useRegister();
+
+    const [query, setQuery] = useState(formData.city || '');
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const handleNext = () => {
-        if (selectedCity) {
+        if (formData.city) {
             navigate('/register/interests');
         }
     };
@@ -44,8 +45,13 @@ export const LocationStep = () => {
                                 type="text"
                                 value={query}
                                 onChange={(e) => {
-                                    setQuery(e.target.value);
+                                    const val = e.target.value;
+                                    setQuery(val);
                                     setShowSuggestions(true);
+                                    
+                                    if (val === '') {
+                                        updateFormData({ city: '' });
+                                    }
                                 }}
                                 placeholder="Escribe el nombre de tu ciudad..."
                                 className="w-full bg-white/50 backdrop-blur-xl border border-white/60 py-5 pl-12 pr-6 rounded-[2rem] outline-none focus:ring-4 focus:ring-bluvi-purple/10 text-bluvi-purple placeholder:text-bluvi-purple/30 text-lg shadow-inner transition-all"
@@ -64,17 +70,17 @@ export const LocationStep = () => {
                             >
                                 {filteredCities.length > 0 ? (
                                     filteredCities.map((city) => (
-                                        <li key={city} role="option" aria-selected={selectedCity === city}>
+                                        <li key={city} role="option" aria-selected={formData.city === city}>
                                             <button
                                                 onClick={() => {
-                                                    setSelectedCity(city);
                                                     setQuery(city);
+                                                    updateFormData({ city: city });
                                                     setShowSuggestions(false);
                                                 }}
                                                 className="w-full flex items-center justify-between px-6 py-4 hover:bg-bluvi-purple/5 text-left text-bluvi-purple font-medium transition-colors"
                                             >
                                                 {city}
-                                                {selectedCity === city ? <CheckCircle2 size={18} /> : <ChevronRight size={18} className="opacity-30" />}
+                                                {formData.city === city ? <CheckCircle2 size={18} /> : <ChevronRight size={18} className="opacity-30" />}
                                             </button>
                                         </li>
                                     ))
@@ -88,9 +94,9 @@ export const LocationStep = () => {
                     <div className="pt-10 md:pt-16 animate-fade-in"> 
                         <Button
                             onClick={handleNext}
-                            disabled={!selectedCity}
+                            disabled={!formData.city}
                             className={`w-full py-4 rounded-full text-lg shadow-xl ${
-                                selectedCity 
+                                formData.city 
                                 ? 'bg-bluvi-purple text-white' 
                                 : 'bg-gray-200 text-gray-400 opacity-50'
                             }`}

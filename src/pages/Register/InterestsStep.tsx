@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { useRegister } from '../../context/RegisterContext';
 
 interface Interest {
     id_interest: number;
@@ -10,10 +11,11 @@ interface Interest {
 
 export const InterestsStep = () => {
     const navigate = useNavigate();
+    const { formData, updateFormData } = useRegister();
     
-    const [interests, setInterests] = useState<Interest[]>([]);
-    const [selected, setSelected] = useState<number[]>([]); 
+    const [interests, setInterests] = useState<Interest[]>([]); 
     const MIN_SELECTION = 2;
+
 
     useEffect(() => {
         fetch('http://localhost:3000/interests')
@@ -23,17 +25,18 @@ export const InterestsStep = () => {
     }, []);
 
     const handleNext = () => {
-        if (selected.length >= MIN_SELECTION) {
+        if (formData.interests.length >= MIN_SELECTION) {
             navigate('/register/description');
         }
     };
 
     const toggleInterest = (id: number) => {
-        setSelected(prev => 
-            prev.includes(id) 
-                ? prev.filter(i => i !== id) 
-                : [...prev, id]
-        );
+        const currentInterests = formData.interests || [];
+        const newSelection = currentInterests.includes(id)
+            ? currentInterests.filter(i => i !== id)
+            : [...currentInterests, id];
+
+        updateFormData({ interests: newSelection });
     };
 
     return (
@@ -49,7 +52,7 @@ export const InterestsStep = () => {
                     <div className="flex-grow overflow-y-auto no-scrollbar py-4">
                         <div className="flex flex-wrap justify-center gap-3">
                             {interests.map((interest) => {
-                                const isSelected = selected.includes(interest.id_interest);
+                                const isSelected = formData.interests.includes(interest.id_interest);
                                 return (
                                     <button
                                         key={interest.id_interest}
@@ -72,11 +75,11 @@ export const InterestsStep = () => {
                     <div className="pt-6 pb-10">
                         <Button
                             onClick={handleNext}
-                            disabled={selected.length < MIN_SELECTION}
+                            disabled={formData.interests.length < MIN_SELECTION}
                             className={`w-full max-w-sm py-4 rounded-full text-lg shadow-xl
-                            ${selected.length >= MIN_SELECTION ? 'bg-bluvi-purple text-white' : 'bg-gray-200 text-gray-400 opacity-50'}`}
+                            ${formData.interests.length >= MIN_SELECTION ? 'bg-bluvi-purple text-white' : 'bg-gray-200 text-gray-400 opacity-50'}`}
                         >
-                            Siguiente {selected.length > 0 && `${selected.length}/5`}
+                            Siguiente {formData.interests.length > 0 && `${formData.interests.length}/5`}
                         </Button>
                     </div>
 

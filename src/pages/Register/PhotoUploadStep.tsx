@@ -2,10 +2,14 @@ import React, { useState, useRef } from 'react';
 import { Camera, Plus, X, CheckCircle2, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { useRegister } from '../../context/RegisterContext';
 
 export const PhotoUploadStep = () => {
     const navigate = useNavigate();
-    const [photos, setPhotos] = useState<(string | null)[]>([null, null, null, null, null]);
+    const { formData, updateFormData } = useRegister();
+
+    const photos = formData.photos;
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectingIndex, setSelectingIndex] = useState<number | null>(null);
 
@@ -22,7 +26,7 @@ export const PhotoUploadStep = () => {
             reader.onloadend = () => {
                 const newPhotos = [...photos];
                 newPhotos[selectingIndex] = reader.result as string;
-                setPhotos(newPhotos);
+                updateFormData({ photos: newPhotos });
             };
             reader.readAsDataURL(file);
         }
@@ -37,7 +41,7 @@ export const PhotoUploadStep = () => {
         e.stopPropagation();
         const newPhotos = [...photos];
         newPhotos[index] = null;
-        setPhotos(newPhotos);
+        updateFormData({ photos: newPhotos });
     };
 
     return (

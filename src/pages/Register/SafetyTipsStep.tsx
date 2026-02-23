@@ -3,7 +3,7 @@ import { ShieldCheck, Heart, UserCheck, MessageCircleWarning, Info } from 'lucid
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { SuccessModal } from '../../components/SuccessModal';
-import { useRegister } from '../context/RegisterContext';
+import { useRegister } from '../../context/RegisterContext';
 
 const TIPS = [
     {
@@ -29,11 +29,14 @@ const TIPS = [
 ];
 
 export const SafetyTipsStep = () => {
-    const { sendToBackend, formData } = useRegister();
+    const { sendToBackend } = useRegister(); 
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-        const handleFinishRegistration = async () => {
+    const handleFinishRegistration = async () => {
+        setIsLoading(true); 
+        try {
             const success = await sendToBackend();
 
             if (success) {
@@ -41,12 +44,18 @@ export const SafetyTipsStep = () => {
             } else {
                 alert("¡Ups! No hemos podido guardar tu perfil. Revisa tu conexión.");
             }
-        };
+        } catch (error) {
+            console.error("Error en el registro:", error);
+            alert("Ocurrió un error inesperado. Inténtalo de nuevo.");
+        } finally {
+            setIsLoading(false); 
+        }
+    };
 
-        const handleCloseAndGoToLanding = () => {
-            setIsModalOpen(false);
-            navigate('/landing');
-        };
+    const handleCloseAndGoToLanding = () => {
+        setIsModalOpen(false);
+        navigate('/landing');
+    };
 
     return (
         <div className="h-[100dvh] w-full flex flex-col items-center justify-center px-6 overflow-hidden fixed inset-0 animate-fade-in">
@@ -86,10 +95,13 @@ export const SafetyTipsStep = () => {
                 
                 <Button
                     onClick={handleFinishRegistration} 
-                    className="w-full max-w-sm py-4 rounded-full text-lg shadow-xl bg-bluvi-purple text-white hover:scale-105"
+                    disabled={isLoading}
+                    className={`w-full max-w-sm py-4 rounded-full text-lg shadow-xl bg-bluvi-purple text-white transition-all ${
+                            isLoading ? 'opacity-70 cursor-wait' : 'hover:scale-105'
+                        }`}
                     aria-label="Entendido, finalizar registro"
                 >
-                    ¡Entendido, vamos allá!
+                    {isLoading ? 'Guardando tu perfil...' : '¡Entendido, vamos allá!'}
                 </Button>
             </footer>
 
