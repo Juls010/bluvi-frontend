@@ -3,11 +3,30 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, RefreshCw } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { authService } from '../../services/auth.service';
 
 export const EmailVerificationStep = () => {
     const navigate = useNavigate();
     const [code, setCode] = useState(['', '', '', '']);
     const inputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+
+
+    const handleVerifyCode = async () => {
+    const fullCode = code.join(''); // Une ['1','2','3','4'] en '1234'
+    
+    try {
+            // Usamos el servicio de Axios que creamos antes
+            const response = await authService.verifyEmail(fullCode);
+            
+            if (response.success) {
+                console.log("✅ Código correcto");
+                navigate('/register/safety-tips'); 
+            }
+        } catch (error: any) {
+            console.error("Código incorrecto:", error.response?.data?.message);
+            alert("El código no es válido. ¡Revisa tu terminal del Back!");
+        }
+    };
 
     const handleChange = (index: number, value: string) => {
         if (!/^\d*$/.test(value)) return;
@@ -66,7 +85,7 @@ export const EmailVerificationStep = () => {
 
                 <div className="w-full max-w-sm">
                     <Button 
-                        onClick={() => navigate('/register/description')}
+                        onClick={handleVerifyCode}
                         disabled={code.some(d => d === '')}
                         className="w-full py-3 bg-[#3f4a9b] text-white rounded-lg shadow-md font-semibold disabled:opacity-50"
                     >

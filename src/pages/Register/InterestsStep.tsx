@@ -3,9 +3,10 @@ import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { useRegister } from '../../context/RegisterContext';
+import { authService } from '../../services/auth.service';
 
 interface Interest {
-    id_interest: number;
+    id: number;
     name: string;
 }
 
@@ -16,12 +17,19 @@ export const InterestsStep = () => {
     const [interests, setInterests] = useState<Interest[]>([]); 
     const MIN_SELECTION = 2;
 
-
     useEffect(() => {
-        fetch('http://localhost:3000/interests')
-            .then(res => res.json())
-            .then(data => setInterests(data))
-            .catch(err => console.error("Error", err));
+        const fetchInterests = async () => {
+            try {
+                const response = await authService.getMetadata();
+                if (response.success) {
+                    setInterests(response.data.interests);
+                }
+            } catch (err) {
+                console.error("Error cargando intereses desde el servicio:", err);
+            }
+        };
+
+        fetchInterests();
     }, []);
 
     const handleNext = () => {
@@ -52,12 +60,12 @@ export const InterestsStep = () => {
                     <div className="flex-grow overflow-y-auto no-scrollbar py-4">
                         <div className="flex flex-wrap justify-center gap-3">
                             {interests.map((interest) => {
-                                const isSelected = formData.interests.includes(interest.id_interest);
+                                const isSelected = formData.interests.includes(interest.id);
                                 return (
                                     <button
-                                        key={interest.id_interest}
+                                        key={interest.id}
                                         type="button"
-                                        onClick={() => toggleInterest(interest.id_interest)}
+                                        onClick={() => toggleInterest(interest.id)}
                                         className={`
                                             px-6 py-2.5 rounded-full border-2 font-medium transition-all duration-300
                                             ${isSelected 

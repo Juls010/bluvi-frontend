@@ -1,14 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { authService } from '../../services/auth.service';
+
+
+interface GenderOption {
+    id: number;
+    name: string;
+}
 
 export const GenderStep: React.FC = () => {
     const navigate = useNavigate();
     const { formData, updateFormData } = useRegister();
 
-    const genderOptions = ['Hombre', 'Mujer', 'No binarie'];
+    const [genderOptions, setGenderOptions] = useState<GenderOption[]>([]);
+
+    useEffect(() => {
+        const fetchGenders = async () => {
+            try {
+                const response = await authService.getMetadata();
+                if (response.success) {
+                    // DEBUG: Mira qué llega exactamente del Back
+                    console.log("Datos recibidos de géneros:", response.data.genders);
+                    setGenderOptions(response.data.genders);
+                }
+            } catch (error) {
+                console.error("Error cargando géneros:", error);
+            }
+        };
+        fetchGenders();
+    }, []);
 
     const handleNext = () => {
         if (!formData.gender) return;
@@ -30,13 +53,16 @@ export const GenderStep: React.FC = () => {
 
             <div className="w-full flex flex-col gap-4 mb-20">
                 {genderOptions.map((option) => {
-                
-                const isSelected = formData.gender === option;
+                // 2. Comparación de seguridad: 
+                // Verificamos que option.id exista y que formData.gender no esté vacío
+                const isSelected = formData.gender !== '' && 
+                                formData.gender !== undefined && 
+                                formData.gender === option.id;
 
                 return (
                     <button
-                    key={option}
-                    onClick={() => updateFormData({ gender: option })} 
+                    key={option.id}
+                    onClick={() => updateFormData({ gender: option.id })} 
                     className={`
                         w-full py-4 px-6 rounded-2xl text-lg font-medium transition-all duration-300 border-2
                         ${isSelected 
@@ -45,7 +71,7 @@ export const GenderStep: React.FC = () => {
                         }
                     `}
                 >
-                    {option}
+                    {option.name}
                 </button>
                 );
                 })}

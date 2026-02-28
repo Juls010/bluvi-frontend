@@ -1,56 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { authService } from '../../services/auth.service';
 
 export const NeurodivergenceStep: React.FC = () => {
     const navigate = useNavigate();
     const { formData, updateFormData } = useRegister();
+    const [availableTraits, setAvailableTraits] = useState<{id: number, name: string}[]>([]);
     const MAX_NEURO_TRAITS = 4;
 
-    const traits = [
-    // Neurodesarrollo y Aprendizaje
-    'ADHD', 
-    'Autismo', 
-    'Dislexia', 
-    'Discalculia',   
-    'Dispraxia',     
-    'Síndrome Tourette',
-    
-    // Salud Mental y Emocional
-    'Ansiedad',      
-    'Ansiedad Social', 
-    'Depresión', 
-    'Bipolar', 
-    'TOC',           
-    'TLP',          
-    
-    // Rasgos y Sensorialidad
-    'PAS (Alta Sensibilidad)', 
-    'ARFID', 
-    
-    // Discapacidad y Genética
-    'Síndrome Down', 
-    'Discapacidad intelectual',
-    'Parálisis cerebral', 
-    'Tartamudez'
-];
+    useEffect(() => {
+        const fetchTraits = async () => {
+            try {
+                const response = await authService.getMetadata();
+                if (response.success) {
+                    setAvailableTraits(response.data.neurodivergences);
+                }
+            } catch (error) {
+                console.error("Error cargando rasgos:", error);
+            }
+        };
+        fetchTraits();
+    }, []);
 
-    const toggleTrait = (trait: string) => {
-    const currentList = formData.neurodivergences || []; 
-    const isSelected = currentList.includes(trait);
+    const toggleTrait = (traitId: number) => {
+        const currentList = formData.neurodivergences || []; 
+        const isSelected = currentList.includes(traitId);
 
-    if (isSelected) {
-        updateFormData({ 
-            neurodivergences: currentList.filter(t => t !== trait) 
-        });
-    } else if (currentList.length < MAX_NEURO_TRAITS) {
-        updateFormData({ 
-            neurodivergences: [...currentList, trait] 
-        });
-    }
-};
+        if (isSelected) {
+            updateFormData({ 
+                neurodivergences: currentList.filter(id => id !== traitId) 
+            });
+        } else if (currentList.length < MAX_NEURO_TRAITS) {
+            updateFormData({ 
+                neurodivergences: [...currentList, traitId] 
+            });
+        }
+    };
 
     const handleNext = () => {
         navigate('/register/communication');
@@ -74,14 +62,17 @@ export const NeurodivergenceStep: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-3">
-                    {traits.map((trait) => {
-                    const isSelected = formData.neurodivergences.includes(trait);
+                    {availableTraits.map((trait) => {
+
+                    const isSelected = formData.neurodivergences.includes(trait.id);
                     const isDisabled = !isSelected && formData.neurodivergences.length >= 4;
                     
+                    console.log("Estado actual de Neurodivergencias (IDs):", formData.neurodivergences);
+
                     return (
                         <button
-                            key={trait}
-                            onClick={() => toggleTrait(trait)}
+                            key={trait.id}
+                            onClick={() => toggleTrait(trait.id)}
                             disabled={isDisabled}
                             className={`
                                 py-2.5 px-5 rounded-xl text-base font-medium transition-all duration-300 border-2
@@ -93,7 +84,7 @@ export const NeurodivergenceStep: React.FC = () => {
                                 ${isDisabled ? 'opacity-50 cursor-not-allowed grayscale' : 'cursor-pointer'}
                             `}
                         >
-                            {trait}
+                            {trait.name}
                         </button>
                     );
                     })}

@@ -1,48 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { authService } from '../../services/auth.service';
 
 export const CommunicationStyleStep: React.FC = () => {
     const navigate = useNavigate();
     const { formData, updateFormData } = useRegister();
+    
+    // 1. Estado para los estilos que vienen de la DB
+    const [styles, setStyles] = useState<{id: number, name: string}[]>([]);
 
-    const styles = [
-    'Mensajes de texto', 
-    'Notas de voz',        
-    'Videollamadas', 
-    'Llamadas de voz',
-    'Memes', 
-    'Directa y literal', 
-    'Conversación casual', 
-    'Conversación profunda', 
-    'Lento y reflexivo', 
-    'Pocas palabras', 
-    'Párrafos largos',
-    'Infodumping',          
-    'Ecolalia', 
-    'Compañía silenciosa'  
-    ];
+    // 2. Cargar los datos desde el servicio
+    useEffect(() => {
+        const fetchStyles = async () => {
+            try {
+                const response = await authService.getMetadata();
+                if (response.success) {
+                    setStyles(response.data.communicationStyles);
+                }
+            } catch (error) {
+                console.error("Error cargando estilos:", error);
+            }
+        };
+        fetchStyles();
+    }, []);
 
-    const toggleStyle = (style: string) => {
+    const toggleStyle = (id: number) => {
         const currentList = formData.communicationStyle || [];
         
-        if (currentList.includes(style)) {
+        // Ahora trabajamos con IDs numéricos
+        if (currentList.includes(id)) {
             updateFormData({ 
-                communicationStyle: currentList.filter(s => s !== style) 
+                communicationStyle: currentList.filter(s => s !== id) 
             });
         } else {
             updateFormData({ 
-                communicationStyle: [...currentList, style] 
+                communicationStyle: [...currentList, id] 
             });
         }
     };
 
     const handleNext = () => {
-
         if (formData.communicationStyle.length === 0) return;
-        
         navigate('/register/email');
     };
 
@@ -68,12 +69,13 @@ export const CommunicationStyleStep: React.FC = () => {
 
                 <div className="flex flex-wrap justify-center gap-3">
                     {styles.map((style) => {
-                    const isSelected = formData.communicationStyle.includes(style);
+                            // Comparamos con style.id
+                            const isSelected = formData.communicationStyle.includes(style.id);
                     
                     return (
                         <button
-                        key={style}
-                        onClick={() => toggleStyle(style)}
+                        key={style.id}
+                        onClick={() => toggleStyle(style.id)}
                         className={`
                             py-2.5 px-5 rounded-xl text-base font-medium transition-all duration-300 border-2
                             ${isSelected 
@@ -83,7 +85,7 @@ export const CommunicationStyleStep: React.FC = () => {
                             }
                         `}
                         >
-                        {style}
+                        {style.name}
                         </button>
                     );
                     })}

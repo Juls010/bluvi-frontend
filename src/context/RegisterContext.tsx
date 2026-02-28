@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useState } from 'react';
+import { authService } from '../services/auth.service';
 
 interface RegisterData {
     firstName: string;
     lastName: string;
     birthDate: string;
-    gender: string;
-    sexuality: string;
-    neurodivergences: string[];
-    communicationStyle: string[];
+    gender: number | ''; 
+    sexuality: number | ''; 
+    neurodivergences: number[]; 
+    communicationStyle: number[]; 
     email: string;
     password: string;
     photos: (string | null)[];
@@ -29,8 +30,8 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         firstName: '',
         lastName: '',
         birthDate: '',
-        gender: "",
-        sexuality: "",
+        gender: '', 
+        sexuality: '',
         neurodivergences: [],
         communicationStyle: [],
         email: '',
@@ -47,17 +48,20 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     const sendToBackend = async () => {
         try {
-            console.log("Enviando datos a la API de Bluvi:", formData);
+            console.log("🚀 Enviando datos profesionales al Backend:", formData);
             
-            const response = await fetch('http://localhost:3000/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
+            // Ya no necesitamos 'mappedData' porque los componentes ahora 
+            // guardarán directamente el ID en el estado.
+            const result = await authService.register(formData);
 
-            return response.ok;
-        } catch (error) {
-            console.error("Error de conexión con el Backend:", error);
+            if (result.success) {
+                console.log("✨ Registro completado con éxito");
+                return true;
+            }
+            return false;
+        } catch (error: any) {
+            console.error("Error detallado:", error.response?.data);
+            alert("Error del servidor: " + (error.response?.data?.message || "Revisa la consola del Back"));
             return false;
         }
     };
