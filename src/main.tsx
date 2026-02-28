@@ -1,12 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import './index.css'
 
 // PAGINAS PÚBLICAS
-import { Welcome } from './pages/Welcome'
-import { Intro } from './pages/Intro'
-import { Landing } from './pages/Landing'
+import { WelcomeLayout } from './layouts/WelcomeLayout';
+import { Welcome } from './pages/Welcome/Welcome'
+import { Intro } from './pages/Welcome/Intro'
+import { Landing } from './pages/Welcome/Landing'
+import { Login } from './pages/Auth/Login'
 
 // REGISTER
 import { RegisterLayout } from './layouts/RegisterLayout';
@@ -35,61 +38,65 @@ import { Messages } from './pages/Messages';
 import { ChatDetail } from './pages/ChatDetails'
 import { ChatLayout } from './layouts/ChatLayout'
 
+// 1. Esta es la nueva "pieza" que envuelve tus rutas
+const AnimatedRoutes = () => {
+  const location = useLocation();
 
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        
-        {/* --- ZONA 1: PÚBLICA --- */}
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* AQUÍ PEGAS TODAS TUS RUTAS EXACTAMENTE COMO LAS TENÍAS */}
+        <Route element={<WelcomeLayout />}>
         <Route path="/" element={<Welcome />} />
         <Route path="/intro" element={<Intro />} />
         <Route path="/landing" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        </Route>
 
-        {/* --- ZONA 2: REGISTRO --- */}
+        {/* ZONA REGISTER */}
         <Route path="/register" element={
             <RegisterProvider>
                 <RegisterLayout />
             </RegisterProvider>
-          }>
-            <Route path="name" element={<NameStep />} />
-            <Route path="age" element={<AgeStep />} />
-            <Route path="gender" element={<GenderStep />} />
-            <Route path="sexuality" element={<SexualityStep />} />
-            <Route path="neurodivergence" element={<NeurodivergenceStep />} />
-            <Route path="communication" element={<CommunicationStyleStep />} /> 
-            <Route path="email" element={<EmailStep />} />
-            <Route path="photos" element={<PhotoUploadStep />} />
-            <Route path="location" element={<LocationStep />} />
-            <Route path="interests" element={<InterestsStep />} />
-            <Route path="description" element={<ProfileDescriptionStep />} />
-            <Route path="verificationemail" element={<EmailVerificationStep />} />
-            <Route path="safety-tips" element={<SafetyTipsStep />} />
+        }>
+              <Route path="name" element={<NameStep />} />
+              <Route path="age" element={<AgeStep />} />
+              <Route path="gender" element={<GenderStep />} />
+              <Route path="sexuality" element={<SexualityStep />} />
+              <Route path="neurodivergence" element={<NeurodivergenceStep />} />
+              <Route path="communication" element={<CommunicationStyleStep />} /> 
+              <Route path="email" element={<EmailStep />} />
+              <Route path="photos" element={<PhotoUploadStep />} />
+              <Route path="location" element={<LocationStep />} />
+              <Route path="interests" element={<InterestsStep />} />
+              <Route path="description" element={<ProfileDescriptionStep />} />
+              <Route path="verificationemail" element={<EmailVerificationStep />} />
+              <Route path="safety-tips" element={<SafetyTipsStep />} />
+        </Route>
 
-            {/* <Route path="document" element={<DocumentStep />} /> */} 
-        </Route> 
-        
-
-
-        {/* --- ZONA 3: APLICACIÓN (USUARIO LOGUEADO) --- */}
-
+        {/* ZONA APP */}
         <Route path="/app" element={<AppLayout />}>
             <Route index element={<Navigate to="/app/home" replace />} />
             <Route path="home" element={<Home />} />
             <Route path="discovery" element={<Discovery />} />
             <Route path="messages" element={<Messages />} />
-            {/* <Route path="chats" element={<Chats />} /> */}
-            {/* <Route path="profile" element={<Profile />} /> */}
         </Route>
         
         <Route element={<ChatLayout />} >
           <Route path="/app/chat/:id" element={<ChatDetail />} />
         </Route>
+
         {/* REDIRECCIÓN POR DEFECTO */}
         <Route path="*" element={<Navigate to="/" replace />} />
-
       </Routes>
+    </AnimatePresence>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <AnimatedRoutes /> 
     </BrowserRouter>
   </React.StrictMode>,
 )
