@@ -56,10 +56,16 @@ export const AgeStep: React.FC = () => {
                         value={calendarValue} 
                         onChange={(newDate) => {
                             if (newDate) {
-                                updateFormData({ birthDate: newDate.toString() });
+                                const y = newDate.year;
+                                const m = String(newDate.month).padStart(2, '0');
+                                const d = String(newDate.day).padStart(2, '0');
+                                const formatted = `${y}-${m}-${d}`;
+                                
+                                console.log("📍 PASO 1 - Fecha capturada:", formatted); 
+                                updateFormData({ birthDate: formatted });
                             }
                         }}
-                            />
+                    />
 
                     <p className="text-sm text-bluvi-purple/60 italic font-medium ml-2">
                         * Tu fecha de nacimiento no será pública en tu perfil.

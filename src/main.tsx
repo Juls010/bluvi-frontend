@@ -40,6 +40,8 @@ import { Messages } from './pages/Messages'
 import { ChatDetail } from './pages/ChatDetails'
 import { ChatLayout } from './layouts/ChatLayout'
 import { UserProfile } from './pages/App/UserProfile'
+import { Settings } from './pages/Settings/Settings'
+
 
 // ─── Rutas animadas ───────────────────────────────────────────────────────────
 
@@ -59,11 +61,14 @@ const AnimatedRoutes = () => {
                 </Route>
 
                 {/* ZONA REGISTER */}
-                <Route path="/register" element={
-                    <RegisterProvider>
-                        <RegisterLayout />
-                    </RegisterProvider>
-                }>
+                <Route 
+                    path="/register" 
+                    element={
+                        <RegisterProvider> 
+                            <RegisterLayout /> 
+                        </RegisterProvider>
+                    }
+                >
                     <Route path="name" element={<NameStep />} />
                     <Route path="age" element={<AgeStep />} />
                     <Route path="gender" element={<GenderStep />} />
@@ -89,8 +94,8 @@ const AnimatedRoutes = () => {
                     <Route path="home" element={<Home />} />
                     <Route path="discovery" element={<Discovery />} />
                     <Route path="messages" element={<Messages />} />
-                    {/* UserProfile carga sus propios datos desde la API — no necesita props */}
                     <Route path="profile" element={<UserProfile />} />
+                    <Route path="settings" element={<Settings />} />
                 </Route>
 
                 <Route element={<ChatLayout />}>

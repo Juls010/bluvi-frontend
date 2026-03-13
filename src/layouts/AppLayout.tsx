@@ -1,22 +1,24 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { SettingsButton } from '../components/SettingsButton';
 import { BluAssistant } from '../components/BluAssistant';
 
 export const AppLayout: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <main className="min-h-screen w-full bg-bluvi-gradient flex flex-col font-sans relative overflow-hidden" style={{ '--navbar-height': '80px' } as React.CSSProperties}>
 
       <div className="fixed top-0 left-0 w-full z-50 p-1 flex justify-center pointer-events-none">
-          
-          <div className="w-full max-w-[95%] pointer-events-auto">
-              <Navbar />
-          </div>
 
-          <div className="absolute top-3 right-8 pointer-events-auto">
-              <SettingsButton onClick={() => console.log("Ajustes")} />
-          </div>
+        <div className="w-full max-w-[95%] pointer-events-auto">
+          <Navbar />
+        </div>
+
+        <div className="absolute top-3 right-8 pointer-events-auto">
+          <SettingsButton onClick={() => navigate('/app/settings')} />
+        </div>
 
       </div>
 
@@ -24,8 +26,6 @@ export const AppLayout: React.FC = () => {
         <Outlet />
       </div>
 
-      
-      
       <BluAssistant />
 
     </main>
