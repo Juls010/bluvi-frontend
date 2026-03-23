@@ -4,27 +4,32 @@ import { Mail, RefreshCw } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { authService } from '../../services/auth.service';
+import { useRegister } from '../../context/RegisterContext';
 
 export const EmailVerificationStep = () => {
     const navigate = useNavigate();
-    const [code, setCode] = useState(['', '', '', '']);
-    const inputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
-
+    const [code, setCode] = useState(['', '', '', '','','']);
+    const inputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+    const { formData } = useRegister();
 
     const handleVerifyCode = async () => {
-    const fullCode = code.join(''); // Une ['1','2','3','4'] en '1234'
-    
-    try {
-            // Usamos el servicio de Axios que creamos antes
-            const response = await authService.verifyEmail(fullCode);
+        const fullCode = code.join('');
+        const email = formData.email || localStorage.getItem('temp_email_verification'); 
+
+        if (!email) {
+            alert("No se encontró el email del registro. Por favor, reinicia el proceso.");
+            return;
+        }
+
+        try {
+            const response = await authService.verifyEmail(fullCode, email);
             
             if (response.success) {
-                console.log("✅ Código correcto");
+                localStorage.removeItem('temp_email_verification');
                 navigate('/register/safety-tips'); 
             }
         } catch (error: any) {
-            console.error("Código incorrecto:", error.response?.data?.message);
-            alert("El código no es válido. ¡Revisa tu terminal del Back!");
+            alert(error.response?.data?.message || "Código incorrecto");
         }
     };
 
@@ -35,7 +40,7 @@ export const EmailVerificationStep = () => {
         newCode[index] = value;
         setCode(newCode);
 
-        if (value !== '' && index < 3) {
+        if (value !== '' && index < 5) {
             inputRefs[index + 1].current?.focus();
         }
     };
@@ -57,7 +62,7 @@ export const EmailVerificationStep = () => {
                         </div>
                         <h1 className="text-3xl font-bold text-[#2d3a7d]">Verifica tu correo</h1>
                         <div className="text-[#5b6bb1] font-medium max-w-sm mx-auto">
-                            <p>Te hemos enviado un código de 4 dígitos para proteger tu cuenta.</p>
+                            <p>Te hemos enviado un código de 6 dígitos para proteger tu cuenta.</p>
                         </div>
                     </header>
 
@@ -72,7 +77,7 @@ export const EmailVerificationStep = () => {
                                 value={digit}
                                 onChange={(e) => handleChange(index, e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(index, e)}
-                                className="w-14 h-16 text-center text-2xl font-bold rounded-2xl bg-white/50 border border-white/30 shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#3f4a9b]/30 text-[#2d3a7d] transition-all"
+                                className="w-12 h-16 text-center text-2xl font-bold rounded-2xl bg-white/50 border border-white/30 shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#3f4a9b]/30 text-[#2d3a7d] transition-all"
                             />
                         ))}
                     </div>

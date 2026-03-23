@@ -47,7 +47,7 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     const sendToBackend = async () => {
-        console.log("📦 Verificando maleta antes de enviar:", formData);
+        console.log("Verificando maleta antes de enviar:", formData);
         
         try {
             const mappedData = {
@@ -75,12 +75,14 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             const result = await authService.register(mappedData);
             
             if (result.success) {
-                localStorage.removeItem('bluvi_reg_backup'); // Limpiamos al éxito
+                localStorage.setItem('temp_email_verification', formData.email);
+                localStorage.removeItem('bluvi_reg_backup'); 
                 return true;
             }
             return false;
+            
         } catch (error: any) {
-            console.error("❌ Error en registro:", error);
+            console.error("Error en registro:", error);
             return false;
         }
     };

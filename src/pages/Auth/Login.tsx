@@ -25,19 +25,26 @@ export const Login: React.FC = () => {
             const data = await response.json();
 
             if (data.success) {
-                localStorage.setItem('token', data.token);
+                // CAMBIO: Guardamos los dos tokens que genera el backend 
+                // Nota: Asegúrate de que el backend los envíe como 'access' y 'refresh'
+                localStorage.setItem('accessToken', data.access); 
+                localStorage.setItem('refreshToken', data.refresh);
+                
+                // Mantenemos los datos del usuario para el resto de la app
                 localStorage.setItem('user', JSON.stringify(data.user));
+                
                 navigate('/app/home'); 
 
             } else {
+                // Manejo de errores que ya tenías...
                 if (data.message === "Credenciales incorrectas") {
-                    setError('El correo electrónico o la contraseña que has escrito no coinciden con nuestros registros. Por favor, revísalos e inténtalo de nuevo.');
+                    setError('El correo electrónico o la contraseña no coinciden.');
                 } else {
                     setError(data.message);
                 }
             }
         } catch (err) {
-            setError('No hemos podido conectar con el servidor. Revisa si tienes conexión a internet o inténtalo de nuevo en unos minutos.');
+            setError('No hemos podido conectar con el servidor.');
         }
     };
 

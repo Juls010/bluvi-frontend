@@ -7,9 +7,28 @@ import { useRegister } from '../../context/RegisterContext';
 
 export const ProfileDescriptionStep = () => {
     const navigate = useNavigate();
-    const { formData, updateFormData } = useRegister();
+    const { formData, updateFormData, sendToBackend } = useRegister();
+    const [isLoading, setIsLoading] = useState(false);
 
     const MAX_CHARS = 200;
+
+    const handleNext = async () => {
+        setIsLoading(true);
+        try {
+            const success = await sendToBackend();
+            
+            if (success) {
+                navigate('/register/verificationemail');
+            } else {
+                alert("Hubo un error al procesar tu registro. Revisa los datos o inténtalo más tarde.");
+            }
+        } catch (error) {
+            console.error("Error en el paso de descripción:", error);
+            alert("No se pudo conectar con el servidor.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <AnimatedStep>
@@ -40,8 +59,8 @@ export const ProfileDescriptionStep = () => {
 
                 <div className="w-full max-w-sm">
                     <Button 
-                        onClick={() => navigate('/register/verificationemail')}
-                        disabled={formData.description.length === 0}
+                        onClick={handleNext}
+                        disabled={formData.description.length === 0 || isLoading}
                         className="w-full py-3 bg-[#3f4a9b] text-white rounded-lg shadow-md font-semibold"
                     >
                         Siguiente

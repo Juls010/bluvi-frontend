@@ -29,32 +29,17 @@ const TIPS = [
 ];
 
 export const SafetyTipsStep = () => {
-    const { sendToBackend } = useRegister(); 
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleFinishRegistration = async () => {
-        setIsLoading(true); 
-        try {
-            const success = await sendToBackend();
-
-            if (success) {
-                setIsModalOpen(true); 
-            } else {
-                alert("¡Ups! No hemos podido guardar tu perfil. Revisa tu conexión.");
-            }
-        } catch (error) {
-            console.error("Error en el registro:", error);
-            alert("Ocurrió un error inesperado. Inténtalo de nuevo.");
-        } finally {
-            setIsLoading(false); 
-        }
+    const handleFinishRegistration = () => {
+        setIsModalOpen(true); 
     };
 
-    const handleCloseAndGoToLanding = () => {
+    const handleCloseAndGoToHome = () => {
         setIsModalOpen(false);
-        navigate('/landing');
+        navigate('/app/home'); 
     };
 
     return (
@@ -107,7 +92,7 @@ export const SafetyTipsStep = () => {
 
             <SuccessModal 
                 isOpen={isModalOpen} 
-                onClose={handleCloseAndGoToLanding} 
+                onClose={handleCloseAndGoToHome} 
             />
             </div>
         </div>
