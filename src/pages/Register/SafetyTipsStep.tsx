@@ -3,7 +3,6 @@ import { ShieldCheck, Heart, UserCheck, MessageCircleWarning, Info } from 'lucid
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { SuccessModal } from '../../components/SuccessModal';
-import { useRegister } from '../../context/RegisterContext';
 
 const TIPS = [
     {

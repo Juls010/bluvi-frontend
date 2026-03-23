@@ -1,9 +1,9 @@
 import React from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { SettingsButton } from '../components/SettingsButton';
-import { useLocation } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { RegisterProvider } from '../context/RegisterContext'; 
+import { RegisterProvider } from '../context/RegisterContext';
+import { AnimatePresence } from 'framer-motion'; 
 
 export const RegisterLayout: React.FC = () => {
     const navigate = useNavigate();
@@ -21,6 +21,7 @@ export const RegisterLayout: React.FC = () => {
     '/register/location',
     '/register/interests',
     '/register/description',
+    '/register/verificationemail', 
     '/register/safety-tips'
 ];
 
@@ -30,6 +31,7 @@ export const RegisterLayout: React.FC = () => {
     return (
         <RegisterProvider>
             <main className="min-h-screen w-full bg-bluvi-gradient flex flex-col items-center font-sans overflow-hidden relative">
+                
                 {progressLevel > 0 && (
                     <div className="absolute top-0 left-0 w-full h-1 bg-white/30 z-50">
                         <div 
@@ -51,8 +53,13 @@ export const RegisterLayout: React.FC = () => {
                     <SettingsButton onClick={() => console.log("Ajustes")} />
                 </div>
 
+
                 <div className="flex-1 w-full flex flex-col items-center justify-center -mt-20">
-                    <Outlet /> 
+                    <AnimatePresence mode="wait">
+                        <div key={location.pathname} className="w-full flex justify-center">
+                            <Outlet /> 
+                        </div>
+                    </AnimatePresence>
                 </div>
             </main>
         </RegisterProvider>
