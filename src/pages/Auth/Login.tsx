@@ -4,48 +4,38 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/Button';
 import logo from '../../assets/logo.svg';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { useAuth } from '../../context/AuthContext';
+
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
+    const auth = useAuth(); // Primero cogemos todo el objeto
+    const authLogin = auth.login; // Luego sacamos la función con un nombre distinto
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
+                e.preventDefault();
+            console.log("🟢 BOTÓN PULSADO"); // Si esto no sale, el problema es el <form>
 
-        try {
-            const response = await fetch('http://localhost:3000/api/auth/login', { 
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+            try {
+                console.log("🔵 Llamando a login con:", email, password);
+                const success = await authLogin({ email, password });
+                console.log("🟡 Resultado del login en el componente:", success);
 
-            const data = await response.json();
-
-            if (data.success) {
-                // CAMBIO: Guardamos los dos tokens que genera el backend 
-                // Nota: Asegúrate de que el backend los envíe como 'access' y 'refresh'
-                localStorage.setItem('accessToken', data.access); 
-                localStorage.setItem('refreshToken', data.refresh);
-                
-                // Mantenemos los datos del usuario para el resto de la app
-                localStorage.setItem('user', JSON.stringify(data.user));
-                
-                navigate('/app/home'); 
-
-            } else {
-                // Manejo de errores que ya tenías...
-                if (data.message === "Credenciales incorrectas") {
-                    setError('El correo electrónico o la contraseña no coinciden.');
+                if (success) {
+                    console.log("🚀 Navegando a Home...");
+                    navigate('/app/home');
                 } else {
-                    setError(data.message);
+                    setError('Credenciales incorrectas');
                 }
+            } catch (err) {
+                console.error("🔴 Error atrapado en Login.tsx:", err);
+                setError('Error de conexión');
             }
-        } catch (err) {
-            setError('No hemos podido conectar con el servidor.');
-        }
     };
 
     return (
