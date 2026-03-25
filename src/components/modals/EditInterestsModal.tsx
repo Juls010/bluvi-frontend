@@ -38,7 +38,7 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
 
         <div className="p-6 overflow-y-auto space-y-4">
           <input 
-            type="text"
+            type="file"
             placeholder="Buscar intereses..."
             className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-bluvi-purple/20 outline-none"
             value={search}
