@@ -1,8 +1,15 @@
 import React from 'react';
-import { type User } from '../data/mockUsers';
+import type { User } from '../types/User.types';
 import { SimpleCarousel } from './SimpleCarousel';
 import ClickSpark from './ClickSpark';
-
+import { 
+    idsToLabels, 
+    INTEREST_LABELS, 
+    NEURODIVERGENCE_LABELS, 
+    COMMUNICATION_LABELS,
+    GENDER_LABELS,
+    SEXUALITY_LABELS 
+} from '../types/User.types';
 interface ProfileDetailProps {
     user: User;
     onClose: () => void;
@@ -11,22 +18,34 @@ interface ProfileDetailProps {
 }
 
 export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onLike, onPass }) => {
+    console.log("🔍 INVESTIGANDO USUARIO:", user);
 
-    const carouselPhotos = user.photos && user.photos.length > 0 
-        ? user.photos.map((url, index) => ({
-            id: index,
-            image: url,
-            alt: `Foto ${index + 1} de ${user.name}`
-        }))
-        : [ 
-            { id: 0, image: user.image, alt: `Foto de perfil de ${user.name}` }
-        ];
+   
+    const age = (user as any).birth_date 
+    ? Math.floor((Date.now() - new Date((user as any).birth_date).getTime()) / (1000 * 60 * 60 * 24 * 365.25))
+    : '—';
+    const genderLabel = GENDER_LABELS[user.id_gender] || 'No especificado';
+
+    const preferenceId = (user as any).id_preference;
+    const sexualityLabel = SEXUALITY_LABELS[preferenceId] || 'No especificada';
+
+    const communicationLabels: string[] = Array.isArray(user.communication_style) 
+    ? (user.communication_style as string[]) 
+    : [];
+
+    const traitLabels = Array.isArray(user.features) ? user.features : [];
+
+    const interestLabels = Array.isArray(user.interests) ? user.interests : [];
+
+    const photosForCarousel = (user.photos?.length && user.photos[0]) 
+        ? user.photos.filter((p): p is string => typeof p === 'string') 
+        : [(user as any).main_photo || '/assets/images/default-avatar.png'];
 
     return (
         <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none">
         
         <h1 className="text-3xl md:text-4xl font-heading font-bold text-bluvi-purple mb-6 pl-2 outline-none" tabIndex={-1}>
-            {user.name}
+            {user.first_name} {user.last_name}
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -34,13 +53,15 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
             <div className="md:col-span-4 flex flex-col gap-6">
                 
                 <div className="w-full"> 
-                    <SimpleCarousel photos={carouselPhotos} />
+                    <SimpleCarousel 
+                    photos={photosForCarousel}
+                    firstName={user.first_name} />
                 </div>
 
                 <div className="flex justify-between px-4">
                     <button 
                         onClick={onPass}
-                        aria-label={`Pasar perfil de ${user.name}`}
+                        aria-label={`Pasar perfil de ${user.first_name}`}
                         className="w-16 h-16 rounded-2xl border-2 border-bluvi-purple/30 text-bluvi-purple hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all flex items-center justify-center focus:ring-4 focus:ring-red-200 outline-none"
                     >
                         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -48,7 +69,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
 
                     <button 
                             onClick={onLike}
-                            aria-label={`Me gusta ${user.name}`}
+                            aria-label={`Me gusta ${user.first_name}`}
                             className="w-16 h-16 relative overflow-visible rounded-2xl bg-bluvi-purple text-white shadow-lg hover:scale-105 hover:bg-bluvi-purple/90 transition-all flex items-center justify-center focus:ring-4 focus:ring-purple-300 outline-none"
                         >
                             <ClickSpark 
@@ -71,27 +92,27 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                     <ul className="flex flex-wrap gap-4 sm:gap-6 text-bluvi-purple font-semibold mb-4 text-sm md:text-base border-b border-bluvi-purple/10 pb-4">
                         <li className="flex items-center gap-1">
                             <span aria-hidden="true">🎂</span>
-                            <span>{user.age} <span className="sr-only">años</span></span>
+                            <span>{age} <span className="sr-only">años</span></span>
                         </li>
 
                         <li className="flex items-center gap-1">
                             <span aria-hidden="true">👤</span>
                             <span className="sr-only">Género:</span>
-                            {user.gender}
+                            {genderLabel}
                         </li>
                         <li className="flex items-center gap-1">
                             <span aria-hidden="true">📍</span>
                             <span className="sr-only">Ubicación:</span>
-                            {user.location}
+                            {user.city}
                         </li>
                         <li className="flex items-center gap-1">
                             <span aria-hidden="true">🌈</span>
                             <span className="sr-only">Orientación sexual:</span>
-                            {user.orientation}
+                            {sexualityLabel}
                         </li>
                     </ul>
                     <p className="text-gray-700 leading-relaxed text-lg">
-                        {user.bio}
+                        {user.description}
                     </p>
                 </div>
 
@@ -100,9 +121,9 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                         <span aria-hidden="true">🌱</span> Mis intereses
                     </h2>
                     <ul className="flex flex-wrap gap-2">
-                        {user.interests.map((tag) => (
-                            <li key={tag} className="px-4 py-2 bg-gray-200 text-bluvi-purple border border-gray-200 rounded-xl text-sm font-medium">
-                                {tag}
+                        {interestLabels.map((label) => (
+                            <li key={label} className="...">
+                                {label}
                             </li>
                         ))}
                     </ul>
@@ -115,9 +136,9 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                     <div className="mb-5">
                         <h3 className="text-xs font-bold text-gray-400 uppercase block mb-2">Rasgos</h3>
                         <ul className="flex flex-wrap gap-2">
-                            {user.divergentTraits.map((trait) => (
-                                <li key={trait} className="px-4 py-2 bg-gray-200 text-bluvi-purple border border-purple-100 rounded-xl text-sm font-semibold">
-                                    {trait}
+                            {traitLabels.map((label) => (
+                                <li key={label} className="px-4 py-2 bg-gray-200 text-bluvi-purple border border-purple-100 rounded-xl text-sm font-semibold">
+                                    {label}
                                 </li>
                             ))}
                         </ul>
@@ -125,11 +146,18 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                     <div>
                         <h3 className="text-xs font-bold text-gray-400 uppercase block mb-2">Comunicación</h3>
                         <ul className="flex flex-wrap gap-2">
-                            {user.communicationStyle.map((style) => (
-                                <li key={style} className="px-4 py-2 bg-gray-200 text-bluvi-purple border border-blue-100 rounded-xl text-sm font-semibold">
-                                    {style}
-                                </li>
-                            ))}
+                            {communicationLabels.length > 0 ? (
+                                communicationLabels.map((label, index) => (
+                                    <li 
+                                        key={`${label}-${index}`} // Usamos el index por si hay labels repetidos
+                                        className="px-4 py-2 bg-gray-200 text-bluvi-purple border border-blue-100 rounded-xl text-sm font-semibold"
+                                    >
+                                        {label}
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="text-gray-400 text-sm italic">No hay estilos definidos</li>
+                            )}
                         </ul>
                     </div>
                 </section>

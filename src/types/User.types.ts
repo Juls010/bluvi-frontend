@@ -6,18 +6,18 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
-  birth_date: string;       // ISO: "1997-12-11T23:00:00.000Z"
+  birth_date: string;       
   city: string;
   description: string;
   id_gender: number;
-  sexuality: number[];      // IDs de preference (orientación sexual)
+  sexuality: number[];      
   photos: (string | null)[];
-  interests: number[];      // IDs de interest
-  neurodivergences: number[]; // IDs de feature
-  communication_style: number[]; // IDs de communication_style
+  main_photo?: string;
+  interests: string[];      
+  features: string[]; 
+  communication_style: string[]; 
 }
 
-// ─── Mapas de etiquetas ───────────────────────────────────────────────────────
 
 export const GENDER_LABELS: Record<number, string> = {
   1: 'Hombre',
@@ -119,7 +119,11 @@ export const INTEREST_LABELS: Record<number, string> = {
   42: 'Maquetas',
 };
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
 
-export const idsToLabels = (ids: number[], map: Record<number, string>): string[] =>
-  ids.map((id) => map[id]).filter(Boolean);
+
+export const idsToLabels = (ids: number[] | undefined, labelsRecord: Record<number, string>): string[] => {
+  if (!ids || !Array.isArray(ids)) return [];
+  return ids
+    .map(id => labelsRecord[id]) 
+    .filter(label => !!label);   
+};

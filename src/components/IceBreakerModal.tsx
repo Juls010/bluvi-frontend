@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { type User } from '../data/mockUsers';
+import type { User } from '../types/User.types';
 import { Button } from './Button'; 
 
 interface IceBreakerModalProps {
@@ -31,8 +31,8 @@ export const IceBreakerModal: React.FC<IceBreakerModalProps> = ({ user, onSend, 
                     <div className="absolute inset-0 bg-bluvi-purple/20 rounded-full blur-md group-hover:bg-bluvi-purple/30 transition-all duration-500"></div>
                     <div className="w-24 h-24 relative z-10">
                         <img 
-                            src={user.image} 
-                            alt={user.name} 
+                            src={user.photos[0] || 'https://via.placeholder.com/150'}
+                            alt={user.first_name} 
                             className="w-full h-full rounded-full object-cover  shadow-sm"
                         />
                     </div>
@@ -40,7 +40,7 @@ export const IceBreakerModal: React.FC<IceBreakerModalProps> = ({ user, onSend, 
                 </div>
 
                 <h2 className="text-xl font-heading font-bold text-gray-800 mb-1 text-center">
-                    ¡Es un match con {user.name.split(' ')[0]}!
+                    ¡Es un match con {user.first_name}!
                 </h2>
                 <p className="text-sm text-bluvi-purple/80 font-medium mb-6 text-center px-4 py-1.5 rounded-full">
                     Elige cómo quieres romper el hielo
