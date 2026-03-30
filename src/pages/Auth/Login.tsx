@@ -18,7 +18,8 @@ export const Login: React.FC = () => {
     
 
     const handleSubmit = async (e: React.FormEvent) => {
-                e.preventDefault();
+            e.preventDefault();
+            alert("🟢 ¡EL FORMULARIO HA SIDO LANZADO!");
             console.log("🟢 BOTÓN PULSADO"); // Si esto no sale, el problema es el <form>
 
             try {
@@ -42,7 +43,7 @@ export const Login: React.FC = () => {
         <AnimatedStep>
                 <div className="w-full flex justify-start px-8">
                     <button 
-                        onClick={() => navigate('/landing')}
+                        onClick={() => navigate('/welcome')}
                         className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition-colors text-bluvi-purple cursor-pointer"
                         aria-label="Volver atrás"
                     >
@@ -61,6 +62,8 @@ export const Login: React.FC = () => {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
                                 <input
+                                    id="email"      
+                                    name="email"
                                     type="email"
                                     placeholder="Email"
                                     value={email}
@@ -71,6 +74,8 @@ export const Login: React.FC = () => {
                             </div>
                             <div>
                                 <input
+                                    id="password"
+                                    name="password"
                                     type="password"
                                     placeholder="Contraseña"
                                     value={password}

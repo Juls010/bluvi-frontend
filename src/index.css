@@ -1,73 +1,120 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Manrope:wght@200..800&display=swap');
-@layer base {
-    body {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        @apply text-slate-900;
-    }
-}
 
 @theme {
     --color-bluvi-purple: #3f4292;
     --color-bluvi-light-purple: #b8bceb;
     
-    /* Degradado con más presencia: Azul Sereno -> Malva Suave -> Naranja Atardecer */
     --background-image-bluvi-gradient: linear-gradient(
         to bottom right, 
-        #A5C9FF, /* Azul más definido (Océano claro) */
-        #D8D1FF, /* Un lila azulado que une ambos mundos */
-        #FFD5A1  /* Naranja melocotón con más fuerza */
+        #A5C9FF, 
+        #D8D1FF, 
+        #FFD5A1
     );
+
+    --font-heading: "Lexend Deca", sans-serif;
+    --font-sans: "Manrope", sans-serif;
+    --font-family-sans: var(--font-sans);
 }
 
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-}
+@layer base {
+    html {
+        background-image: var(--background-image-bluvi-gradient);
+        background-attachment: fixed;
+        min-height: 100%;
+    }
 
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: white;
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.05); 
+    :root {
+        --scrollbar-thumb: rgba(128, 128, 128, 0.72);
+        --scrollbar-thumb-hover: rgba(128, 128, 128, 0.72);
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--scrollbar-thumb) transparent;
+    }
+
+    body {
+        background-color: transparent;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        color: #26215C;
+        overflow-x: hidden;
+    }
+
+    #root {
+        background-color: transparent;
+        min-height: 100%;
+    }
 }
 
 @layer utilities {
-    .scrollbar-hide::-webkit-scrollbar {
-        display: none !important;
-        width: 0 !important;
-        background: transparent !important;
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
     }
 
+    .no-scrollbar,
     .scrollbar-hide {
-        -ms-overflow-style: none !important;
-        scrollbar-width: none !important;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar,
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
     }
 }
 
-html, body, #root {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background: transparent;
 }
 
-body {
-    overflow-x: hidden;
+*::-webkit-scrollbar-track {
+    background: transparent !important;
 }
 
-main {
-    position: relative;
+*::-webkit-scrollbar-track-piece {
+    background: transparent !important;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    min-height: 36px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+}
+
+html.welcome-scroll-hidden,
+body.welcome-scroll-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+html.welcome-scroll-hidden::-webkit-scrollbar,
+body.welcome-scroll-hidden::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }

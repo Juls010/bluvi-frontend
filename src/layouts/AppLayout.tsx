@@ -3,8 +3,10 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { SettingsButton } from '../components/SettingsButton';
 import { BluAssistant } from '../components/BluAssistant';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 
 export const AppLayout: React.FC = () => {
+  useScrollToTop();
   const navigate = useNavigate();
 
   return (

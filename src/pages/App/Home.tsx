@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
+import api from '../../services/api'; 
+import { useAuth } from '../../context/AuthContext';
 
 // Tarjetas de perfil de muestra — en producción vendrían de la API
 const SAMPLE_PROFILES = [
@@ -32,9 +34,24 @@ const SAMPLE_PROFILES = [
 
 export const Home: React.FC = () => {
     const navigate = useNavigate();
+    const { user } = useAuth(); 
+    const [stats, setStats] = useState({ active: '...', safety: '...', types: '...' });
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const res = await api.get('/catalog/stats'); 
+                setStats(res.data);
+            } catch (err) {
+                console.error("Error cargando stats:", err);
+            }
+        };
+        fetchStats();
+    }, []);
 
     return (
         <div className="w-full max-w-5xl mx-auto px-6 flex flex-col gap-7">
+            
             <div className="flex justify-center animate-fade-in motion-reduce:animate-none">
                 <img
                     src={logo}
@@ -57,7 +74,8 @@ export const Home: React.FC = () => {
                     </span>
 
                     <h1 className="text-4xl md:text-5xl font-bold text-bluvi-purple leading-[1.1] mb-5 tracking-tight">
-                        Conexiones{' '}
+                        Bienvenido, {user?.first_name || 'a Bluvi'}{' '} 
+                        
                         <span
                             aria-hidden="true"
                             className="relative inline-block"
@@ -67,9 +85,10 @@ export const Home: React.FC = () => {
                                 WebkitTextFillColor: 'transparent',
                             }}
                         >
-                            que encajan
+                            conexiones que encajan
                         </span>
-                        <span className="sr-only">que encajan</span>
+                        
+                        <span className="sr-only">conexiones que encajan</span>
                     </h1>
 
                     <p className="text-bluvi-purple/70 text-base leading-relaxed mb-10 max-w-sm font-medium">

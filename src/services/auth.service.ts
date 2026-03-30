@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = 'http://localhost:3000/api/auth';
+const API_URL = '/auth'; 
 
 export const authService = {
     checkEmail: async (email: string) => {
@@ -20,27 +20,22 @@ export const authService = {
 
     login: async (credentials: { email: string; password: string }) => {
         const response = await api.post(`${API_URL}/login`, credentials);
-        
-        if (response.data.accessToken) {
-            localStorage.setItem('accessToken', response.data.accessToken); 
-            localStorage.setItem('refreshToken', response.data.refreshToken); 
-        }
         return response.data;
     },
 
     verifyEmail: async (code: string, email: string) => {
         const response = await api.post(`${API_URL}/verify-email`, { code, email });
-        
-        if (response.data.accessToken) {
-            localStorage.setItem('accessToken', response.data.accessToken);
-            localStorage.setItem('refreshToken', response.data.refreshToken);
-        }
         return response.data;
     },
 
-    logout: () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
+    logout: async () => {
+        try {
+            await api.post(`${API_URL}/logout`);
+        } catch (error) {
+            console.error("Error avisando al servidor del logout:", error);
+        } finally {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+        }
     }
 };

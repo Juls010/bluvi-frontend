@@ -11,8 +11,6 @@ import { RegisterProvider } from '../context/RegisterContext';
 
 // Pages
 import { Welcome } from '../pages/Welcome/Welcome';
-import { Intro } from '../pages/Welcome/Intro';
-import { Landing } from '../pages/Welcome/Landing';
 import { Login } from '../pages/Auth/Login';
 import { NameStep } from '../pages/Register/NameStep';
 import { AgeStep } from '../pages/Register/AgeStep';
@@ -41,8 +39,6 @@ export const router = createBrowserRouter([
         element: <WelcomeLayout />,
         children: [
             { index: true, element: <Welcome /> },
-            { path: "intro", element: <Intro /> },
-            { path: "landing", element: <Landing /> },
             { path: "login", element: <Login /> },
         ]
     },

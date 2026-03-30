@@ -1,11 +1,12 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { SettingsButton } from '../components/SettingsButton';
 import { ChevronLeft } from 'lucide-react';
 import { RegisterProvider } from '../context/RegisterContext';
-import { AnimatePresence } from 'framer-motion'; 
+import { AnimatePresence } from 'framer-motion';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 
 export const RegisterLayout: React.FC = () => {
+    useScrollToTop();
     const navigate = useNavigate();
     const location = useLocation(); 
 
@@ -50,7 +51,6 @@ export const RegisterLayout: React.FC = () => {
                         <ChevronLeft size={28} strokeWidth={2.5} className="group-hover:-translate-x-0.5 transition-transform" />
                     </button>
                     
-                    <SettingsButton onClick={() => console.log("Ajustes")} />
                 </div>
 
 
