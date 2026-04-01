@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/auth.service';
-import axios from 'axios';
+import api from '../services/api';
 
 interface AuthUser {
     id: number;
@@ -42,34 +42,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const login = async (credentials: { email: string; password: string }): Promise<boolean> => {
-        console.log("1. Entrando en login");
         try {
-            console.log("2. Lanzando petición directa...");
-            
-            const response = await axios.post('http://localhost:3000/api/auth/login', credentials, {
-                withCredentials: true
-            });
+            const response = await api.post('/auth/login', credentials);
+            const payload = response.data ?? {};
 
-            console.log("3. Respuesta recibida:", response.data);
-
-            const { accessToken, user, success } = response.data;
+            const accessToken =
+                payload.accessToken ?? payload.token ?? payload.data?.accessToken ?? payload.data?.token;
+            const userData = payload.user ?? payload.data?.user ?? null;
+            const success = payload.success ?? Boolean(accessToken);
 
             if (success && accessToken) {
                 setToken(accessToken);
-                setUser(user);
+                setUser(userData);
 
                 localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('user', JSON.stringify(user));
+                if (userData) {
+                    localStorage.setItem('user', JSON.stringify(userData));
+                }
 
-                console.log("✅ Todo guardado. ¡Navegando!");
                 return true; 
             }
 
-            console.log("⚠️ El Back dio 200 pero el formato no es el esperado");
             return false;
             
         } catch (error) {
-            console.error("4. Error capturado:", error);
+            console.error('Error en login', error);
             return false;
         }
     };

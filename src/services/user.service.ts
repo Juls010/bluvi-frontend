@@ -1,46 +1,5 @@
-import axios from 'axios';
+import api from './api';
 import type { User } from '../types/User.types';
-
-
-const API_URL = 'http://localhost:3000/api';
-
-const api = axios.create({
-    baseURL: API_URL
-});
-
-// Interceptor de Petición 
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('accessToken'); 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`; 
-    }
-    return config;
-});
-
-// Interceptor de Respuesta 
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-            const refreshToken = localStorage.getItem('refreshToken'); 
-            if (refreshToken) {
-                try {
-                    const res = await axios.post(`${API_URL}/users/refresh`, { refresh: refreshToken });
-                    const { access } = res.data;
-                    localStorage.setItem('accessToken', access);
-                    originalRequest.headers.Authorization = `Bearer ${access}`;
-                    return api(originalRequest);
-                } catch (refreshError) {
-                    localStorage.clear();
-                    window.location.href = '/login';
-                }
-            }
-        }
-        return Promise.reject(error);
-    }
-);
 
 // --- FUNCIONES DEL SERVICIO ---
 

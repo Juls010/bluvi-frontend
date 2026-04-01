@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { Button } from '../components/Button';
 
 interface FilterData {
   search: string;
   selectedTags: string[];
   city: string;
+  distance: number;
+  communicationStyle: string[]; 
+  sensoryPref: string[]; 
 }
-
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -17,17 +20,28 @@ export const DiscoveryFilter: React.FC<Props> = ({ isOpen, onClose, onApply, ini
   const [search, setSearch] = useState(initialFilters.search);
   const [selectedTags, setSelectedTags] = useState<string[]>(initialFilters.selectedTags);
   const [city, setCity] = useState(initialFilters.city);
+  
+  // 1. Añadimos los estados que faltaban
+  const [distance, setDistance] = useState(initialFilters.distance || 50);
+  const [communicationStyle, setCommunicationStyle] = useState<string[]>(initialFilters.communicationStyle || []);
+  const [sensoryPref, setSensoryPref] = useState<string[]>(initialFilters.sensoryPref || []);
 
-  // Tags sugeridos: Lo que más une a la comunidad Bluvi
   const QUICK_TAGS = ['🎮 Gaming', '🎨 Arte', '🌿 Naturaleza', '🎶 Música', '🐾 Mascotas', '📚 Lectura', '🍿 Cine', '🧩 Puzzles'];
+  const COMMS_STYLES = ['💬 Directo', '🐌 Pausado', '🎙️ Audios ok', '⌨️ Solo texto'];
+  const SENSORY_LIMITS = ['🔇 Tranquilo', '💡 Luz tenue', '🌳 Aire libre', '☕ Cafeterías'];
+
+  // Función genérica para toggles
+  const toggleItem = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, item: string) => {
+    setList(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
+  };
+
+  if (!isOpen) return null;
 
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => 
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4">
@@ -46,67 +60,157 @@ export const DiscoveryFilter: React.FC<Props> = ({ isOpen, onClose, onApply, ini
             <button onClick={onClose} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-gray-100 transition-colors">✕</button>
           </header>
 
-          {/* Buscador de intereses */}
-          <section>
-            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-3 block">¿Qué te apetece encontrar?</label>
-            <div className="group relative">
-              <input 
-                type="text" 
-                placeholder="Busca un interés (ej. Ajedrez...)" 
-                className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent rounded-2xl text-gray-700 focus:bg-white focus:border-bluvi-purple/20 focus:ring-4 focus:ring-bluvi-purple/5 transition-all outline-none"
+          <section className="space-y-4">
+            <div>
+              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-2 block">
+                Buscar por texto
+              </label>
+              <input
+                type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                placeholder="Nombre, apellido o descripción"
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-bluvi-purple/30"
               />
-              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-xl opacity-30 group-focus-within:opacity-100 transition-opacity">🔍</span>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-2 block">
+                Ciudad
+              </label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="Ej: Madrid"
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-bluvi-purple/30"
+              />
             </div>
           </section>
 
           {/* Tags Rápidos */}
           <section>
-            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-3 block">Sugerencias rápidas</label>
+            <div className="flex justify-between items-end mb-4">
+              <div>
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 block">
+                  Intereses y Hyperfocus
+                </label>
+                <p className="text-[10px] text-gray-400 ml-1 mt-1">Selecciona lo que te apasiona hoy</p>
+              </div>
+              <span className="text-[10px] font-bold text-bluvi-purple bg-bluvi-purple/5 px-2 py-1 rounded-lg">
+                {selectedTags.length} seleccionados
+              </span>
+            </div>
+
             <div className="flex flex-wrap gap-2.5">
               {QUICK_TAGS.map(tag => {
                 const isSelected = selectedTags.includes(tag);
                 return (
                   <button
                     key={tag}
-                    onClick={() => toggleTag(tag)}
+                    onClick={() => toggleItem(selectedTags, setSelectedTags, tag)}
                     className={`px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all border-2
                       ${isSelected 
-                        ? 'bg-bluvi-purple text-white border-bluvi-purple shadow-lg shadow-bluvi-purple/20 scale-105' 
-                        : 'bg-white text-gray-500 border-gray-100 hover:border-bluvi-purple/30 hover:text-bluvi-purple'}`}
+                        ? 'bg-bluvi-purple text-white border-bluvi-purple shadow-md' 
+                        : 'bg-white text-gray-500 border-gray-100 hover:border-bluvi-purple/20'}`}
                   >
                     {tag}
                   </button>
                 );
               })}
+              {/* Botón de "Añadir otro" (opcional para el futuro) */}
+              <button className="px-4 py-2.5 rounded-2xl text-sm font-semibold border-2 border-dashed border-gray-200 text-gray-400 hover:bg-gray-50">
+                + Proponer otro
+              </button>
             </div>
           </section>
 
-          {/* Ubicación */}
-          <section>
-            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-3 block">Ciudad o zona</label>
-            <div className="relative">
+          <section className="space-y-6">
+            {/* Slider de Distancia */}
+            <div className="px-1">
+              <div className="flex justify-between items-center mb-4">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                  Distancia máxima
+                </label>
+                <span className="text-sm font-bold text-bluvi-purple bg-bluvi-purple/10 px-3 py-1 rounded-full">
+                  {distance === 50 ? '+50' : distance} km
+                </span>
+              </div>
+              
               <input 
-                  type="text" 
-                  placeholder="Madrid, Remoto..." 
-                  className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl text-gray-700 outline-none focus:ring-2 focus:ring-bluvi-purple/10 transition-all"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                />
-              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-xl opacity-30">📍</span>
+                type="range" 
+                min="1" 
+                max="50" 
+                step="1"
+                value={distance}
+                onChange={(e) => setDistance(parseInt(e.target.value))}
+                className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-bluvi-purple"
+                style={{
+                    background: `linear-gradient(to right, #3f4292 0%, #3f4292 ${(distance / 50) * 100}%, #f3f4f6 ${(distance / 50) * 100}%, #f3f4f6 100%)`
+                }}
+              />
+              
+              <div className="flex justify-between mt-2 text-[10px] text-gray-400 font-medium px-1">
+                <span>Cerca</span>
+                <span>30 km</span>
+                <span>Toda la ciudad</span>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-3 block">Estilo de comunicación</label>
+            <div className="flex flex-wrap gap-2">
+              {COMMS_STYLES.map(style => (
+                <button 
+                  key={style}
+                  onClick={() => toggleItem(communicationStyle, setCommunicationStyle, style)}
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all border-2
+                    ${communicationStyle.includes(style) 
+                      ? 'bg-bluvi-purple/10 border-bluvi-purple text-bluvi-purple' 
+                      : 'bg-white border-gray-100 text-gray-500'}`}
+                >
+                  {style}
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* 4. SENSORIAL */}
+          <section>
+            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-3 block">Preferencias de entorno</label>
+            <div className="flex flex-wrap gap-2">
+              {SENSORY_LIMITS.map(pref => (
+                <button 
+                  key={pref}
+                  onClick={() => toggleItem(sensoryPref, setSensoryPref, pref)}
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all border-2
+                    ${sensoryPref.includes(pref) 
+                      ? 'bg-[#9d66ff]/10 border-[#9d66ff] text-[#9d66ff]' 
+                      : 'bg-white border-gray-100 text-gray-500'}`}
+                >
+                  {pref}
+                </button>
+              ))}
             </div>
           </section>
         </div>
 
         {/* Botón de Aplicar con Gradiente */}
         <div className="p-6 bg-white border-t border-gray-50">
-          <button 
-            onClick={() => onApply({ search, selectedTags, city })}
-            className="w-full py-4 bg-gradient-to-r from-bluvi-purple to-[#9d66ff] text-white rounded-2xl font-bold text-lg shadow-xl shadow-bluvi-purple/30 hover:opacity-90 active:scale-[0.97] transition-all"
+          <Button 
+            onClick={() => onApply({ 
+                search, 
+                selectedTags, 
+                city, 
+                distance, 
+                communicationStyle, 
+                sensoryPref 
+            })}
+            className="w-full py-4 from-bluvi-purple to-[#9d66ff] text-white rounded-2xl font-bold text-lg shadow-xl shadow-bluvi-purple/30 hover:opacity-90 active:scale-[0.97] transition-all"
           >
             Ver resultados
-          </button>
+          </Button>
         </div>
       </div>
     </div>

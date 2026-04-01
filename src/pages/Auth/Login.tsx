@@ -19,22 +19,17 @@ export const Login: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
             e.preventDefault();
-            alert("🟢 ¡EL FORMULARIO HA SIDO LANZADO!");
-            console.log("🟢 BOTÓN PULSADO"); // Si esto no sale, el problema es el <form>
 
             try {
-                console.log("🔵 Llamando a login con:", email, password);
                 const success = await authLogin({ email, password });
-                console.log("🟡 Resultado del login en el componente:", success);
 
                 if (success) {
-                    console.log("🚀 Navegando a Home...");
                     navigate('/app/home');
                 } else {
                     setError('Credenciales incorrectas');
                 }
             } catch (err) {
-                console.error("🔴 Error atrapado en Login.tsx:", err);
+                console.error('Error en Login.tsx', err);
                 setError('Error de conexión');
             }
     };

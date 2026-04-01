@@ -7,6 +7,8 @@ import { getExploreUsers } from '../../services/user.service';
 import type { User } from '../../types/User.types';
 
 export const Discovery: React.FC = () => {
+  const normalizeLabel = (value: string) => value.replace(/^[^\p{L}\p{N}]+/u, '').trim();
+
   const [users, setUsers] = useState<User[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -16,7 +18,10 @@ export const Discovery: React.FC = () => {
   const [activeFilters, setActiveFilters] = useState({
     search: '',
     selectedTags: [] as string[],
-    city: ''
+    city: '',
+    distance: 50,
+    communicationStyle: [] as string[],
+    sensoryPref: [] as string[]
   });
 
   const fetchUsers = async (filters = activeFilters) => {
@@ -25,7 +30,9 @@ export const Discovery: React.FC = () => {
       const data = await getExploreUsers({
         search: filters.search,
         city: filters.city,
-        interests: filters.selectedTags.join(',')
+        interests: filters.selectedTags.map(normalizeLabel).join(','),
+        communicationStyle: filters.communicationStyle.map(normalizeLabel).join(','),
+        sensory: filters.sensoryPref.map(normalizeLabel).join(',')
       });
       setUsers(data.users || []);
       setCurrentIndex(0);
@@ -44,7 +51,9 @@ export const Discovery: React.FC = () => {
   const activeFilterCount = 
     (activeFilters.search ? 1 : 0) + 
     activeFilters.selectedTags.length + 
-    (activeFilters.city ? 1 : 0);
+    (activeFilters.city ? 1 : 0) +
+    activeFilters.communicationStyle.length +
+    activeFilters.sensoryPref.length;
 
   const handleNext = () => {
     setCurrentIndex((prev) => prev + 1);
@@ -57,7 +66,7 @@ export const Discovery: React.FC = () => {
     return (
       <div className="w-full max-w-2xl mx-auto px-6 pt-20 text-center">
         <h2 className="text-3xl font-heading font-bold text-bluvi-purple mb-4">¡No hay más perfiles!</h2>
-        <Button onClick={() => fetchUsers({ search: '', selectedTags: [], city: '' })}>Reiniciar filtros</Button>
+        <Button onClick={() => fetchUsers({ search: '', selectedTags: [], city: '', distance: 50, communicationStyle: [], sensoryPref: [] })}>Reiniciar filtros</Button>
       </div>
     );
   }

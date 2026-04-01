@@ -35,13 +35,21 @@ const SAMPLE_PROFILES = [
 export const Home: React.FC = () => {
     const navigate = useNavigate();
     const { user } = useAuth(); 
-    const [stats, setStats] = useState({ active: '...', safety: '...', types: '...' });
+    const [stats, setStats] = useState({ active: '2.4k', safety: '94%', types: '...' });
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await api.get('/catalog/stats'); 
-                setStats(res.data);
+                const res = await api.get('/auth/metadata');
+                const metadata = res.data?.data;
+                const neuroCount = Array.isArray(metadata?.neurodivergences)
+                    ? metadata.neurodivergences.length
+                    : 0;
+
+                setStats((prev) => ({
+                    ...prev,
+                    types: neuroCount > 0 ? `${neuroCount}+` : prev.types,
+                }));
             } catch (err) {
                 console.error("Error cargando stats:", err);
             }
@@ -119,9 +127,9 @@ export const Home: React.FC = () => {
                         className="flex gap-6 mt-10 pt-8 border-t border-bluvi-light-purple/30 w-full"
                     >
                         {[
-                            { value: '2.4k', label: 'Personas activas' },
-                            { value: '94%', label: 'Se sienten seguros' },
-                            { value: '18+',  label: 'Neurodivergencias' },
+                            { value: stats.active, label: 'Personas activas' },
+                            { value: stats.safety, label: 'Se sienten seguros' },
+                            { value: stats.types,  label: 'Neurodivergencias' },
                         ].map(stat => (
                             <div key={stat.label}>
                                 <dt className="text-[11px] text-bluvi-purple/50 font-medium mt-0.5 order-2">
