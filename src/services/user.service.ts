@@ -1,6 +1,15 @@
 import api from './api';
 import type { User } from '../types/User.types';
 
+export interface ExploreUsersResponse {
+    success: boolean;
+    count: number;
+    users: User[];
+    hasMore: boolean;
+    nextCursor: number | null;
+    limit: number;
+}
+
 // --- FUNCIONES DEL SERVICIO ---
 
 export const getMyProfile = async (): Promise<User> => {
@@ -13,9 +22,9 @@ export const updateMyProfile = async (updated: Partial<User>): Promise<User> => 
     return response.data.user;
 };
 
-export const getExploreUsers = async (params: any) => {
-    const response = await api.get('/users/explore', { params }); 
-    return response.data; 
+export const getExploreUsers = async (params: Record<string, unknown>): Promise<ExploreUsersResponse> => {
+    const response = await api.get<ExploreUsersResponse>('/users/explore', { params });
+    return response.data;
 };
 
 export const deleteMyAccount = async (password: string): Promise<void> => {
@@ -26,6 +35,10 @@ export interface Privacy {
     is_visible: boolean;
     messages_only_matches: boolean;
 }
+
+export const markDiscoverySeen = async (seenUserId: number, action: 'passed' | 'liked' | 'dismissed' = 'passed'): Promise<void> => {
+    await api.post('/users/discovery/seen', { seenUserId, action });
+};
 
 export const getPrivacy = async (): Promise<Privacy> => {
     const response = await api.get<{ privacy: Privacy }>('/users/privacy');

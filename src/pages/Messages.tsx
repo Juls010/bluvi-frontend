@@ -1,37 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MessageCircle, Sparkles } from 'lucide-react';
+import {
+    getIncomingMatchRequests,
+    getMyMatches,
+    respondToMatchRequest,
+    type IncomingMatchRequest,
+    type MatchItem,
+} from '../services/match.service';
+import { connectRealtime, disconnectRealtime } from '../services/realtime.service';
 
-interface MatchUser {
-    id: number;
-    name: string;
-    image: string;
-    isNew?: boolean;
-}
+const formatTime = (date: string | null) => {
+    if (!date) return '';
+    return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+};
 
-interface ChatItem {
-    id: number;
-    name: string;
-    lastMsg: string;
-    time: string;
-    unread: boolean;
-    image: string;
-}
-
-const NEW_MATCHES: MatchUser[] = [
-    { id: 1, name: 'Lucila',  image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop', isNew: true },
-    { id: 2, name: 'Marc',    image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop', isNew: true },
-    { id: 3, name: 'Noa',     image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=400&fit=crop' },
-    { id: 4, name: 'Javier',  image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop' },
-];
-
-const CHATS: ChatItem[] = [
-    { id: 1, name: 'Lucila López Quesada', lastMsg: '¿Te gustan las pelis de miedo?',              time: '20:08', unread: true,  image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop' },
-    { id: 2, name: 'Esther Medina',        lastMsg: 'El kiwi, además de una fruta, es un ave 🤨', time: '17:24', unread: false, image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop' },
-    { id: 3, name: 'Marcos Vidal',         lastMsg: 'Oye, ¿quedamos el sábado?',                  time: 'Ayer',  unread: false, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop' },
-];
-
-const MatchesSection: React.FC = () => (
+const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (id: number, action: 'accept' | 'reject') => void }> = ({ requests, onRespond }) => (
     <section aria-labelledby="matches-heading">
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -44,65 +28,57 @@ const MatchesSection: React.FC = () => (
                 </h2>
             </div>
             <span
-                aria-label={`${NEW_MATCHES.filter(m => m.isNew).length} matches nuevos`}
+                aria-label={`${requests.length} solicitudes nuevas`}
                 className="text-[11px] font-semibold text-bluvi-purple/50 bg-bluvi-light-purple/30 px-2.5 py-1 rounded-full"
             >
-                {NEW_MATCHES.filter(m => m.isNew).length} nuevos
+                {requests.length} nuevas
             </span>
         </div>
 
-        <div
-            role="list"
-            aria-label="Nuevos matches"
-            className="flex overflow-x-auto gap-3 scrollbar-hide py-3 -mx-1 px-1"
-        >
-            {NEW_MATCHES.map((user) => (
-                <Link
-                    key={user.id}
-                    to={`/app/chat/${user.id}`}
-                    role="listitem"
-                    aria-label={`Abrir chat con ${user.name}${user.isNew ? ', match nuevo' : ''}`}
-                    className="flex-shrink-0 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40 rounded-3xl"
-                >
-                    <div className="relative w-28">
-                        <div className="w-28 h-36 rounded-3xl overflow-hidden shadow-md group-hover:shadow-lg transition-shadow duration-300">
-                            <img
-                                src={user.image}
-                                alt={user.name}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                loading="lazy"
-                            />
-                            <div
-                                aria-hidden="true"
-                                className="absolute inset-0 rounded-3xl"
-                                style={{ background: 'linear-gradient(to top, rgba(63,66,146,0.55) 0%, transparent 55%)' }}
-                            />
-                            <p className="absolute bottom-2.5 left-0 right-0 text-center text-white text-[12px] font-semibold drop-shadow-sm">
-                                {user.name}
-                            </p>
-                        </div>
+        <div role="list" aria-label="Solicitudes de conexión" className="flex flex-col gap-3 py-3">
+            {requests.length === 0 && (
+                <p className="text-sm text-gray-500">No tienes solicitudes pendientes ahora mismo.</p>
+            )}
 
-                        {user.isNew && (
-                            <span
-                                aria-hidden="true"
-                                className="absolute -top-1.5 -right-1.5 text-[9px] font-bold uppercase tracking-wide bg-bluvi-purple text-white px-2 py-0.5 rounded-full shadow-sm"
-                            >
-                                Nuevo
-                            </span>
-                        )}
-
-                        <span
-                            aria-hidden="true"
-                            className="absolute bottom-2.5 right-2 w-2.5 h-2.5 bg-green-400 rounded-full ring-2 ring-white"
+            {requests.map((request) => (
+                <div key={request.id_request} className="rounded-2xl border border-bluvi-light-purple/40 bg-white/70 p-4 shadow-sm">
+                    <div className="flex items-center gap-3">
+                        <img
+                            src={request.main_photo || 'https://via.placeholder.com/120'}
+                            alt={request.first_name}
+                            className="w-12 h-12 rounded-xl object-cover"
                         />
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-bluvi-purple truncate">
+                                {request.first_name} {request.last_name}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-0.5">{formatTime(request.created_at)}</p>
+                        </div>
                     </div>
-                </Link>
+
+                    <p className="text-sm text-gray-700 mt-3">"{request.icebreaker_message}"</p>
+
+                    <div className="flex gap-2 mt-4">
+                        <button
+                            onClick={() => onRespond(request.id_request, 'reject')}
+                            className="flex-1 rounded-xl border border-gray-200 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-50"
+                        >
+                            Rechazar
+                        </button>
+                        <button
+                            onClick={() => onRespond(request.id_request, 'accept')}
+                            className="flex-1 rounded-xl bg-bluvi-purple py-2 text-sm font-semibold text-white hover:opacity-90"
+                        >
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
             ))}
         </div>
     </section>
 );
 
-const ChatsSection: React.FC = () => (
+const ChatsSection: React.FC<{ matches: MatchItem[] }> = ({ matches }) => (
     <section aria-labelledby="chats-heading">
         <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -114,32 +90,30 @@ const ChatsSection: React.FC = () => (
                     Conversaciones
                 </h2>
             </div>
-            {CHATS.some(c => c.unread) && (
+            {matches.length > 0 && (
                 <span
-                    aria-label="Tienes mensajes sin leer"
+                    aria-label={`Tienes ${matches.length} matches activos`}
                     className="text-[11px] font-semibold text-white bg-bluvi-purple px-2.5 py-1 rounded-full shadow-sm"
                 >
-                    {CHATS.filter(c => c.unread).length} sin leer
+                    {matches.length} activas
                 </span>
             )}
         </div>
 
         <ul aria-label="Lista de conversaciones" className="flex flex-col gap-2.5">
-            {CHATS.map((chat) => (
-                <li key={chat.id}>
+            {matches.map((match) => (
+                <li key={match.id_request}>
                     <Link
-                        to={`/app/chat/${chat.id}`}
+                        to={`/app/chat/${match.id_user}`}
                         aria-label={`
-                            Chat con ${chat.name}.
-                            Último mensaje: ${chat.lastMsg}.
-                            ${chat.unread ? 'Tienes mensajes sin leer.' : ''}
-                            ${chat.time}
+                            Chat con ${match.first_name} ${match.last_name}.
+                            Mensaje inicial: ${match.icebreaker_message}
                         `}
                         className="flex items-center gap-4 p-4 rounded-2xl bg-white/40 border border-white/60 backdrop-blur-md hover:bg-white/65 transition-all duration-200 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40"
                     >
                         <div className="relative flex-shrink-0">
                             <img
-                                src={chat.image}
+                                src={match.main_photo || 'https://via.placeholder.com/120'}
                                 alt=""          
                                 className="w-14 h-14 rounded-2xl object-cover shadow-sm"
                                 loading="lazy"
@@ -153,46 +127,105 @@ const ChatsSection: React.FC = () => (
 
                         <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-baseline gap-2">
-                                <h3 className={`text-[15px] truncate transition-colors duration-200 ${chat.unread ? 'font-bold text-bluvi-purple' : 'font-semibold text-gray-600 group-hover:text-bluvi-purple'}`}>
-                                    {chat.name}
+                                <h3 className="text-[15px] truncate transition-colors duration-200 font-semibold text-gray-600 group-hover:text-bluvi-purple">
+                                    {match.first_name} {match.last_name}
                                 </h3>
                                 <span className="text-[11px] text-gray-400 flex-shrink-0 font-medium">
-                                    {chat.time}
+                                    {formatTime(match.responded_at || match.created_at)}
                                 </span>
                             </div>
-                            <p className={`text-[13px] truncate mt-0.5 ${chat.unread ? 'text-gray-600 font-medium' : 'text-gray-400 italic'}`}>
-                                {chat.lastMsg}
+                            <p className="text-[13px] truncate mt-0.5 text-gray-400 italic">
+                                {match.icebreaker_message}
                             </p>
                         </div>
-
-                        {chat.unread && (
-                            <div
-                                aria-hidden="true"
-                                className="w-3 h-3 rounded-full bg-bluvi-purple flex-shrink-0 shadow-[0_0_8px_rgba(63,66,146,0.6)]"
-                            />
-                        )}
                     </Link>
                 </li>
             ))}
+
+            {matches.length === 0 && (
+                <li className="text-sm text-gray-500">Aun no tienes conversaciones activas.</li>
+            )}
         </ul>
     </section>
 );
 
+export const Messages: React.FC = () => {
+    const [requests, setRequests] = useState<IncomingMatchRequest[]>([]);
+    const [matches, setMatches] = useState<MatchItem[]>([]);
+    const [loading, setLoading] = useState(true);
 
-export const Messages: React.FC = () => (
-    <div className="w-full max-w-4xl mx-auto px-6 py-2 animate-fade-in motion-reduce:animate-none">
+    const loadData = async (showLoader = false) => {
+        if (showLoader) {
+            setLoading(true);
+        }
+
+        try {
+            const [incoming, accepted] = await Promise.all([
+                getIncomingMatchRequests(),
+                getMyMatches(),
+            ]);
+            setRequests(incoming);
+            setMatches(accepted);
+        } catch (error) {
+            console.error('Error cargando mensajes:', error);
+        } finally {
+            if (showLoader) {
+                setLoading(false);
+            }
+        }
+    };
+
+    useEffect(() => {
+        loadData(true);
+
+        const intervalId = window.setInterval(() => {
+            loadData();
+        }, 15000);
+
+        const socket = connectRealtime();
+
+        const handleRealtimeUpdate = () => {
+            loadData();
+        };
+
+        socket?.on('match:request:new', handleRealtimeUpdate);
+        socket?.on('match:accepted', handleRealtimeUpdate);
+
+        return () => {
+            window.clearInterval(intervalId);
+            socket?.off('match:request:new', handleRealtimeUpdate);
+            socket?.off('match:accepted', handleRealtimeUpdate);
+            disconnectRealtime();
+        };
+    }, []);
+
+    const handleRespond = async (idRequest: number, action: 'accept' | 'reject') => {
+        try {
+            await respondToMatchRequest(idRequest, action);
+            await loadData();
+        } catch (error) {
+            console.error('Error respondiendo solicitud:', error);
+        }
+    };
+
+    if (loading) {
+        return <div className="pt-16 text-center text-bluvi-purple font-medium">Cargando mensajes...</div>;
+    }
+
+    return (
+        <div className="w-full max-w-4xl mx-auto px-6 py-2 animate-fade-in motion-reduce:animate-none">
 
         <header className="mb-4 -my-10">
             <h1 className="text-3xl font-bold text-gray-800 leading-tight">
                 Mensajes
             </h1>
             <p className="text-gray-500 text-sm mt-1.5">
-                {NEW_MATCHES.filter(m => m.isNew).length} conexiones nuevas esperándote
+                {requests.length} solicitudes nuevas esperándote
             </p>
         </header>
 
         <main className="flex flex-col gap-10">
-            <MatchesSection />
+            <MatchesSection requests={requests} onRespond={handleRespond} />
             <div aria-hidden="true" className="flex items-center gap-3 -my-5">
                 <div className="flex-1 h-px bg-bluvi-light-purple/30" />
                 <span className="text-[10px] font-semibold text-bluvi-purple/30 uppercase tracking-widest">
@@ -201,7 +234,8 @@ export const Messages: React.FC = () => (
                 <div className="flex-1 h-px bg-bluvi-light-purple/30" />
             </div>
 
-            <ChatsSection />
+            <ChatsSection matches={matches} />
         </main>
     </div>
-);
+    );
+};

@@ -9,9 +9,17 @@ interface IceBreakerModalProps {
 }
 
 export const IceBreakerModal: React.FC<IceBreakerModalProps> = ({ user, onSend, onCancel }) => {
+    const featuredInterest = Array.isArray(user.interests) && user.interests.length > 0
+        ? user.interests[0]
+        : 'el arte';
+
+    const mainPhoto = Array.isArray(user.photos) && user.photos.length > 0 && user.photos[0]
+        ? user.photos[0]
+        : 'https://via.placeholder.com/150';
+
     const options = [
         "¡Hola! ¿Te apetece que charlemos?",
-        `¡He visto que te gusta ${user.interests[0] || 'el arte'}! A mí también`,
+        `¡He visto que te gusta ${featuredInterest}! A mí también`,
         "Si pudieras viajar a cualquier sitio ahora, ¿cuál elegirías?"
     ];
 
@@ -31,7 +39,7 @@ export const IceBreakerModal: React.FC<IceBreakerModalProps> = ({ user, onSend, 
                     <div className="absolute inset-0 bg-bluvi-purple/20 rounded-full blur-md group-hover:bg-bluvi-purple/30 transition-all duration-500"></div>
                     <div className="w-24 h-24 relative z-10">
                         <img 
-                            src={user.photos[0] || 'https://via.placeholder.com/150'}
+                            src={mainPhoto}
                             alt={user.first_name} 
                             className="w-full h-full rounded-full object-cover  shadow-sm"
                         />
