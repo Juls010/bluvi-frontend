@@ -1,4 +1,5 @@
 import React from 'react';
+import { MapPin, Cake } from 'lucide-react';
 import { type User } from '../data/mockUsers';
 
 interface UserCardProps {
@@ -19,12 +20,20 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
 
         <div className="absolute bottom-0 left-0 w-full p-6 text-white">
             
-            <div className="flex items-end gap-2 mb-2">
-                <h3 className="text-3xl font-bold font-heading">{user.name}</h3>
-                <span className="text-xl opacity-80 mb-1">{user.age}</span>
+            <div className="flex items-end gap-3 mb-3">
+                <div>
+                    <h3 className="text-3xl font-bold font-heading">{user.name}</h3>
+                    <div className="flex items-center gap-3 text-sm opacity-80 mt-1">
+                        <span className="flex items-center gap-1">
+                            <Cake className="w-4 h-4" aria-hidden="true" />
+                            {user.age}
+                        </span>
+                    </div>
+                </div>
             </div>
             
             <p className="text-sm opacity-70 mb-4 flex items-center gap-1">
+                <MapPin className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 {user.location}
             </p>
 

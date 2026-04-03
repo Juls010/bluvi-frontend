@@ -20,12 +20,10 @@ export interface User {
 
 
 export const GENDER_LABELS: Record<number, string> = {
-  1: 'Hombre',
-  2: 'Mujer',
+  1: 'Mujer',
+  2: 'Hombre',
   3: 'No binario',
-  4: 'Género fluido',
-  5: 'Agénero',
-  6: 'Otro',
+  4: 'Prefiero no decirlo'
 };
 
 export const SEXUALITY_LABELS: Record<number, string> = {

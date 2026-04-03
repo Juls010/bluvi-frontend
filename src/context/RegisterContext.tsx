@@ -59,7 +59,7 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 city: formData.city,
                 description: formData.description,
                 id_gender: formData.gender !== '' ? Number(formData.gender) : null,
-                id_preference: String(formData.sexuality),
+                id_preference: formData.sexuality !== '' ? Number(formData.sexuality) : null,
                 neurodivergences: formData.neurodivergences,
                 communication_style: formData.communicationStyle,
                 interests: formData.interests,

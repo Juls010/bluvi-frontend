@@ -29,6 +29,7 @@ import { Home } from '../pages/App/Home';
 import { Discovery } from '../pages/App/Discovery';
 import { Messages } from '../pages/Messages';
 import { ChatDetail } from '../pages/ChatDetails';
+import { ChatUserProfile } from '../pages/ChatUserProfile';
 import { UserProfile } from '../pages/App/UserProfile';
 import { Settings } from '../pages/Settings/Settings';
 import PrivateRoute from '../components/PrivateRoute';
@@ -74,11 +75,12 @@ export const router = createBrowserRouter([
         ),
         children: [
             { index: true, element: <Navigate to="/app/home" replace /> },
-            { path: "home", element: <Home /> },
-            { path: "discovery", element: <Discovery /> },
-            { path: "messages", element: <Messages /> },
-            { path: "profile", element: <UserProfile /> },
-            { path: "settings", element: <Settings /> },
+            { path: "home", element: <Home />, handle: { topOffset: 'normal' } },
+            { path: "discovery", element: <Discovery />, handle: { topOffset: 'normal' } },
+            { path: "messages", element: <Messages />, handle: { topOffset: 'normal' } },
+            { path: "profile", element: <UserProfile />, handle: { topOffset: 'normal' } },
+            { path: "settings", element: <Settings />, handle: { topOffset: 'normal' } },
+            { path: "user/:userId", element: <ChatUserProfile />, handle: { topOffset: 'compact' } },
         ]
     },
     {

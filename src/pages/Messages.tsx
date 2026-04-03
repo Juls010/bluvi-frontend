@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, Sparkles } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import {
     getIncomingMatchRequests,
-    getMyMatches,
     respondToMatchRequest,
     type IncomingMatchRequest,
-    type MatchItem,
 } from '../services/match.service';
+import { getConversations, type ConversationItem } from '../services/chat.service';
 import { connectRealtime, disconnectRealtime } from '../services/realtime.service';
 
 const formatTime = (date: string | null) => {
@@ -19,7 +18,6 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
     <section aria-labelledby="matches-heading">
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-                <Sparkles size={14} className="text-bluvi-purple/60" aria-hidden="true" />
                 <h2
                     id="matches-heading"
                     className="text-[11px] font-bold text-bluvi-purple uppercase tracking-[0.2em] opacity-70"
@@ -78,7 +76,7 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
     </section>
 );
 
-const ChatsSection: React.FC<{ matches: MatchItem[] }> = ({ matches }) => (
+const ChatsSection: React.FC<{ conversations: ConversationItem[] }> = ({ conversations }) => (
     <section aria-labelledby="chats-heading">
         <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -90,59 +88,63 @@ const ChatsSection: React.FC<{ matches: MatchItem[] }> = ({ matches }) => (
                     Conversaciones
                 </h2>
             </div>
-            {matches.length > 0 && (
+            {conversations.length > 0 && (
                 <span
-                    aria-label={`Tienes ${matches.length} matches activos`}
+                    aria-label={`Tienes ${conversations.length} conversaciones activas`}
                     className="text-[11px] font-semibold text-white bg-bluvi-purple px-2.5 py-1 rounded-full shadow-sm"
                 >
-                    {matches.length} activas
+                    {conversations.length} activas
                 </span>
             )}
         </div>
 
         <ul aria-label="Lista de conversaciones" className="flex flex-col gap-2.5">
-            {matches.map((match) => (
-                <li key={match.id_request}>
+            {conversations.map((conversation) => (
+                <li key={conversation.match_request_id}>
                     <Link
-                        to={`/app/chat/${match.id_user}`}
+                        to={`/app/chat/${conversation.id_user}`}
                         aria-label={`
-                            Chat con ${match.first_name} ${match.last_name}.
-                            Mensaje inicial: ${match.icebreaker_message}
+                            Chat con ${conversation.first_name} ${conversation.last_name}.
+                            Último mensaje: ${conversation.last_message || 'Sin mensajes todavía'}
                         `}
                         className="flex items-center gap-4 p-4 rounded-2xl bg-white/40 border border-white/60 backdrop-blur-md hover:bg-white/65 transition-all duration-200 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40"
                     >
                         <div className="relative flex-shrink-0">
                             <img
-                                src={match.main_photo || 'https://via.placeholder.com/120'}
+                                src={conversation.main_photo || 'https://via.placeholder.com/120'}
                                 alt=""          
                                 className="w-14 h-14 rounded-2xl object-cover shadow-sm"
                                 loading="lazy"
                             />
 
-                            <span
-                                aria-hidden="true"
-                                className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-400 rounded-full ring-2 ring-white"
-                            />
+                            {conversation.unread_count > 0 && (
+                                <span
+                                    aria-label={`${conversation.unread_count} mensajes no leidos`}
+                                    className="absolute -bottom-1 -right-1 min-w-4 h-4 px-1 text-[10px] leading-4 text-center font-semibold bg-bluvi-purple text-white rounded-full ring-2 ring-white"
+                                >
+                                    {conversation.unread_count > 9 ? '9+' : conversation.unread_count}
+                                </span>
+                            )}
                         </div>
 
                         <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-baseline gap-2">
                                 <h3 className="text-[15px] truncate transition-colors duration-200 font-semibold text-gray-600 group-hover:text-bluvi-purple">
-                                    {match.first_name} {match.last_name}
+                                    {conversation.first_name} {conversation.last_name}
                                 </h3>
                                 <span className="text-[11px] text-gray-400 flex-shrink-0 font-medium">
-                                    {formatTime(match.responded_at || match.created_at)}
+                                    {formatTime(conversation.last_message_at)}
                                 </span>
                             </div>
                             <p className="text-[13px] truncate mt-0.5 text-gray-400 italic">
-                                {match.icebreaker_message}
+                                {conversation.last_message || 'Empieza la conversación'}
                             </p>
                         </div>
                     </Link>
                 </li>
             ))}
 
-            {matches.length === 0 && (
+            {conversations.length === 0 && (
                 <li className="text-sm text-gray-500">Aun no tienes conversaciones activas.</li>
             )}
         </ul>
@@ -151,7 +153,7 @@ const ChatsSection: React.FC<{ matches: MatchItem[] }> = ({ matches }) => (
 
 export const Messages: React.FC = () => {
     const [requests, setRequests] = useState<IncomingMatchRequest[]>([]);
-    const [matches, setMatches] = useState<MatchItem[]>([]);
+    const [conversations, setConversations] = useState<ConversationItem[]>([]);
     const [loading, setLoading] = useState(true);
 
     const loadData = async (showLoader = false) => {
@@ -160,12 +162,12 @@ export const Messages: React.FC = () => {
         }
 
         try {
-            const [incoming, accepted] = await Promise.all([
+            const [incoming, activeConversations] = await Promise.all([
                 getIncomingMatchRequests(),
-                getMyMatches(),
+                getConversations(),
             ]);
             setRequests(incoming);
-            setMatches(accepted);
+            setConversations(activeConversations);
         } catch (error) {
             console.error('Error cargando mensajes:', error);
         } finally {
@@ -190,11 +192,15 @@ export const Messages: React.FC = () => {
 
         socket?.on('match:request:new', handleRealtimeUpdate);
         socket?.on('match:accepted', handleRealtimeUpdate);
+        socket?.on('chat:message:new', handleRealtimeUpdate);
+        socket?.on('chat:messages:read', handleRealtimeUpdate);
 
         return () => {
             window.clearInterval(intervalId);
             socket?.off('match:request:new', handleRealtimeUpdate);
             socket?.off('match:accepted', handleRealtimeUpdate);
+            socket?.off('chat:message:new', handleRealtimeUpdate);
+            socket?.off('chat:messages:read', handleRealtimeUpdate);
             disconnectRealtime();
         };
     }, []);
@@ -213,9 +219,9 @@ export const Messages: React.FC = () => {
     }
 
     return (
-        <div className="w-full max-w-4xl mx-auto px-6 py-2 animate-fade-in motion-reduce:animate-none">
+        <div className="w-full max-w-4xl mx-auto px-6 py-4 animate-fade-in motion-reduce:animate-none">
 
-        <header className="mb-4 -my-10">
+        <header className="mb-4">
             <h1 className="text-3xl font-bold text-gray-800 leading-tight">
                 Mensajes
             </h1>
@@ -234,7 +240,7 @@ export const Messages: React.FC = () => {
                 <div className="flex-1 h-px bg-bluvi-light-purple/30" />
             </div>
 
-            <ChatsSection matches={matches} />
+            <ChatsSection conversations={conversations} />
         </main>
     </div>
     );

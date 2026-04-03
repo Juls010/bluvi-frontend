@@ -1,13 +1,31 @@
 import React from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useMatches } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
-import { SettingsButton } from '../components/SettingsButton';
 import { BluAssistant } from '../components/BluAssistant';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
+type TopOffset = 'compact' | 'normal' | 'loose';
+
+const TOP_OFFSET_CLASS: Record<TopOffset, string> = {
+  compact: 'pt-20',
+  normal: 'pt-24',
+  loose: 'pt-28',
+};
+
 export const AppLayout: React.FC = () => {
   useScrollToTop();
-  const navigate = useNavigate();
+  const matches = useMatches();
+
+  // The deepest route with handle.topOffset wins. Defaults to "normal".
+  const resolvedTopOffset = [...matches]
+    .reverse()
+    .find((match) => {
+      const handle = match.handle as { topOffset?: TopOffset } | undefined;
+      return Boolean(handle?.topOffset);
+    })?.handle as { topOffset?: TopOffset } | undefined;
+
+  const topOffset: TopOffset = resolvedTopOffset?.topOffset ?? 'normal';
+  const outletTopPaddingClass = TOP_OFFSET_CLASS[topOffset];
 
   return (
     <main className="min-h-screen w-full bg-bluvi-gradient flex flex-col font-sans relative overflow-hidden" style={{ '--navbar-height': '80px' } as React.CSSProperties}>
@@ -18,13 +36,9 @@ export const AppLayout: React.FC = () => {
           <Navbar />
         </div>
 
-        <div className="absolute top-3 right-8 pointer-events-auto">
-          <SettingsButton onClick={() => navigate('/app/settings')} />
-        </div>
-
       </div>
 
-      <div className="flex-1 w-full flex flex-col items-center pt-32 pb-10 overflow-y-auto">
+      <div className={`flex-1 w-full flex flex-col items-center ${outletTopPaddingClass} pb-10 overflow-y-auto`}>
         <Outlet />
       </div>
 

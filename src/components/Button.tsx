@@ -21,9 +21,10 @@ export const Button: React.FC<ButtonProps> = ({ className = '', children, ...pro
             ease-out
             active:scale-95
             focus:outline-none 
-            focus:ring-4 
-            focus:ring-bluvi-purple/20
-            cursor-pointer
+            focus-visible:ring-4 
+            focus-visible:ring-bluvi-purple/25
+            focus-visible:ring-offset-2
+            !cursor-pointer
             disabled:opacity-50
             disabled:cursor-not-allowed
             ${!hasBgClass ? 'bg-bluvi-purple' : ''}

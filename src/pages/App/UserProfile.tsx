@@ -5,7 +5,7 @@ import { EditMindModal } from '../../components/modals/EditMindModal';
 import { EditPhotosModal } from '../../components/modals/EditPhotosModal';
 import { EditBasicInfoModal } from '../../components/modals/EditBasicInfoModal';
 import { getMyProfile, updateMyProfile } from '../../services/user.service';
-import { X, Camera, Pencil, MapPin, Calendar, User as UserIcon, Heart, Sprout, Brain} from 'lucide-react';
+import { X, Camera, Pencil, MapPin, Cake, User as UserIcon, Heart, Sprout, Brain} from 'lucide-react';
 import { type User, GENDER_LABELS,SEXUALITY_LABELS } from '../../types/User.types';
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
@@ -179,7 +179,7 @@ export const UserProfile: React.FC = () => {
             <Card>
               <ul className="flex flex-wrap gap-4 sm:gap-6 text-bluvi-purple font-semibold mb-4 text-sm border-b border-bluvi-purple/10 pb-4">
                 <li className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 opacity-70" /> {age} años
+                  <Cake className="w-4 h-4 opacity-70" /> {age} años
                 </li>
                 <li className="flex items-center gap-2">
                   <UserIcon className="w-4 h-4 opacity-70" /> {GENDER_LABELS[user.id_gender] ?? '—'}

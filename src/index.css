@@ -45,6 +45,30 @@
         overflow-x: hidden;
     }
 
+    html.high-contrast {
+        background-image: none;
+        background-color: #ffffff;
+    }
+
+    html.high-contrast body,
+    html.high-contrast #root {
+        background-color: #ffffff;
+        color: #161616;
+    }
+
+    html.reduce-motion {
+        scroll-behavior: auto;
+    }
+
+    html.reduce-motion *,
+    html.reduce-motion *::before,
+    html.reduce-motion *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
     #root {
         background-color: transparent;
         min-height: 100%;
@@ -117,4 +141,13 @@ body.welcome-scroll-hidden::-webkit-scrollbar {
     width: 0;
     height: 0;
     display: none;
+}
+
+/* Force cursor pointer on interactive elements */
+button,
+[role="button"],
+[role="tab"],
+.cursor-pointer,
+summary {
+    cursor: pointer !important;
 }

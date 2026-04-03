@@ -168,7 +168,7 @@ export const Discovery: React.FC = () => {
   }
 
   return (
-    <div className="w-full pb-24 pt-0 -mt-7 animate-fade-in relative">
+    <div className="w-full pb-24 pt-2 animate-fade-in motion-reduce:animate-none relative">
       {showMatchModal && currentUser && (
         <IceBreakerModal user={currentUser} onSend={handleSendIcebreaker} onCancel={() => setShowMatchModal(false)} />
       )}
@@ -187,17 +187,17 @@ export const Discovery: React.FC = () => {
       <div className="w-full max-w-5xl mx-auto px-4 mb-6 relative z-20">
         <FilterTriggerButton activeCount={activeFilterCount} onClick={() => setShowFilters(true)} />
         {activeFilterChips.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2" aria-live="polite" aria-label="Filtros activos">
             {activeFilterChips.slice(0, 8).map((chip) => (
               <span
                 key={chip}
-                className="px-3 py-1.5 rounded-full text-xs font-semibold bg-bluvi-purple/10 text-bluvi-purple border border-bluvi-purple/20"
+                className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/80 text-bluvi-purple border border-bluvi-purple/15"
               >
                 {chip}
               </span>
             ))}
             {activeFilterChips.length > 8 && (
-              <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 border border-gray-200">
+              <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">
                 +{activeFilterChips.length - 8}
               </span>
             )}

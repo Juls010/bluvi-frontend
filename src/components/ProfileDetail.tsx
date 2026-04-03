@@ -2,6 +2,7 @@ import React from 'react';
 import type { User } from '../types/User.types';
 import { SimpleCarousel } from './SimpleCarousel';
 import ClickSpark from './ClickSpark';
+import { Cake, User as UserIcon, MapPin, Heart, Sprout, Brain } from 'lucide-react';
 import { 
     idsToLabels, 
     INTEREST_LABELS, 
@@ -90,23 +91,23 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
             <div className="md:col-span-8 flex flex-col gap-4">
                 <div className="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm">
                     <ul className="flex flex-wrap gap-4 sm:gap-6 text-bluvi-purple font-semibold mb-4 text-sm md:text-base border-b border-bluvi-purple/10 pb-4">
-                        <li className="flex items-center gap-1">
-                            <span aria-hidden="true">🎂</span>
+                        <li className="flex items-center gap-1.5">
+                            <Cake className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
                             <span>{age} <span className="sr-only">años</span></span>
                         </li>
 
-                        <li className="flex items-center gap-1">
-                            <span aria-hidden="true">👤</span>
+                        <li className="flex items-center gap-1.5">
+                            <UserIcon className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
                             <span className="sr-only">Género:</span>
                             {genderLabel}
                         </li>
-                        <li className="flex items-center gap-1">
-                            <span aria-hidden="true">📍</span>
+                        <li className="flex items-center gap-1.5">
+                            <MapPin className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
                             <span className="sr-only">Ubicación:</span>
                             {user.city}
                         </li>
-                        <li className="flex items-center gap-1">
-                            <span aria-hidden="true">🌈</span>
+                        <li className="flex items-center gap-1.5">
+                            <Heart className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
                             <span className="sr-only">Orientación sexual:</span>
                             {sexualityLabel}
                         </li>
@@ -118,11 +119,11 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
 
                 <section className="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm">
                     <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wider flex items-center gap-2">
-                        <span aria-hidden="true">🌱</span> Mis intereses
+                        <Sprout className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" /> Mis intereses
                     </h2>
                     <ul className="flex flex-wrap gap-2">
                         {interestLabels.map((label) => (
-                            <li key={label} className="...">
+                            <li key={label} className="px-3 py-1.5 bg-bluvi-purple/5 border border-bluvi-purple/10 rounded-lg text-sm font-medium text-bluvi-purple">
                                 {label}
                             </li>
                         ))}
@@ -131,13 +132,13 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
 
                 <section className="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm">
                     <h2 className="text-sm font-bold text-gray-500 mb-4 uppercase tracking-wider flex items-center gap-2">
-                        <span aria-hidden="true">🧠</span> Mente y Comunicación
+                        <Brain className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" /> Mente y Comunicación
                     </h2>
                     <div className="mb-5">
                         <h3 className="text-xs font-bold text-gray-400 uppercase block mb-2">Rasgos</h3>
                         <ul className="flex flex-wrap gap-2">
                             {traitLabels.map((label) => (
-                                <li key={label} className="px-4 py-2 bg-gray-200 text-bluvi-purple border border-purple-100 rounded-xl text-sm font-semibold">
+                                <li key={label} className="px-3 py-1.5 bg-bluvi-purple/5 text-bluvi-purple border border-bluvi-purple/10 rounded-lg text-sm font-medium">
                                     {label}
                                 </li>
                             ))}
@@ -150,7 +151,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                                 communicationLabels.map((label, index) => (
                                     <li 
                                         key={`${label}-${index}`} // Usamos el index por si hay labels repetidos
-                                        className="px-4 py-2 bg-gray-200 text-bluvi-purple border border-blue-100 rounded-xl text-sm font-semibold"
+                                        className="px-3 py-1.5 bg-bluvi-purple/5 text-bluvi-purple border border-bluvi-purple/10 rounded-lg text-sm font-medium"
                                     >
                                         {label}
                                     </li>
