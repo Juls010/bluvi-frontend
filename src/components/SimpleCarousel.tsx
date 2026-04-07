@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { UserCircle2 } from 'lucide-react';
 
 interface SimpleCarouselProps {
     photos: string[]; 
@@ -32,14 +33,14 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
 
     if (!photos || photos.length === 0) {
         return (
-            <div className="w-full aspect-[4/5] rounded-3xl bg-gray-200 flex items-center justify-center">
-                <span className="text-4xl">👤</span>
+            <div className="w-full aspect-[4/5] rounded-3xl bg-app-surface-soft border border-app-soft flex items-center justify-center">
+                <UserCircle2 className="w-14 h-14 text-app-muted" aria-hidden="true" />
             </div>
         );
     }
 
     return (
-        <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-lg bg-gray-100 group">
+        <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-lg bg-app-surface-soft border border-app-soft group">
 
             <div 
                 ref={scrollRef}

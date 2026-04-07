@@ -9,14 +9,14 @@ import { X, Camera, Pencil, MapPin, Cake, User as UserIcon, Heart, Sprout, Brain
 import { type User, GENDER_LABELS,SEXUALITY_LABELS } from '../../types/User.types';
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
-  <div className={`bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm ${className}`}>
+  <div className={`bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm ${className}`}>
     {children}
   </div>
 );
 
 const SectionLabel: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon, label }) => (
-  <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-    <span className="text-bluvi-purple/60">{icon}</span> {label}
+  <h2 className="text-xs font-bold text-app-secondary uppercase tracking-widest mb-3 flex items-center gap-2">
+    <span className="text-app-accent">{icon}</span> {label}
   </h2>
 );
 
@@ -118,11 +118,11 @@ export const UserProfile: React.FC = () => {
       <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none">
 
         <div className="flex items-end justify-between mb-6 pl-2">
-            <h1 className="text-3xl md:text-4xl font-heading font-bold text-bluvi-purple flex items-center gap-3">
+            <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary flex items-center gap-3">
               {user.first_name} {user.last_name}
                   <button 
                     onClick={() => setShowInfoModal(true)}
-                    className="p-2 hover:bg-gray-100 rounded-full transition-all text-gray-400 hover:text-bluvi-purple"
+                    className="p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple"
                     title="Editar información básica"
                   >
                   <Pencil className="w-6 h-6" /> 
@@ -154,22 +154,22 @@ export const UserProfile: React.FC = () => {
               
               <button 
                 onClick={() => setShowPhotosModal(true)}
-                className="absolute bottom-4 right-4 p-3 bg-white/90 backdrop-blur-md text-bluvi-purple rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all border border-white/50 z-10"
+                className="absolute bottom-4 right-4 p-3 bg-app-surface-strong backdrop-blur-md text-app-accent rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all border border-app-soft z-10"
                 title="Gestionar fotos"
               >
                 <Camera className="w-5 h-5" strokeWidth={2.5} /> 
               </button>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-white shadow-sm">
+            <div className="bg-app-surface backdrop-blur-md p-4 rounded-2xl border border-app-soft shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold text-gray-500">Perfil completado</p>
-                <p className="text-xs font-bold text-bluvi-purple">{completeness}%</p>
+                <p className="text-xs font-semibold text-app-secondary">Perfil completado</p>
+                <p className="text-xs font-bold text-app-accent-strong">{completeness}%</p>
               </div>
-              <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-app-surface-soft rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-bluvi-purple rounded-full transition-all duration-500" 
-                  style={{ width: `${completeness}%` }} 
+                  className="h-full rounded-full transition-all duration-500" 
+                  style={{ width: `${completeness}%`, backgroundImage: 'var(--app-accent-gradient)' }} 
                 />
               </div>
             </div>
@@ -177,7 +177,7 @@ export const UserProfile: React.FC = () => {
 
           <div className="md:col-span-8 flex flex-col gap-4">
             <Card>
-              <ul className="flex flex-wrap gap-4 sm:gap-6 text-bluvi-purple font-semibold mb-4 text-sm border-b border-bluvi-purple/10 pb-4">
+              <ul className="flex flex-wrap gap-4 sm:gap-6 text-app-primary font-semibold mb-4 text-sm border-b border-app-soft pb-4">
                 <li className="flex items-center gap-2">
                   <Cake className="w-4 h-4 opacity-70" /> {age} años
                 </li>
@@ -194,7 +194,7 @@ export const UserProfile: React.FC = () => {
                     : 'Sin especificar'}
                 </li>
               </ul>
-              <p className="text-gray-700 leading-relaxed text-lg">{user.description}</p>
+              <p className="text-app-secondary leading-relaxed text-lg">{user.description}</p>
             </Card>
 
             <Card>
@@ -202,14 +202,14 @@ export const UserProfile: React.FC = () => {
                 <SectionLabel icon={<Sprout className="w-4 h-4" />} label="Mis intereses" />
                 <button 
                   onClick={() => setShowInterestsModal(true)} 
-                  className="text-xs font-bold text-bluvi-purple hover:underline"
+                  className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"
                 >
-                  EDITAR
+                  Editar
                 </button>
               </div>
               <ul className="flex flex-wrap gap-2">
                 {interestNames.map((name: string) => (
-                  <li key={name} className="px-4 py-2 bg-gray-200 text-bluvi-purple rounded-xl text-sm font-medium">{name}</li>
+                  <li key={name} className="px-4 py-2 bg-app-pill text-app-primary rounded-xl text-sm font-medium">{name}</li>
                 ))}
               </ul>
             </Card>
@@ -219,38 +219,38 @@ export const UserProfile: React.FC = () => {
                 <SectionLabel icon={<Brain className="w-4 h-4" />} label="Mente y Comunicación" />
                 <button 
                   onClick={() => setShowMindModal(true)} 
-                  className="text-xs font-bold text-bluvi-purple hover:underline outline-none"
+                  className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 outline-none dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"
                 >
-                  EDITAR
+                  Editar
                 </button>
               </div>
 
               <div className="mb-5">
-                <h3 className="text-xs font-bold text-gray-400 uppercase mb-2">Rasgos</h3>
+                <h3 className="text-xs font-bold text-app-secondary uppercase mb-2">Rasgos</h3>
                 <ul className="flex flex-wrap gap-2">
                   {features.length > 0 ? (
                     features.map((name: string) => (
-                      <li key={name} className="px-4 py-2 bg-gray-200 text-bluvi-purple rounded-xl text-sm font-medium">
+                      <li key={name} className="px-4 py-2 bg-app-pill text-app-primary rounded-xl text-sm font-medium">
                         {name}
                       </li>
                     ))
                   ) : (
-                    <li className="text-gray-400 italic text-sm italic">Sin rasgos definidos</li>
+                    <li className="text-app-muted italic text-sm italic">Sin rasgos definidos</li>
                   )}
                 </ul>
               </div>
 
               <div>
-                <h3 className="text-xs font-bold text-gray-400 uppercase mb-2">Comunicación</h3>
+                <h3 className="text-xs font-bold text-app-secondary uppercase mb-2">Comunicación</h3>
                 <ul className="flex flex-wrap gap-2">
                   {communication.length > 0 ? (
                     communication.map((name: string) => (
-                      <li key={name} className="px-4 py-2 bg-gray-200 text-bluvi-purple rounded-xl text-sm font-medium">
+                      <li key={name} className="px-4 py-2 bg-app-pill text-app-primary rounded-xl text-sm font-medium">
                         {name}
                       </li>
                     ))
                   ) : (
-                    <li className="text-gray-400 italic text-sm italic">Sin estilo definido</li>
+                    <li className="text-app-muted italic text-sm italic">Sin estilo definido</li>
                   )}
                 </ul>
               </div>

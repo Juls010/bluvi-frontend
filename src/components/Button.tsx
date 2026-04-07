@@ -6,7 +6,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button: React.FC<ButtonProps> = ({ className = '', children, ...props }) => { 
     const hasBgClass = className.includes('bg-');
-    const hasColorTextClass = className.match(/text-(white|black|bluvi|purple|gray|red|blue)/);
+    const hasColorTextClass = /(?:^|\s)(?:[a-z-]+:)*!?text-[^\s]+/.test(className);
 
     return (
         <button

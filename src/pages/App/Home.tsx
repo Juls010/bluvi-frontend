@@ -1,12 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getConversations, type ConversationItem } from '../../services/chat.service';
+import { useNotifications } from '../../context/NotificationContext';
+import { HOME_EVENTS } from '../../data/events';
+import { ArrowRight, Clock } from 'lucide-react';
 
 export const Home: React.FC = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
     const [conversations, setConversations] = useState<ConversationItem[]>([]);
+    const { unreadMessages, pendingMatchRequests, hasNotifications, pendingRequestNames } = useNotifications();
 
     const displayName = useMemo(() => {
         const rawName =
@@ -44,107 +48,142 @@ export const Home: React.FC = () => {
             <section className="pt-1 pb-6 animate-fade-in motion-reduce:animate-none">
                 <span
                     aria-hidden="true"
-                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase text-bluvi-purple/65 bg-bluvi-light-purple/30 px-3 py-1.5 rounded-full mb-5 select-none"
+                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase text-app-secondary bg-app-pill px-3 py-1.5 rounded-full mb-5 select-none"
                 >
-                    <span className="w-1.5 h-1.5 rounded-full bg-bluvi-purple/40 inline-block" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-app-home-safe-dot inline-block" />
                     Tu espacio seguro
                 </span>
 
-                <h1 className="text-3xl md:text-5xl font-bold text-bluvi-purple leading-[1.1] tracking-tight">
+                <h1 className="text-3xl md:text-5xl font-bold text-app-primary leading-[1.1] tracking-tight">
                     Bienvenida, {displayName}
                 </h1>
-                <p className="text-bluvi-purple/70 text-base md:text-lg mt-3 max-w-2xl">
+                <p className="text-app-secondary text-base md:text-lg mt-3 max-w-2xl">
                     Elige como quieres empezar hoy. Todo esta pensado para navegar con calma y sin ruido.
                 </p>
             </section>
 
             <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] gap-5">
                 <div className="space-y-5">
-                    <section className="rounded-3xl border border-white/60 bg-white/65 backdrop-blur-md shadow-sm p-5 md:p-6">
-                        <h2 className="text-sm font-bold uppercase tracking-wide text-bluvi-purple/65 mb-4">
-                            Acciones rapidas
+                    <section
+                        className="bg-app-surface backdrop-blur-md border border-app-soft rounded-[22px] p-5"
+                        aria-labelledby="actions-title"
+                    >
+                        <h2
+                        id="actions-title"
+                        className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary mb-4"
+                        >
+                        Por dónde empezar
                         </h2>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <button
-                                onClick={() => navigate('/app/discovery')}
-                                className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/25"
-                                style={{ background: 'linear-gradient(135deg, #3f4292, #6366c7)' }}
+            
+                        <button
+                        type="button"
+                        onClick={() => navigate('/app/discovery')}
+                        className="
+                            w-full flex items-center justify-between gap-4
+                            bg-app-pill hover:bg-bluvi-purple/18 dark:hover:bg-app-surface-strong
+                            border border-[#7F77DD]/20 dark:border-app-strong
+                            rounded-2xl px-5 py-4 mb-3 text-left
+                            transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md
+                            focus:outline-none focus-visible:ring-4 focus-visible:ring-[#7F77DD]/30
+                        "
+                        >
+                        <div>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-app-secondary mb-1">
+                            Descubrir
+                            </p>
+                            <p className="text-[16px] font-extrabold text-app-primary leading-tight">
+                            Explorar personas
+                            </p>
+                            <p className="text-[12.5px] text-app-muted mt-1 leading-relaxed">
+                            Perfiles nuevos esperando conectar contigo
+                            </p>
+                        </div>
+                        <div
+                            className="w-9 h-9 rounded-full bg-[#7F77DD] bg-app-accent-gradient-dark flex items-center justify-center shrink-0"
+                            aria-hidden="true"
+                        >
+                            <ArrowRight size={14} className="text-white" />
+                        </div>
+                        </button>
+            
+                        <div className="grid grid-cols-2 gap-2.5" role="group" aria-label="Otras acciones">
+                        <button
+                            type="button"
+                            onClick={() => navigate('/app/messages')}
+                            className="
+                            bg-app-surface-soft hover:bg-app-surface-strong
+                            border border-app-soft
+                            rounded-2xl px-4 py-3.5 text-left
+                            transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm
+                            focus:outline-none focus-visible:ring-4 focus-visible:ring-[#7F77DD]/30
+                            "
                             >
-                                <span className="block text-[11px] uppercase tracking-widest text-white/70 mb-1">Buscar</span>
-                                Explorar personas
-                            </button>
-
-                            <button
-                                onClick={() => navigate('/app/messages')}
-                                className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-bluvi-purple bg-white/85 border border-white/80 shadow-sm hover:bg-white transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/25"
+                            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-app-muted mb-1">
+                            Mensajes
+                            </p>
+                            <p className="text-[13.5px] font-bold text-app-primary">
+                            Revisar conversaciones
+                            </p>
+                        </button>
+            
+                        <button
+                            type="button"
+                            onClick={() => navigate('/app/profile')}
+                            className="
+                            bg-app-surface-soft hover:bg-app-surface-strong
+                            border border-app-soft
+                            rounded-2xl px-4 py-3.5 text-left
+                            transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm
+                            focus:outline-none focus-visible:ring-4 focus-visible:ring-[#7F77DD]/30
+                            "
                             >
-                                <span className="block text-[11px] uppercase tracking-widest text-bluvi-purple/50 mb-1">Mensajes</span>
-                                Revisar conversaciones
-                            </button>
-
-                            <button
-                                onClick={() => navigate('/app/profile')}
-                                className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-bluvi-purple bg-white/85 border border-white/80 shadow-sm hover:bg-white transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/25"
-                            >
-                                <span className="block text-[11px] uppercase tracking-widest text-bluvi-purple/50 mb-1">Perfil</span>
-                                Ajustar mi espacio
-                            </button>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-app-muted mb-1">
+                            Perfil
+                            </p>
+                            <p className="text-[13.5px] font-bold text-app-primary">
+                            Ajustar mi espacio
+                            </p>
+                        </button>
                         </div>
                     </section>
 
-                    <section className="rounded-3xl border border-white/60 bg-white/55 backdrop-blur-md shadow-sm p-5 md:p-6">
-                        <h2 className="text-sm font-bold uppercase tracking-wide text-bluvi-purple/65 mb-3">
-                            Qué puedes hacer ahora
-                        </h2>
-                        <p className="text-sm md:text-base text-bluvi-purple/80 leading-relaxed max-w-2xl">
-                            Empieza por una sola accion si hoy prefieres baja estimulacion. Desde Ajustes puedes cambiar contraste y movimiento cuando lo necesites.
-                        </p>
-                    </section>
-
-                    <section className="rounded-3xl border border-white/60 bg-white/55 backdrop-blur-md shadow-sm p-5 md:p-6">
-                        <h2 className="text-sm font-bold uppercase tracking-wide text-bluvi-purple/65 mb-4">
+                    <section className="rounded-3xl border border-app-soft bg-app-surface-soft backdrop-blur-md shadow-sm p-5 md:p-6">
+                        <h2 className="text-sm font-bold uppercase tracking-wide text-app-secondary mb-4">
                             Noticias y eventos
                         </h2>
 
                         <div className="space-y-3">
-                            {[
-                                {
-                                    title: 'Nueva forma de descubrir perfiles',
-                                    text: 'Hemos simplificado el inicio para que puedas entrar directamente a explorar sin ruido visual.',
-                                    meta: 'Hoy',
-                                },
-                                {
-                                    title: 'Sesión de comunidad esta semana',
-                                    text: 'Próximo encuentro de bienvenida para personas nuevas y curiosas sobre Bluvi.',
-                                    meta: 'Jueves · 19:00',
-                                },
-                                {
-                                    title: 'Ajustes pensados para ti',
-                                    text: 'Contraste, movimiento y navegación clara ya están disponibles desde el menú superior.',
-                                    meta: 'Siempre disponible',
-                                },
-                            ].map((item) => (
-                                <article key={item.title} className="border-l-2 border-bluvi-purple/20 pl-4 py-1">
-                                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-bluvi-purple/45">
-                                        {item.meta}
-                                    </p>
-                                    <h3 className="text-sm font-bold text-bluvi-purple mt-1">{item.title}</h3>
-                                    <p className="text-sm text-bluvi-purple/70 mt-1 leading-relaxed">{item.text}</p>
-                                </article>
+                            {HOME_EVENTS.map((item) => (
+                                <Link
+                                    key={item.id}
+                                    to={`/app/events/${item.id}`}
+                                    className="block border-l-2 border-bluvi-purple/20 dark:border-[#FFB16A]/45 pl-4 py-2 rounded-r-2xl hover:bg-app-surface hover:shadow-sm hover:translate-x-0.5 transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
+                                >
+                                    <article>
+                                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-app-muted">
+                                            {item.meta}
+                                        </p>
+                                        <h3 className="text-sm font-bold text-app-primary mt-1">{item.title}</h3>
+                                        <p className="text-sm text-app-secondary mt-1 leading-relaxed">{item.text}</p>
+                                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-app-muted mt-2">
+                                            Ver informacion
+                                        </p>
+                                    </article>
+                                </Link>
                             ))}
                         </div>
                     </section>
                 </div>
 
-                <aside className="space-y-5">
-                    <section className="rounded-3xl border border-white/60 bg-white/65 backdrop-blur-md shadow-sm p-5 md:p-6">
+                <aside className="flex flex-col gap-5" aria-label="Panel lateral">
+                    <section className="bg-app-surface backdrop-blur-md border border-app-soft rounded-[22px] p-5" aria-labelledby="notif-title">
                         <div className="flex items-center justify-between gap-3 mb-4">
-                            <h2 className="text-sm font-bold uppercase tracking-wide text-bluvi-purple/65">
+                            <h2 id="notif-title" className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary">
                                 Notificaciones
                             </h2>
-                            <span className="text-xs font-semibold text-bluvi-purple/60 bg-bluvi-light-purple/25 px-2.5 py-1 rounded-full">
-                                {unreadNotifications.reduce((total, conversation) => total + (conversation.unread_count || 0), 0)} sin leer
+                            <span className="inline-flex items-center gap-2 text-xs font-semibold text-app-secondary bg-app-pill px-2.5 py-1 rounded-full">
+                                {hasNotifications && <span className="w-2.5 h-2.5 rounded-full bg-green-500" aria-hidden="true" />}
+                                {unreadMessages + pendingMatchRequests} sin leer
                             </span>
                         </div>
 
@@ -154,35 +193,56 @@ export const Home: React.FC = () => {
                                     <button
                                         key={conversation.match_request_id}
                                         onClick={() => navigate('/app/messages')}
-                                        className="w-full text-left border-l-2 border-green-500/70 pl-4 py-2 hover:bg-white/50 rounded-r-2xl transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
+                                        className="w-full text-left border-l-2 border-green-500/70 pl-4 py-2 hover:bg-app-surface-soft rounded-r-2xl transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
                                     >
                                         <div className="flex items-center justify-between gap-3">
-                                            <p className="text-sm font-semibold text-bluvi-purple">
+                                            <p className="text-sm font-semibold text-app-primary">
                                                 {conversation.first_name} {conversation.last_name}
                                             </p>
                                             <span className="w-2.5 h-2.5 rounded-full bg-green-500 flex-shrink-0" aria-hidden="true" />
                                         </div>
-                                        <p className="text-sm text-bluvi-purple/70 mt-1">
+                                        <p className="text-sm text-app-secondary mt-1">
                                             Tienes {conversation.unread_count} mensaje{conversation.unread_count > 1 ? 's' : ''} sin leer.
                                         </p>
                                     </button>
                                 ))}
                             </div>
+                        ) : pendingMatchRequests > 0 ? (
+                            <button
+                                onClick={() => navigate('/app/messages')}
+                                className="w-full text-left rounded-2xl border border-green-500/20 bg-green-500/8 px-4 py-3 hover:bg-green-500/12 transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-green-500/20"
+                            >
+                                <div className="flex items-center justify-between gap-3">
+                                    <p className="text-sm font-semibold text-app-primary">
+                                        {pendingRequestNames[0] ? `${pendingRequestNames[0]} te quiere conocer` : 'Tienes una nueva solicitud de icebreaking'}
+                                    </p>
+                                    <span className="w-2.5 h-2.5 rounded-full bg-green-500 flex-shrink-0" aria-hidden="true" />
+                                </div>
+                                <p className="text-sm text-app-secondary mt-1">
+                                    Hay {pendingMatchRequests} solicitud{pendingMatchRequests > 1 ? 'es' : ''} pendiente{pendingMatchRequests > 1 ? 's' : ''} esperando tu respuesta.
+                                </p>
+                            </button>
                         ) : (
-                            <p className="text-sm text-bluvi-purple/70 leading-relaxed">
-                                Ahora mismo no hay mensajes pendientes. Cuando llegue algo nuevo, verás el punto verde en Mensajes.
+                            <p className="text-sm text-app-secondary leading-relaxed">
+                                Cuando llegue algo nuevo lo verás aquí. Por ahora, todo tranquilo.
                             </p>
                         )}
                     </section>
 
-                    <section className="rounded-3xl border border-white/60 bg-white/55 backdrop-blur-md shadow-sm p-5 md:p-6">
-                        <h2 className="text-sm font-bold uppercase tracking-wide text-bluvi-purple/65 mb-3">
-                            Recordatorio suave
-                        </h2>
-                        <p className="text-sm text-bluvi-purple/80 leading-relaxed">
-                            Tu espacio seguro sigue disponible en todo momento. Avanza a tu ritmo y vuelve aqui cuando quieras reorientarte.
+                    
+                    
+                    <aside className="bg-app-surface-soft border border-app-soft rounded-[22px] p-5" aria-label="Recordatorio de ritmo">
+                        <div className="w-8 h-8 rounded-[9px] bg-[#7F77DD]/12 dark:bg-app-accent-gradient flex items-center justify-center mb-3" aria-hidden="true">
+                            <Clock size={15} className="text-app-home-pace-icon" />
+                        </div>
+                        <p className="text-[13px] font-extrabold text-app-primary mb-1.5">
+                            Avanza a tu ritmo
                         </p>
-                    </section>
+                        <p className="text-[12.5px] text-app-secondary leading-relaxed">
+                            Una sola acción es suficiente para hoy. Tu espacio sigue aquí cuando vuelvas.
+                        </p>
+                    </aside>
+                    
                 </aside>
             </div>
         </div>

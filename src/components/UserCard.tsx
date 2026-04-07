@@ -8,7 +8,7 @@ interface UserCardProps {
 
 export const UserCard: React.FC<UserCardProps> = ({ user }) => {
     return (
-        <div className="group relative w-full h-96 rounded-3xl overflow-hidden shadow-lg transition-transform hover:scale-[1.02] cursor-pointer bg-white">
+        <div className="group relative w-full h-96 rounded-3xl overflow-hidden shadow-lg transition-transform hover:scale-[1.02] cursor-pointer bg-app-surface border border-app-soft">
 
         <img 
             src={user.image} 

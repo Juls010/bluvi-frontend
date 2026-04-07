@@ -134,13 +134,13 @@ export const Discovery: React.FC = () => {
     }
   };
 
-  if (isLoading && users.length === 0) return <div className="pt-20 text-center text-bluvi-purple font-medium">Cargando perfiles afines...</div>;
+  if (isLoading && users.length === 0) return <div className="pt-20 text-center text-app-primary font-medium">Cargando perfiles afines...</div>;
 
   if (isFinished && users.length === 0 && !includeSeenProfiles) {
     return (
       <div className="w-full max-w-2xl mx-auto px-6 pt-20 text-center">
-        <h2 className="text-3xl font-heading font-bold text-bluvi-purple mb-4">No hay perfiles nuevos ahora</h2>
-        <p className="text-bluvi-purple/70 mb-6">Puedes volver a explorar perfiles ya vistos mientras llegan personas nuevas.</p>
+        <h2 className="text-3xl font-heading font-bold text-app-primary mb-4">No hay perfiles nuevos ahora</h2>
+        <p className="text-app-secondary mb-6">Puedes volver a explorar perfiles ya vistos mientras llegan personas nuevas.</p>
         <Button onClick={() => { setIncludeSeenProfiles(true); setCurrentIndex(0); }}>Mostrar perfiles vistos</Button>
       </div>
     );
@@ -149,7 +149,7 @@ export const Discovery: React.FC = () => {
   if (!currentUser && hasNextPage) {
     return (
       <div className="w-full max-w-2xl mx-auto px-6 pt-20 text-center">
-        <h2 className="text-2xl font-heading font-bold text-bluvi-purple mb-4">Buscando más perfiles...</h2>
+        <h2 className="text-2xl font-heading font-bold text-app-primary mb-4">Buscando más perfiles...</h2>
         <Button onClick={() => fetchNextPage()}>{isFetchingNextPage ? 'Cargando...' : 'Cargar más'}</Button>
       </div>
     );
@@ -158,7 +158,7 @@ export const Discovery: React.FC = () => {
   if (isFinished) {
     return (
       <div className="w-full max-w-2xl mx-auto px-6 pt-20 text-center">
-        <h2 className="text-3xl font-heading font-bold text-bluvi-purple mb-4">¡No hay más perfiles!</h2>
+        <h2 className="text-3xl font-heading font-bold text-app-primary mb-4">¡No hay más perfiles!</h2>
         <Button onClick={() => {
           setIncludeSeenProfiles(false);
           setActiveFilters({ selectedTags: [], city: '', communicationStyle: [], sensoryPref: [] });
@@ -168,7 +168,7 @@ export const Discovery: React.FC = () => {
   }
 
   return (
-    <div className="w-full pb-24 pt-2 animate-fade-in motion-reduce:animate-none relative">
+    <div className="w-full pb-24 pt-2 animate-fade-in motion-reduce:animate-none relative text-app-primary">
       {showMatchModal && currentUser && (
         <IceBreakerModal user={currentUser} onSend={handleSendIcebreaker} onCancel={() => setShowMatchModal(false)} />
       )}
@@ -191,13 +191,13 @@ export const Discovery: React.FC = () => {
             {activeFilterChips.slice(0, 8).map((chip) => (
               <span
                 key={chip}
-                className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/80 text-bluvi-purple border border-bluvi-purple/15"
+                className="px-3 py-1.5 rounded-full text-xs font-semibold bg-app-surface text-app-primary border border-app-soft"
               >
                 {chip}
               </span>
             ))}
             {activeFilterChips.length > 8 && (
-              <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+                <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-app-surface-soft text-app-secondary border border-app-soft">
                 +{activeFilterChips.length - 8}
               </span>
             )}

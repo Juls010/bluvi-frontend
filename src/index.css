@@ -19,14 +19,40 @@
 
 @layer base {
     html {
-        background-image: var(--background-image-bluvi-gradient);
+        background-image: var(--app-bg-gradient);
         background-attachment: fixed;
         min-height: 100%;
+        scrollbar-gutter: stable;
     }
 
     :root {
+        --app-bg-gradient: linear-gradient(to bottom right, #A5C9FF, #D8D1FF, #FFD5A1);
+        --app-text-primary: #26215C;
+        --app-text-secondary: rgba(38, 33, 92, 0.78);
+        --app-text-muted: rgba(75, 69, 120, 0.68);
+        --app-surface-nav: rgba(255, 255, 255, 0.38);
+        --app-surface-card: rgba(255, 255, 255, 0.82);
+        --app-surface-card-strong: rgba(255, 255, 255, 0.94);
+        --app-surface-soft: rgba(255, 255, 255, 0.68);
+        --app-border-soft: rgba(255, 255, 255, 0.88);
+        --app-border-strong: rgba(127, 119, 221, 0.26);
+        --app-accent: #7F77DD;
+        --app-accent-strong: #534AB7;
+        --app-accent-gradient: linear-gradient(135deg, #7F77DD 0%, #F2A65A 100%);
+        --app-pill-bg: rgba(229, 232, 255, 0.44);
+        --app-switch-off: rgba(126, 134, 180, 0.35);
+        --app-switch-on: #7F77DD;
+        --app-switch-thumb: #ffffff;
+        --app-filter-trigger-bg: rgba(255, 255, 255, 0.84);
+        --app-filter-trigger-hover: rgba(255, 255, 255, 0.94);
+        --app-filter-icon-bg: rgba(127, 119, 221, 0.10);
+        --app-filter-icon-color: #6D5BD0;
+        --app-messages-accent: #6C63D8;
+        --app-messages-accent-bg: rgba(108, 99, 216, 0.10);
         --scrollbar-thumb: rgba(128, 128, 128, 0.72);
         --scrollbar-thumb-hover: rgba(128, 128, 128, 0.72);
+        --app-home-safe-dot: #3f4292;
+        --app-home-pace-icon: #3f4292;
     }
 
     * {
@@ -41,19 +67,103 @@
         padding: 0;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        color: #26215C;
+        color: var(--app-text-primary);
         overflow-x: hidden;
     }
 
+    html.dark {
+        --app-bg-gradient: linear-gradient(to bottom right, #1d214f, #2b2961 52%, #4c3850 78%, #614347 100%);
+        --app-text-primary: #ECEBFF;
+        --app-text-secondary: rgba(236, 235, 255, 0.82);
+        --app-text-muted: rgba(220, 218, 255, 0.64);
+        --app-surface-nav: rgba(20, 24, 60, 0.5);
+        --app-surface-card: rgba(26, 30, 70, 0.6);
+        --app-surface-card-strong: rgba(30, 34, 82, 0.82);
+        --app-surface-soft: rgba(32, 36, 84, 0.52);
+        --app-border-soft: rgba(171, 176, 255, 0.26);
+        --app-border-strong: rgba(171, 176, 255, 0.38);
+        --app-accent: #B8B2FF;
+        --app-accent-strong: #D0CCFF;
+        --app-accent-gradient: linear-gradient(135deg, #B8B2FF 0%, #FFB16A 100%);
+        --app-pill-bg: rgba(86, 92, 172, 0.45);
+        --app-switch-off: rgba(143, 151, 214, 0.34);
+        --app-switch-on: #B8B2FF;
+        --app-switch-thumb: #f4f2ff;
+        --app-filter-trigger-bg: rgba(52, 58, 128, 0.55);
+        --app-filter-trigger-hover: rgba(59, 66, 142, 0.62);
+        --app-filter-icon-bg: #FFB16A;
+        --app-filter-icon-color: #FFB16A;
+        --app-messages-accent: #FFB16A;
+        --app-messages-accent-bg: rgba(255, 177, 106, 0.2);
+        --app-home-safe-dot: #FFB16A;
+        --app-home-pace-icon: #ffffff;
+    }
+
+    html.dark body,
+    html.dark #root {
+        color: var(--app-text-primary);
+    }
+
     html.high-contrast {
-        background-image: none;
+        --app-bg-gradient: none;
         background-color: #ffffff;
+        --app-text-primary: #111111;
+        --app-text-secondary: #222222;
+        --app-text-muted: #333333;
+        --app-surface-nav: #ffffff;
+        --app-surface-card: #ffffff;
+        --app-surface-card-strong: #ffffff;
+        --app-surface-soft: #ffffff;
+        --app-border-soft: #111111;
+        --app-border-strong: #000000;
+        --app-accent: #111111;
+        --app-accent-strong: #000000;
+        --app-accent-gradient: linear-gradient(135deg, #111111 0%, #111111 100%);
+        --app-pill-bg: #ffffff;
+        --app-switch-off: #ffffff;
+        --app-switch-on: #000000;
+        --app-switch-thumb: #ffffff;
+        --app-messages-accent: #111111;
+        --app-messages-accent-bg: #ffffff;
+        --app-home-safe-dot: #111111;
+        --app-home-pace-icon: #111111;
+    }
+
+    html.dark.high-contrast {
+        --app-bg-gradient: none;
+        background-color: #000000;
+        --app-text-primary: #ffffff;
+        --app-text-secondary: #ffffff;
+        --app-text-muted: #f3f3f3;
+        --app-surface-nav: #000000;
+        --app-surface-card: #000000;
+        --app-surface-card-strong: #000000;
+        --app-surface-soft: #000000;
+        --app-border-soft: #ffffff;
+        --app-border-strong: #ffffff;
+        --app-accent: #ffffff;
+        --app-accent-strong: #ffffff;
+        --app-accent-gradient: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+        --app-pill-bg: #000000;
+        --app-switch-off: #000000;
+        --app-switch-on: #ffffff;
+        --app-switch-thumb: #ffffff;
+        --app-messages-accent: #ffffff;
+        --app-messages-accent-bg: #000000;
+        --app-home-safe-dot: #ffffff;
+        --app-home-pace-icon: #ffffff;
     }
 
     html.high-contrast body,
     html.high-contrast #root {
         background-color: #ffffff;
         color: #161616;
+    }
+
+    html.dark.high-contrast body,
+    html.dark.high-contrast #root {
+        background-color: #000000;
+        color: #ffffff;
     }
 
     html.reduce-motion {
@@ -99,6 +209,90 @@
         display: none;
         width: 0;
         height: 0;
+    }
+
+    .bg-app-gradient {
+        background-image: var(--app-bg-gradient);
+    }
+
+    .bg-app-surface-nav {
+        background-color: var(--app-surface-nav);
+    }
+
+    .bg-app-surface {
+        background-color: var(--app-surface-card);
+    }
+
+    .bg-app-surface-soft {
+        background-color: var(--app-surface-soft);
+    }
+
+    .bg-app-surface-strong {
+        background-color: var(--app-surface-card-strong);
+    }
+
+    .bg-app-pill {
+        background-color: var(--app-pill-bg);
+    }
+
+    .bg-app-accent-gradient {
+        background-image: var(--app-accent-gradient);
+    }
+
+    .dark .bg-app-accent-gradient-dark {
+        background-image: var(--app-accent-gradient);
+    }
+
+    .text-app-primary {
+        color: var(--app-text-primary);
+    }
+
+    .text-app-secondary {
+        color: var(--app-text-secondary);
+    }
+
+    .text-app-muted {
+        color: var(--app-text-muted);
+    }
+
+    .text-app-accent {
+        color: var(--app-accent);
+    }
+
+    .text-app-accent-strong {
+        color: var(--app-accent-strong);
+    }
+
+    .border-app-soft {
+        border-color: var(--app-border-soft);
+    }
+
+    .border-app-strong {
+        border-color: var(--app-border-strong);
+    }
+
+    .bg-app-filter-trigger {
+        background-color: var(--app-filter-trigger-bg);
+    }
+
+    .hover\:bg-app-filter-trigger-hover:hover {
+        background-color: var(--app-filter-trigger-hover);
+    }
+
+    .bg-app-filter-icon {
+        background-color: var(--app-filter-icon-bg);
+    }
+
+    .text-app-filter-icon {
+        color: var(--app-filter-icon-color);
+    }
+
+    .bg-app-home-safe-dot {
+        background-color: var(--app-home-safe-dot);
+    }
+
+    .text-app-home-pace-icon {
+        color: var(--app-home-pace-icon);
     }
 }
 

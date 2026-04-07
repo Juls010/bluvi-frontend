@@ -1,5 +1,6 @@
 import React from 'react';
-import { Outlet, useMatches } from 'react-router-dom';
+import { Outlet, useLocation, useMatches } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Navbar } from '../components/Navbar';
 import { BluAssistant } from '../components/BluAssistant';
 import { useScrollToTop } from '../hooks/useScrollToTop';
@@ -15,6 +16,8 @@ const TOP_OFFSET_CLASS: Record<TopOffset, string> = {
 export const AppLayout: React.FC = () => {
   useScrollToTop();
   const matches = useMatches();
+  const location = useLocation();
+  const prefersReducedMotion = useReducedMotion();
 
   // The deepest route with handle.topOffset wins. Defaults to "normal".
   const resolvedTopOffset = [...matches]
@@ -28,7 +31,7 @@ export const AppLayout: React.FC = () => {
   const outletTopPaddingClass = TOP_OFFSET_CLASS[topOffset];
 
   return (
-    <main className="min-h-screen w-full bg-bluvi-gradient flex flex-col font-sans relative overflow-hidden" style={{ '--navbar-height': '80px' } as React.CSSProperties}>
+    <main className="min-h-screen w-full bg-app-gradient text-app-primary flex flex-col font-sans relative overflow-hidden" style={{ '--navbar-height': '80px' } as React.CSSProperties}>
 
       <div className="fixed top-0 left-0 w-full z-50 p-1 flex justify-center pointer-events-none">
 
@@ -39,7 +42,15 @@ export const AppLayout: React.FC = () => {
       </div>
 
       <div className={`flex-1 w-full flex flex-col items-center ${outletTopPaddingClass} pb-10 overflow-y-auto`}>
-        <Outlet />
+        <motion.div
+          key={location.pathname}
+          className="w-full flex flex-col items-center"
+          initial={prefersReducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Outlet />
+        </motion.div>
       </div>
 
       <BluAssistant />

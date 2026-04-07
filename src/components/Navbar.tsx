@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/icon.svg';
-import { getConversations } from '../services/chat.service';
-import { connectRealtime } from '../services/realtime.service';
+import { useNotifications } from '../context/NotificationContext';
+import { useAuth } from '../context/AuthContext';
+import { getMyProfile } from '../services/user.service';
 
 const NAV_ITEMS = [
     {
@@ -66,6 +67,8 @@ const NAV_ITEMS = [
     },
 ];
 
+const DESKTOP_NAV_KEYS = new Set(['home', 'discovery', 'messages']);
+
 const NavItem: React.FC<{
     path: string;
     label: string;
@@ -78,10 +81,10 @@ const NavItem: React.FC<{
         to={path}
         aria-label={label}
         className={`
-        flex flex-col items-center transition-all duration-200
+        flex items-center transition-all duration-200
         ${mobile
             ? 'flex-1 gap-1.5 py-2.5'
-            : `gap-1 px-4 py-2 rounded-2xl ${active ? 'bg-bluvi-purple/12 ring-1 ring-bluvi-purple/20' : 'hover:bg-bluvi-purple/5'}`
+            : `gap-2 px-3.5 py-2 rounded-xl ${active ? 'bg-bluvi-purple/12 ring-1 ring-bluvi-purple/20' : 'hover:bg-app-surface-soft'}`
         }
         `}
     >
@@ -89,10 +92,10 @@ const NavItem: React.FC<{
         className={`
             relative
             transition-all duration-200
-            ${mobile ? 'w-6 h-6' : 'w-5 h-5'}
+            ${mobile ? 'w-6 h-6' : 'w-4.5 h-4.5'}
             ${active
             ? 'text-bluvi-purple scale-110 [&>svg]:stroke-[2.3px]'
-            : 'text-bluvi-purple/60 [&>svg]:stroke-[1.9px]'
+            : 'text-app-secondary [&>svg]:stroke-[1.9px]'
             }
         `}
         >
@@ -109,13 +112,18 @@ const NavItem: React.FC<{
         className={`
             font-semibold leading-none tracking-wide transition-all duration-200 overflow-hidden
             ${mobile
-            ? `text-[10px] max-h-4 opacity-100 ${active ? 'text-bluvi-purple' : 'text-bluvi-purple/40'}`
-            : `text-[11px] max-h-4 opacity-100 ${active ? 'text-bluvi-purple' : 'text-bluvi-purple/70'}`
+            ? `text-[10px] max-h-4 opacity-100 ${active ? 'text-bluvi-purple' : 'text-app-muted'}`
+            : `text-[13px] max-h-4 opacity-100 ${active ? 'text-bluvi-purple' : 'text-app-secondary'}`
             }
         `}
         >
         {label}
         </span>
+        {mobile && unreadCount > 0 && (
+            <span className="mt-1 inline-flex items-center justify-center rounded-full bg-green-500 px-2 py-0.5 text-[9px] font-bold leading-none text-white shadow-sm ring-2 ring-white">
+                {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+        )}
         {unreadCount > 0 && <span className="sr-only">Tienes {unreadCount} mensajes sin leer</span>}
     </Link>
 );
@@ -123,66 +131,252 @@ const NavItem: React.FC<{
 
 
 export const Navbar: React.FC = () => {
+    const navigate = useNavigate();
     const location = useLocation();
-    const [unreadCount, setUnreadCount] = useState(0);
+    const { user, logout, isAuthenticated } = useAuth();
+    const { unreadMessages, pendingMatchRequests } = useNotifications();
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [profileSnapshot, setProfileSnapshot] = useState<Record<string, unknown> | null>(null);
+    const userMenuRef = useRef<HTMLDivElement | null>(null);
+    const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+    const firstMenuItemRef = useRef<HTMLAnchorElement | null>(null);
 
-    const loadUnreadCount = async () => {
-        try {
-            const conversations = await getConversations();
-            const totalUnread = conversations.reduce((acc, conv) => acc + (conv.unread_count || 0), 0);
-            setUnreadCount(totalUnread);
-        } catch (error) {
-            console.error('Error cargando contador de mensajes:', error);
-        }
-    };
+    const desktopNavItems = useMemo(() => NAV_ITEMS.filter((item) => DESKTOP_NAV_KEYS.has(item.key)), []);
+
+    const identitySource = useMemo(() => {
+        return {
+            ...(user as Record<string, unknown> | null),
+            ...(profileSnapshot ?? {}),
+        };
+    }, [user, profileSnapshot]);
+
+    const displayName = useMemo(() => {
+        const nameCandidates = [
+            identitySource.first_name,
+            identitySource.firstName,
+            identitySource.name,
+        ];
+
+        const match = nameCandidates.find((candidate) => typeof candidate === 'string' && candidate.trim().length > 0);
+        return typeof match === 'string' ? match.trim() : 'Usuaria';
+    }, [identitySource]);
+
+    const avatarSrc = useMemo(() => {
+        const data = identitySource;
+        const resolveFromEntry = (entry: unknown): string | undefined => {
+            if (typeof entry === 'string' && entry.trim().length > 0) {
+                return entry;
+            }
+
+            if (entry && typeof entry === 'object') {
+                const imageObj = entry as Record<string, unknown>;
+                const objectCandidates = [
+                    imageObj.url,
+                    imageObj.photo,
+                    imageObj.path,
+                    imageObj.image,
+                    imageObj.src,
+                ];
+                const objectMatch = objectCandidates.find((item) => typeof item === 'string' && item.trim().length > 0);
+                if (typeof objectMatch === 'string') {
+                    return objectMatch;
+                }
+            }
+
+            return undefined;
+        };
+
+        const candidates = [
+            data.main_photo,
+            data.photo,
+            data.avatar,
+            data.image,
+            data.profile_image,
+            data.profile_photo,
+            Array.isArray(data.photos)
+                ? data.photos.map((entry) => resolveFromEntry(entry)).find((entry) => typeof entry === 'string' && entry.trim().length > 0)
+                : undefined,
+        ];
+
+        const photo = candidates.find((entry) => typeof entry === 'string' && entry.trim().length > 0);
+        return typeof photo === 'string' ? photo : '';
+    }, [identitySource]);
+
+    const avatarInitial = useMemo(() => {
+        if (!displayName) return 'U';
+        return displayName.charAt(0).toUpperCase();
+    }, [displayName]);
+
+    const isUserSectionActive = location.pathname.startsWith('/app/profile') || location.pathname.startsWith('/app/settings') || location.pathname.startsWith('/app/user/');
 
     useEffect(() => {
-        loadUnreadCount();
+        if (!isUserMenuOpen) return;
 
-        const intervalId = window.setInterval(() => {
-            loadUnreadCount();
-        }, 15000);
-
-        const socket = connectRealtime();
-        const refreshUnread = () => {
-            loadUnreadCount();
+        const handlePointerDown = (event: MouseEvent) => {
+            if (!userMenuRef.current?.contains(event.target as Node)) {
+                setIsUserMenuOpen(false);
+            }
         };
 
-        socket?.on('chat:message:new', refreshUnread);
-        socket?.on('chat:messages:read', refreshUnread);
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setIsUserMenuOpen(false);
+                menuButtonRef.current?.focus();
+            }
+        };
+
+        document.addEventListener('mousedown', handlePointerDown);
+        document.addEventListener('keydown', handleEscape);
 
         return () => {
-            window.clearInterval(intervalId);
-            socket?.off('chat:message:new', refreshUnread);
-            socket?.off('chat:messages:read', refreshUnread);
+            document.removeEventListener('mousedown', handlePointerDown);
+            document.removeEventListener('keydown', handleEscape);
         };
-    }, []);
+    }, [isUserMenuOpen]);
 
-    const desktopNavItems = useMemo(() => NAV_ITEMS, []);
+    useEffect(() => {
+        if (isUserMenuOpen) {
+            firstMenuItemRef.current?.focus();
+        }
+    }, [isUserMenuOpen]);
+
+    useEffect(() => {
+        setIsUserMenuOpen(false);
+    }, [location.pathname]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const loadProfileSnapshot = async () => {
+            if (!isAuthenticated) return;
+
+            try {
+                const profile = await getMyProfile();
+                if (!cancelled) {
+                    setProfileSnapshot(profile as unknown as Record<string, unknown>);
+                }
+            } catch {
+                if (!cancelled) {
+                    setProfileSnapshot(null);
+                }
+            }
+        };
+
+        loadProfileSnapshot();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isAuthenticated]);
+
+    const toggleUserMenu = () => {
+        setIsUserMenuOpen((prev) => !prev);
+    };
+
+    const handleLogout = async () => {
+        setIsUserMenuOpen(false);
+        await logout();
+        navigate('/login');
+    };
 
     return (
         <>
-        <nav className="hidden md:grid w-full max-w-5xl mx-auto px-6 py-2 bg-white/25 backdrop-blur-xl rounded-3xl items-center shadow-lg border border-white/35 grid-cols-[2.5rem_1fr_2.5rem]">
-            <Link to="/app/home" className="hover:opacity-80 flex-shrink-0 justify-self-start" aria-label="Ir a inicio">
-            <img src={logo} alt="bluvi" className="w-8 h-8 object-contain" />
-            </Link>
-            <div className="flex items-center justify-center gap-2">
-            {desktopNavItems.map(({ path, key, label, icon, isActive }) => (
-                <NavItem
-                    key={key}
-                    path={path}
-                    label={label}
-                    icon={icon}
-                    active={isActive(location.pathname)}
-                    unreadCount={key === 'messages' ? unreadCount : 0}
-                />
-            ))}
+        <nav className="hidden md:grid w-full max-w-5xl mx-auto px-4 py-2.5 bg-app-surface-nav backdrop-blur-xl rounded-3xl items-center shadow-lg border border-app-soft grid-cols-[minmax(7rem,1fr)_auto_minmax(7rem,1fr)] gap-3">
+            <div className="justify-self-start">
+                <Link to="/app/home" className="inline-flex items-center gap-2.5 hover:opacity-85 transition-opacity" aria-label="Ir a inicio">
+                    <img src={logo} alt="bluvi" className="w-8 h-8 object-contain" />
+                    <span className="text-sm font-semibold tracking-wide text-app-secondary">bluvi</span>
+                </Link>
             </div>
-            <div className="w-8 h-8 justify-self-end" aria-hidden="true" />
+
+            <div className="justify-self-center">
+                <div className="flex items-center gap-1.5">
+                    {desktopNavItems.map(({ path, key, label, icon, isActive }) => (
+                        <NavItem
+                            key={key}
+                            path={path}
+                            label={label}
+                            icon={icon}
+                            active={isActive(location.pathname)}
+                            unreadCount={key === 'messages' ? unreadMessages + pendingMatchRequests : 0}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            <div ref={userMenuRef} className="relative justify-self-end">
+                <button
+                    ref={menuButtonRef}
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded={isUserMenuOpen}
+                    aria-controls="user-navbar-menu"
+                    aria-label={`Cuenta de ${displayName}`}
+                    onClick={toggleUserMenu}
+                    className={`
+                        relative w-10 h-10 rounded-xl overflow-visible border shadow-sm
+                        bg-app-surface transition-all duration-200
+                        focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/50
+                        ${isUserSectionActive ? 'border-bluvi-purple/60 ring-2 ring-bluvi-purple/20' : 'border-app-soft hover:border-bluvi-purple/35'}
+                    `}
+                >
+                    <span className="block w-full h-full rounded-xl overflow-hidden">
+                        {avatarSrc ? (
+                            <img src={avatarSrc} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                            <span className="w-full h-full flex items-center justify-center text-sm font-bold text-bluvi-purple bg-bluvi-light-purple/50">
+                                {avatarInitial}
+                            </span>
+                        )}
+                    </span>
+                    <span
+                        aria-hidden="true"
+                        className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 ring-2 ring-white"
+                    />
+                </button>
+
+                {isUserMenuOpen && (
+                    <div
+                        id="user-navbar-menu"
+                        role="menu"
+                        aria-label="Menú de cuenta"
+                        className="absolute right-0 mt-2 w-56 rounded-2xl border border-app-soft bg-app-surface-strong backdrop-blur-md shadow-xl p-1.5"
+                    >
+                        <p className="px-3 py-2 text-xs font-semibold text-app-secondary" aria-live="polite">
+                            Sesión iniciada como {displayName}
+                        </p>
+                        <Link
+                            ref={firstMenuItemRef}
+                            to="/app/profile"
+                            role="menuitem"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary hover:bg-app-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                        >
+                            Ver mi perfil
+                        </Link>
+                        <Link
+                            to="/app/settings"
+                            role="menuitem"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary hover:bg-app-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                        >
+                            Ajustes de cuenta
+                        </Link>
+                        <button
+                            type="button"
+                            role="menuitem"
+                            onClick={handleLogout}
+                            className="w-full text-left rounded-xl px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                        >
+                            Cerrar sesión
+                        </button>
+                    </div>
+                )}
+            </div>
         </nav>
 
         <nav
-            className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-stretch gap-1 px-1.5 bg-white/80 backdrop-blur-xl border-t border-white/40 shadow-[0_-4px_24px_rgba(0,0,0,0.07)]"
+            className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-stretch gap-1 px-1.5 bg-app-surface-nav backdrop-blur-xl border-t border-app-soft shadow-[0_-4px_24px_rgba(0,0,0,0.07)]"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
             {NAV_ITEMS.map(({ path, key, label, icon, isActive }) => (
@@ -192,7 +386,7 @@ export const Navbar: React.FC = () => {
                 label={label}
                 icon={icon}
                 active={isActive(location.pathname)}
-                unreadCount={key === 'messages' ? unreadCount : 0}
+                unreadCount={key === 'messages' ? unreadMessages + pendingMatchRequests : 0}
                 mobile
             />
             ))}

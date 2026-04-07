@@ -70,10 +70,10 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
         index === 0 ? 'ring-4 ring-bluvi-purple rounded-2xl' : ''
       }`}
     >
-      <img src={url} alt="" className="w-full h-full object-cover rounded-2xl shadow-sm border border-gray-100" />
+      <img src={url} alt="" className="w-full h-full object-cover rounded-2xl shadow-sm border border-app-soft" />
       
       <div className={`absolute top-2 left-2 w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-bold shadow-lg border border-white/50 ${
-        index === 0 ? 'bg-bluvi-purple text-white' : 'bg-white/90 text-gray-500'
+        index === 0 ? 'bg-bluvi-purple text-white' : 'bg-app-surface-strong text-app-secondary border-app-soft'
       }`}>
         {index + 1}
       </div>
@@ -169,25 +169,25 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 dark:bg-black/60 backdrop-blur-sm">
     
-      <div className="bg-white w-full max-w-md rounded-[32px] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-white">
+      <div className="bg-app-surface-strong text-app-primary w-full max-w-md rounded-[32px] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-app-soft">
         
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-white z-10">
-          <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-            <Camera className="text-bluvi-purple" /> Mis Fotos
+        <div className="p-6 flex justify-between items-center bg-app-surface-strong z-10">
+          <h2 className="text-xl font-bold text-app-primary flex items-center gap-2">
+            <Camera className="text-app-accent" /> Mis Fotos
           </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <X className="w-5 h-5 text-gray-400" />
+          <button onClick={onClose} className="p-2 hover:bg-app-surface-soft rounded-full transition-colors">
+            <X className="w-5 h-5 text-app-muted" />
           </button>
         </div>
 
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-          <div className="p-6 flex-1 overflow-y-auto space-y-4">
+          <div className="p-6 flex-1 overflow-y-auto space-y-4 bg-app-surface-strong">
             <div className="grid grid-cols-3 gap-3">
-              <button onClick={() => fileInputRef.current?.click()} className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-bluvi-purple hover:bg-purple-50 transition-all group">
-                <Plus className="w-6 h-6 text-gray-300 group-hover:text-bluvi-purple" />
-                <span className="text-[10px] font-bold text-gray-400 group-hover:text-bluvi-purple uppercase">Añadir</span>
+              <button onClick={() => fileInputRef.current?.click()} className="aspect-square rounded-2xl border-2 border-dashed border-app-strong flex flex-col items-center justify-center gap-2 hover:border-bluvi-purple hover:bg-app-surface-soft transition-all group bg-app-surface">
+                <Plus className="w-6 h-6 text-app-muted group-hover:text-bluvi-purple" />
+                <span className="text-[10px] font-bold text-app-secondary group-hover:text-bluvi-purple uppercase">Añadir</span>
               </button>
 
               <SortableContext items={photos} strategy={rectSortingStrategy}>
@@ -215,14 +215,14 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
           </div>
         </DndContext>
 
-        <div className="p-6 bg-gray-50 flex gap-3 border-t border-gray-100">
-          <button onClick={onClose} className="flex-1 py-3 text-gray-500 font-bold hover:text-gray-700">
+        <div className="p-6 bg-app-surface-soft flex gap-3">
+          <button onClick={onClose} className="flex-1 py-2.5 px-6 rounded-full border border-app-soft border-b-2 border-black/10 bg-app-surface text-app-secondary font-semibold shadow-sm hover:text-app-primary hover:bg-app-surface-strong hover:-translate-y-0.5 active:translate-y-0 transition-all">
             Cancelar
           </button>
           <button 
             onClick={() => onSave(photos)}
             disabled={isSaving || photos.length === 0}
-            className="flex-1 py-3 bg-bluvi-purple text-white rounded-2xl font-bold shadow-lg shadow-bluvi-purple/20 disabled:opacity-50 transition-all active:scale-95"
+            className="flex-1 py-2.5 px-6 bg-bluvi-purple text-white rounded-full font-semibold shadow-md shadow-bluvi-purple/20 border-b-2 border-black/10 disabled:opacity-50 transition-all hover:brightness-105 hover:-translate-y-0.5 active:scale-95"
           >
             {isSaving ? 'Subiendo...' : 'Guardar Cambios'}
           </button>

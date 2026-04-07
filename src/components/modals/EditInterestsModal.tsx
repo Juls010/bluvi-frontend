@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { INTEREST_LABELS } from '../../types/User.types';
+import { X } from 'lucide-react';
 
 interface EditInterestsModalProps {
   currentInterests: number[]; // Recibimos IDs
@@ -28,19 +29,21 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 dark:bg-black/60 backdrop-blur-sm">
+      <div className="bg-app-surface-strong text-app-primary w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-app-soft">
         
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-800">Editar Intereses</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+        <div className="p-6 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-app-primary">Editar Intereses</h2>
+          <button onClick={onClose} className="p-2 rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary">
+            <X size={18} aria-hidden="true" />
+          </button>
         </div>
 
-        <div className="p-6 overflow-y-auto space-y-4">
+        <div className="p-6 overflow-y-auto space-y-4 bg-app-surface-strong">
           <input 
-            type="file"
+            type="text"
             placeholder="Buscar intereses..."
-            className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-bluvi-purple/20 outline-none"
+            className="w-full px-4 py-2 rounded-xl border border-app-strong bg-app-surface text-app-primary placeholder:text-app-muted focus:ring-2 focus:ring-bluvi-purple/20 focus:border-bluvi-purple/45 outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -55,7 +58,7 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                     isSelected 
                       ? 'bg-bluvi-purple text-white shadow-md' 
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      : 'bg-app-surface text-app-secondary hover:bg-app-surface-soft border border-app-soft'
                   }`}
                 >
                   {label}
@@ -65,10 +68,10 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
           </div>
         </div>
 
-        <div className="p-6 bg-gray-50 flex gap-3">
+        <div className="p-6 bg-app-surface-soft flex gap-3">
           <button 
             onClick={onClose}
-            className="flex-1 py-3 font-semibold text-gray-500"
+            className="flex-1 py-2.5 px-6 rounded-full border border-app-soft border-b-2 border-black/10 bg-app-surface font-semibold text-app-secondary shadow-sm hover:text-app-primary hover:bg-app-surface-strong hover:-translate-y-0.5 active:translate-y-0 transition-all"
             disabled={isSaving}
           >
             Cancelar
@@ -76,7 +79,7 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
           <button 
             onClick={() => onSave(selected)}
             disabled={isSaving}
-            className="flex-1 py-3 bg-bluvi-purple text-white rounded-2xl font-semibold shadow-lg shadow-bluvi-purple/20 disabled:opacity-50"
+            className="flex-1 py-2.5 px-6 bg-bluvi-purple text-white rounded-full font-semibold shadow-md shadow-bluvi-purple/20 border-b-2 border-black/10 disabled:opacity-50 hover:brightness-105 hover:-translate-y-0.5 active:scale-95 transition-all"
           >
             {isSaving ? 'Guardando...' : 'Guardar'}
           </button>

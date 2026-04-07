@@ -27,6 +27,7 @@ import { EmailVerificationStep } from '../pages/Register/EmailVerificationStep';
 import { SafetyTipsStep } from '../pages/Register/SafetyTipsStep';
 import { Home } from '../pages/App/Home';
 import { Discovery } from '../pages/App/Discovery';
+import { EventFlyer } from '../pages/App/EventFlyer';
 import { Messages } from '../pages/Messages';
 import { ChatDetail } from '../pages/ChatDetails';
 import { ChatUserProfile } from '../pages/ChatUserProfile';
@@ -76,6 +77,7 @@ export const router = createBrowserRouter([
         children: [
             { index: true, element: <Navigate to="/app/home" replace /> },
             { path: "home", element: <Home />, handle: { topOffset: 'normal' } },
+            { path: "events/:eventId", element: <EventFlyer />, handle: { topOffset: 'normal' } },
             { path: "discovery", element: <Discovery />, handle: { topOffset: 'normal' } },
             { path: "messages", element: <Messages />, handle: { topOffset: 'normal' } },
             { path: "profile", element: <UserProfile />, handle: { topOffset: 'normal' } },

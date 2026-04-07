@@ -26,17 +26,17 @@ export const IceBreakerModal: React.FC<IceBreakerModalProps> = ({ user, onSend, 
     const [selectedMsg, setSelectedMsg] = useState<string | null>(null);
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-bluvi-purple/20 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/35 dark:bg-black/55 backdrop-blur-md animate-fade-in">
         
-        <div className="bg-white/95 w-full max-w-md rounded-[2rem] shadow-2xl border border-white/50 relative overflow-hidden animate-scale-in">
+        <div className="bg-app-surface-strong text-app-primary w-full max-w-md rounded-[2rem] shadow-2xl border border-app-soft relative overflow-hidden animate-scale-in">
 
-            <div className="absolute top-[-50px] right-[-50px] w-40 h-40 bg-purple-200 rounded-full blur-3xl opacity-50 pointer-events-none" />
-            <div className="absolute bottom-[-30px] left-[-30px] w-32 h-32 bg-blue-200 rounded-full blur-3xl opacity-50 pointer-events-none" />
+            <div className="absolute top-[-50px] right-[-50px] w-40 h-40 rounded-full blur-3xl opacity-45 pointer-events-none" style={{ backgroundColor: 'var(--app-accent)' }} />
+            <div className="absolute bottom-[-30px] left-[-30px] w-32 h-32 rounded-full blur-3xl opacity-30 pointer-events-none" style={{ backgroundColor: 'var(--app-accent-strong)' }} />
 
             <div className="relative z-10 flex flex-col items-center pt-8 px-8 pb-8">
                 
                 <div className="relative mb-4 group">
-                    <div className="absolute inset-0 bg-bluvi-purple/20 rounded-full blur-md group-hover:bg-bluvi-purple/30 transition-all duration-500"></div>
+                    <div className="absolute inset-0 rounded-full blur-md transition-all duration-500 opacity-55 group-hover:opacity-75" style={{ backgroundColor: 'var(--app-accent)' }} />
                     <div className="w-24 h-24 relative z-10">
                         <img 
                             src={mainPhoto}
@@ -47,10 +47,10 @@ export const IceBreakerModal: React.FC<IceBreakerModalProps> = ({ user, onSend, 
                     <span className="absolute -right-2 top-0 text-2xl animate-bounce-slow" style={{ animationDuration: '3s' }}></span>
                 </div>
 
-                <h2 className="text-xl font-heading font-bold text-gray-800 mb-1 text-center">
+                <h2 className="text-xl font-heading font-bold text-app-primary mb-1 text-center">
                     ¡Es un match con {user.first_name}!
                 </h2>
-                <p className="text-sm text-bluvi-purple/80 font-medium mb-6 text-center px-4 py-1.5 rounded-full">
+                <p className="text-sm text-app-accent font-medium mb-6 text-center px-4 py-1.5 rounded-full bg-app-surface border border-app-soft">
                     Elige cómo quieres romper el hielo
                 </p>
 
@@ -64,10 +64,11 @@ export const IceBreakerModal: React.FC<IceBreakerModalProps> = ({ user, onSend, 
                                 className={`
                                     w-full py-4 px-6 rounded-2xl text-sm font-medium transition-all duration-300 border-2 text-left
                                     ${isSelected 
-                                        ? 'bg-bluvi-purple/20 border-bluvi-purple text-bluvi-purple font-bold shadow-md scale-[1.02]' 
-                                        : 'bg-gray-50 border-gray-100 text-gray-500 hover:bg-white hover:border-bluvi-purple/30'
+                                        ? 'text-white font-bold shadow-md scale-[1.02] border-transparent' 
+                                        : 'bg-app-surface border-app-soft text-app-secondary hover:bg-app-surface-soft hover:border-bluvi-purple/30'
                                     }
                                 `}
+                                style={isSelected ? { backgroundColor: 'var(--app-accent)' } : undefined}
                             >
                                 {msg}
                             </button>
@@ -79,7 +80,7 @@ export const IceBreakerModal: React.FC<IceBreakerModalProps> = ({ user, onSend, 
                 
                 <Button 
                     onClick={onCancel}
-                    className="flex-1 !bg-white border-2 border-gray-200 !text-gray-500 hover:!border-gray-400 hover:!text-gray-700 hover:!bg-gray-50 shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-95"
+                    className="flex-1 !bg-app-surface border-2 !border-app-soft !text-app-secondary hover:!border-bluvi-purple/40 hover:!text-app-primary hover:!bg-app-surface-soft shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-95"
                 >
                     Ahora no
                 </Button>
@@ -89,10 +90,11 @@ export const IceBreakerModal: React.FC<IceBreakerModalProps> = ({ user, onSend, 
                     onClick={() => selectedMsg && onSend(selectedMsg)}
                     className={`flex-[2] border-2 transition-all duration-200 hover:scale-[1.02] active:scale-95
                         ${selectedMsg 
-                            ? 'bg-bluvi-purple border-bluvi-purple text-white hover:bg-opacity-90 shadow-md' 
-                            : '!bg-gray-100 !border-gray-100 !text-gray-400 cursor-not-allowed'
+                            ? 'text-white shadow-md border-transparent hover:brightness-105' 
+                            : '!bg-app-surface-soft !border-app-soft !text-app-muted cursor-not-allowed'
                         }
                     `}
+                    style={selectedMsg ? { backgroundColor: 'var(--app-accent)' } : undefined}
                 >
                     Enviar Mensaje
                 </Button>

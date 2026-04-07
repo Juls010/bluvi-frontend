@@ -43,9 +43,9 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
         : [(user as any).main_photo || '/assets/images/default-avatar.png'];
 
     return (
-        <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none">
+        <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none text-app-primary">
         
-        <h1 className="text-3xl md:text-4xl font-heading font-bold text-bluvi-purple mb-6 pl-2 outline-none" tabIndex={-1}>
+        <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary mb-6 pl-2 outline-none" tabIndex={-1}>
             {user.first_name} {user.last_name}
         </h1>
 
@@ -63,7 +63,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                     <button 
                         onClick={onPass}
                         aria-label={`Pasar perfil de ${user.first_name}`}
-                        className="w-16 h-16 rounded-2xl border-2 border-bluvi-purple/30 text-bluvi-purple hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all flex items-center justify-center focus:ring-4 focus:ring-red-200 outline-none"
+                        className="w-16 h-16 rounded-2xl border-2 border-app-strong text-app-accent hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all flex items-center justify-center focus:ring-4 focus:ring-red-200 outline-none"
                     >
                         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
@@ -71,7 +71,8 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                     <button 
                             onClick={onLike}
                             aria-label={`Me gusta ${user.first_name}`}
-                            className="w-16 h-16 relative overflow-visible rounded-2xl bg-bluvi-purple text-white shadow-lg hover:scale-105 hover:bg-bluvi-purple/90 transition-all flex items-center justify-center focus:ring-4 focus:ring-purple-300 outline-none"
+                            className="w-16 h-16 relative overflow-visible rounded-2xl text-white shadow-md hover:scale-[1.03] hover:brightness-105 transition-all flex items-center justify-center focus:ring-4 focus:ring-purple-300 outline-none"
+                            style={{ backgroundColor: 'var(--app-accent)' }}
                         >
                             <ClickSpark 
                                 sparkColor="#ffffff" 
@@ -89,81 +90,81 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
             </div>
 
             <div className="md:col-span-8 flex flex-col gap-4">
-                <div className="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm">
-                    <ul className="flex flex-wrap gap-4 sm:gap-6 text-bluvi-purple font-semibold mb-4 text-sm md:text-base border-b border-bluvi-purple/10 pb-4">
+                <div className="bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm">
+                    <ul className="flex flex-wrap gap-4 sm:gap-6 text-app-primary font-semibold mb-4 text-sm md:text-base border-b border-app-strong pb-4">
                         <li className="flex items-center gap-1.5">
-                            <Cake className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
+                            <Cake className="w-4 h-4 text-app-accent" aria-hidden="true" />
                             <span>{age} <span className="sr-only">años</span></span>
                         </li>
 
                         <li className="flex items-center gap-1.5">
-                            <UserIcon className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
+                            <UserIcon className="w-4 h-4 text-app-accent" aria-hidden="true" />
                             <span className="sr-only">Género:</span>
                             {genderLabel}
                         </li>
                         <li className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
+                            <MapPin className="w-4 h-4 text-app-accent" aria-hidden="true" />
                             <span className="sr-only">Ubicación:</span>
                             {user.city}
                         </li>
                         <li className="flex items-center gap-1.5">
-                            <Heart className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
+                            <Heart className="w-4 h-4 text-app-accent" aria-hidden="true" />
                             <span className="sr-only">Orientación sexual:</span>
                             {sexualityLabel}
                         </li>
                     </ul>
-                    <p className="text-gray-700 leading-relaxed text-lg">
+                    <p className="text-app-secondary leading-relaxed text-lg">
                         {user.description}
                     </p>
                 </div>
 
-                <section className="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm">
-                    <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wider flex items-center gap-2">
-                        <Sprout className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" /> Mis intereses
+                <section className="bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm">
+                    <h2 className="text-sm font-bold text-app-secondary mb-3 uppercase tracking-wider flex items-center gap-2">
+                        <Sprout className="w-4 h-4 text-app-accent" aria-hidden="true" /> Mis intereses
                     </h2>
                     <ul className="flex flex-wrap gap-2">
                         {interestLabels.map((label) => (
-                            <li key={label} className="px-3 py-1.5 bg-bluvi-purple/5 border border-bluvi-purple/10 rounded-lg text-sm font-medium text-bluvi-purple">
+                            <li key={label} className="px-3 py-1.5 bg-app-pill border border-app-soft rounded-lg text-sm font-medium text-app-primary">
                                 {label}
                             </li>
                         ))}
                     </ul>
                 </section>
 
-                <section className="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm">
-                    <h2 className="text-sm font-bold text-gray-500 mb-4 uppercase tracking-wider flex items-center gap-2">
-                        <Brain className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" /> Mente y Comunicación
+                <section className="bg-app-surface-strong backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm">
+                    <h2 className="text-sm font-bold text-app-secondary mb-4 uppercase tracking-wider flex items-center gap-2">
+                        <Brain className="w-4 h-4 text-app-accent" aria-hidden="true" /> Mente y Comunicación
                     </h2>
                     <div className="mb-5">
-                        <h3 className="text-xs font-bold text-gray-400 uppercase block mb-2">Rasgos</h3>
+                        <h3 className="text-xs font-bold text-app-muted uppercase block mb-2">Rasgos</h3>
                         <ul className="flex flex-wrap gap-2">
                             {traitLabels.map((label) => (
-                                <li key={label} className="px-3 py-1.5 bg-bluvi-purple/5 text-bluvi-purple border border-bluvi-purple/10 rounded-lg text-sm font-medium">
+                                <li key={label} className="px-3 py-1.5 bg-app-pill text-app-primary border border-app-soft rounded-lg text-sm font-medium">
                                     {label}
                                 </li>
                             ))}
                         </ul>
                     </div>
                     <div>
-                        <h3 className="text-xs font-bold text-gray-400 uppercase block mb-2">Comunicación</h3>
+                        <h3 className="text-xs font-bold text-app-muted uppercase block mb-2">Comunicación</h3>
                         <ul className="flex flex-wrap gap-2">
                             {communicationLabels.length > 0 ? (
                                 communicationLabels.map((label, index) => (
                                     <li 
                                         key={`${label}-${index}`} // Usamos el index por si hay labels repetidos
-                                        className="px-3 py-1.5 bg-bluvi-purple/5 text-bluvi-purple border border-bluvi-purple/10 rounded-lg text-sm font-medium"
+                                        className="px-3 py-1.5 bg-app-pill text-app-primary border border-app-soft rounded-lg text-sm font-medium"
                                     >
                                         {label}
                                     </li>
                                 ))
                             ) : (
-                                <li className="text-gray-400 text-sm italic">No hay estilos definidos</li>
+                                <li className="text-app-muted text-sm italic">No hay estilos definidos</li>
                             )}
                         </ul>
                     </div>
                 </section>
                 <div className="flex justify-end mt-2">
-                    <button className="text-xs font-medium text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-red-200 outline-none">
+                    <button className="text-xs font-medium text-app-secondary hover:text-red-600 bg-app-surface-soft hover:bg-red-50 px-4 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-red-200 outline-none">
                         Denunciar y bloquear usuario
                     </button>
                 </div>
