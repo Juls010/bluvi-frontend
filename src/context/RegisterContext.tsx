@@ -17,6 +17,60 @@ interface RegisterData {
     description: string;
 }
 
+const DEFAULT_REGISTER_DATA: RegisterData = {
+    firstName: '',
+    lastName: '',
+    birthDate: '',
+    gender: '',
+    sexuality: '',
+    neurodivergences: [],
+    communicationStyle: [],
+    email: '',
+    password: '',
+    photos: [null, null, null, null, null],
+    city: '',
+    interests: [],
+    description: '',
+};
+
+const normalizeRegisterData = (raw: unknown): RegisterData => {
+    if (!raw || typeof raw !== 'object') {
+        return DEFAULT_REGISTER_DATA;
+    }
+
+    const data = raw as Partial<RegisterData>;
+
+    const photos = Array.isArray(data.photos)
+        ? data.photos.slice(0, 5).map((photo) => (typeof photo === 'string' && photo.length > 0 ? photo : null))
+        : DEFAULT_REGISTER_DATA.photos;
+
+    while (photos.length < 5) {
+        photos.push(null);
+    }
+
+    return {
+        firstName: typeof data.firstName === 'string' ? data.firstName : '',
+        lastName: typeof data.lastName === 'string' ? data.lastName : '',
+        birthDate: typeof data.birthDate === 'string' ? data.birthDate : '',
+        gender: typeof data.gender === 'number' ? data.gender : '',
+        sexuality: typeof data.sexuality === 'number' ? data.sexuality : '',
+        neurodivergences: Array.isArray(data.neurodivergences)
+            ? data.neurodivergences.filter((v): v is number => typeof v === 'number')
+            : [],
+        communicationStyle: Array.isArray(data.communicationStyle)
+            ? data.communicationStyle.filter((v): v is number => typeof v === 'number')
+            : [],
+        email: typeof data.email === 'string' ? data.email : '',
+        password: typeof data.password === 'string' ? data.password : '',
+        photos,
+        city: typeof data.city === 'string' ? data.city : '',
+        interests: Array.isArray(data.interests)
+            ? data.interests.filter((v): v is number => typeof v === 'number')
+            : [],
+        description: typeof data.description === 'string' ? data.description : '',
+    };
+};
+
 interface RegisterContextType {
     formData: RegisterData; 
     updateFormData: (newData: Partial<RegisterData>) => void; 
@@ -26,18 +80,15 @@ interface RegisterContextType {
 const RegisterContext = createContext<RegisterContextType | undefined>(undefined);
 
 export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    // 1. Cargamos el estado inicial desde localStorage (si existe)
     const [formData, setData] = useState<RegisterData>(() => {
-        const saved = localStorage.getItem('bluvi_reg_backup');
-        return saved ? JSON.parse(saved) : {
-            firstName: '', lastName: '', birthDate: '', gender: '', 
-            sexuality: '', neurodivergences: [], communicationStyle: [],
-            email: '', password: '', photos: [null, null, null, null, null],
-            city: '', interests: [], description: '',
-        };
+        try {
+            const saved = localStorage.getItem('bluvi_reg_backup');
+            return saved ? normalizeRegisterData(JSON.parse(saved)) : DEFAULT_REGISTER_DATA;
+        } catch {
+            return DEFAULT_REGISTER_DATA;
+        }
     });
 
-    // 2. Al actualizar, guardamos una copia de seguridad automática
     const updateFormData = (newData: Partial<RegisterData>) => {
         setData((prev) => {
             const updated = { ...prev, ...newData };
@@ -63,7 +114,7 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 neurodivergences: formData.neurodivergences,
                 communication_style: formData.communicationStyle,
                 interests: formData.interests,
-                photos: formData.photos
+                photos: formData.photos.filter((photo): photo is string => typeof photo === 'string' && photo.length > 0)
             };
 
             // VALIDACIÓN CRÍTICA: Si la fecha está vacía aquí, detenemos el proceso

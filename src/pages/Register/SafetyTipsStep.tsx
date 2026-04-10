@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ShieldCheck, Heart, UserCheck, MessageCircleWarning, Info } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
@@ -30,7 +30,6 @@ const TIPS = [
 export const SafetyTipsStep = () => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
 
     const handleFinishRegistration = () => {
         setIsModalOpen(true); 
@@ -79,13 +78,10 @@ export const SafetyTipsStep = () => {
                 
                 <Button
                     onClick={handleFinishRegistration} 
-                    disabled={isLoading}
-                    className={`w-full max-w-sm py-4 rounded-full text-lg shadow-xl bg-bluvi-purple text-white transition-all ${
-                            isLoading ? 'opacity-70 cursor-wait' : 'hover:scale-105'
-                        }`}
+                    className="w-full max-w-sm py-4 rounded-full text-lg shadow-xl bg-bluvi-purple text-white transition-all hover:scale-105"
                     aria-label="Entendido, finalizar registro"
                 >
-                    {isLoading ? 'Guardando tu perfil...' : '¡Entendido, vamos allá!'}
+                    ¡Entendido, vamos allá!
                 </Button>
             </footer>
 

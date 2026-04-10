@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react';
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 // Layouts
@@ -9,39 +10,45 @@ import { ChatLayout } from '../layouts/ChatLayout';
 // Contexts
 import { RegisterProvider } from '../context/RegisterContext';
 
-// Pages
-import { Welcome } from '../pages/Welcome/Welcome';
-import { Login } from '../pages/Auth/Login';
-import { NameStep } from '../pages/Register/NameStep';
-import { AgeStep } from '../pages/Register/AgeStep';
-import { GenderStep } from '../pages/Register/GenderStep';
-import { SexualityStep } from '../pages/Register/SexualityStep';
-import { NeurodivergenceStep } from '../pages/Register/NeurodivergenceStep';
-import { CommunicationStyleStep } from '../pages/Register/CommunicationsStyleStep';
-import { EmailStep } from '../pages/Register/EmailStep';
-import { PhotoUploadStep } from '../pages/Register/PhotoUploadStep';
-import { LocationStep } from '../pages/Register/LocationStep';
-import { InterestsStep } from '../pages/Register/InterestsStep';
-import { ProfileDescriptionStep } from '../pages/Register/ProfileDescriptionStep';
-import { EmailVerificationStep } from '../pages/Register/EmailVerificationStep';
-import { SafetyTipsStep } from '../pages/Register/SafetyTipsStep';
-import { Home } from '../pages/App/Home';
-import { Discovery } from '../pages/App/Discovery';
-import { EventFlyer } from '../pages/App/EventFlyer';
-import { Messages } from '../pages/Messages';
-import { ChatDetail } from '../pages/ChatDetails';
-import { ChatUserProfile } from '../pages/ChatUserProfile';
-import { UserProfile } from '../pages/App/UserProfile';
-import { Settings } from '../pages/Settings/Settings';
 import PrivateRoute from '../components/PrivateRoute';
+
+const WelcomePage = lazy(() => import('../pages/Welcome/Welcome').then((m) => ({ default: m.Welcome })));
+const LoginPage = lazy(() => import('../pages/Auth/Login').then((m) => ({ default: m.Login })));
+const NameStepPage = lazy(() => import('../pages/Register/NameStep').then((m) => ({ default: m.NameStep })));
+const AgeStepPage = lazy(() => import('../pages/Register/AgeStep').then((m) => ({ default: m.AgeStep })));
+const GenderStepPage = lazy(() => import('../pages/Register/GenderStep').then((m) => ({ default: m.GenderStep })));
+const SexualityStepPage = lazy(() => import('../pages/Register/SexualityStep').then((m) => ({ default: m.SexualityStep })));
+const NeurodivergenceStepPage = lazy(() => import('../pages/Register/NeurodivergenceStep').then((m) => ({ default: m.NeurodivergenceStep })));
+const CommunicationStyleStepPage = lazy(() => import('../pages/Register/CommunicationsStyleStep').then((m) => ({ default: m.CommunicationStyleStep })));
+const EmailStepPage = lazy(() => import('../pages/Register/EmailStep').then((m) => ({ default: m.EmailStep })));
+const PhotoUploadStepPage = lazy(() => import('../pages/Register/PhotoUploadStep').then((m) => ({ default: m.PhotoUploadStep })));
+const LocationStepPage = lazy(() => import('../pages/Register/LocationStep').then((m) => ({ default: m.LocationStep })));
+const InterestsStepPage = lazy(() => import('../pages/Register/InterestsStep').then((m) => ({ default: m.InterestsStep })));
+const ProfileDescriptionStepPage = lazy(() => import('../pages/Register/ProfileDescriptionStep').then((m) => ({ default: m.ProfileDescriptionStep })));
+const EmailVerificationStepPage = lazy(() => import('../pages/Register/EmailVerificationStep').then((m) => ({ default: m.EmailVerificationStep })));
+const SafetyTipsStepPage = lazy(() => import('../pages/Register/SafetyTipsStep').then((m) => ({ default: m.SafetyTipsStep })));
+const HomePage = lazy(() => import('../pages/App/Home').then((m) => ({ default: m.Home })));
+const DiscoveryPage = lazy(() => import('../pages/App/Discovery').then((m) => ({ default: m.Discovery })));
+const EventFlyerPage = lazy(() => import('../pages/App/EventFlyer').then((m) => ({ default: m.EventFlyer })));
+const MessagesPage = lazy(() => import('../pages/Messages').then((m) => ({ default: m.Messages })));
+const ChatDetailPage = lazy(() => import('../pages/ChatDetails').then((m) => ({ default: m.ChatDetail })));
+const ChatUserProfilePage = lazy(() => import('../pages/ChatUserProfile').then((m) => ({ default: m.ChatUserProfile })));
+const UserProfilePage = lazy(() => import('../pages/App/UserProfile').then((m) => ({ default: m.UserProfile })));
+const SettingsPage = lazy(() => import('../pages/Settings/Settings').then((m) => ({ default: m.Settings })));
+
+const withSuspense = (element: React.ReactNode) => (
+    <Suspense fallback={<div className="min-h-screen w-full bg-app-surface" />}>
+        {element}
+    </Suspense>
+);
 
 export const router = createBrowserRouter([
     {
         path: "/",
         element: <WelcomeLayout />,
         children: [
-            { index: true, element: <Welcome /> },
-            { path: "login", element: <Login /> },
+            { index: true, element: withSuspense(<WelcomePage />) },
+            { path: "login", element: withSuspense(<LoginPage />) },
         ]
     },
     {
@@ -52,19 +59,19 @@ export const router = createBrowserRouter([
             </RegisterProvider>
         ),
         children: [
-            { path: "name", element: <NameStep /> },
-            { path: "age", element: <AgeStep /> },
-            { path: "gender", element: <GenderStep /> },
-            { path: "sexuality", element: <SexualityStep /> },
-            { path: "neurodivergence", element: <NeurodivergenceStep /> },
-            { path: "communication", element: <CommunicationStyleStep /> },
-            { path: "email", element: <EmailStep /> },
-            { path: "photos", element: <PhotoUploadStep /> },
-            { path: "location", element: <LocationStep /> },
-            { path: "interests", element: <InterestsStep /> },
-            { path: "description", element: <ProfileDescriptionStep /> },
-            { path: "verificationemail", element: <EmailVerificationStep /> },
-            { path: "safety-tips", element: <SafetyTipsStep /> },
+            { path: "name", element: withSuspense(<NameStepPage />) },
+            { path: "age", element: withSuspense(<AgeStepPage />) },
+            { path: "gender", element: withSuspense(<GenderStepPage />) },
+            { path: "sexuality", element: withSuspense(<SexualityStepPage />) },
+            { path: "neurodivergence", element: withSuspense(<NeurodivergenceStepPage />) },
+            { path: "communication", element: withSuspense(<CommunicationStyleStepPage />) },
+            { path: "email", element: withSuspense(<EmailStepPage />) },
+            { path: "photos", element: withSuspense(<PhotoUploadStepPage />) },
+            { path: "location", element: withSuspense(<LocationStepPage />) },
+            { path: "interests", element: withSuspense(<InterestsStepPage />) },
+            { path: "description", element: withSuspense(<ProfileDescriptionStepPage />) },
+            { path: "verificationemail", element: withSuspense(<EmailVerificationStepPage />) },
+            { path: "safety-tips", element: withSuspense(<SafetyTipsStepPage />) },
         ]
     },
     {
@@ -76,13 +83,13 @@ export const router = createBrowserRouter([
         ),
         children: [
             { index: true, element: <Navigate to="/app/home" replace /> },
-            { path: "home", element: <Home />, handle: { topOffset: 'normal' } },
-            { path: "events/:eventId", element: <EventFlyer />, handle: { topOffset: 'normal' } },
-            { path: "discovery", element: <Discovery />, handle: { topOffset: 'normal' } },
-            { path: "messages", element: <Messages />, handle: { topOffset: 'normal' } },
-            { path: "profile", element: <UserProfile />, handle: { topOffset: 'normal' } },
-            { path: "settings", element: <Settings />, handle: { topOffset: 'normal' } },
-            { path: "user/:userId", element: <ChatUserProfile />, handle: { topOffset: 'compact' } },
+            { path: "home", element: withSuspense(<HomePage />), handle: { topOffset: 'normal' } },
+            { path: "events/:eventId", element: withSuspense(<EventFlyerPage />), handle: { topOffset: 'normal' } },
+            { path: "discovery", element: withSuspense(<DiscoveryPage />), handle: { topOffset: 'normal' } },
+            { path: "messages", element: withSuspense(<MessagesPage />), handle: { topOffset: 'normal' } },
+            { path: "profile", element: withSuspense(<UserProfilePage />), handle: { topOffset: 'normal' } },
+            { path: "settings", element: withSuspense(<SettingsPage />), handle: { topOffset: 'normal' } },
+            { path: "user/:userId", element: withSuspense(<ChatUserProfilePage />), handle: { topOffset: 'compact' } },
         ]
     },
     {
@@ -91,7 +98,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: ":id", 
-                element: <ChatDetail />
+                element: withSuspense(<ChatDetailPage />)
             }
         ]
     },

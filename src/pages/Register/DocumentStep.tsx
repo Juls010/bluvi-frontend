@@ -1,27 +1,25 @@
 import React from 'react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
-import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
 
 export const DocumentStep: React.FC = () => {
     const navigate = useNavigate();
-    
-    const { data, updateData } = useRegister();
+    const [documentFile, setDocumentFile] = React.useState<File | null>(null);
 
-    const fileName = data.documentFile?.name;
+    const fileName = documentFile?.name;
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            updateData({ documentFile: file });
+            setDocumentFile(file);
         }
     };
 
     const handleNext = () => {
-        if (!data.documentFile) return; 
+        if (!documentFile) return; 
         
-        console.log("Documento listo para enviar:", data.documentFile.name);
+        console.log("Documento listo para enviar:", documentFile.name);
         
 
         

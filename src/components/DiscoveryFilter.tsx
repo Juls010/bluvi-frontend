@@ -42,7 +42,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
   }, [isOpen, initialFilters]);
 
   // Función genérica para toggles
-  const toggleItem = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, item: string) => {
+  const toggleItem = (setList: React.Dispatch<React.SetStateAction<string[]>>, item: string) => {
     setList(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
   };
 
@@ -124,7 +124,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 return (
                   <button
                     key={tag}
-                    onClick={() => toggleItem(selectedTags, setSelectedTags, tag)}
+                    onClick={() => toggleItem(setSelectedTags, tag)}
                     className={`px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20
                       ${isSelected 
                         ? 'bg-bluvi-purple text-white border-bluvi-purple shadow-md' 
@@ -150,7 +150,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
               {communicationOptions.map(style => (
                 <button 
                   key={style}
-                  onClick={() => toggleItem(communicationStyle, setCommunicationStyle, style)}
+                  onClick={() => toggleItem(setCommunicationStyle, style)}
                   className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20
                     ${communicationStyle.includes(style) 
                       ? 'bg-bluvi-purple/10 border-bluvi-purple text-bluvi-purple' 
@@ -176,7 +176,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
               {sensoryOptions.map(pref => (
                 <button 
                   key={pref}
-                  onClick={() => toggleItem(sensoryPref, setSensoryPref, pref)}
+                  onClick={() => toggleItem(setSensoryPref, pref)}
                   className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20
                     ${sensoryPref.includes(pref) 
                       ? 'bg-[#9d66ff]/10 border-[#9d66ff] text-[#9d66ff]' 
