@@ -75,7 +75,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                     <button 
                             onClick={onLike}
                             aria-label={`Me gusta ${user.first_name}`}
-                            className="w-16 h-16 relative overflow-visible rounded-2xl text-white shadow-md hover:scale-[1.03] hover:brightness-105 transition-all flex items-center justify-center focus:ring-4 focus:ring-purple-300 outline-none"
+                            className="w-16 h-16 relative overflow-visible rounded-2xl text-app-on-accent shadow-md hover:scale-[1.03] hover:brightness-105 transition-all flex items-center justify-center focus:ring-4 focus:ring-purple-300 outline-none"
                             style={{ backgroundColor: 'var(--app-accent)' }}
                         >
                             <ClickSpark 

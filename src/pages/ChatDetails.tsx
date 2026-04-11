@@ -42,6 +42,7 @@ export const ChatDetail: React.FC = () => {
     const [hasMore, setHasMore] = useState(true);
     const [isTypingRemote, setIsTypingRemote] = useState(false);
     const [isRemoteUserOnline, setIsRemoteUserOnline] = useState(false);
+    const [canShowOnlineStatus, setCanShowOnlineStatus] = useState(true);
     const [showPicker, setShowPicker] = useState(false);
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -96,8 +97,9 @@ export const ChatDetail: React.FC = () => {
             setHasMore(Boolean(response.hasMore));
             
             // Consultar estado online del otro usuario
-            const isOnline = await checkUserOnline(chatUserId);
-            setIsRemoteUserOnline(isOnline);
+            const onlineStatus = await checkUserOnline(chatUserId);
+            setIsRemoteUserOnline(onlineStatus.isOnline);
+            setCanShowOnlineStatus(onlineStatus.canShowOnlineStatus);
             
             await markConversationRead(chatUserId);
         } catch (error) {
@@ -244,12 +246,20 @@ export const ChatDetail: React.FC = () => {
         socket?.on('chat:messages:read', onRead);
 
         const onUserOnline = (payload: { userId: number }) => {
+            if (!canShowOnlineStatus) {
+                return;
+            }
+
             if (payload.userId === chatUserId) {
                 setIsRemoteUserOnline(true);
             }
         };
 
         const onUserOffline = (payload: { userId: number }) => {
+            if (!canShowOnlineStatus) {
+                return;
+            }
+
             if (payload.userId === chatUserId) {
                 setIsRemoteUserOnline(false);
             }
@@ -266,7 +276,7 @@ export const ChatDetail: React.FC = () => {
             socket?.off('user:offline', onUserOffline);
             disconnectRealtime();
         };
-    }, [chatUserId, currentUserId]);
+    }, [chatUserId, currentUserId, canShowOnlineStatus]);
 
     useEffect(() => {
         if (isPrependingRef.current) {
@@ -286,22 +296,22 @@ export const ChatDetail: React.FC = () => {
     }, []);
 
     if (!Number.isInteger(chatUserId) || chatUserId <= 0) {
-        return <div className="pt-20 text-center text-bluvi-purple font-medium">Chat no válido.</div>;
+        return <div className="pt-20 text-center text-app-primary font-medium">Chat no válido.</div>;
     }
 
     if (loading) {
-        return <div className="pt-20 text-center text-bluvi-purple font-medium">Cargando conversación...</div>;
+        return <div className="pt-20 text-center text-app-primary font-medium">Cargando conversación...</div>;
     }
 
     return (
         <div className="flex justify-center h-[100svh]">
             <div className="flex flex-col w-full max-w-[95%]">
-                <header className="flex-none z-50 bg-white/90 backdrop-blur-md border-b rounded-2xl border-purple-100/60 px-5 py-3 flex items-center justify-between shadow-sm shadow-purple-100/30">
+                <header className="flex-none z-50 bg-app-surface-strong backdrop-blur-md border-b rounded-2xl border-app-soft px-5 py-3 flex items-center justify-between shadow-sm">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate(-1)}
                             aria-label="Volver a la lista de conversaciones"
-                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-purple-50 text-bluvi-purple transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/30"
+                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-app-surface-soft text-app-accent transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/30"
                         >
                             <ArrowLeft size={22} strokeWidth={2} />
                         </button>
@@ -313,22 +323,24 @@ export const ChatDetail: React.FC = () => {
                             <div className="relative">
                                 <img
                                     src={counterpart?.main_photo || 'https://via.placeholder.com/120'}
-                                    className="w-11 h-11 rounded-full object-cover ring-2 ring-purple-200"
+                                    className="w-11 h-11 rounded-full object-cover ring-2 ring-app-soft"
                                     alt={counterpart?.first_name || 'Usuario'}
                                 />
-                                <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ring-2 ring-white transition-colors ${isRemoteUserOnline ? 'bg-green-400' : 'bg-gray-300'}`} />
+                                <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ring-2 ring-app-surface transition-colors ${canShowOnlineStatus && isRemoteUserOnline ? 'bg-green-400' : 'bg-gray-400'}`} />
                             </div>
                             <div className="text-left">
-                                <h2 className="text-[15px] font-semibold text-bluvi-purple leading-tight">
+                                <h2 className="text-[15px] font-semibold text-app-primary leading-tight">
                                     {counterpart ? `${counterpart.first_name} ${counterpart.last_name}` : 'Chat'}
                                 </h2>
                                 <span className="text-[11px] font-medium" aria-live="polite" role="status">
                                     {isTypingRemote ? (
-                                        <span className="text-blue-600">escribiendo…</span>
+                                        <span className="text-app-secondary">escribiendo…</span>
+                                    ) : !canShowOnlineStatus ? (
+                                        <span className="text-app-muted">Estado oculto</span>
                                     ) : isRemoteUserOnline ? (
                                         <span className="text-green-600">Conectada/o</span>
                                     ) : (
-                                        <span className="text-gray-500">Desconectada/o</span>
+                                        <span className="text-app-muted">Desconectada/o</span>
                                     )}
                                 </span>
                             </div>
@@ -336,7 +348,7 @@ export const ChatDetail: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-1">
-                        <button className="w-10 h-10 flex items-center justify-center rounded-full text-bluvi-purple/50 hover:bg-purple-50 hover:text-bluvi-purple transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20" aria-label="Más opciones del chat">
+                        <button className="w-10 h-10 flex items-center justify-center rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20" aria-label="Más opciones del chat">
                             <MoreVertical size={20} strokeWidth={1.8} />
                         </button>
                     </div>
@@ -360,13 +372,13 @@ export const ChatDetail: React.FC = () => {
                     tabIndex={0}
                 >
                     {loadingOlder && (
-                        <div className="text-center text-xs text-bluvi-purple/50 py-2" aria-live="polite">Cargando mensajes anteriores...</div>
+                        <div className="text-center text-xs text-app-muted py-2" aria-live="polite">Cargando mensajes anteriores...</div>
                     )}
 
                     <div className="flex items-center gap-3 my-4" aria-hidden="true">
-                        <div className="flex-1 h-px bg-purple-100/70" />
-                        <span className="text-[11px] text-bluvi-purple/40 font-medium tracking-wide uppercase">Hoy</span>
-                        <div className="flex-1 h-px bg-purple-100/70" />
+                        <div className="flex-1 h-px border-t border-app-soft" />
+                        <span className="text-[11px] text-app-muted font-medium tracking-wide uppercase">Hoy</span>
+                        <div className="flex-1 h-px border-t border-app-soft" />
                     </div>
 
                     {messages.map((msg, index) => {
@@ -385,7 +397,7 @@ export const ChatDetail: React.FC = () => {
                                         {(!messages[index + 1] || messages[index + 1].sender_id === currentUserId) && (
                                             <img
                                                 src={counterpart?.main_photo || 'https://via.placeholder.com/120'}
-                                                className="w-7 h-7 rounded-full object-cover ring-1 ring-purple-100"
+                                                className="w-7 h-7 rounded-full object-cover ring-1 ring-app-soft"
                                                 alt={counterpart?.first_name || 'Usuario'}
                                             />
                                         )}
@@ -397,21 +409,24 @@ export const ChatDetail: React.FC = () => {
                                         className={`
                                                 px-4 py-2.5 text-[15px] leading-7
                                             ${isMe
-                                                    ? 'bg-bluvi-purple text-white rounded-2xl rounded-br-md shadow-md shadow-bluvi-purple/20'
-                                                    : 'bg-white text-gray-800 rounded-2xl rounded-bl-md shadow-sm border border-purple-100'
+                                                    ? 'text-app-on-accent rounded-2xl rounded-br-md shadow-md'
+                                                    : 'bg-app-surface text-app-primary rounded-2xl rounded-bl-md shadow-sm border border-app-soft'
                                             }
                                         `}
-                                        style={{ overflowWrap: 'anywhere' }}
+                                        style={{
+                                            overflowWrap: 'anywhere',
+                                            ...(isMe ? { backgroundColor: 'var(--app-accent)' } : {}),
+                                        }}
                                     >
                                         {msg.body}
                                     </div>
 
                                     <div className="flex items-center gap-1 mt-1 px-1">
-                                        <span className="text-[11px] text-bluvi-purple/40">{formatHour(msg.created_at)}</span>
+                                        <span className="text-[11px] text-app-muted">{formatHour(msg.created_at)}</span>
                                         {isMe && (
                                             <span className="flex" aria-label={isRead ? 'Leído' : 'Enviado'}>
-                                                <Check size={11} className={isRead ? 'text-bluvi-purple' : 'text-bluvi-purple/35'} />
-                                                <Check size={11} className={isRead ? 'text-bluvi-purple' : 'text-bluvi-purple/35 -ml-1.5'} />
+                                                <Check size={11} className={isRead ? 'text-app-accent' : 'text-app-muted'} />
+                                                <Check size={11} className={isRead ? 'text-app-accent' : 'text-app-muted -ml-1.5'} />
                                             </span>
                                         )}
                                     </div>
@@ -423,10 +438,10 @@ export const ChatDetail: React.FC = () => {
                     <div ref={messagesEndRef} />
                 </main>
 
-                <div className="flex-none px-4 pb-6 pt-2 bg-white/60 backdrop-blur-xl rounded-2xl border-t border-purple-50">
+                <div className="flex-none px-4 pb-6 pt-2 bg-app-surface-nav backdrop-blur-xl rounded-2xl border-t border-app-soft">
                     <div className="flex items-end gap-2">
                         <div className="flex gap-1 pb-2">
-                            <button className="w-10 h-10 flex items-center justify-center text-bluvi-purple/40 hover:text-bluvi-purple hover:bg-purple-50 rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20" aria-label="Adjuntar imagen">
+                            <button className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20" aria-label="Adjuntar imagen">
                                 <Image size={20} strokeWidth={1.8} />
                             </button>
                             <div className="relative">
@@ -435,7 +450,7 @@ export const ChatDetail: React.FC = () => {
                                     aria-controls={typingPickerId}
                                     aria-expanded={showPicker}
                                     aria-label="Abrir selector de emoji"
-                                    className="w-10 h-10 flex items-center justify-center text-bluvi-purple/40 hover:text-bluvi-purple hover:bg-purple-50 rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
+                                    className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
                                 >
                                     <Smile size={20} strokeWidth={1.8} />
                                 </button>
@@ -452,7 +467,7 @@ export const ChatDetail: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="flex-1 bg-white/90 border border-purple-100 rounded-2xl px-4 py-2.5 shadow-sm flex items-end gap-2">
+                        <div className="flex-1 bg-app-surface border border-app-soft rounded-2xl px-4 py-2.5 shadow-sm flex items-end gap-2">
                             <textarea
                                 rows={1}
                                 placeholder="Escribe un mensaje..."
@@ -465,7 +480,7 @@ export const ChatDetail: React.FC = () => {
                                     event.target.style.height = `${Math.min(event.target.scrollHeight, 120)}px`;
                                 }}
                                 onKeyDown={handleEnterSend}
-                                className="flex-1 bg-transparent outline-none text-bluvi-purple placeholder:text-bluvi-purple/30 text-[15px] resize-none leading-relaxed max-h-[120px] overflow-y-auto"
+                                className="flex-1 bg-transparent outline-none text-app-primary placeholder:text-app-muted text-[15px] resize-none leading-relaxed max-h-[120px] overflow-y-auto"
                                 style={{ minHeight: '24px' }}
                             />
                         </div>
@@ -473,7 +488,8 @@ export const ChatDetail: React.FC = () => {
                         <button
                             onClick={() => void handleSendMessage()}
                             aria-label="Enviar mensaje"
-                            className={`w-11 h-11 flex items-center justify-center rounded-full shadow-md transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/30 ${inputText.trim() ? 'bg-bluvi-purple text-white shadow-bluvi-purple/30' : 'bg-purple-100 text-bluvi-purple/40'}`}
+                            className={`w-11 h-11 flex items-center justify-center rounded-full shadow-md transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/30 ${inputText.trim() ? 'text-app-on-accent' : 'bg-app-surface-soft text-app-muted'}`}
+                            style={inputText.trim() ? { backgroundColor: 'var(--app-accent)' } : undefined}
                             disabled={!inputText.trim() || sending}
                         >
                             <Send size={18} strokeWidth={2} className={inputText.trim() ? 'translate-x-0.5 -translate-y-0.5' : ''} />

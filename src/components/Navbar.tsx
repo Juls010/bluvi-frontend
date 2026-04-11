@@ -84,7 +84,7 @@ const NavItem: React.FC<{
         flex items-center transition-all duration-200
         ${mobile
             ? 'flex-1 gap-1.5 py-2.5'
-            : `gap-2 px-3.5 py-2 rounded-xl ${active ? 'bg-bluvi-purple/12 ring-1 ring-bluvi-purple/20' : 'hover:bg-app-surface-soft'}`
+            : `gap-2 px-3.5 py-2 rounded-xl ${active ? 'bg-app-surface-soft ring-1 ring-app-strong' : 'hover:bg-app-surface-soft'}`
         }
         `}
     >
@@ -94,7 +94,7 @@ const NavItem: React.FC<{
             transition-all duration-200
             ${mobile ? 'w-6 h-6' : 'w-4.5 h-4.5'}
             ${active
-            ? 'text-bluvi-purple scale-110 [&>svg]:stroke-[2.3px]'
+            ? 'text-app-accent scale-110 [&>svg]:stroke-[2.3px]'
             : 'text-app-secondary [&>svg]:stroke-[1.9px]'
             }
         `}
@@ -103,7 +103,8 @@ const NavItem: React.FC<{
         {unreadCount > 0 && (
             <span
                 aria-hidden="true"
-                className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-green-500 ring-2 ring-white"
+                className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ring-2 ring-app-surface"
+                style={{ backgroundColor: 'var(--app-accent)' }}
             />
         )}
         </span>
@@ -112,15 +113,15 @@ const NavItem: React.FC<{
         className={`
             font-semibold leading-none tracking-wide transition-all duration-200 overflow-hidden
             ${mobile
-            ? `text-[10px] max-h-4 opacity-100 ${active ? 'text-bluvi-purple' : 'text-app-muted'}`
-            : `text-[13px] max-h-4 opacity-100 ${active ? 'text-bluvi-purple' : 'text-app-secondary'}`
+            ? `text-[10px] max-h-4 opacity-100 ${active ? 'text-app-accent' : 'text-app-muted'}`
+            : `text-[13px] max-h-4 opacity-100 ${active ? 'text-app-accent' : 'text-app-secondary'}`
             }
         `}
         >
         {label}
         </span>
         {mobile && unreadCount > 0 && (
-            <span className="mt-1 inline-flex items-center justify-center rounded-full bg-green-500 px-2 py-0.5 text-[9px] font-bold leading-none text-white shadow-sm ring-2 ring-white">
+            <span className="mt-1 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[9px] font-bold leading-none text-app-on-accent shadow-sm ring-2 ring-app-surface" style={{ backgroundColor: 'var(--app-accent)' }}>
                 {unreadCount > 9 ? '9+' : unreadCount}
             </span>
         )}
@@ -136,10 +137,12 @@ export const Navbar: React.FC = () => {
     const { user, logout, isAuthenticated } = useAuth();
     const { unreadMessages, pendingMatchRequests } = useNotifications();
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isUserMenuClosing, setIsUserMenuClosing] = useState(false);
     const [profileSnapshot, setProfileSnapshot] = useState<Record<string, unknown> | null>(null);
     const userMenuRef = useRef<HTMLDivElement | null>(null);
     const menuButtonRef = useRef<HTMLButtonElement | null>(null);
     const firstMenuItemRef = useRef<HTMLAnchorElement | null>(null);
+    const closeMenuTimerRef = useRef<number | null>(null);
 
     const desktopNavItems = useMemo(() => NAV_ITEMS.filter((item) => DESKTOP_NAV_KEYS.has(item.key)), []);
 
@@ -172,10 +175,13 @@ export const Navbar: React.FC = () => {
                 const imageObj = entry as Record<string, unknown>;
                 const objectCandidates = [
                     imageObj.url,
+                    imageObj.url_photo,
                     imageObj.photo,
                     imageObj.path,
                     imageObj.image,
                     imageObj.src,
+                    imageObj.avatar_url,
+                    imageObj.secure_url,
                 ];
                 const objectMatch = objectCandidates.find((item) => typeof item === 'string' && item.trim().length > 0);
                 if (typeof objectMatch === 'string') {
@@ -186,16 +192,43 @@ export const Navbar: React.FC = () => {
             return undefined;
         };
 
+        const resolvePhotoCollection = (value: unknown): string | undefined => {
+            if (Array.isArray(value)) {
+                return value.map((entry) => resolveFromEntry(entry)).find((entry) => typeof entry === 'string' && entry.trim().length > 0);
+            }
+
+            if (typeof value === 'string') {
+                const trimmed = value.trim();
+                if (!trimmed) {
+                    return undefined;
+                }
+
+                try {
+                    const parsed = JSON.parse(trimmed);
+                    if (Array.isArray(parsed)) {
+                        return parsed.map((entry) => resolveFromEntry(entry)).find((entry) => typeof entry === 'string' && entry.trim().length > 0);
+                    }
+                } catch {
+                    return resolveFromEntry(trimmed);
+                }
+
+                return resolveFromEntry(trimmed);
+            }
+
+            return undefined;
+        };
+
         const candidates = [
             data.main_photo,
+            data.mainPhoto,
             data.photo,
             data.avatar,
             data.image,
             data.profile_image,
             data.profile_photo,
-            Array.isArray(data.photos)
-                ? data.photos.map((entry) => resolveFromEntry(entry)).find((entry) => typeof entry === 'string' && entry.trim().length > 0)
-                : undefined,
+            data.url_photo,
+            data.avatar_url,
+            resolvePhotoCollection(data.photos),
         ];
 
         const photo = candidates.find((entry) => typeof entry === 'string' && entry.trim().length > 0);
@@ -212,15 +245,33 @@ export const Navbar: React.FC = () => {
     useEffect(() => {
         if (!isUserMenuOpen) return;
 
+        const requestCloseMenu = () => {
+            if (isUserMenuClosing) {
+                return;
+            }
+
+            setIsUserMenuClosing(true);
+
+            if (closeMenuTimerRef.current) {
+                window.clearTimeout(closeMenuTimerRef.current);
+            }
+
+            closeMenuTimerRef.current = window.setTimeout(() => {
+                setIsUserMenuOpen(false);
+                setIsUserMenuClosing(false);
+                closeMenuTimerRef.current = null;
+            }, 170);
+        };
+
         const handlePointerDown = (event: MouseEvent) => {
             if (!userMenuRef.current?.contains(event.target as Node)) {
-                setIsUserMenuOpen(false);
+                requestCloseMenu();
             }
         };
 
         const handleEscape = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
-                setIsUserMenuOpen(false);
+                requestCloseMenu();
                 menuButtonRef.current?.focus();
             }
         };
@@ -232,13 +283,21 @@ export const Navbar: React.FC = () => {
             document.removeEventListener('mousedown', handlePointerDown);
             document.removeEventListener('keydown', handleEscape);
         };
-    }, [isUserMenuOpen]);
+    }, [isUserMenuOpen, isUserMenuClosing]);
 
     useEffect(() => {
         if (isUserMenuOpen) {
             firstMenuItemRef.current?.focus();
         }
     }, [isUserMenuOpen]);
+
+    useEffect(() => {
+        return () => {
+            if (closeMenuTimerRef.current) {
+                window.clearTimeout(closeMenuTimerRef.current);
+            }
+        };
+    }, []);
 
     useEffect(() => {
         setIsUserMenuOpen(false);
@@ -269,8 +328,37 @@ export const Navbar: React.FC = () => {
         };
     }, [isAuthenticated]);
 
+    const closeUserMenu = () => {
+        if (!isUserMenuOpen || isUserMenuClosing) {
+            return;
+        }
+
+        setIsUserMenuClosing(true);
+
+        if (closeMenuTimerRef.current) {
+            window.clearTimeout(closeMenuTimerRef.current);
+        }
+
+        closeMenuTimerRef.current = window.setTimeout(() => {
+            setIsUserMenuOpen(false);
+            setIsUserMenuClosing(false);
+            closeMenuTimerRef.current = null;
+        }, 170);
+    };
+
     const toggleUserMenu = () => {
-        setIsUserMenuOpen((prev) => !prev);
+        if (isUserMenuOpen) {
+            closeUserMenu();
+            return;
+        }
+
+        if (closeMenuTimerRef.current) {
+            window.clearTimeout(closeMenuTimerRef.current);
+            closeMenuTimerRef.current = null;
+        }
+
+        setIsUserMenuClosing(false);
+        setIsUserMenuOpen(true);
     };
 
     const handleLogout = async () => {
@@ -309,7 +397,7 @@ export const Navbar: React.FC = () => {
                     ref={menuButtonRef}
                     type="button"
                     aria-haspopup="menu"
-                    aria-expanded={isUserMenuOpen}
+                    aria-expanded={isUserMenuOpen && !isUserMenuClosing}
                     aria-controls="user-navbar-menu"
                     aria-label={`Cuenta de ${displayName}`}
                     onClick={toggleUserMenu}
@@ -317,21 +405,22 @@ export const Navbar: React.FC = () => {
                         relative w-10 h-10 rounded-xl overflow-visible border shadow-sm
                         bg-app-surface transition-all duration-200
                         focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/50
-                        ${isUserSectionActive ? 'border-bluvi-purple/60 ring-2 ring-bluvi-purple/20' : 'border-app-soft hover:border-bluvi-purple/35'}
+                        ${isUserSectionActive ? 'border-app-strong ring-2 ring-app-strong' : 'border-app-soft hover:border-app-strong'}
                     `}
                 >
                     <span className="block w-full h-full rounded-xl overflow-hidden">
                         {avatarSrc ? (
                             <img src={avatarSrc} alt="" className="w-full h-full object-cover" />
                         ) : (
-                            <span className="w-full h-full flex items-center justify-center text-sm font-bold text-bluvi-purple bg-bluvi-light-purple/50">
+                            <span className="w-full h-full flex items-center justify-center text-sm font-bold text-app-accent bg-app-surface-soft">
                                 {avatarInitial}
                             </span>
                         )}
                     </span>
                     <span
                         aria-hidden="true"
-                        className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 ring-2 ring-white"
+                        className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-app-surface"
+                        style={{ backgroundColor: 'var(--app-accent)' }}
                     />
                 </button>
 
@@ -340,7 +429,7 @@ export const Navbar: React.FC = () => {
                         id="user-navbar-menu"
                         role="menu"
                         aria-label="Menú de cuenta"
-                        className="absolute right-0 mt-2 w-56 rounded-2xl border border-app-soft bg-app-surface-strong backdrop-blur-md shadow-xl p-1.5"
+                        className={`absolute right-0 mt-2 w-56 rounded-2xl border border-app-soft bg-app-surface-strong backdrop-blur-md shadow-xl p-1.5 origin-top-right motion-reduce:animate-none ${isUserMenuClosing ? 'animate-navbar-menu-out' : 'animate-navbar-menu'}`}
                     >
                         <p className="px-3 py-2 text-xs font-semibold text-app-secondary" aria-live="polite">
                             Sesión iniciada como {displayName}
@@ -350,7 +439,8 @@ export const Navbar: React.FC = () => {
                             to="/app/profile"
                             role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary hover:bg-app-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                            data-navbar-menu-item="true"
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ver mi perfil
                         </Link>
@@ -358,15 +448,18 @@ export const Navbar: React.FC = () => {
                             to="/app/settings"
                             role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary hover:bg-app-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                            data-navbar-menu-item="true"
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ajustes de cuenta
                         </Link>
                         <button
                             type="button"
                             role="menuitem"
+                            data-navbar-menu-item="true"
+                            data-navbar-menu-danger="true"
                             onClick={handleLogout}
-                            className="w-full text-left rounded-xl px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                            className="w-full text-left rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Cerrar sesión
                         </button>

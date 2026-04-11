@@ -18,8 +18,10 @@ export const AppLayout: React.FC = () => {
   const matches = useMatches();
   const location = useLocation();
   const prefersReducedMotion = useReducedMotion();
+  const reduceMotionFromSettings = typeof document !== 'undefined' && document.documentElement.classList.contains('reduce-motion');
+  const shouldReduceMotion = prefersReducedMotion || reduceMotionFromSettings;
 
-  // The deepest route with handle.topOffset wins. Defaults to "normal".
+  
   const resolvedTopOffset = [...matches]
     .reverse()
     .find((match) => {
@@ -45,9 +47,9 @@ export const AppLayout: React.FC = () => {
         <motion.div
           key={location.pathname}
           className="w-full flex flex-col items-center"
-          initial={prefersReducedMotion ? false : { opacity: 0 }}
+          initial={shouldReduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
         >
           <Outlet />
         </motion.div>

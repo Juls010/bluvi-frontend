@@ -2,36 +2,39 @@ import React, { useEffect, useId, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from 'next-themes';
 import { useAuth } from '../../context/AuthContext';
-import { getPrivacy, updatePrivacy, type Privacy } from '../../services/user.service';
+import {
+    getPrivacy,
+    updatePrivacy,
+    getAccessibilityPreferences,
+    updateAccessibilityPreferences,
+    type Privacy,
+    type AccessibilityPreferences,
+} from '../../services/user.service';
 import { DeleteAccountModal } from '../../components/DeleteAccountModal';
 import {
-    Accessibility,
     Contrast,
+    Droplets,
     Eye,
-    Lock,
     LogOut,
     RotateCcw,
     ShieldCheck,
     Trash2,
     Type,
-    User,
     MessageSquare,
     ZapOff,
+    Flag,
     Monitor,
     Sun,
     Moon,
     Palette,
 } from 'lucide-react';
 
-// Subcomponents
-
-const SectionTitle: React.FC<{ icon: React.ReactNode; title: string; description?: string }> = ({ icon, title, description }) => (
+const SectionTitle: React.FC<{ title: string; description?: string }> = ({ title, description }) => (
     <div className="mb-4">
-        <h2 className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary flex items-center gap-2">
-            <span aria-hidden="true" className="text-app-accent-strong">{icon}</span>
+        <h2 className="text-xl md:text-2xl font-heading font-bold tracking-tight text-app-primary">
             {title}
         </h2>
-        {description && <p className="text-xs text-app-muted mt-1 ml-6">{description}</p>}
+        {description && <p className="text-sm text-app-muted mt-1">{description}</p>}
     </div>
 );
 
@@ -40,7 +43,9 @@ const Toggle: React.FC<{
     enabled: boolean;
     onChange: (val: boolean) => void;
     disabled?: boolean;
-}> = ({ label, enabled, onChange, disabled }) => {
+    labelledBy?: string;
+    describedBy?: string;
+}> = ({ label, enabled, onChange, disabled, labelledBy, describedBy }) => {
     const switchId = useId();
 
     return (
@@ -48,7 +53,9 @@ const Toggle: React.FC<{
         id={switchId}
         role="switch"
         aria-checked={enabled}
-        aria-label={label}
+        aria-label={labelledBy ? undefined : label}
+        aria-labelledby={labelledBy}
+        aria-describedby={describedBy}
         onClick={() => !disabled && onChange(!enabled)}
         disabled={disabled}
         style={{ backgroundColor: enabled ? 'var(--app-switch-on)' : 'var(--app-switch-off)' }}
@@ -94,14 +101,25 @@ const SettingRow: React.FC<{
                 enabled={enabled}
                 onChange={onChange}
                 disabled={disabled || saving}
+                labelledBy={titleId}
+                describedBy={descId}
             />
         </div>
     </div>
 );
 };
 
-const Card: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <div className="bg-app-surface backdrop-blur-md rounded-[24px] border border-app-soft shadow-sm px-5 md:px-6">
+const Card: React.FC<{
+    children: React.ReactNode;
+    ariaLabel?: string;
+    busy?: boolean;
+}> = ({ children, ariaLabel, busy = false }) => (
+    <div
+        className="bg-app-surface backdrop-blur-md rounded-[24px] border border-app-soft shadow-sm px-5 md:px-6"
+        role={ariaLabel ? 'region' : undefined}
+        aria-label={ariaLabel}
+        aria-busy={busy || undefined}
+    >
         {children}
     </div>
 );
@@ -185,9 +203,10 @@ export const Settings: React.FC = () => {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
-    const [privacy, setPrivacy] = useState<Privacy>({ is_visible: true, messages_only_matches: false });
+    const [privacy, setPrivacy] = useState<Privacy>({ is_visible: true, messages_only_matches: false, show_online_status: true });
     const [loadingPrivacy, setLoadingPrivacy] = useState(true);
     const [savingField, setSavingField] = useState<keyof Privacy | null>(null);
+    const [savingAccessibility, setSavingAccessibility] = useState(false);
     const [privacyError, setPrivacyError] = useState<string | null>(null);
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
@@ -198,6 +217,10 @@ export const Settings: React.FC = () => {
         if (saved === 'reduce') return true;
         if (saved === 'normal') return false;
         return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    });
+    const [reduceTransparency, setReduceTransparency] = useState<boolean>(() => {
+        const saved = localStorage.getItem('a11y_transparency');
+        return saved === 'reduce';
     });
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -217,9 +240,41 @@ export const Settings: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        let cancelled = false;
+
+        const syncAccessibility = async () => {
+            try {
+                const prefs = await getAccessibilityPreferences();
+                if (cancelled) return;
+
+                applyFont(prefs.font_size);
+                applyContrast(prefs.contrast);
+                setReduceMotion(Boolean(prefs.reduce_motion));
+            } catch {
+                if (!cancelled) {
+                    setStatusMessage('No se pudo sincronizar accesibilidad. Usaremos tus ajustes locales en este dispositivo.');
+                }
+            }
+        };
+
+        syncAccessibility();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    useEffect(() => {
         document.documentElement.classList.toggle('reduce-motion', reduceMotion);
         localStorage.setItem('a11y_motion', reduceMotion ? 'reduce' : 'normal');
+        window.dispatchEvent(new Event('bluvi:a11y-sync'));
     }, [reduceMotion]);
+
+    useEffect(() => {
+        document.documentElement.classList.toggle('low-transparency', reduceTransparency);
+        localStorage.setItem('a11y_transparency', reduceTransparency ? 'reduce' : 'normal');
+        window.dispatchEvent(new Event('bluvi:a11y-sync'));
+    }, [reduceTransparency]);
 
     const handlePrivacyChange = async (key: keyof Privacy, value: boolean) => {
         setPrivacyError(null);
@@ -255,14 +310,38 @@ export const Settings: React.FC = () => {
 
     const handleReduceMotion = (val: boolean) => {
         setReduceMotion(val);
-        setStatusMessage('Preferencias de movimiento actualizadas.');
+        void persistAccessibility({ reduce_motion: val }, 'Preferencias de movimiento actualizadas.');
+    };
+
+    const handleReduceTransparency = (val: boolean) => {
+        setReduceTransparency(val);
+        setStatusMessage(val ? 'Transparencias reducidas activadas.' : 'Transparencias reducidas desactivadas.');
+    };
+
+    const persistAccessibility = async (
+        patch: Partial<AccessibilityPreferences>,
+        successMessage: string
+    ) => {
+        setSavingAccessibility(true);
+        try {
+            await updateAccessibilityPreferences(patch);
+            setStatusMessage(successMessage);
+        } catch {
+            setStatusMessage('No se pudo guardar accesibilidad en tu cuenta. El cambio queda solo en este dispositivo.');
+        } finally {
+            setSavingAccessibility(false);
+        }
     };
 
     const handleResetAccessibility = () => {
         applyFont('normal');
         applyContrast('normal');
         setReduceMotion(false);
-        setStatusMessage('Ajustes de accesibilidad restaurados.');
+        setReduceTransparency(false);
+        void persistAccessibility(
+            { font_size: 'normal', contrast: 'normal', reduce_motion: false },
+            'Ajustes de accesibilidad restaurados.'
+        );
     };
 
     const handleLogout = () => {
@@ -270,24 +349,71 @@ export const Settings: React.FC = () => {
         navigate('/');
     };
 
+    const handleThemeSelect = (value: ThemeChoice) => {
+        setTheme(value);
+        const selected = THEME_OPTIONS.find((option) => option.value === value);
+        if (selected) {
+            setStatusMessage(`Tema ${selected.label.toLowerCase()} activado.`);
+        }
+    };
+
+    const handleFontSizeSelect = (value: FontSize) => {
+        applyFont(value);
+        const selected = FONT_SIZES.find((option) => option.value === value);
+        const selectedLabel = selected ? selected.label.toLowerCase() : value;
+        void persistAccessibility({ font_size: value }, `Tamaño de texto ${selectedLabel} activado.`);
+    };
+
+    const handleRadioGroupKeyDown = (
+        event: React.KeyboardEvent<HTMLButtonElement>,
+        currentIndex: number,
+        total: number,
+        groupName: 'theme' | 'font-size',
+        onSelect: (index: number) => void
+    ) => {
+        let nextIndex: number | null = null;
+
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+            nextIndex = (currentIndex + 1) % total;
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+            nextIndex = (currentIndex - 1 + total) % total;
+        } else if (event.key === 'Home') {
+            nextIndex = 0;
+        } else if (event.key === 'End') {
+            nextIndex = total - 1;
+        }
+
+        if (nextIndex === null) {
+            return;
+        }
+
+        event.preventDefault();
+        onSelect(nextIndex);
+
+        window.requestAnimationFrame(() => {
+            const selector = `[data-radio-group="${groupName}"][data-radio-index="${nextIndex}"]`;
+            const targetButton = document.querySelector<HTMLButtonElement>(selector);
+            targetButton?.focus();
+        });
+    };
+
     return (
         <>
             <article className="w-full max-w-3xl mx-auto p-4 md:p-0 pb-16 animate-fade-in motion-reduce:animate-none space-y-7">
 
-                <div className="pl-1 md:pl-2">
-                    <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary bg-app-surface-soft border border-app-soft px-3 py-1 rounded-full">
+                <div className="space-y-3 md:space-y-4">
+                    <span className="inline-flex w-fit items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary bg-app-surface-soft border border-app-soft px-3 py-1 rounded-full">
                         <ShieldCheck size={12} aria-hidden="true" />
                         Preferencias
                     </span>
-                    <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary mt-3">Ajustes</h1>
-                    <p className="text-sm text-app-secondary mt-1">Personaliza tu experiencia en Bluvi sin perder claridad.</p>
+                    <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">Ajustes</h1>
+                    <p className="max-w-2xl text-sm text-app-secondary/90">Personaliza tu experiencia en Bluvi sin perder claridad.</p>
                 </div>
 
                 <p className="sr-only" aria-live="polite">{statusMessage ?? ''}</p>
 
                 <section>
                     <SectionTitle
-                        icon={<Lock size={15} />}
                         title="Privacidad"
                         description="Controla quien puede encontrarte y escribirte."
                     />
@@ -306,7 +432,10 @@ export const Settings: React.FC = () => {
                         </div>
                     )}
 
-                    <Card>
+                    <Card
+                        ariaLabel="Ajustes de privacidad"
+                        busy={loadingPrivacy || savingField !== null}
+                    >
                         <SettingRow
                             icon={<Eye size={15} />}
                             title="Aparecer en Explorar"
@@ -318,23 +447,22 @@ export const Settings: React.FC = () => {
                         />
                         <SettingRow
                             icon={<MessageSquare size={15} />}
-                            title="Mensajes solo de personas con match"
-                            description="Si lo activas, solo recibirás mensajes de personas con las que hayas hecho match. El resto no podrá escribirte."
-                            enabled={loadingPrivacy ? false : privacy.messages_only_matches}
-                            onChange={(val) => handlePrivacyChange('messages_only_matches', val)}
+                            title="Mostrar estado en línea"
+                            description="Si lo desactivas, tus matches no verán si estás conectada/o ahora mismo."
+                            enabled={loadingPrivacy ? true : privacy.show_online_status}
+                            onChange={(val) => handlePrivacyChange('show_online_status', val)}
                             disabled={loadingPrivacy}
-                            saving={savingField === 'messages_only_matches'}
+                            saving={savingField === 'show_online_status'}
                         />
                     </Card>
                 </section>
 
                 <section>
                     <SectionTitle
-                        icon={<Palette size={15} />}
                         title="Apariencia"
                         description="Elige entre modo claro, oscuro o automático según tu sistema."
                     />
-                    <Card>
+                    <Card ariaLabel="Ajustes de apariencia">
                         <div className="py-4">
                             <p className="text-sm font-semibold text-app-primary mb-1 flex items-center gap-2">
                                 <Palette size={15} aria-hidden="true" />
@@ -343,6 +471,7 @@ export const Settings: React.FC = () => {
                             <p className="text-xs text-app-muted mb-3">Puedes cambiarlo cuando quieras desde aquí.</p>
                             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Tema visual de la aplicación">
                                 {THEME_OPTIONS.map(({ value, label, icon }) => {
+                                    const optionIndex = THEME_OPTIONS.findIndex((option) => option.value === value);
                                     const isActive = (theme ?? 'system') === value;
                                     return (
                                         <button
@@ -350,10 +479,15 @@ export const Settings: React.FC = () => {
                                             type="button"
                                             role="radio"
                                             aria-checked={isActive}
-                                            onClick={() => {
-                                                setTheme(value);
-                                                setStatusMessage(`Tema ${label.toLowerCase()} activado.`);
-                                            }}
+                                            tabIndex={isActive ? 0 : -1}
+                                            data-radio-group="theme"
+                                            data-radio-index={optionIndex}
+                                            onClick={() => handleThemeSelect(value)}
+                                            onKeyDown={(event) =>
+                                                handleRadioGroupKeyDown(event, optionIndex, THEME_OPTIONS.length, 'theme', (nextIndex) => {
+                                                    handleThemeSelect(THEME_OPTIONS[nextIndex].value);
+                                                })
+                                            }
                                             disabled={!mounted}
                                             className={`
                                                 min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all inline-flex items-center justify-center gap-2
@@ -376,11 +510,13 @@ export const Settings: React.FC = () => {
 
                 <section>
                     <SectionTitle
-                        icon={<Accessibility size={15} />}
                         title="Accesibilidad"
                         description="Estos ajustes se guardan en este dispositivo para una navegación más cómoda."
                     />
-                    <Card>
+                    <Card
+                        ariaLabel="Ajustes de accesibilidad"
+                        busy={savingAccessibility}
+                    >
                         <div className="py-4">
                             <p className="text-sm font-semibold text-app-primary mb-1 flex items-center gap-2">
                                 <Type size={15} aria-hidden="true" />
@@ -388,24 +524,37 @@ export const Settings: React.FC = () => {
                             </p>
                             <p className="text-xs text-app-muted mb-3">Cambia el tamaño de todo el texto de la app.</p>
                             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Tamaño del texto">
-                                {FONT_SIZES.map(({ value, label }) => (
-                                    <button
-                                        key={value}
-                                        type="button"
-                                        onClick={() => applyFont(value)}
-                                        role="radio"
-                                        aria-checked={fontSize === value}
-                                        className={`
-                                            min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all
-                                            ${fontSize === value
-                                                ? 'bg-bluvi-purple text-white border-bluvi-purple shadow-sm'
-                                                : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-bluvi-purple/40'
+                                {FONT_SIZES.map(({ value, label }, optionIndex) => {
+                                    const isActive = fontSize === value;
+                                    return (
+                                        <button
+                                            key={value}
+                                            type="button"
+                                            role="radio"
+                                            aria-checked={isActive}
+                                            tabIndex={isActive ? 0 : -1}
+                                            data-radio-group="font-size"
+                                            data-radio-index={optionIndex}
+                                            onClick={() => handleFontSizeSelect(value)}
+                                            onKeyDown={(event) =>
+                                                handleRadioGroupKeyDown(event, optionIndex, FONT_SIZES.length, 'font-size', (nextIndex) => {
+                                                    handleFontSizeSelect(FONT_SIZES[nextIndex].value);
+                                                })
                                             }
-                                        `}
-                                    >
-                                        {label}
-                                    </button>
-                                ))}
+                                            disabled={savingAccessibility}
+                                            className={`
+                                                min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all
+                                                ${isActive
+                                                    ? 'bg-bluvi-purple text-white border-bluvi-purple shadow-sm'
+                                                    : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-bluvi-purple/40'
+                                                }
+                                                ${savingAccessibility ? 'opacity-80 cursor-not-allowed' : ''}
+                                            `}
+                                        >
+                                            {label}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -414,7 +563,23 @@ export const Settings: React.FC = () => {
                             title="Alto contraste"
                             description="Aumenta el contraste de colores para facilitar la lectura."
                             enabled={contrast === 'high'}
-                            onChange={(val) => applyContrast(val ? 'high' : 'normal')}
+                            onChange={(val) => {
+                                const nextContrast = val ? 'high' : 'normal';
+                                applyContrast(nextContrast);
+                                void persistAccessibility(
+                                    { contrast: nextContrast },
+                                    nextContrast === 'high' ? 'Alto contraste activado.' : 'Alto contraste desactivado.'
+                                );
+                            }}
+                            saving={savingAccessibility}
+                        />
+
+                        <SettingRow
+                            icon={<Droplets size={15} />}
+                            title="Reducir transparencias"
+                            description="Disminuye desenfoques y capas translúcidas para una lectura más estable."
+                            enabled={reduceTransparency}
+                            onChange={handleReduceTransparency}
                         />
 
                         <SettingRow
@@ -429,7 +594,7 @@ export const Settings: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleResetAccessibility}
-                                className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-xs font-semibold text-app-primary hover:bg-app-surface-strong focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/40"
+                                className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-xs font-semibold text-app-primary hover:bg-app-surface-strong hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/40"
                             >
                                 <RotateCcw size={14} aria-hidden="true" />
                                 Restablecer accesibilidad
@@ -440,16 +605,32 @@ export const Settings: React.FC = () => {
 
                 <section>
                     <SectionTitle
-                        icon={<User size={15} />}
                         title="Cuenta"
                         description="Acciones de sesión y administración de tu cuenta."
                     />
-                    <Card>
+                    <Card ariaLabel="Ajustes de cuenta">
                         <div className="py-4">
                             <button
                                 type="button"
+                                data-account-action="true"
+                                onClick={() => navigate('/app/settings/reports-blocks')}
+                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/35"
+                            >
+                                <span className="mt-0.5 inline-flex items-center gap-1 text-app-accent" aria-hidden="true">
+                                    <Flag size={16} />
+                                </span>
+                                <div>
+                                    <p className="font-semibold">Reportes y bloqueos</p>
+                                    <p className="text-xs text-app-muted font-normal">Revisa reportes enviados y gestiona perfiles bloqueados.</p>
+                                </div>
+                            </button>
+                        </div>
+                        <div className="py-4">
+                            <button
+                                type="button"
+                                data-account-action="true"
                                 onClick={handleLogout}
-                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft transition-colors text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/35"
+                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/35"
                             >
                                 <LogOut size={18} aria-hidden="true" className="mt-0.5" />
                                 <div>
@@ -461,8 +642,9 @@ export const Settings: React.FC = () => {
                         <div className="py-4">
                             <button
                                 type="button"
+                                data-account-action="true"
                                 onClick={() => setShowDeleteModal(true)}
-                                className="w-full py-3 rounded-2xl border border-red-100 text-red-500 text-sm font-semibold hover:bg-red-50 transition-colors text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
+                                className="w-full py-3 rounded-2xl border border-red-100 text-red-500 text-sm font-semibold hover:bg-red-50 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
                             >
                                 <Trash2 size={18} aria-hidden="true" className="mt-0.5" />
                                 <div>

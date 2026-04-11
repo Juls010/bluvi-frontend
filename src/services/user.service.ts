@@ -34,6 +34,13 @@ export const deleteMyAccount = async (password: string): Promise<void> => {
 export interface Privacy {
     is_visible: boolean;
     messages_only_matches: boolean;
+    show_online_status: boolean;
+}
+
+export interface AccessibilityPreferences {
+    contrast: 'normal' | 'high';
+    reduce_motion: boolean;
+    font_size: 'normal' | 'large' | 'xlarge';
 }
 
 export const markDiscoverySeen = async (seenUserId: number, action: 'passed' | 'liked' | 'dismissed' = 'passed'): Promise<void> => {
@@ -48,4 +55,16 @@ export const getPrivacy = async (): Promise<Privacy> => {
 export const updatePrivacy = async (privacy: Partial<Privacy>): Promise<Privacy> => {
     const response = await api.patch<{ privacy: Privacy }>('/users/privacy', privacy);
     return response.data.privacy;
+};
+
+export const getAccessibilityPreferences = async (): Promise<AccessibilityPreferences> => {
+    const response = await api.get<{ accessibility: AccessibilityPreferences }>('/users/accessibility');
+    return response.data.accessibility;
+};
+
+export const updateAccessibilityPreferences = async (
+    accessibility: Partial<AccessibilityPreferences>
+): Promise<AccessibilityPreferences> => {
+    const response = await api.patch<{ accessibility: AccessibilityPreferences }>('/users/accessibility', accessibility);
+    return response.data.accessibility;
 };

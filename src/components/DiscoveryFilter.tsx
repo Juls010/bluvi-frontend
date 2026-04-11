@@ -41,7 +41,6 @@ export const DiscoveryFilter: React.FC<Props> = ({
     setSensoryPref(initialFilters.sensoryPref || []);
   }, [isOpen, initialFilters]);
 
-  // Función genérica para toggles
   const toggleItem = (setList: React.Dispatch<React.SetStateAction<string[]>>, item: string) => {
     setList(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
   };
@@ -50,13 +49,10 @@ export const DiscoveryFilter: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4">
-      {/* Fondo desenfocado */}
       <div className="absolute inset-0 bg-black/25 dark:bg-black/45 backdrop-blur-md animate-fade-in motion-reduce:animate-none" onClick={onClose} />
 
-      {/* Panel Principal */}
       <div className="relative w-full max-w-lg bg-app-surface-strong text-app-primary rounded-t-[40px] md:rounded-[32px] shadow-2xl overflow-hidden animate-slide-up motion-reduce:animate-none border border-app-soft">
         
-        {/* Decoración superior */}
         <div className="h-1.5 w-12 bg-app-surface-soft rounded-full mx-auto mt-4 mb-2 md:hidden" />
 
         <div className="p-6 md:p-8 space-y-6 max-h-[85vh] overflow-y-auto">
@@ -98,7 +94,6 @@ export const DiscoveryFilter: React.FC<Props> = ({
             </section>
           </details>
 
-          {/* Tags Rápidos */}
           <details className="rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-3">
             <summary className="cursor-pointer list-none flex items-center justify-between focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 rounded-xl">
               <span className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">Intereses y Hyperfocus</span>
@@ -127,8 +122,9 @@ export const DiscoveryFilter: React.FC<Props> = ({
                     onClick={() => toggleItem(setSelectedTags, tag)}
                     className={`px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20
                       ${isSelected 
-                        ? 'bg-bluvi-purple text-white border-bluvi-purple shadow-md' 
+                        ? 'text-app-on-accent border-app-strong shadow-md' 
                         : 'bg-app-surface text-app-secondary border-app-soft hover:border-bluvi-purple/20'}`}
+                    style={isSelected ? { backgroundColor: 'var(--app-accent)' } : undefined}
                     aria-pressed={isSelected}
                   >
                     {tag}
@@ -153,8 +149,9 @@ export const DiscoveryFilter: React.FC<Props> = ({
                   onClick={() => toggleItem(setCommunicationStyle, style)}
                   className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20
                     ${communicationStyle.includes(style) 
-                      ? 'bg-bluvi-purple/10 border-bluvi-purple text-bluvi-purple' 
+                      ? 'text-app-on-accent border-app-strong' 
                       : 'bg-app-surface border-app-soft text-app-secondary'}`}
+                  style={communicationStyle.includes(style) ? { backgroundColor: 'var(--app-accent)' } : undefined}
                   aria-pressed={communicationStyle.includes(style)}
                 >
                   {style}
@@ -164,7 +161,6 @@ export const DiscoveryFilter: React.FC<Props> = ({
             </section>
           </details>
 
-          {/* 4. SENSORIAL */}
           <details className="rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-3">
             <summary className="cursor-pointer list-none flex items-center justify-between focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 rounded-xl">
               <span className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">Preferencias de entorno</span>
@@ -179,8 +175,9 @@ export const DiscoveryFilter: React.FC<Props> = ({
                   onClick={() => toggleItem(setSensoryPref, pref)}
                   className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20
                     ${sensoryPref.includes(pref) 
-                      ? 'bg-[#9d66ff]/10 border-[#9d66ff] text-[#9d66ff]' 
+                      ? 'text-app-on-accent border-app-strong' 
                       : 'bg-app-surface border-app-soft text-app-secondary'}`}
+                  style={sensoryPref.includes(pref) ? { backgroundColor: 'var(--app-accent)' } : undefined}
                   aria-pressed={sensoryPref.includes(pref)}
                 >
                   {pref}
@@ -191,7 +188,6 @@ export const DiscoveryFilter: React.FC<Props> = ({
           </details>
         </div>
 
-        {/* Botón de Aplicar con Gradiente */}
         <div className="p-6 bg-app-surface-strong border-t border-app-soft">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Button
@@ -213,7 +209,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                   communicationStyle, 
                   sensoryPref 
               })}
-              className="sm:col-span-2 w-full py-4 text-white rounded-2xl font-bold text-lg shadow-md hover:opacity-95 hover:-translate-y-0.5 active:scale-[0.98] transition-all focus-visible:ring-offset-2"
+              className="sm:col-span-2 w-full py-4 text-app-on-accent rounded-2xl font-bold text-lg shadow-md hover:opacity-95 hover:-translate-y-0.5 active:scale-[0.98] transition-all focus-visible:ring-offset-2"
               style={{ backgroundColor: 'var(--app-accent)' }}
             >
               Ver resultados
@@ -237,7 +233,7 @@ export const FilterTriggerButton: React.FC<{
             <Filter size={16} className="text-app-filter-icon shrink-0" aria-hidden="true" />
             <span>Filtros</span>
             {activeCount > 0 && (
-            <span className="text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pop" style={{ backgroundColor: 'var(--app-accent-strong)' }}>
+            <span className="text-app-on-accent text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pop" style={{ backgroundColor: 'var(--app-accent-strong)' }}>
                 {activeCount}
             </span>
             )}

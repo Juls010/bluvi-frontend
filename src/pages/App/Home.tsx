@@ -102,7 +102,7 @@ export const Home: React.FC = () => {
                             className="w-9 h-9 rounded-full bg-[#7F77DD] bg-app-accent-gradient-dark flex items-center justify-center shrink-0"
                             aria-hidden="true"
                         >
-                            <ArrowRight size={14} className="text-white" />
+                            <ArrowRight size={14} className="text-app-on-accent" />
                         </div>
                         </button>
             
@@ -157,7 +157,7 @@ export const Home: React.FC = () => {
                                 <Link
                                     key={item.id}
                                     to={`/app/events/${item.id}`}
-                                    className="block border-l-2 border-bluvi-purple/20 dark:border-[#FFB16A]/45 pl-4 py-2 rounded-r-2xl hover:bg-app-surface hover:shadow-sm hover:translate-x-0.5 transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
+                                    className="block border-l-2 border-app-strong pl-4 py-2 rounded-r-2xl hover:bg-app-surface hover:shadow-sm hover:translate-x-0.5 transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
                                 >
                                     <article>
                                         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-app-muted">
@@ -232,8 +232,8 @@ export const Home: React.FC = () => {
                     
                     
                     <aside className="bg-app-surface-soft border border-app-soft rounded-[22px] p-5" aria-label="Recordatorio de ritmo">
-                        <div className="w-8 h-8 rounded-[9px] bg-[#7F77DD]/12 dark:bg-app-accent-gradient flex items-center justify-center mb-3" aria-hidden="true">
-                            <Clock size={15} className="text-app-home-pace-icon" />
+                        <div className="w-8 h-8 rounded-[9px] bg-app-pill flex items-center justify-center mb-3" aria-hidden="true">
+                            <Clock size={15} className="text-app-accent" />
                         </div>
                         <p className="text-[13px] font-extrabold text-app-primary mb-1.5">
                             Avanza a tu ritmo

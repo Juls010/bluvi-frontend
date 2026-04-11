@@ -8,6 +8,7 @@ import {
 } from '../services/match.service';
 import { getConversations, type ConversationItem } from '../services/chat.service';
 import { connectRealtime, disconnectRealtime } from '../services/realtime.service';
+import { useNotifications } from '../context/NotificationContext';
 
 const formatTime = (date: string | null) => {
     if (!date) return '';
@@ -96,7 +97,8 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[] }> = ({ convers
             {conversations.length > 0 && (
                 <span
                     aria-label={`Tienes ${conversations.length} conversaciones activas`}
-                    className="text-[11px] font-semibold text-white bg-bluvi-purple px-2.5 py-1 rounded-full shadow-sm"
+                    className="text-[11px] font-semibold text-app-on-accent px-2.5 py-1 rounded-full shadow-sm"
+                    style={{ backgroundColor: 'var(--app-accent)' }}
                 >
                     {conversations.length} activas
                 </span>
@@ -125,7 +127,8 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[] }> = ({ convers
                             {conversation.unread_count > 0 && (
                                 <span
                                     aria-label={`${conversation.unread_count} mensajes no leidos`}
-                                    className="absolute -bottom-1 -right-1 min-w-4 h-4 px-1 text-[10px] leading-4 text-center font-semibold bg-bluvi-purple text-white rounded-full ring-2 ring-white"
+                                    className="absolute -bottom-1 -right-1 min-w-4 h-4 px-1 text-[10px] leading-4 text-center font-semibold text-app-on-accent rounded-full ring-2 ring-white"
+                                    style={{ backgroundColor: 'var(--app-accent)' }}
                                 >
                                     {conversation.unread_count > 9 ? '9+' : conversation.unread_count}
                                 </span>
@@ -160,6 +163,7 @@ export const Messages: React.FC = () => {
     const [requests, setRequests] = useState<IncomingMatchRequest[]>([]);
     const [conversations, setConversations] = useState<ConversationItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const { refreshNotifications } = useNotifications();
 
     const loadData = async (showLoader = false) => {
         if (showLoader) {
@@ -214,6 +218,7 @@ export const Messages: React.FC = () => {
         try {
             await respondToMatchRequest(idRequest, action);
             await loadData();
+            await refreshNotifications();
         } catch (error) {
             console.error('Error respondiendo solicitud:', error);
         }

@@ -6,6 +6,7 @@ import { WelcomeLayout } from '../layouts/WelcomeLayout';
 import { RegisterLayout } from '../layouts/RegisterLayout';
 import { AppLayout } from '../layouts/AppLayout';
 import { ChatLayout } from '../layouts/ChatLayout';
+import { PublicThemeScope, PrivateThemeScope } from '../layouts/ThemeScopes';
 
 // Contexts
 import { RegisterProvider } from '../context/RegisterContext';
@@ -35,6 +36,7 @@ const ChatDetailPage = lazy(() => import('../pages/ChatDetails').then((m) => ({ 
 const ChatUserProfilePage = lazy(() => import('../pages/ChatUserProfile').then((m) => ({ default: m.ChatUserProfile })));
 const UserProfilePage = lazy(() => import('../pages/App/UserProfile').then((m) => ({ default: m.UserProfile })));
 const SettingsPage = lazy(() => import('../pages/Settings/Settings').then((m) => ({ default: m.Settings })));
+const ReportsAndBlocksPage = lazy(() => import('../pages/Settings/ReportsAndBlocks').then((m) => ({ default: m.ReportsAndBlocks })));
 
 const withSuspense = (element: React.ReactNode) => (
     <Suspense fallback={<div className="min-h-screen w-full bg-app-surface" />}>
@@ -45,7 +47,11 @@ const withSuspense = (element: React.ReactNode) => (
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <WelcomeLayout />,
+        element: (
+            <PublicThemeScope>
+                <WelcomeLayout />
+            </PublicThemeScope>
+        ),
         children: [
             { index: true, element: withSuspense(<WelcomePage />) },
             { path: "login", element: withSuspense(<LoginPage />) },
@@ -54,9 +60,11 @@ export const router = createBrowserRouter([
     {
         path: "/register",
         element: (
-            <RegisterProvider>
-                <RegisterLayout />
-            </RegisterProvider>
+            <PublicThemeScope>
+                <RegisterProvider>
+                    <RegisterLayout />
+                </RegisterProvider>
+            </PublicThemeScope>
         ),
         children: [
             { path: "name", element: withSuspense(<NameStepPage />) },
@@ -77,9 +85,11 @@ export const router = createBrowserRouter([
     {
         path: "/app",
         element: (
-            <PrivateRoute>
-                <AppLayout />
-            </PrivateRoute>
+            <PrivateThemeScope>
+                <PrivateRoute>
+                    <AppLayout />
+                </PrivateRoute>
+            </PrivateThemeScope>
         ),
         children: [
             { index: true, element: <Navigate to="/app/home" replace /> },
@@ -89,12 +99,19 @@ export const router = createBrowserRouter([
             { path: "messages", element: withSuspense(<MessagesPage />), handle: { topOffset: 'normal' } },
             { path: "profile", element: withSuspense(<UserProfilePage />), handle: { topOffset: 'normal' } },
             { path: "settings", element: withSuspense(<SettingsPage />), handle: { topOffset: 'normal' } },
+            { path: "settings/reports-blocks", element: withSuspense(<ReportsAndBlocksPage />), handle: { topOffset: 'normal' } },
             { path: "user/:userId", element: withSuspense(<ChatUserProfilePage />), handle: { topOffset: 'compact' } },
         ]
     },
     {
         path: "/app/chat", 
-        element: <ChatLayout />,
+        element: (
+            <PrivateThemeScope>
+                <PrivateRoute>
+                    <ChatLayout />
+                </PrivateRoute>
+            </PrivateThemeScope>
+        ),
         children: [
             {
                 path: ":id", 

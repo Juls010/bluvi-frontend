@@ -74,12 +74,20 @@ export const markConversationRead = async (userId: number): Promise<void> => {
     await api.patch(`/chats/${userId}/read`);
 };
 
-export const checkUserOnline = async (userId: number): Promise<boolean> => {
+export interface UserOnlineStatus {
+    isOnline: boolean;
+    canShowOnlineStatus: boolean;
+}
+
+export const checkUserOnline = async (userId: number): Promise<UserOnlineStatus> => {
     try {
-        const response = await api.get<{ success: boolean; isOnline: boolean }>(`/chats/${userId}/online`);
-        return response.data.isOnline || false;
+        const response = await api.get<{ success: boolean; isOnline: boolean; canShowOnlineStatus?: boolean }>(`/chats/${userId}/online`);
+        return {
+            isOnline: Boolean(response.data.isOnline),
+            canShowOnlineStatus: response.data.canShowOnlineStatus !== false,
+        };
     } catch (error) {
         console.error('Error verificando estado online:', error);
-        return false;
+        return { isOnline: false, canShowOnlineStatus: true };
     }
 };
