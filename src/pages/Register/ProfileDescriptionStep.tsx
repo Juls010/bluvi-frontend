@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Button';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { AccessibleErrorTooltip } from '../../components/AccessibleErrorTooltip';
 import { useRegister } from '../../context/RegisterContext';
 
 
@@ -9,22 +10,24 @@ export const ProfileDescriptionStep = () => {
     const navigate = useNavigate();
     const { formData, updateFormData, sendToBackend } = useRegister();
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const MAX_CHARS = 200;
 
     const handleNext = async () => {
         setIsLoading(true);
+        setErrorMessage('');
         try {
             const success = await sendToBackend();
             
             if (success) {
                 navigate('/register/verificationemail');
             } else {
-                alert("Hubo un error al procesar tu registro. Revisa los datos o inténtalo más tarde.");
+                setErrorMessage('Hubo un error al procesar tu registro. Revisa los datos o intentalo mas tarde.');
             }
         } catch (error) {
             console.error("Error en el paso de descripción:", error);
-            alert("No se pudo conectar con el servidor.");
+            setErrorMessage('No se pudo conectar con el servidor.');
         } finally {
             setIsLoading(false);
         }
@@ -50,17 +53,25 @@ export const ProfileDescriptionStep = () => {
 
                         <textarea 
                             value={formData.description}
-                            onChange={(e) => updateFormData({description: e.target.value.slice(0, MAX_CHARS)})}
+                            onChange={(e) => {
+                                updateFormData({description: e.target.value.slice(0, MAX_CHARS)});
+                                if (errorMessage) {
+                                    setErrorMessage('');
+                                }
+                            }}
                             className="w-full h-64 p-6 rounded-3xl bg-white/40 border border-white/20 shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#3f4a9b]/20 text-gray-700 resize-none placeholder:text-gray-400/80 transition-all"
                             placeholder="Escribe aquí..."
                         />
                     </div>
+
+                    <AccessibleErrorTooltip id="profile-description-error" message={errorMessage} className="w-full max-w-md" />
                 </div>
 
                 <div className="w-full max-w-sm">
                     <Button 
                         onClick={handleNext}
                         disabled={formData.description.length === 0 || isLoading}
+                        aria-describedby={errorMessage ? 'profile-description-error' : undefined}
                         className="w-full py-3 bg-[#3f4a9b] text-white rounded-lg shadow-md font-semibold"
                     >
                         Siguiente

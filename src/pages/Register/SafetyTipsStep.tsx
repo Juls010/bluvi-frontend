@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { ShieldCheck, Heart, UserCheck, MessageCircleWarning, Info } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
-import { SuccessModal } from '../../components/SuccessModal';
 
 const TIPS = [
     {
@@ -29,14 +27,8 @@ const TIPS = [
 
 export const SafetyTipsStep = () => {
     const navigate = useNavigate();
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleFinishRegistration = () => {
-        setIsModalOpen(true); 
-    };
-
-    const handleCloseAndGoToHome = () => {
-        setIsModalOpen(false);
         navigate('/app/home'); 
     };
 
@@ -84,11 +76,6 @@ export const SafetyTipsStep = () => {
                     ¡Entendido, vamos allá!
                 </Button>
             </footer>
-
-            <SuccessModal 
-                isOpen={isModalOpen} 
-                onClose={handleCloseAndGoToHome} 
-            />
             </div>
         </div>
     );

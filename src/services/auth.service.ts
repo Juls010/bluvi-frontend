@@ -2,9 +2,30 @@ import api from './api';
 
 const API_URL = '/auth'; 
 
+export interface RegisterPayload {
+    email: string;
+    password: string;
+    first_name: string;
+    last_name: string;
+    birth_date: string;
+    city: string;
+    description: string;
+    id_gender: number | null;
+    id_preference: number | null;
+    neurodivergences: number[];
+    communication_style: number[];
+    interests: number[];
+    photos: string[];
+}
+
+interface ApiResponse {
+    success: boolean;
+    message?: string;
+}
+
 export const authService = {
-    checkEmail: async (email: string) => {
-        const response = await api.post(`${API_URL}/check-email`, { email });
+    checkEmail: async (email: string): Promise<ApiResponse> => {
+        const response = await api.post<ApiResponse>(`${API_URL}/check-email`, { email });
         return response.data;
     },
 
@@ -13,8 +34,8 @@ export const authService = {
         return response.data;
     },
 
-    register: async (userData: any) => {
-        const response = await api.post(`${API_URL}/register`, userData);
+    register: async (userData: RegisterPayload): Promise<ApiResponse> => {
+        const response = await api.post<ApiResponse>(`${API_URL}/register`, userData);
         return response.data;
     },
 
@@ -23,8 +44,8 @@ export const authService = {
         return response.data;
     },
 
-    verifyEmail: async (code: string, email: string) => {
-        const response = await api.post(`${API_URL}/verify-email`, { code, email });
+    verifyEmail: async (code: string, email: string): Promise<ApiResponse> => {
+        const response = await api.post<ApiResponse>(`${API_URL}/verify-email`, { code, email });
         return response.data;
     },
 

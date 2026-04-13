@@ -3,12 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, RefreshCw } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { AccessibleErrorTooltip } from '../../components/AccessibleErrorTooltip';
+import { SuccessModal } from '../../components/SuccessModal';
 import { authService } from '../../services/auth.service';
 import { useRegister } from '../../context/RegisterContext';
 
 export const EmailVerificationStep = () => {
     const navigate = useNavigate();
     const [code, setCode] = useState(['', '', '', '','','']);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isInfoModalOpen, setIsInfoModalOpen] = useState(true);
     const inputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
     const { formData } = useRegister();
 
@@ -17,9 +21,11 @@ export const EmailVerificationStep = () => {
         const email = formData.email || localStorage.getItem('temp_email_verification'); 
 
         if (!email) {
-            alert("No se encontró el email del registro. Por favor, reinicia el proceso.");
+            setErrorMessage('No se encontro el email del registro. Por favor, reinicia el proceso.');
             return;
         }
+
+        setErrorMessage('');
 
         try {
             const response = await authService.verifyEmail(fullCode, email);
@@ -29,7 +35,7 @@ export const EmailVerificationStep = () => {
                 navigate('/register/safety-tips'); 
             }
         } catch (error: any) {
-            alert(error.response?.data?.message || "Código incorrecto");
+            setErrorMessage(error.response?.data?.message || 'Codigo incorrecto. Revisa el codigo y vuelve a intentarlo.');
         }
     };
 
@@ -39,6 +45,9 @@ export const EmailVerificationStep = () => {
         const newCode = [...code];
         newCode[index] = value;
         setCode(newCode);
+        if (errorMessage) {
+            setErrorMessage('');
+        }
 
         if (value !== '' && index < 5) {
             inputRefs[index + 1].current?.focus();
@@ -86,17 +95,25 @@ export const EmailVerificationStep = () => {
                         <RefreshCw size={16} />
                         Reenviar código
                     </button>
+
+                    <AccessibleErrorTooltip id="email-verification-error" message={errorMessage} className="max-w-sm" />
                 </div>
 
                 <div className="w-full max-w-sm">
                     <Button 
                         onClick={handleVerifyCode}
                         disabled={code.some(d => d === '')}
+                        aria-describedby={errorMessage ? 'email-verification-error' : undefined}
                         className="w-full py-3 bg-[#3f4a9b] text-white rounded-lg shadow-md font-semibold disabled:opacity-50"
                     >
                         Verificar y continuar
                     </Button>
                 </div>
+
+                <SuccessModal
+                    isOpen={isInfoModalOpen}
+                    onClose={() => setIsInfoModalOpen(false)}
+                />
             </div>
         </AnimatedStep>
     );

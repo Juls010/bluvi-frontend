@@ -1,12 +1,14 @@
-import { useState } from 'react';
-import { Search, MapPin, CheckCircle2, ChevronRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Search, MapPin, CheckCircle2, ChevronRight, X } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { useRegister } from '../../context/RegisterContext'; 
+import { searchCities, type CitySuggestion } from '../../services/cities.service';
 
-// Esto es un ejemplo, luego podrás conectarlo con una API de ciudades
-const MOCK_CITIES = ["Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga", "Murcia"];
+const MAX_CITY_QUERY_LENGTH = 120;
+const CITY_LISTBOX_ID = 'register-city-results';
+const SEARCH_DEBOUNCE_MS = 250;
 
 export const LocationStep = () => {
     const navigate = useNavigate();
@@ -14,6 +16,73 @@ export const LocationStep = () => {
 
     const [query, setQuery] = useState(formData.city || '');
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(-1);
+    const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [citySearchError, setCitySearchError] = useState<string | null>(null);
+    const [liveMessage, setLiveMessage] = useState('');
+    const comboboxContainerRef = useRef<HTMLDivElement | null>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+    const sanitizeQuery = (value: string) =>
+        value.replace(/[\u0000-\u001F\u007F]/g, '').slice(0, MAX_CITY_QUERY_LENGTH);
+
+    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedSelectedCity = formData.city.trim().toLowerCase();
+    const hasSelectedCityInInput = normalizedSelectedCity.length > 0 && normalizedQuery === normalizedSelectedCity;
+    const hasSuggestions = showSuggestions && query.length > 0 && !hasSelectedCityInInput;
+    const activeSuggestion = activeIndex >= 0 ? suggestions[activeIndex] : null;
+    const activeDescendantId = activeSuggestion ? `city-option-${activeSuggestion.id}` : undefined;
+
+    useEffect(() => {
+        const trimmedQuery = query.trim();
+
+        if (trimmedQuery.length < 2) {
+            setSuggestions([]);
+            setIsLoading(false);
+            setCitySearchError(null);
+            return;
+        }
+
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(async () => {
+            setIsLoading(true);
+            setCitySearchError(null);
+
+            const results = await searchCities(trimmedQuery, 8, controller.signal);
+
+            if (!controller.signal.aborted) {
+                setSuggestions(results);
+                if (results.length === 0) {
+                    setCitySearchError('No encontramos ciudades con ese nombre.');
+                    setLiveMessage('No se encontraron ciudades para esa busqueda.');
+                } else {
+                    setLiveMessage(`${results.length} ${results.length === 1 ? 'resultado disponible' : 'resultados disponibles'}.`);
+                }
+                setActiveIndex(-1);
+                setIsLoading(false);
+            }
+        }, SEARCH_DEBOUNCE_MS);
+
+        return () => {
+            controller.abort();
+            window.clearTimeout(timeoutId);
+        };
+    }, [query]);
+
+    useEffect(() => {
+        const handleDocumentPointerDown = (event: PointerEvent) => {
+            if (!comboboxContainerRef.current?.contains(event.target as Node)) {
+                setShowSuggestions(false);
+                setActiveIndex(-1);
+            }
+        };
+
+        document.addEventListener('pointerdown', handleDocumentPointerDown);
+        return () => {
+            document.removeEventListener('pointerdown', handleDocumentPointerDown);
+        };
+    }, []);
 
     const handleNext = () => {
         if (formData.city) {
@@ -21,9 +90,80 @@ export const LocationStep = () => {
         }
     };
 
-    const filteredCities = MOCK_CITIES.filter(city => 
-        city.toLowerCase().includes(query.toLowerCase())
-    );
+    const handleCitySelect = (city: CitySuggestion) => {
+        setQuery(city.value);
+        updateFormData({ city: city.value });
+        setShowSuggestions(false);
+        setActiveIndex(-1);
+        setCitySearchError(null);
+        setLiveMessage(`Ciudad seleccionada: ${city.value}.`);
+    };
+
+    const handleInputChange = (value: string) => {
+        const sanitizedValue = sanitizeQuery(value);
+        setQuery(sanitizedValue);
+        setShowSuggestions(true);
+        setLiveMessage('Buscando ciudades...');
+
+        const normalizedTypedValue = sanitizedValue.trim().toLowerCase();
+        const normalizedSelectedCity = formData.city.trim().toLowerCase();
+
+        if (sanitizedValue.length === 0) {
+            updateFormData({ city: '' });
+        } else if (normalizedTypedValue !== normalizedSelectedCity) {
+            // Force a valid selection from suggestions before allowing next step.
+            updateFormData({ city: '' });
+        }
+
+        setActiveIndex(-1);
+    };
+
+    const handleClearQuery = () => {
+        setQuery('');
+        setSuggestions([]);
+        setShowSuggestions(false);
+        setActiveIndex(-1);
+        setCitySearchError(null);
+        updateFormData({ city: '' });
+        setLiveMessage('Ciudad eliminada.');
+        inputRef.current?.focus();
+    };
+
+    const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (!hasSuggestions) {
+            return;
+        }
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            setActiveIndex((prev) => {
+                if (suggestions.length === 0) return -1;
+                return prev < suggestions.length - 1 ? prev + 1 : 0;
+            });
+            return;
+        }
+
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            setActiveIndex((prev) => {
+                if (suggestions.length === 0) return -1;
+                return prev > 0 ? prev - 1 : suggestions.length - 1;
+            });
+            return;
+        }
+
+        if (event.key === 'Enter' && activeIndex >= 0 && suggestions[activeIndex]) {
+            event.preventDefault();
+            handleCitySelect(suggestions[activeIndex]);
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            setShowSuggestions(false);
+            setActiveIndex(-1);
+        }
+    };
 
     return (
         <AnimatedStep>
@@ -38,54 +178,78 @@ export const LocationStep = () => {
                         </div>
                     </header>
 
-                    <div className="relative">
+                    <div className="relative" ref={comboboxContainerRef}>
                         <div className="relative group">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-bluvi-purple/40 group-focus-within:text-bluvi-purple transition-colors" size={20} />
                             <input 
+                                ref={inputRef}
                                 type="text"
                                 value={query}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    setQuery(val);
-                                    setShowSuggestions(true);
-                                    
-                                    if (val === '') {
-                                        updateFormData({ city: '' });
+                                onChange={(e) => handleInputChange(e.target.value)}
+                                onKeyDown={handleInputKeyDown}
+                                onFocus={() => {
+                                    if (!hasSelectedCityInInput) {
+                                        setShowSuggestions(true);
                                     }
                                 }}
                                 placeholder="Escribe el nombre de tu ciudad..."
                                 className="w-full bg-white/50 backdrop-blur-xl border border-white/60 py-5 pl-12 pr-6 rounded-[2rem] outline-none focus:ring-4 focus:ring-bluvi-purple/10 text-bluvi-purple placeholder:text-bluvi-purple/30 text-lg shadow-inner transition-all"
                                 aria-label="Buscar ciudad"
-                                aria-expanded={showSuggestions}
+                                aria-describedby="city-combobox-help"
+                                aria-expanded={hasSuggestions}
                                 role="combobox"
-                                aria-controls="city-results"
+                                aria-controls={CITY_LISTBOX_ID}
+                                aria-autocomplete="list"
+                                aria-activedescendant={activeDescendantId}
                             />
+                            {query.length > 0 && (
+                                <button
+                                    type="button"
+                                    onClick={handleClearQuery}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-bluvi-purple/45 hover:text-bluvi-purple transition-colors rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/30"
+                                    aria-label="Limpiar ciudad seleccionada"
+                                >
+                                    <X size={18} aria-hidden="true" />
+                                </button>
+                            )}
+                            <p id="city-combobox-help" className="sr-only">
+                                Escribe al menos dos letras. Usa flechas arriba y abajo para navegar sugerencias y Enter para seleccionar.
+                            </p>
+                            <p className="sr-only" role="status" aria-live="polite">
+                                {liveMessage}
+                            </p>
                         </div>
 
-                        {showSuggestions && query.length > 0 && (
+                        {hasSuggestions && (
                             <ul 
-                                id="city-results"
+                                id={CITY_LISTBOX_ID}
                                 className="absolute z-50 w-full mt-2 bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2rem] shadow-2xl overflow-hidden max-h-60 overflow-y-auto no-scrollbar"
                                 role="listbox"
                             >
-                                {filteredCities.length > 0 ? (
-                                    filteredCities.map((city) => (
-                                        <li key={city} role="option" aria-selected={formData.city === city}>
-                                            <button
-                                                onClick={() => {
-                                                    setQuery(city);
-                                                    updateFormData({ city: city });
-                                                    setShowSuggestions(false);
-                                                }}
-                                                className="w-full flex items-center justify-between px-6 py-4 hover:bg-bluvi-purple/5 text-left text-bluvi-purple font-medium transition-colors"
-                                            >
-                                                {city}
-                                                {formData.city === city ? <CheckCircle2 size={18} /> : <ChevronRight size={18} className="opacity-30" />}
-                                            </button>
+                                {isLoading ? (
+                                    <li className="px-6 py-4 text-bluvi-purple/70" role="presentation">Buscando ciudades...</li>
+                                ) : suggestions.length > 0 ? (
+                                    suggestions.map((city, index) => (
+                                        <li
+                                            key={city.id}
+                                            id={`city-option-${city.id}`}
+                                            role="option"
+                                            aria-selected={formData.city === city.value}
+                                            tabIndex={-1}
+                                            onMouseDown={(event) => {
+                                                event.preventDefault();
+                                                handleCitySelect(city);
+                                            }}
+                                            onClick={() => handleCitySelect(city)}
+                                            onMouseEnter={() => setActiveIndex(index)}
+                                            className={`w-full flex items-center justify-between px-6 py-4 text-left text-bluvi-purple font-medium transition-colors cursor-pointer ${index === activeIndex ? 'bg-bluvi-purple/10' : 'hover:bg-bluvi-purple/5'}`}
+                                        >
+                                            <span>{city.label}</span>
+                                            {formData.city === city.value ? <CheckCircle2 size={18} /> : <ChevronRight size={18} className="opacity-30" />}
                                         </li>
                                     ))
                                 ) : (
-                                    <li className="px-6 py-4 text-gray-400 italic">No encontramos esa ciudad...</li>
+                                    <li className="px-6 py-4 text-gray-400 italic" role="presentation">{citySearchError ?? 'No encontramos esa ciudad...'}</li>
                                 )}
                             </ul>
                         )}

@@ -4,9 +4,55 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'ghost';
 }
 
+const NON_COLOR_TEXT_CLASSES = new Set([
+    'text-xs',
+    'text-sm',
+    'text-base',
+    'text-lg',
+    'text-xl',
+    'text-2xl',
+    'text-3xl',
+    'text-4xl',
+    'text-5xl',
+    'text-6xl',
+    'text-7xl',
+    'text-8xl',
+    'text-9xl',
+    'text-left',
+    'text-center',
+    'text-right',
+    'text-justify',
+    'text-start',
+    'text-end',
+    'text-wrap',
+    'text-nowrap',
+    'text-balance',
+    'text-pretty',
+    'text-ellipsis',
+    'text-clip'
+]);
+
+const hasTextColorClass = (className: string) => {
+    return className
+        .trim()
+        .split(/\s+/)
+        .some((token) => {
+            if (!token) return false;
+
+            const withoutImportant = token.startsWith('!') ? token.slice(1) : token;
+            const baseClass = withoutImportant.split(':').pop() ?? withoutImportant;
+
+            if (!baseClass.startsWith('text-')) return false;
+            if (NON_COLOR_TEXT_CLASSES.has(baseClass)) return false;
+            if (baseClass.startsWith('text-opacity-')) return false;
+
+            return true;
+        });
+};
+
 export const Button: React.FC<ButtonProps> = ({ className = '', children, ...props }) => { 
     const hasBgClass = className.includes('bg-');
-    const hasColorTextClass = /(?:^|\s)(?:[a-z-]+:)*!?text-[^\s]+/.test(className);
+    const hasColorTextClass = hasTextColorClass(className);
 
     return (
         <button
@@ -41,3 +87,5 @@ export const Button: React.FC<ButtonProps> = ({ className = '', children, ...pro
         </button>
     );
 };
+
+export default Button;

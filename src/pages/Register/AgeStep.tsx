@@ -1,39 +1,109 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { Button } from '../../components/Button';
-import { DatePicker } from '../../components/DatePicker'; 
+import { DatePicker } from '../../components/DatePicker';
 import { useRegister } from '../../context/RegisterContext';
-import { parseDate, CalendarDate } from '@internationalized/date';
+import { CalendarDate, parseDate } from '@internationalized/date';
+
+const MIN_AGE = 18;
+
+const getMaxBirthDate = () => {
+    const today = new Date();
+    return `${today.getFullYear() - MIN_AGE}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+};
+
+const isValidIsoDate = (value: string) => {
+    const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!isoDateRegex.test(value)) return false;
+
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return (
+        date.getUTCFullYear() === year &&
+        date.getUTCMonth() === month - 1 &&
+        date.getUTCDate() === day
+    );
+};
+
+const normalizeIsoDate = (value: string) => {
+    const match = value.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (!match) return value;
+
+    const [, year, month, day] = match;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+};
+
+const isAtLeastAge = (birthDateIso: string, minAge: number) => {
+    const [year, month, day] = birthDateIso.split('-').map(Number);
+    const today = new Date();
+
+    let age = today.getFullYear() - year;
+    const hasNotHadBirthdayThisYear =
+        today.getMonth() + 1 < month ||
+        (today.getMonth() + 1 === month && today.getDate() < day);
+
+    if (hasNotHadBirthdayThisYear) {
+        age -= 1;
+    }
+
+    return age >= minAge;
+};
 
 export const AgeStep: React.FC = () => {
     const navigate = useNavigate();
     const { formData, updateFormData } = useRegister();
+    const [error, setError] = useState('');
+    const maxBirthDate = useMemo(() => getMaxBirthDate(), []);
+    const maxBirthDateValue = useMemo(() => parseDate(maxBirthDate), [maxBirthDate]);
 
-    let calendarValue: CalendarDate | null = null;
+    let defaultCalendarValue: CalendarDate | null = null;
     try {
         if (formData.birthDate) {
-            calendarValue = parseDate(formData.birthDate);
+            defaultCalendarValue = parseDate(formData.birthDate);
         }
-    } catch (e) {
-        console.error("Error parseando la fecha:", e);
+    } catch {
+        defaultCalendarValue = null;
     }
 
     const handleNext = () => {
-        const min_age = 16;
+        const birthDate = normalizeIsoDate(formData.birthDate);
 
-        if (formData.birthDate) {
-            const birthDateObj = new Date(formData.birthDate);
-            const birthYear = birthDateObj.getFullYear();
-            const currentYear = new Date().getFullYear();
+        if (!birthDate) {
+            setError('Por favor, selecciona tu fecha de nacimiento.');
+            return;
+        }
 
-            if (currentYear - birthYear < min_age) {
-                alert(`Debes tener al menos ${min_age} años para unirte a Bluvi.`);
-                return;
-            }
-            navigate('/register/gender');
-        } else {
-            alert("Por favor, selecciona tu fecha de nacimiento.");
+        if (!isValidIsoDate(birthDate)) {
+            setError('La fecha introducida no es valida.');
+            return;
+        }
+
+        if (!isAtLeastAge(birthDate, MIN_AGE)) {
+            setError(`Debes tener al menos ${MIN_AGE} años para unirte a Bluvi.`);
+            return;
+        }
+
+        if (birthDate !== formData.birthDate) {
+            updateFormData({ birthDate });
+        }
+
+        setError('');
+        navigate('/register/gender');
+    };
+
+    const handleBirthDateChange = (newDate: CalendarDate | null) => {
+        if (!newDate) {
+            // During segmented manual editing, react-aria can emit null temporarily.
+            // Ignore it to avoid wiping previously entered day/month values.
+            return;
+        }
+
+        const value = `${newDate.year}-${String(newDate.month).padStart(2, '0')}-${String(newDate.day).padStart(2, '0')}`;
+        updateFormData({ birthDate: value });
+        if (error) {
+            setError('');
         }
     };
 
@@ -51,20 +121,14 @@ export const AgeStep: React.FC = () => {
                 </div>
 
                 <div className="w-full flex flex-col gap-6 mb-20">
-                    <DatePicker 
+                    <DatePicker
                         label="Fecha de Nacimiento"
-                        value={calendarValue} 
-                        onChange={(newDate) => {
-                            if (newDate) {
-                                const y = newDate.year;
-                                const m = String(newDate.month).padStart(2, '0');
-                                const d = String(newDate.day).padStart(2, '0');
-                                const formatted = `${y}-${m}-${d}`;
-                                
-                                console.log("📍 PASO 1 - Fecha capturada:", formatted); 
-                                updateFormData({ birthDate: formatted });
-                            }
-                        }}
+                        defaultValue={defaultCalendarValue ?? undefined}
+                        onChange={handleBirthDateChange}
+                        maxValue={maxBirthDateValue}
+                        shouldForceLeadingZeros
+                        description={`Debes tener al menos ${MIN_AGE} años.`}
+                        errorMessage={error || undefined}
                     />
 
                     <p className="text-sm text-bluvi-purple/60 italic font-medium ml-2">

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { authService } from '../services/auth.service';
+import { authService, type RegisterPayload } from '../services/auth.service';
 
 interface RegisterData {
     firstName: string;
@@ -17,6 +17,8 @@ interface RegisterData {
     description: string;
 }
 
+type RegisterBackupData = Omit<RegisterData, 'password'>;
+
 const DEFAULT_REGISTER_DATA: RegisterData = {
     firstName: '',
     lastName: '',
@@ -31,6 +33,78 @@ const DEFAULT_REGISTER_DATA: RegisterData = {
     city: '',
     interests: [],
     description: '',
+};
+
+const sanitizePlainText = (value: string, maxLength: number) =>
+    value.replace(/[\u0000-\u001F\u007F]/g, '').slice(0, maxLength);
+
+const sanitizeEmail = (value: string) => sanitizePlainText(value, 254).replace(/\s+/g, '');
+
+const serializeBackupData = (data: RegisterData): RegisterBackupData => ({
+    firstName: data.firstName,
+    lastName: data.lastName,
+    birthDate: data.birthDate,
+    gender: data.gender,
+    sexuality: data.sexuality,
+    neurodivergences: data.neurodivergences,
+    communicationStyle: data.communicationStyle,
+    email: data.email,
+    photos: data.photos,
+    city: data.city,
+    interests: data.interests,
+    description: data.description,
+});
+
+const sanitizeRegisterPatch = (newData: Partial<RegisterData>): Partial<RegisterData> => {
+    const sanitized: Partial<RegisterData> = { ...newData };
+
+    if (typeof newData.firstName === 'string') {
+        sanitized.firstName = sanitizePlainText(newData.firstName, 80);
+    }
+
+    if (typeof newData.lastName === 'string') {
+        sanitized.lastName = sanitizePlainText(newData.lastName, 80);
+    }
+
+    if (typeof newData.email === 'string') {
+        sanitized.email = sanitizeEmail(newData.email);
+    }
+
+    if (typeof newData.password === 'string') {
+        sanitized.password = sanitizePlainText(newData.password, 128);
+    }
+
+    if (typeof newData.city === 'string') {
+        sanitized.city = sanitizePlainText(newData.city, 120);
+    }
+
+    if (typeof newData.description === 'string') {
+        sanitized.description = sanitizePlainText(newData.description, 1200);
+    }
+
+    if (Array.isArray(newData.photos)) {
+        sanitized.photos = newData.photos.slice(0, 5).map((photo) => {
+            if (typeof photo !== 'string') {
+                return null;
+            }
+            const cleanPhoto = photo.trim();
+            return cleanPhoto.length > 0 ? cleanPhoto.slice(0, 2_000_000) : null;
+        });
+    }
+
+    if (Array.isArray(newData.neurodivergences)) {
+        sanitized.neurodivergences = [...new Set(newData.neurodivergences.filter((value) => Number.isInteger(value) && value > 0))];
+    }
+
+    if (Array.isArray(newData.communicationStyle)) {
+        sanitized.communicationStyle = [...new Set(newData.communicationStyle.filter((value) => Number.isInteger(value) && value > 0))];
+    }
+
+    if (Array.isArray(newData.interests)) {
+        sanitized.interests = [...new Set(newData.interests.filter((value) => Number.isInteger(value) && value > 0))];
+    }
+
+    return sanitized;
 };
 
 const normalizeRegisterData = (raw: unknown): RegisterData => {
@@ -61,7 +135,7 @@ const normalizeRegisterData = (raw: unknown): RegisterData => {
             ? data.communicationStyle.filter((v): v is number => typeof v === 'number')
             : [],
         email: typeof data.email === 'string' ? data.email : '',
-        password: typeof data.password === 'string' ? data.password : '',
+        password: '',
         photos,
         city: typeof data.city === 'string' ? data.city : '',
         interests: Array.isArray(data.interests)
@@ -91,24 +165,23 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     const updateFormData = (newData: Partial<RegisterData>) => {
         setData((prev) => {
-            const updated = { ...prev, ...newData };
-            localStorage.setItem('bluvi_reg_backup', JSON.stringify(updated));
+            const sanitizedPatch = sanitizeRegisterPatch(newData);
+            const updated = { ...prev, ...sanitizedPatch };
+            localStorage.setItem('bluvi_reg_backup', JSON.stringify(serializeBackupData(updated)));
             return updated;
         });
     };
 
     const sendToBackend = async () => {
-        console.log("Verificando maleta antes de enviar:", formData);
-        
         try {
-            const mappedData = {
-                email: formData.email,
+            const mappedData: RegisterPayload = {
+                email: formData.email.trim().toLowerCase(),
                 password: formData.password,
-                first_name: formData.firstName,
-                last_name: formData.lastName,
+                first_name: formData.firstName.trim(),
+                last_name: formData.lastName.trim(),
                 birth_date: formData.birthDate,
-                city: formData.city,
-                description: formData.description,
+                city: formData.city.trim(),
+                description: formData.description.trim(),
                 id_gender: formData.gender !== '' ? Number(formData.gender) : null,
                 id_preference: formData.sexuality !== '' ? Number(formData.sexuality) : null,
                 neurodivergences: formData.neurodivergences,
@@ -127,7 +200,8 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             
             if (result.success) {
                 localStorage.setItem('temp_email_verification', formData.email);
-                localStorage.removeItem('bluvi_reg_backup'); 
+                localStorage.removeItem('bluvi_reg_backup');
+                setData((prev) => ({ ...prev, password: '' }));
                 return true;
             }
             return false;

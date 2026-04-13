@@ -16,6 +16,8 @@ import {
     Text
 } from 'react-aria-components';
 import { CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { getLocalTimeZone, today } from '@internationalized/date';
 
 export interface DatePickerProps<T extends DateValue> extends AriaDatePickerProps<T> {
     label?: string;
@@ -24,6 +26,19 @@ export interface DatePickerProps<T extends DateValue> extends AriaDatePickerProp
 }
 
 export function DatePicker<T extends DateValue>({ label, description, errorMessage, ...props }: DatePickerProps<T>) {
+    const [focusedValue, setFocusedValue] = useState<DateValue | null>(null);
+    const fallbackFocusValue = useMemo(() => {
+        if (props.value) return props.value;
+        if (props.placeholderValue) return props.placeholderValue;
+        return today(getLocalTimeZone());
+    }, [props.placeholderValue, props.value]);
+
+    const jumpOneYear = (direction: 'prev' | 'next') => {
+        const base = focusedValue ?? props.value ?? fallbackFocusValue;
+        const years = direction === 'prev' ? -1 : 1;
+        setFocusedValue(base.add({ years }));
+    };
+
     return (
         <AriaDatePicker {...props} className="group flex flex-col gap-2 w-full max-w-sm font-sans">
         {label && <Label className="text-[#2d3a7d] font-bold text-lg ml-2">{label}</Label>}
@@ -46,23 +61,47 @@ export function DatePicker<T extends DateValue>({ label, description, errorMessa
         {description && <Text slot="description" className="text-sm text-[#5b6bb1] ml-2 opacity-80">{description}</Text>}
         {errorMessage && <Text slot="errorMessage" className="text-red-500 text-xs ml-2 mt-1">{errorMessage}</Text>}
 
-        <Popover className="p-4 rounded-[2rem] bg-white/95 backdrop-blur-xl border border-white/40 shadow-2xl animate-in fade-in zoom-in duration-200">
+        <Popover className="w-[min(92vw,22rem)] sm:w-auto p-3 sm:p-4 rounded-[2rem] bg-white/95 backdrop-blur-xl border border-white/40 shadow-2xl animate-in fade-in zoom-in duration-200">
             <Dialog>
-            <Calendar className="text-[#2d3a7d]">
-                <header className="flex items-center justify-between pb-4">
-                <Button slot="previous" className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                    <ChevronLeft size={20}/>
-                </Button>
+            <Calendar
+                className="w-full text-[#2d3a7d]"
+                focusedValue={focusedValue ?? undefined}
+                onFocusChange={setFocusedValue}
+            >
+                <header className="flex items-center justify-between pb-3 sm:pb-4">
+                <div className="flex items-center gap-1">
+                    <button
+                        type="button"
+                        onClick={() => jumpOneYear('prev')}
+                        className="px-2 py-1 rounded-full hover:bg-gray-100 transition-colors text-xs sm:text-sm font-semibold"
+                        aria-label="Ir al ano anterior"
+                    >
+                        {'<<'}
+                    </button>
+                    <Button slot="previous" className="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Ir al mes anterior">
+                        <ChevronLeft size={20}/>
+                    </Button>
+                </div>
                 <Heading className="font-bold" />
-                <Button slot="next" className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                    <ChevronRight size={20}/>
-                </Button>
+                <div className="flex items-center gap-1">
+                    <Button slot="next" className="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Ir al mes siguiente">
+                        <ChevronRight size={20}/>
+                    </Button>
+                    <button
+                        type="button"
+                        onClick={() => jumpOneYear('next')}
+                        className="px-2 py-1 rounded-full hover:bg-gray-100 transition-colors text-xs sm:text-sm font-semibold"
+                        aria-label="Ir al ano siguiente"
+                    >
+                        {'>>'}
+                    </button>
+                </div>
                 </header>
-                <CalendarGrid className="border-separate border-spacing-1 text-center">
+                <CalendarGrid className="w-full border-separate border-spacing-0.5 sm:border-spacing-1 text-center">
                 {(date) => (
                     <CalendarCell 
                     date={date} 
-                    className="w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer hover:bg-[#3f4a9b]/10 aria-selected:bg-[#3f4a9b] aria-selected:text-white outline-none transition-all" 
+                    className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl cursor-pointer hover:bg-[#3f4a9b]/10 aria-selected:bg-[#3f4a9b] aria-selected:text-white data-[outside-month]:text-[#2d3a7d]/35 data-[outside-month]:hover:bg-transparent data-[outside-month]:hover:text-[#2d3a7d]/45 outline-none transition-all" 
                     />
                 )}
                 </CalendarGrid>
