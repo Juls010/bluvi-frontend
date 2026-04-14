@@ -5,26 +5,39 @@ interface InputFieldProps {
     placeholder?: string;
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    type?: string; 
+    type?: string;
     id: string;
     state?: 'default' | 'success' | 'error';
     helperText?: string;
-    }
+    clearable?: boolean;
+    onClear?: () => void;
+    clearLabel?: string;
+    inputRef?: React.RefObject<HTMLInputElement>;
+    ['aria-invalid']?: boolean;
+    ['aria-describedby']?: string;
+}
 
-    export const InputField: React.FC<InputFieldProps> = ({ 
-    label, 
-    placeholder, 
-    value, 
-    onChange, 
-    type = "text",
-    id,
-    state = 'default',
-    helperText
+    export const InputField: React.FC<InputFieldProps> = ({
+        label,
+        placeholder,
+        value,
+        onChange,
+        type = "text",
+        id,
+        state = 'default',
+        helperText,
+        clearable = false,
+        onClear,
+        clearLabel = 'Limpiar campo',
+        inputRef,
+        ['aria-invalid']: ariaInvalid,
+        ['aria-describedby']: ariaDescribedby
     }) => {
     
     const [showPassword, setShowPassword] = useState(false);
 
     const isPasswordType = type === 'password';
+    const shouldShowClearButton = clearable && !isPasswordType && typeof value === 'string' && value.length > 0;
 
     const currentType = isPasswordType ? (showPassword ? 'text' : 'password') : type;
 
@@ -42,18 +55,34 @@ interface InputFieldProps {
 
         <div className="relative w-full">
             <input
-            id={id}
-            type={currentType}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            className={`
-                w-full px-4 py-3 rounded-xl bg-white/50 text-bluvi-purple placeholder:text-bluvi-purple/40 font-sans text-lg
-                border-2 transition-all duration-300 focus:outline-none focus:ring-4
-                ${getBorderColor()}
-                ${isPasswordType ? 'pr-12' : ''} /* Dejamos hueco a la derecha para el ojito */
-            `}
+                id={id}
+                ref={inputRef}
+                type={currentType}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className={`
+                    w-full px-4 py-3 rounded-xl bg-white/50 text-bluvi-purple placeholder:text-bluvi-purple/40 font-sans text-lg
+                    border-2 transition-all duration-300 focus:outline-none focus:ring-4
+                    ${getBorderColor()}
+                    ${isPasswordType || shouldShowClearButton ? 'pr-12' : ''} /* Dejamos hueco a la derecha para acciones */
+                `}
+                aria-invalid={ariaInvalid}
+                aria-describedby={ariaDescribedby}
             />
+
+            {shouldShowClearButton && (
+            <button
+                type="button"
+                onClick={onClear}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-bluvi-purple/45 hover:text-bluvi-purple transition-colors rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/30"
+                aria-label={clearLabel}
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4.5 h-4.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            )}
 
             {isPasswordType && (
             <button
@@ -79,7 +108,11 @@ interface InputFieldProps {
         </div>
 
         {helperText && (
-            <p className={`text-sm pl-1 ${state === 'error' ? 'text-red-500' : 'text-bluvi-purple/60'}`}>
+            <p
+                id={ariaDescribedby}
+                className={`text-sm pl-1 ${state === 'error' ? 'text-red-500' : 'text-bluvi-purple/60'}`}
+                aria-live={state === 'error' ? 'assertive' : undefined}
+            >
                 {helperText}
             </p>
         )}

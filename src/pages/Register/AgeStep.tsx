@@ -95,8 +95,6 @@ export const AgeStep: React.FC = () => {
 
     const handleBirthDateChange = (newDate: CalendarDate | null) => {
         if (!newDate) {
-            // During segmented manual editing, react-aria can emit null temporarily.
-            // Ignore it to avoid wiping previously entered day/month values.
             return;
         }
 
@@ -107,10 +105,11 @@ export const AgeStep: React.FC = () => {
         }
     };
 
+    const errorId = error ? 'birthdate-error' : undefined;
+
     return (
         <AnimatedStep>
             <div className="w-full max-w-md px-6 flex flex-col items-center">
-                
                 <div className="w-full text-left mb-8">
                     <h1 className="font-heading text-3xl md:text-4xl font-bold text-bluvi-purple mb-2">
                         ¿Cuándo naciste?
@@ -129,17 +128,19 @@ export const AgeStep: React.FC = () => {
                         shouldForceLeadingZeros
                         description={`Debes tener al menos ${MIN_AGE} años.`}
                         errorMessage={error || undefined}
+                        aria-invalid={!!error}
+                        aria-describedby={errorId}
                     />
 
-                    <p className="text-sm text-bluvi-purple/60 italic font-medium ml-2">
+                    <p className="text-sm text-bluvi-purple/60 italic font-medium ml-2" id={errorId}>
                         * Tu fecha de nacimiento no será pública en tu perfil.
                     </p>
                 </div>
 
                 <div className="w-full">
-                    <Button 
-                        aria-label="Ir al siguiente paso" 
-                        disabled={!formData.birthDate} 
+                    <Button
+                        aria-label="Ir al siguiente paso"
+                        disabled={!formData.birthDate}
                         className={`w-full py-3.5 text-lg shadow-md transition-all ${
                             !formData.birthDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'
                         }`}

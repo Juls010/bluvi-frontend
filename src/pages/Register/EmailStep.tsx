@@ -3,6 +3,7 @@ import { InputField } from '../../components/InputField';
 import { useNavigate } from 'react-router-dom';
 import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 export const EmailStep: React.FC = () => {
     const navigate = useNavigate();
@@ -39,14 +40,11 @@ export const EmailStep: React.FC = () => {
         <AnimatedStep>
             <div className="w-full max-w-md px-6 animate-fade-in">
                 
-                <div className="w-full text-left mb-8">
-                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-bluvi-purple mb-2">
-                        Crea tu cuenta
-                    </h1>
-                    <p className="text-bluvi-purple/70 text-lg font-medium">
-                        Para que puedas acceder de forma segura
-                    </p>
-                </div>
+                <RegisterStepHeader
+                    title="Crea tu cuenta"
+                    subtitle="Para que puedas acceder de forma segura"
+                    className="mb-8"
+                />
 
                 <div className="w-full flex flex-col gap-6 mb-20">
                     <InputField 

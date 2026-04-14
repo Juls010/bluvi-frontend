@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { useRegister } from '../../context/RegisterContext'; 
 import { searchCities, type CitySuggestion } from '../../services/cities.service';
+import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 const MAX_CITY_QUERY_LENGTH = 120;
 const CITY_LISTBOX_ID = 'register-city-results';
@@ -167,16 +168,19 @@ export const LocationStep = () => {
 
     return (
         <AnimatedStep>
-            <div className="fixed inset-0 w-full flex flex-col items-center justify-center px-6 overflow-hidden animate-fade-in">
-                <div className="max-w-xl w-full space-y-15 text-center">
+            <div className="w-full flex flex-col items-center px-4 md:px-6 animate-fade-in">
+                <div className="max-w-xl w-full space-y-8 md:space-y-10 max-[900px]:space-y-6 text-center">
 
-                    <header className="space-y-6">
-                        <h1 className="text-4xl font-bold text-bluvi-purple">¿Desde dónde conectas?</h1>
-                        <p className="text-gray-600 font-medium">Busca tu ciudad para encontrar personas cerca de ti.</p>
-                        <div className="mx-auto w-20 h-20 bg-white/10 backdrop-blur-md rounded-[2rem] flex items-center justify-center shadow-lg border border-white/10">
-                            <MapPin size={40} className="text-bluvi-purple" strokeWidth={1.5} aria-hidden="true" />
-                        </div>
-                    </header>
+                    <RegisterStepHeader
+                        title="¿Desde dónde conectas?"
+                        subtitle="Busca tu ciudad para encontrar personas cerca de ti."
+                        align="center"
+                        className="mb-0"
+                    />
+
+                    <div className="mx-auto w-16 h-16 md:w-20 md:h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-lg border border-white/10">
+                        <MapPin size={32} className="text-bluvi-purple md:w-10 md:h-10" strokeWidth={1.5} aria-hidden="true" />
+                    </div>
 
                     <div className="relative" ref={comboboxContainerRef}>
                         <div className="relative group">
@@ -193,7 +197,7 @@ export const LocationStep = () => {
                                     }
                                 }}
                                 placeholder="Escribe el nombre de tu ciudad..."
-                                className="w-full bg-white/50 backdrop-blur-xl border border-white/60 py-5 pl-12 pr-6 rounded-[2rem] outline-none focus:ring-4 focus:ring-bluvi-purple/10 text-bluvi-purple placeholder:text-bluvi-purple/30 text-lg shadow-inner transition-all"
+                                className="w-full bg-white/50 backdrop-blur-xl border border-white/60 py-4 md:py-5 pl-12 pr-6 rounded-[2rem] outline-none focus:ring-4 focus:ring-bluvi-purple/10 text-bluvi-purple placeholder:text-bluvi-purple/30 text-base md:text-lg shadow-inner transition-all"
                                 aria-label="Buscar ciudad"
                                 aria-describedby="city-combobox-help"
                                 aria-expanded={hasSuggestions}
@@ -255,11 +259,11 @@ export const LocationStep = () => {
                         )}
                     </div>
 
-                    <div className="pt-10 md:pt-16 animate-fade-in"> 
+                    <div className="pt-4 md:pt-8 max-[900px]:pt-3 animate-fade-in"> 
                         <Button
                             onClick={handleNext}
                             disabled={!formData.city}
-                            className={`w-full py-4 rounded-full text-lg shadow-xl ${
+                            className={`w-full py-3.5 md:py-4 rounded-full text-base md:text-lg shadow-xl ${
                                 formData.city 
                                 ? 'bg-bluvi-purple text-white' 
                                 : 'bg-gray-200 text-gray-400 opacity-50'

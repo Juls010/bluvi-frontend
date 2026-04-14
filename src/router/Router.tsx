@@ -44,6 +44,12 @@ const withSuspense = (element: React.ReactNode) => (
     </Suspense>
 );
 
+const withRegisterSuspense = (element: React.ReactNode) => (
+    <Suspense fallback={<div className="min-h-screen w-full bg-bluvi-gradient" />}>
+        {element}
+    </Suspense>
+);
+
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -67,19 +73,19 @@ export const router = createBrowserRouter([
             </PublicThemeScope>
         ),
         children: [
-            { path: "name", element: withSuspense(<NameStepPage />) },
-            { path: "age", element: withSuspense(<AgeStepPage />) },
-            { path: "gender", element: withSuspense(<GenderStepPage />) },
-            { path: "sexuality", element: withSuspense(<SexualityStepPage />) },
-            { path: "neurodivergence", element: withSuspense(<NeurodivergenceStepPage />) },
-            { path: "communication", element: withSuspense(<CommunicationStyleStepPage />) },
-            { path: "email", element: withSuspense(<EmailStepPage />) },
-            { path: "photos", element: withSuspense(<PhotoUploadStepPage />) },
-            { path: "location", element: withSuspense(<LocationStepPage />) },
-            { path: "interests", element: withSuspense(<InterestsStepPage />) },
-            { path: "description", element: withSuspense(<ProfileDescriptionStepPage />) },
-            { path: "verificationemail", element: withSuspense(<EmailVerificationStepPage />) },
-            { path: "safety-tips", element: withSuspense(<SafetyTipsStepPage />) },
+            { path: "name", element: withRegisterSuspense(<NameStepPage />) },
+            { path: "age", element: withRegisterSuspense(<AgeStepPage />) },
+            { path: "gender", element: withRegisterSuspense(<GenderStepPage />) },
+            { path: "sexuality", element: withRegisterSuspense(<SexualityStepPage />) },
+            { path: "neurodivergence", element: withRegisterSuspense(<NeurodivergenceStepPage />) },
+            { path: "communication", element: withRegisterSuspense(<CommunicationStyleStepPage />) },
+            { path: "email", element: withRegisterSuspense(<EmailStepPage />) },
+            { path: "photos", element: withRegisterSuspense(<PhotoUploadStepPage />) },
+            { path: "location", element: withRegisterSuspense(<LocationStepPage />) },
+            { path: "interests", element: withRegisterSuspense(<InterestsStepPage />) },
+            { path: "description", element: withRegisterSuspense(<ProfileDescriptionStepPage />) },
+            { path: "verificationemail", element: withRegisterSuspense(<EmailVerificationStepPage />) },
+            { path: "safety-tips", element: withRegisterSuspense(<SafetyTipsStepPage />) },
         ]
     },
     {

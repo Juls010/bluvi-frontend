@@ -19,6 +19,11 @@ interface RegisterData {
 
 type RegisterBackupData = Omit<RegisterData, 'password'>;
 
+const PERSON_NAME_REGEX = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const DATA_URI_OR_HTTP_URL_REGEX = /^(data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n]+|https?:\/\/\S+)$/;
+
 const DEFAULT_REGISTER_DATA: RegisterData = {
     firstName: '',
     lastName: '',
@@ -145,6 +150,73 @@ const normalizeRegisterData = (raw: unknown): RegisterData => {
     };
 };
 
+const isPositiveIntegerArray = (value: number[], maxItems: number) =>
+    Array.isArray(value) && value.length <= maxItems && value.every((item) => Number.isInteger(item) && item > 0);
+
+const validateMappedRegisterData = (payload: RegisterPayload): string | null => {
+    if (!EMAIL_REGEX.test(payload.email) || payload.email.length > 254) {
+        return 'El correo no es valido.';
+    }
+
+    if (payload.password.length < 8 || payload.password.length > 72) {
+        return 'La contraseña debe tener entre 8 y 72 caracteres.';
+    }
+
+    if (!payload.first_name || payload.first_name.length > 80 || !PERSON_NAME_REGEX.test(payload.first_name)) {
+        return 'El nombre es invalido. Solo se permiten letras y espacios.';
+    }
+
+    if (!payload.last_name || payload.last_name.length > 80 || !PERSON_NAME_REGEX.test(payload.last_name)) {
+        return 'El apellido es invalido. Solo se permiten letras y espacios.';
+    }
+
+    if (!ISO_DATE_REGEX.test(payload.birth_date)) {
+        return 'La fecha de nacimiento no es valida.';
+    }
+
+    if (!Number.isInteger(payload.id_gender) || payload.id_gender <= 0) {
+        return 'Selecciona un genero valido.';
+    }
+
+    if (!Number.isInteger(payload.id_preference) || payload.id_preference <= 0) {
+        return 'Selecciona una preferencia valida.';
+    }
+
+    if (!payload.city || payload.city.length > 120) {
+        return 'La ciudad no es valida.';
+    }
+
+    if (!payload.description || payload.description.length > 1200) {
+        return 'La descripcion no es valida.';
+    }
+
+    if (!isPositiveIntegerArray(payload.interests, 50)) {
+        return 'Los intereses contienen valores no validos.';
+    }
+
+    if (!isPositiveIntegerArray(payload.neurodivergences, 50)) {
+        return 'Las neurodivergencias contienen valores no validos.';
+    }
+
+    if (!isPositiveIntegerArray(payload.communication_style, 50)) {
+        return 'El estilo de comunicacion contiene valores no validos.';
+    }
+
+    if (!Array.isArray(payload.photos) || payload.photos.length > 8) {
+        return 'El numero de fotos no es valido.';
+    }
+
+    const hasInvalidPhoto = payload.photos.some(
+        (photo) => photo.length === 0 || photo.length > 2_000_000 || !DATA_URI_OR_HTTP_URL_REGEX.test(photo)
+    );
+
+    if (hasInvalidPhoto) {
+        return 'Hay fotos con un formato no valido.';
+    }
+
+    return null;
+};
+
 interface RegisterContextType {
     formData: RegisterData; 
     updateFormData: (newData: Partial<RegisterData>) => void; 
@@ -190,9 +262,9 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 photos: formData.photos.filter((photo): photo is string => typeof photo === 'string' && photo.length > 0)
             };
 
-            // VALIDACIÓN CRÍTICA: Si la fecha está vacía aquí, detenemos el proceso
-            if (!mappedData.birth_date) {
-                alert("La fecha de nacimiento se ha perdido. Por favor, vuelve al paso de edad.");
+            const validationError = validateMappedRegisterData(mappedData);
+            if (validationError) {
+                alert(validationError);
                 return false;
             }
 

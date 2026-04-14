@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { authService } from '../../services/auth.service';
+import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 export const SexualityStep: React.FC = () => {
     
@@ -35,11 +36,7 @@ export const SexualityStep: React.FC = () => {
         <AnimatedStep>
             <div className="w-full max-w-md px-6 animate-fade-in">
 
-            <div className="w-full text-left mb-6">
-                <h1 className="font-heading text-3xl md:text-4xl font-bold text-bluvi-purple mb-2">
-                Tu sexualidad ...
-                </h1>
-            </div>
+            <RegisterStepHeader title="Tu sexualidad ..." className="mb-6" />
 
             <div className="w-full flex flex-col gap-3 mb-12">
                 {sexualityOptions.map((option) => {
