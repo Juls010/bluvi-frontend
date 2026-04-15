@@ -112,7 +112,6 @@ export const LocationStep = () => {
         if (sanitizedValue.length === 0) {
             updateFormData({ city: '' });
         } else if (normalizedTypedValue !== normalizedSelectedCity) {
-            // Force a valid selection from suggestions before allowing next step.
             updateFormData({ city: '' });
         }
 
@@ -168,105 +167,111 @@ export const LocationStep = () => {
 
     return (
         <AnimatedStep>
-            <div className="w-full flex flex-col items-center px-4 md:px-6 animate-fade-in">
-                <div className="max-w-xl w-full space-y-8 md:space-y-10 max-[900px]:space-y-6 text-center">
+            <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in overflow-visible">
+                <div className="max-w-xl w-full h-full flex flex-col justify-between pt-0 pb-0 md:pt-8 md:pb-4 overflow-visible">
 
-                    <RegisterStepHeader
-                        title="¿Desde dónde conectas?"
-                        subtitle="Busca tu ciudad para encontrar personas cerca de ti."
-                        align="center"
-                        className="mb-0"
-                    />
-
-                    <div className="mx-auto w-16 h-16 md:w-20 md:h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-lg border border-white/10">
-                        <MapPin size={32} className="text-bluvi-purple md:w-10 md:h-10" strokeWidth={1.5} aria-hidden="true" />
-                    </div>
-
-                    <div className="relative" ref={comboboxContainerRef}>
-                        <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-bluvi-purple/40 group-focus-within:text-bluvi-purple transition-colors" size={20} />
-                            <input 
-                                ref={inputRef}
-                                type="text"
-                                value={query}
-                                onChange={(e) => handleInputChange(e.target.value)}
-                                onKeyDown={handleInputKeyDown}
-                                onFocus={() => {
-                                    if (!hasSelectedCityInInput) {
-                                        setShowSuggestions(true);
-                                    }
-                                }}
-                                placeholder="Escribe el nombre de tu ciudad..."
-                                className="w-full bg-white/50 backdrop-blur-xl border border-white/60 py-4 md:py-5 pl-12 pr-6 rounded-[2rem] outline-none focus:ring-4 focus:ring-bluvi-purple/10 text-bluvi-purple placeholder:text-bluvi-purple/30 text-base md:text-lg shadow-inner transition-all"
-                                aria-label="Buscar ciudad"
-                                aria-describedby="city-combobox-help"
-                                aria-expanded={hasSuggestions}
-                                role="combobox"
-                                aria-controls={CITY_LISTBOX_ID}
-                                aria-autocomplete="list"
-                                aria-activedescendant={activeDescendantId}
-                            />
-                            {query.length > 0 && (
-                                <button
-                                    type="button"
-                                    onClick={handleClearQuery}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-bluvi-purple/45 hover:text-bluvi-purple transition-colors rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/30"
-                                    aria-label="Limpiar ciudad seleccionada"
-                                >
-                                    <X size={18} aria-hidden="true" />
-                                </button>
-                            )}
-                            <p id="city-combobox-help" className="sr-only">
-                                Escribe al menos dos letras. Usa flechas arriba y abajo para navegar sugerencias y Enter para seleccionar.
-                            </p>
-                            <p className="sr-only" role="status" aria-live="polite">
-                                {liveMessage}
-                            </p>
+                    <div className="shrink-0 flex flex-col w-full">
+                        <RegisterStepHeader
+                            title="¿Desde dónde te conectas?"
+                            subtitle="Busca tu ciudad para encontrar personas cerca de ti."
+                            align="left"
+                            compactOnShort
+                            className="mb-6 w-full"
+                        />
+                        <div className="flex justify-center w-full mb-2">
+                            <div className="w-16 h-16 md:w-20 md:h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-lg border border-white/10 shrink-0">
+                                <MapPin size={32} className="text-bluvi-purple md:w-10 md:h-10" strokeWidth={1.5} aria-hidden="true" />
+                            </div>
                         </div>
-
-                        {hasSuggestions && (
-                            <ul 
-                                id={CITY_LISTBOX_ID}
-                                className="absolute z-50 w-full mt-2 bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2rem] shadow-2xl overflow-hidden max-h-60 overflow-y-auto no-scrollbar"
-                                role="listbox"
-                            >
-                                {isLoading ? (
-                                    <li className="px-6 py-4 text-bluvi-purple/70" role="presentation">Buscando ciudades...</li>
-                                ) : suggestions.length > 0 ? (
-                                    suggestions.map((city, index) => (
-                                        <li
-                                            key={city.id}
-                                            id={`city-option-${city.id}`}
-                                            role="option"
-                                            aria-selected={formData.city === city.value}
-                                            tabIndex={-1}
-                                            onMouseDown={(event) => {
-                                                event.preventDefault();
-                                                handleCitySelect(city);
-                                            }}
-                                            onClick={() => handleCitySelect(city)}
-                                            onMouseEnter={() => setActiveIndex(index)}
-                                            className={`w-full flex items-center justify-between px-6 py-4 text-left text-bluvi-purple font-medium transition-colors cursor-pointer ${index === activeIndex ? 'bg-bluvi-purple/10' : 'hover:bg-bluvi-purple/5'}`}
-                                        >
-                                            <span>{city.label}</span>
-                                            {formData.city === city.value ? <CheckCircle2 size={18} /> : <ChevronRight size={18} className="opacity-30" />}
-                                        </li>
-                                    ))
-                                ) : (
-                                    <li className="px-6 py-4 text-gray-400 italic" role="presentation">{citySearchError ?? 'No encontramos esa ciudad...'}</li>
-                                )}
-                            </ul>
-                        )}
                     </div>
 
-                    <div className="pt-4 md:pt-8 max-[900px]:pt-3 animate-fade-in"> 
+                    <div className="flex-grow min-h-0 overflow-visible py-10 px-1">
+                        <div className="relative" ref={comboboxContainerRef}>
+                            <div className="relative group">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-bluvi-purple/40 group-focus-within:text-bluvi-purple transition-colors" size={20} />
+                                <input 
+                                    ref={inputRef}
+                                    type="text"
+                                    value={query}
+                                    onChange={(e) => handleInputChange(e.target.value)}
+                                    onKeyDown={handleInputKeyDown}
+                                    onFocus={() => {
+                                        if (!hasSelectedCityInInput) {
+                                            setShowSuggestions(true);
+                                        }
+                                    }}
+                                    placeholder="Escribe el nombre de tu ciudad..."
+                                    className="w-full bg-white/50 backdrop-blur-xl border border-white/60 py-4 md:py-5 pl-12 pr-6 rounded-[2rem] outline-none focus:ring-4 focus:ring-bluvi-purple/10 text-bluvi-purple placeholder:text-bluvi-purple/30 text-base md:text-lg shadow-inner transition-all"
+                                    aria-label="Buscar ciudad"
+                                    aria-describedby="city-combobox-help"
+                                    aria-expanded={hasSuggestions}
+                                    role="combobox"
+                                    aria-controls={CITY_LISTBOX_ID}
+                                    aria-autocomplete="list"
+                                    aria-activedescendant={activeDescendantId}
+                                />
+                                {query.length > 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={handleClearQuery}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-bluvi-purple/45 hover:text-bluvi-purple transition-colors rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/30"
+                                        aria-label="Limpiar ciudad seleccionada"
+                                    >
+                                        <X size={18} aria-hidden="true" />
+                                    </button>
+                                )}
+                                <p id="city-combobox-help" className="sr-only">
+                                    Escribe al menos dos letras. Usa flechas arriba y abajo para navegar sugerencias y Enter para seleccionar.
+                                </p>
+                                <p className="sr-only" role="status" aria-live="polite">
+                                    {liveMessage}
+                                </p>
+                            </div>
+
+                            {hasSuggestions && (
+                                <ul 
+                                    id={CITY_LISTBOX_ID}
+                                    className="absolute z-50 w-full mt-2 bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2rem] shadow-2xl overflow-hidden max-h-60 overflow-y-auto no-scrollbar"
+                                    role="listbox"
+                                >
+                                    {isLoading ? (
+                                        <li className="px-6 py-4 text-bluvi-purple/70" role="presentation">Buscando ciudades...</li>
+                                    ) : suggestions.length > 0 ? (
+                                        suggestions.map((city, index) => (
+                                            <li
+                                                key={city.id}
+                                                id={`city-option-${city.id}`}
+                                                role="option"
+                                                aria-selected={formData.city === city.value}
+                                                tabIndex={-1}
+                                                onMouseDown={(event) => {
+                                                    event.preventDefault();
+                                                    handleCitySelect(city);
+                                                }}
+                                                onClick={() => handleCitySelect(city)}
+                                                onMouseEnter={() => setActiveIndex(index)}
+                                                className={`w-full flex items-center justify-between px-6 py-4 text-left text-bluvi-purple font-medium transition-colors cursor-pointer ${index === activeIndex ? 'bg-bluvi-purple/10' : 'hover:bg-bluvi-purple/5'}`}
+                                            >
+                                                <span>{city.label}</span>
+                                                {formData.city === city.value ? <CheckCircle2 size={18} /> : <ChevronRight size={18} className="opacity-30" />}
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li className="px-6 py-4 text-gray-400 italic" role="presentation">{citySearchError ?? 'No encontramos esa ciudad...'}</li>
+                                    )}
+                                </ul>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="pt-2 shrink-0 w-full flex justify-center"> 
                         <Button
                             onClick={handleNext}
                             disabled={!formData.city}
-                            className={`w-full py-3.5 md:py-4 rounded-full text-base md:text-lg shadow-xl ${
+                            className={`w-full max-w-sm py-4 rounded-full text-base md:text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 ${
                                 formData.city 
-                                ? 'bg-bluvi-purple text-white' 
-                                : 'bg-gray-200 text-gray-400 opacity-50'
+                                ? 'bg-bluvi-purple text-white hover:scale-105 active:scale-95' 
+                                : 'bg-gray-200 text-gray-400 opacity-50 cursor-not-allowed'
                             }`}
                             aria-label="Confirmar ciudad y continuar"
                         >

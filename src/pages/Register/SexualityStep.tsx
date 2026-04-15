@@ -7,11 +7,11 @@ import { authService } from '../../services/auth.service';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 export const SexualityStep: React.FC = () => {
-    
+
     const navigate = useNavigate();
     const { formData, updateFormData } = useRegister();
-    
-    const [sexualityOptions, setSexualityOptions] = useState<{id: number, name: string}[]>([]);
+
+    const [sexualityOptions, setSexualityOptions] = useState<{ id: number, name: string }[]>([]);
 
     useEffect(() => {
         const fetchOptions = async () => {
@@ -29,49 +29,66 @@ export const SexualityStep: React.FC = () => {
 
     const handleNext = () => {
         if (!formData.sexuality) return;
-        navigate('/register/neurodivergence'); 
+        navigate('/register/neurodivergence');
     };
 
     return (
         <AnimatedStep>
-            <div className="w-full max-w-md px-6 animate-fade-in">
+            <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
+                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
+                    
+                    <div className="shrink-0 flex flex-col items-start w-full">
+                        <RegisterStepHeader 
+                            title="Tu sexualidad ..." 
+                            align="left"
+                            compactOnShort
+                            className="mb-0" 
+                        />
+                    </div>
 
-            <RegisterStepHeader title="Tu sexualidad ..." className="mb-6" />
+                    <div 
+                        className="flex-grow min-h-0 overflow-visible no-scrollbar py-10 px-1"
+                        role="radiogroup" 
+                        aria-label="Opciones de sexualidad"
+                    >
+                        <div className="flex flex-col gap-3">
+                            {sexualityOptions.map((option) => {
+                                const isSelected = formData.sexuality === option.id;
 
-            <div className="w-full flex flex-col gap-3 mb-12">
-                {sexualityOptions.map((option) => {
-                        // Comparamos IDs numéricos
-                        const isSelected = formData.sexuality === option.id;
-                
-                return (
-                    <button
-                    key={option.id}
-                    onClick={() => updateFormData({ sexuality: option.id })}
-                    className={`
-                    w-full py-3.5 px-6 rounded-2xl text-lg font-medium transition-all duration-300 border-2
-                    ${isSelected 
-                        ? 'bg-bluvi-purple/20 border-bluvi-purple text-bluvi-purple font-bold shadow-md scale-[1.02]' 
-                        
-                        : 'bg-white/50 border-white/50 text-bluvi-purple hover:bg-white/80 hover:border-bluvi-purple/30'
-                    }
-                    `}
-                >
-                    {option.name}
-                </button>
-                );
-                })}
-            </div>
+                                return (
+                                    <button
+                                        key={option.id}
+                                        role="radio"
+                                        aria-checked={isSelected}
+                                        onClick={() => updateFormData({ sexuality: option.id })}
+                                        className={`
+                                            w-full py-3.5 px-6 rounded-2xl text-lg font-medium transition-all duration-300 border-2
+                                            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40
+                                            ${isSelected
+                                                ? 'bg-bluvi-purple/20 border-bluvi-purple text-bluvi-purple font-bold shadow-md scale-[1.02]'
+                                                : 'bg-white/50 border-white/50 text-bluvi-purple hover:bg-white/80 hover:border-bluvi-purple/30'
+                                            }
+                                        `}
+                                    >
+                                        {option.name}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
 
-            <div className="w-full">
-                <Button 
-                aria-label="Siguiente paso" 
-                className={`w-full py-3.5 text-lg shadow-md transition-all duration-300 ${!formData.sexuality ? 'opacity-50 cursor-not-allowed' : ''}`}
-                onClick={handleNext}
-                >
-                Siguiente
-                </Button>
-            </div>
+                    <div className="pt-4 shrink-0 w-full flex justify-center">
+                        <Button
+                            aria-label="Siguiente paso"
+                            disabled={!formData.sexuality}
+                            className={`w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 ${!formData.sexuality ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
+                            onClick={handleNext}
+                        >
+                            Siguiente
+                        </Button>
+                    </div>
 
+                </div>
             </div>
         </AnimatedStep>
     );

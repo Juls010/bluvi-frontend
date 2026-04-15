@@ -7,6 +7,7 @@ import { AccessibleErrorTooltip } from '../../components/AccessibleErrorTooltip'
 import { SuccessModal } from '../../components/SuccessModal';
 import { authService } from '../../services/auth.service';
 import { useRegister } from '../../context/RegisterContext';
+import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 export const EmailVerificationStep = () => {
     const navigate = useNavigate();
@@ -62,58 +63,73 @@ export const EmailVerificationStep = () => {
 
     return (
         <AnimatedStep>
-            <div className="h-[100dvh] w-full flex flex-col items-center justify-between py-16 px-6 bg-transparent fixed inset-0 animate-fade-in">
-                
-                <div className="max-w-2xl w-full flex flex-col items-center text-center space-y-8">
-                    <header className="space-y-4">
-                        <div className="bg-white/40 p-4 rounded-full w-fit mx-auto backdrop-blur-sm border border-white/20 shadow-sm">
-                            <Mail className="text-[#3f4a9b]" size={32} />
+            <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
+                <div className="max-w-xl w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
+                    
+                    <div className="shrink-0 flex flex-col items-start w-full">
+                        <RegisterStepHeader
+                            title="Verifica tu correo"
+                            subtitle="Te hemos enviado un código de 6 dígitos para proteger tu cuenta."
+                            align="left"
+                            compactOnShort
+                            className="w-full mb-6"
+                        />
+                        <div className="w-full flex justify-center mb-4">
+                            <div className="bg-white/40 p-5 rounded-full backdrop-blur-sm border border-white/20 shadow-sm shrink-0">
+                                <Mail className="text-[#3f4a9b]" size={36} />
+                            </div>
                         </div>
-                        <h1 className="text-3xl font-bold text-[#2d3a7d]">Verifica tu correo</h1>
-                        <div className="text-[#5b6bb1] font-medium max-w-sm mx-auto">
-                            <p>Te hemos enviado un código de 6 dígitos para proteger tu cuenta.</p>
-                        </div>
-                    </header>
-
-                    {/* Inputs del Código */}
-                    <div className="flex gap-4">
-                        {code.map((digit, index) => (
-                            <input
-                                key={index}
-                                ref={inputRefs[index]}
-                                type="text"
-                                maxLength={1}
-                                value={digit}
-                                onChange={(e) => handleChange(index, e.target.value)}
-                                onKeyDown={(e) => handleKeyDown(index, e)}
-                                className="w-12 h-16 text-center text-2xl font-bold rounded-2xl bg-white/50 border border-white/30 shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#3f4a9b]/30 text-[#2d3a7d] transition-all"
-                            />
-                        ))}
                     </div>
 
-                    <button className="flex items-center gap-2 text-[#5b6bb1] hover:text-[#3f4a9b] text-sm font-semibold transition-colors">
-                        <RefreshCw size={16} />
-                        Reenviar código
-                    </button>
+                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-12 flex flex-col items-center justify-start space-y-10">
+                        <div className="flex gap-2 md:gap-4 justify-center" role="group" aria-label="Código de verificación">
+                            {code.map((digit, index) => (
+                                <input
+                                    key={index}
+                                    ref={inputRefs[index]}
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="\d*"
+                                    maxLength={1}
+                                    value={digit}
+                                    aria-label={`Dígito ${index + 1} del código`}
+                                    aria-invalid={!!errorMessage}
+                                    onChange={(e) => handleChange(index, e.target.value)}
+                                    onKeyDown={(e) => handleKeyDown(index, e)}
+                                    className="w-10 h-14 md:w-12 md:h-16 text-center text-xl md:text-2xl font-bold rounded-xl md:rounded-2xl bg-white/50 border border-white/30 shadow-sm backdrop-blur-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40 text-bluvi-purple transition-all"
+                                />
+                            ))}
+                        </div>
 
-                    <AccessibleErrorTooltip id="email-verification-error" message={errorMessage} className="max-w-sm" />
+                        <button className="flex items-center gap-2 text-bluvi-purple/70 hover:text-bluvi-purple text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/40 rounded px-2 py-1">
+                            <RefreshCw size={16} />
+                            Reenviar código
+                        </button>
+
+                        <AccessibleErrorTooltip id="email-verification-error" message={errorMessage} className="max-w-sm" />
+                    </div>
+
+                    <div className="pt-4 shrink-0 w-full flex justify-center">
+                        <Button 
+                            onClick={handleVerifyCode}
+                            disabled={code.some(d => d === '')}
+                            aria-describedby={errorMessage ? 'email-verification-error' : undefined}
+                            className={`w-full max-w-sm py-4 rounded-full text-base md:text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300
+                                ${!code.some(d => d === '') 
+                                    ? 'bg-bluvi-purple text-white hover:scale-105 active:scale-95' 
+                                    : 'bg-gray-200 text-gray-400 opacity-50 cursor-not-allowed'
+                                }
+                            `}
+                        >
+                            Verificar y continuar
+                        </Button>
+                    </div>
+
+                    <SuccessModal
+                        isOpen={isInfoModalOpen}
+                        onClose={() => setIsInfoModalOpen(false)}
+                    />
                 </div>
-
-                <div className="w-full max-w-sm">
-                    <Button 
-                        onClick={handleVerifyCode}
-                        disabled={code.some(d => d === '')}
-                        aria-describedby={errorMessage ? 'email-verification-error' : undefined}
-                        className="w-full py-3 bg-[#3f4a9b] text-white rounded-lg shadow-md font-semibold disabled:opacity-50"
-                    >
-                        Verificar y continuar
-                    </Button>
-                </div>
-
-                <SuccessModal
-                    isOpen={isInfoModalOpen}
-                    onClose={() => setIsInfoModalOpen(false)}
-                />
             </div>
         </AnimatedStep>
     );

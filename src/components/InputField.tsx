@@ -12,7 +12,7 @@ interface InputFieldProps {
     clearable?: boolean;
     onClear?: () => void;
     clearLabel?: string;
-    inputRef?: React.RefObject<HTMLInputElement>;
+    inputRef?: React.Ref<HTMLInputElement>;
     ['aria-invalid']?: boolean;
     ['aria-describedby']?: string;
 }
@@ -47,6 +47,9 @@ interface InputFieldProps {
         return 'border-bluvi-purple/30 focus:border-bluvi-purple focus:ring-bluvi-purple/10';
     };
 
+    const finalAriaDescribedBy = ariaDescribedby || (helperText ? `${id}-helper` : undefined);
+    const finalAriaInvalid = ariaInvalid !== undefined ? ariaInvalid : state === 'error';
+
     return (
         <div className="flex flex-col gap-2 w-full">
         <label htmlFor={id} className="text-bluvi-purple text-lg font-medium font-sans pl-1">
@@ -67,8 +70,8 @@ interface InputFieldProps {
                     ${getBorderColor()}
                     ${isPasswordType || shouldShowClearButton ? 'pr-12' : ''} /* Dejamos hueco a la derecha para acciones */
                 `}
-                aria-invalid={ariaInvalid}
-                aria-describedby={ariaDescribedby}
+                aria-invalid={finalAriaInvalid}
+                aria-describedby={finalAriaDescribedBy}
             />
 
             {shouldShowClearButton && (
@@ -109,7 +112,7 @@ interface InputFieldProps {
 
         {helperText && (
             <p
-                id={ariaDescribedby}
+                id={finalAriaDescribedBy}
                 className={`text-sm pl-1 ${state === 'error' ? 'text-red-500' : 'text-bluvi-purple/60'}`}
                 aria-live={state === 'error' ? 'assertive' : undefined}
             >

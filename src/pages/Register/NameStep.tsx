@@ -69,10 +69,14 @@ export const NameStep: React.FC = () => {
 
     const handleNext = () => {
         setHasAttemptedSubmit(true);
+        
         if (!isValid) {
-            if (firstNameHasError && firstNameInputRef.current) {
+            const isFirstNameInvalid = !hasFirstName || !isFirstNameFormatValid;
+            const isLastNameInvalid = !hasLastName || !isLastNameFormatValid;
+
+            if (isFirstNameInvalid && firstNameInputRef.current) {
                 firstNameInputRef.current.focus();
-            } else if (lastNameHasError && lastNameInputRef.current) {
+            } else if (isLastNameInvalid && lastNameInputRef.current) {
                 lastNameInputRef.current.focus();
             }
             return;
@@ -106,58 +110,66 @@ export const NameStep: React.FC = () => {
 
     return (
         <AnimatedStep>
-            <div className="w-full max-w-md px-6 animate-fade-in">
+            <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
+                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
 
-                <RegisterStepHeader
-                    title="¿Cómo te llamas?"
-                    subtitle="¡Nos emociona conocerte!"
-                    className="mb-8"
-                />
+                    <div className="shrink-0 flex flex-col items-start w-full">
+                        <RegisterStepHeader
+                            title="¿Cómo te llamas?"
+                            subtitle="¡Nos emociona conocerte!"
+                            align="left"
+                            compactOnShort
+                            className="mb-0"
+                        />
+                    </div>
 
-                <div className="w-full flex flex-col gap-6 mb-20">
-                    <InputField
-                        id="nombre"
-                        label="Nombre"
-                        value={formData.firstName}
-                        onChange={(e) => handleFirstNameChange(e.target.value)}
-                        placeholder="Aurora"
-                        state={firstNameHasError ? 'error' : 'default'}
-                        helperText={firstNameError}
-                        clearable
-                        onClear={clearFirstName}
-                        clearLabel="Limpiar nombre"
-                        inputRef={firstNameInputRef}
-                        aria-invalid={firstNameHasError}
-                        aria-describedby={firstNameErrorId}
-                    />
-                    <InputField
-                        id="apellidos"
-                        label="Apellidos"
-                        value={formData.lastName}
-                        onChange={(e) => handleLastNameChange(e.target.value)}
-                        placeholder="Montenegro"
-                        state={lastNameHasError ? 'error' : 'default'}
-                        helperText={lastNameError}
-                        clearable
-                        onClear={clearLastName}
-                        clearLabel="Limpiar apellidos"
-                        inputRef={lastNameInputRef}
-                        aria-invalid={lastNameHasError}
-                        aria-describedby={lastNameErrorId}
-                    />
+                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-10 px-1">
+                        <div className="flex flex-col gap-6">
+                            <InputField
+                                id="nombre"
+                                label="Nombre"
+                                value={formData.firstName}
+                                onChange={(e) => handleFirstNameChange(e.target.value)}
+                                placeholder="Aurora"
+                                state={firstNameHasError ? 'error' : 'default'}
+                                helperText={firstNameError}
+                                clearable
+                                onClear={clearFirstName}
+                                clearLabel="Limpiar nombre"
+                                inputRef={firstNameInputRef}
+                                aria-invalid={firstNameHasError}
+                                aria-describedby={firstNameErrorId}
+                            />
+                            <InputField
+                                id="apellidos"
+                                label="Apellidos"
+                                value={formData.lastName}
+                                onChange={(e) => handleLastNameChange(e.target.value)}
+                                placeholder="Montenegro"
+                                state={lastNameHasError ? 'error' : 'default'}
+                                helperText={lastNameError}
+                                clearable
+                                onClear={clearLastName}
+                                clearLabel="Limpiar apellidos"
+                                inputRef={lastNameInputRef}
+                                aria-invalid={lastNameHasError}
+                                aria-describedby={lastNameErrorId}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="pt-4 shrink-0 w-full flex justify-center">
+                        <Button
+                            onClick={handleNext}
+                            aria-label="Siguiente"
+                            className={`w-full max-w-sm py-4 rounded-full text-base md:text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 ${!isValid ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
+                            disabled={!isValid}
+                        >
+                            Siguiente
+                        </Button>
+                    </div>
+
                 </div>
-
-                <div className="w-full">
-                    <Button
-                        onClick={handleNext}
-                        aria-label="Siguiente"
-                        className={`w-full py-3.5 shadow-md transition-all duration-300 ${!isValid ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        disabled={!isValid}
-                    >
-                        Siguiente
-                    </Button>
-                </div>
-
             </div>
         </AnimatedStep>
     );

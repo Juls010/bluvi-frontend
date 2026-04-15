@@ -12,7 +12,7 @@ export const AnimatedStep = ({ children, className = "justify-between" }: Animat
     const isRegisterRoute = pathname.startsWith('/register/');
     const minHeightClass = isRegisterRoute ? 'h-full min-h-full' : 'min-h-screen';
     const spacingClass = isRegisterRoute
-        ? 'pt-8 pb-5 md:pt-10 md:pb-6 [@media(max-height:900px)]:pt-6 [@media(max-height:900px)]:pb-4 [@media(max-height:760px)]:pt-4 [@media(max-height:760px)]:pb-3'
+        ? 'pt-1 pb-1 md:pt-4 md:pb-4 [@media(max-height:900px)]:pt-1 [@media(max-height:900px)]:pb-2 [@media(max-height:760px)]:pt-1 [@media(max-height:760px)]:pb-1'
         : 'pt-12 pb-7';
     const initialAnimation = isRegisterRoute ? { opacity: 0 } : { opacity: 0, y: 15 };
     const animateAnimation = isRegisterRoute ? { opacity: 1 } : { opacity: 1, y: 0 };

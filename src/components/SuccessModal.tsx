@@ -11,7 +11,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) =
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-bluvi-purple/20 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-bluvi-purple/30 backdrop-blur-sm animate-fade-in">
             
             <div 
                 role="alertdialog" 
@@ -25,10 +25,10 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) =
 
                 <div className="space-y-2">
                     <h2 id="modal-title" className="text-3xl font-bold text-bluvi-purple">
-                        ¡Casi listo!
+                        ¡Revisa tu bandeja!
                     </h2>
                     <p id="modal-desc" className="text-gray-600 font-medium leading-relaxed">
-                        Te hemos enviado un enlace de verificación a tu correo. Por seguridad, **confirma tu email** antes de entrar en la comunidad.
+                        Te hemos enviado un <strong>código de 6 dígitos</strong> a tu correo electrónico. Por seguridad, escríbelo en la pantalla para poder continuar.
                     </p>
                 </div>
 
@@ -46,9 +46,9 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) =
 
                 <Button 
                     onClick={onClose}
-                    className="w-full bg-bluvi-purple text-white py-4 rounded-full text-lg shadow-lg"
+                    className="w-full bg-bluvi-purple text-white py-4 rounded-full text-lg shadow-lg hover:scale-[1.02]"
                 >
-                    Ir al inicio de sesión
+                    ¡Entendido!
                 </Button>
             </div>
         </div>

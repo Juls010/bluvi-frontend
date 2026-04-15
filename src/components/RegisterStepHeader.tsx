@@ -18,16 +18,20 @@ export const RegisterStepHeader: React.FC<RegisterStepHeaderProps> = ({
     className = '',
 }) => {
     const alignmentClass = align === 'center' ? 'text-center' : 'text-left';
-    const headerHeightClass = compact
-        ? 'min-h-[88px] md:min-h-[100px]'
-        : compactOnShort
-            ? 'min-h-[108px] md:min-h-[122px] [@media(max-height:900px)]:min-h-[88px]'
-            : 'min-h-[108px] md:min-h-[122px]';
-    const subtitleMinHeightClass = compact
-        ? 'min-h-[36px]'
-        : compactOnShort
-            ? 'min-h-[52px] [@media(max-height:900px)]:min-h-[36px]'
-            : 'min-h-[52px]';
+    const headerHeightClass = !subtitle
+        ? 'min-h-0'
+        : compact
+            ? 'min-h-[88px] md:min-h-[100px]'
+            : compactOnShort
+                ? 'min-h-[108px] md:min-h-[122px] [@media(max-height:900px)]:min-h-[88px]'
+                : 'min-h-[108px] md:min-h-[122px]';
+    const subtitleMinHeightClass = !subtitle
+        ? 'min-h-0'
+        : compact
+            ? 'min-h-[36px]'
+            : compactOnShort
+                ? 'min-h-[52px] [@media(max-height:900px)]:min-h-[36px]'
+                : 'min-h-[52px]';
     const subtitleTextClass = compact
         ? 'text-bluvi-purple/70 text-sm md:text-base font-medium'
         : compactOnShort

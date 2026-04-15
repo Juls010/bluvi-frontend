@@ -35,7 +35,7 @@ const HeaderIconButton: React.FC<HeaderIconButtonProps> = ({ onClick, ariaLabel,
         <div className="relative inline-flex group">
             <button
                 onClick={onClick}
-                className="p-2 text-[#3f4a9b]/90 hover:text-[#3f4a9b] hover:bg-white/35 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4a9b]/40"
+                className="p-1.5 text-[#3f4a9b]/70 hover:text-[#3f4a9b] hover:bg-white/20 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4a9b]/40"
                 aria-label={ariaLabel}
             >
                 {children}
@@ -131,7 +131,7 @@ export const RegisterLayout: React.FC = () => {
                         tooltip="Volver"
                         align="left"
                     >
-                        <ChevronLeft size={28} strokeWidth={2.5} className="group-hover:-translate-x-0.5 transition-transform" />
+                        <ChevronLeft size={24} strokeWidth={2} className="group-hover:-translate-x-0.5 transition-transform" />
                     </HeaderIconButton>
                 </div>
 

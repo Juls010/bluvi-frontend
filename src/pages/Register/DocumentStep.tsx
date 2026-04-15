@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
+import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 export const DocumentStep: React.FC = () => {
     const navigate = useNavigate();
@@ -28,70 +29,82 @@ export const DocumentStep: React.FC = () => {
 
     return (
         <AnimatedStep>
-            <div className="w-full max-w-md px-6 animate-fade-in">
-                
-                <div className="w-full text-left mb-8">
-                    <h1 className="font-heading text-2xl md:text-3xl font-bold text-bluvi-purple mb-3">
-                        Seguridad ante todo
-                    </h1>
-                    <p className="text-bluvi-purple/80 text-lg leading-relaxed font-medium">
-                        Para garantizar un espacio seguro, necesitamos que subas tu 
-                        <strong> Certificado de Delitos de Naturaleza Sexual</strong>.
-                    </p>
-                    <p className="text-sm text-bluvi-purple/60 mt-3 italic font-medium">
-                        * Tus datos serán tratados con máxima confidencialidad y encriptados.
-                    </p>
-                </div>
-
-                <div className="w-full mb-20">
-                    <label 
-                        htmlFor="file-upload" 
-                        className={`
-                            flex flex-col items-center justify-center w-full h-48 
-                            border-2 border-dashed rounded-2xl cursor-pointer 
-                            transition-all duration-300
-                            ${fileName 
-                                ? 'border-bluvi-purple bg-bluvi-purple/10' 
-                                : 'border-bluvi-purple/30 bg-white/30 hover:bg-white/50 hover:border-bluvi-purple/50'
+            <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
+                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between py-4 md:py-8">
+                    
+                    <div className="shrink-0">
+                        <RegisterStepHeader
+                            title="Seguridad ante todo"
+                            subtitle={
+                                <div className="space-y-3">
+                                    <p>Para garantizar un espacio seguro, necesitamos que subas tu <strong>Certificado de Delitos de Naturaleza Sexual</strong>.</p>
+                                    <p className="text-xs text-bluvi-purple/60 italic font-medium">
+                                        * Tus datos serán tratados con máxima confidencialidad y encriptados.
+                                    </p>
+                                </div>
                             }
-                        `}
-                    >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
-                            {fileName ? (
-                                <>
-                                    <svg className="w-10 h-10 text-bluvi-purple mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <p className="text-lg font-semibold text-bluvi-purple break-all">{fileName}</p>
-                                    <p className="text-sm text-bluvi-purple/70 mt-1">Click para cambiar</p>
-                                </>
-                            ) : (
-                                <>
-                                    <svg className="w-10 h-10 text-bluvi-purple/50 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                                    <p className="mb-2 text-lg text-bluvi-purple font-medium">Sube tu certificado (PDF)</p>
-                                    <p className="text-sm text-bluvi-purple/60">Pulsa aquí para buscar el archivo</p>
-                                </>
-                            )}
-                        </div>
-                        
-                        <input 
-                            id="file-upload" 
-                            type="file" 
-                            accept=".pdf,.jpg,.png" 
-                            className="hidden" 
-                            onChange={handleFileChange}
+                            compactOnShort
+                            className="mb-0"
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <div className="w-full">
-                    <Button 
-                        aria-label="Enviar documentación y finalizar" 
-                        className={`w-full py-3.5 text-lg shadow-md ${!fileName ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        onClick={handleNext}
-                    >
-                        Enviar y Finalizar
-                    </Button>
-                </div>
+                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-10 px-1">
+                        <label 
+                            htmlFor="file-upload" 
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    document.getElementById('file-upload')?.click();
+                                }
+                            }}
+                            className={`
+                                group flex flex-col items-center justify-center w-full min-h-[12rem]
+                                border-2 border-dashed rounded-[2rem] cursor-pointer 
+                                transition-all duration-300 outline-none
+                                focus-within:ring-4 focus-within:ring-bluvi-purple/40
+                                ${fileName 
+                                    ? 'border-bluvi-purple bg-bluvi-purple/10' 
+                                    : 'border-bluvi-purple/30 bg-white/30 hover:bg-white/50 hover:border-bluvi-purple/50'
+                                }
+                            `}
+                        >
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
+                                {fileName ? (
+                                    <>
+                                        <svg className="w-10 h-10 text-bluvi-purple mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <p className="text-lg font-semibold text-bluvi-purple break-all">{fileName}</p>
+                                        <p className="text-sm text-bluvi-purple/70 mt-1 uppercase font-bold tracking-wider">Click para cambiar</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-10 h-10 text-bluvi-purple/50 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                        <p className="mb-2 text-lg text-bluvi-purple font-medium">Sube tu certificado (PDF)</p>
+                                        <p className="text-sm text-bluvi-purple/60">Pulsa aquí para buscar el archivo</p>
+                                    </>
+                                )}
+                            </div>
+                            
+                            <input 
+                                id="file-upload" 
+                                type="file" 
+                                accept=".pdf,.jpg,.png" 
+                                className="sr-only" 
+                                onChange={handleFileChange}
+                            />
+                        </label>
+                    </div>
 
+                    <div className="pt-4 shrink-0 w-full flex justify-center">
+                        <Button 
+                            aria-label="Enviar documentación y finalizar" 
+                            className={`w-full max-w-sm py-4 rounded-full text-lg shadow-xl shadow-bluvi-purple/10 transition-all ${!fileName ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
+                            onClick={handleNext}
+                            disabled={!fileName}
+                        >
+                            Enviar y Finalizar
+                        </Button>
+                    </div>
+
+                </div>
             </div>
         </AnimatedStep>
     );

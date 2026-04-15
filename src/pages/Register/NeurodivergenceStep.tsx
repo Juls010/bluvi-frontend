@@ -47,57 +47,70 @@ export const NeurodivergenceStep: React.FC = () => {
 
     return (
         <AnimatedStep>
-            <div className="w-full max-w-3xl px-4 animate-fade-in flex flex-col items-center">
-            
-            <RegisterStepHeader title="Te identificas con ..." className="mb-8" />
+            <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
+                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between py-4 md:py-8">
 
-            <div className="w-full relative mb-16">
-                <div className="flex justify-end mb-2">
-                    <span className={`text-sm font-medium ${formData.neurodivergences.length === 4 ? 'text-red-400' : 'text-bluvi-purple/60'}`}>
-                        Máximo 4 
-                    </span>
-                </div>
+                    <div className="shrink-0">
+                        <RegisterStepHeader 
+                            title="Te identificas con ..." 
+                            compactOnShort
+                            className="mb-0" 
+                        />
+                    </div>
 
-                <div className="flex flex-wrap justify-center gap-3">
-                    {availableTraits.map((trait) => {
+                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-2 px-1">
+                        <div className="flex justify-end mb-4">
+                            <span className={`text-sm font-medium ${formData.neurodivergences.length === 4 ? 'text-red-400' : 'text-bluvi-purple/60'}`}>
+                                Máximo 4 
+                            </span>
+                        </div>
 
-                    const isSelected = formData.neurodivergences.includes(trait.id);
-                    const isDisabled = !isSelected && formData.neurodivergences.length >= 4;
-                    
-                    console.log("Estado actual de Neurodivergencias (IDs):", formData.neurodivergences);
-
-                    return (
-                        <button
-                            key={trait.id}
-                            onClick={() => toggleTrait(trait.id)}
-                            disabled={isDisabled}
-                            className={`
-                                py-2.5 px-5 rounded-xl text-base font-medium transition-all duration-300 border-2
-                                ${isSelected 
-                                    ? 'bg-bluvi-purple/20 border-bluvi-purple text-bluvi-purple font-bold shadow-md scale-105' 
-                                    
-                                    : 'bg-white/50 border-bluvi-purple/30 text-bluvi-purple hover:border-bluvi-purple/60'
-                                }
-                                ${isDisabled ? 'opacity-50 cursor-not-allowed grayscale' : 'cursor-pointer'}
-                            `}
+                        <div 
+                            className="grid grid-cols-2 grid-flow-dense md:flex md:flex-wrap justify-center gap-3"
+                            role="group"
+                            aria-label="Opciones de neurodivergencia"
                         >
-                            {trait.name}
-                        </button>
-                    );
-                    })}
+                            {availableTraits.map((trait) => {
+                                const isSelected = formData.neurodivergences.includes(trait.id);
+                                const isDisabled = !isSelected && formData.neurodivergences.length >= 4;
+                                const isLongName = trait.name.length > 18;
+
+                                return (
+                                    <button
+                                        key={trait.id}
+                                        role="checkbox"
+                                        aria-checked={isSelected}
+                                        onClick={() => toggleTrait(trait.id)}
+                                        disabled={isDisabled}
+                                        className={`
+                                            py-3 px-4 md:px-5 rounded-2xl text-sm md:text-base font-medium transition-all duration-300 border-2
+                                            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40
+                                            ${isLongName ? 'col-span-2' : 'col-span-1'}
+                                            ${isSelected 
+                                                ? 'bg-bluvi-purple/20 border-bluvi-purple text-bluvi-purple font-bold shadow-md scale-105' 
+                                                : 'bg-white/50 border-bluvi-purple/30 text-bluvi-purple hover:border-bluvi-purple/60'
+                                            }
+                                            ${isDisabled ? 'opacity-50 cursor-not-allowed grayscale' : 'cursor-pointer'}
+                                        `}
+                                    >
+                                        {trait.name}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="pt-4 shrink-0 w-full flex justify-center"> 
+                        <Button 
+                            aria-label="Siguiente paso" 
+                            className="w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 hover:scale-105 active:scale-95"
+                            onClick={handleNext}
+                        >
+                            {formData.neurodivergences.length === 0 ? 'Omitir' : 'Siguiente'}
+                        </Button>
+                    </div>
+
                 </div>
-            </div>
-
-            <div className="w-full max-w-md"> 
-                <Button 
-                    aria-label="Siguiente paso" 
-                    className="w-full py-3.5 text-lg shadow-md"
-                    onClick={handleNext}
-                >
-                    {formData.neurodivergences.length === 0 ? 'Omitir' : 'Siguiente'}
-                </Button>
-            </div>
-
             </div>
         </AnimatedStep>
     );

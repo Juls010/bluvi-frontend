@@ -4,6 +4,7 @@ import { Button } from '../../components/Button';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { AccessibleErrorTooltip } from '../../components/AccessibleErrorTooltip';
 import { useRegister } from '../../context/RegisterContext';
+import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 
 export const ProfileDescriptionStep = () => {
@@ -22,12 +23,10 @@ export const ProfileDescriptionStep = () => {
             
             if (success) {
                 navigate('/register/verificationemail');
-            } else {
-                setErrorMessage('Hubo un error al procesar tu registro. Revisa los datos o intentalo mas tarde.');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error en el paso de descripción:", error);
-            setErrorMessage('No se pudo conectar con el servidor.');
+            setErrorMessage(error.message || 'Error al conectar con el servidor.');
         } finally {
             setIsLoading(false);
         }
@@ -35,47 +34,71 @@ export const ProfileDescriptionStep = () => {
 
     return (
         <AnimatedStep>
-            <div className="h-screen w-full flex flex-col items-center justify-between py-16 px-6 bg-transparent fixed inset-0">
-                
-                <div className="max-w-2xl w-full flex flex-col items-center text-start space-y-8 animate-fade-in">
-                    <header className="space-y-4">
-                        <h1 className="text-3xl font-bold text-[#2d3a7d]">Cuéntanos más sobre ti</h1>
-                        <div className="text-[#5b6bb1] font-medium">
-                            <p>Respira y tómate tu tiempo ...</p>
-                            <p className="text-m ">Es importante que cuentes algo sobre ti para que los demás te conozcan</p>
-                        </div>
-                    </header>
-
-                    <div className="w-full max-w-md relative mt-10">
-                        <span className="absolute -top-6 right-0 text-xs text-[#5b6bb1] opacity-80">
-                            {formData.description.length} / {MAX_CHARS}
-                        </span>
-
-                        <textarea 
-                            value={formData.description}
-                            onChange={(e) => {
-                                updateFormData({description: e.target.value.slice(0, MAX_CHARS)});
-                                if (errorMessage) {
-                                    setErrorMessage('');
-                                }
-                            }}
-                            className="w-full h-64 p-6 rounded-3xl bg-white/40 border border-white/20 shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-[#3f4a9b]/20 text-gray-700 resize-none placeholder:text-gray-400/80 transition-all"
-                            placeholder="Escribe aquí..."
+            <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
+                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
+                    
+                    <div className="shrink-0 flex flex-col items-start w-full">
+                        <RegisterStepHeader
+                            title="Cuéntanos más sobre ti"
+                            subtitle={
+                                <div className="space-y-1">
+                                    <p>Respira y tómate tu tiempo ...</p>
+                                    <p>Es importante que cuentes algo sobre ti para que los demás te conozcan</p>
+                                </div>
+                            }
+                            align="left"
+                            compactOnShort
+                            className="mb-2 w-full max-w-md"
                         />
                     </div>
 
-                    <AccessibleErrorTooltip id="profile-description-error" message={errorMessage} className="w-full max-w-md" />
-                </div>
+                    <div className="flex-grow min-h-0 overflow-visible py-12 px-1 flex flex-col items-center">
+                        <div className="w-full max-w-md relative mt-12 px-1">
+                            <span 
+                                id="char-count" 
+                                className="absolute -top-8 right-1 text-xs text-[#5b6bb1] opacity-80"
+                                aria-live="polite"
+                            >
+                                {formData.description.length} / {MAX_CHARS}
+                            </span>
 
-                <div className="w-full max-w-sm">
-                    <Button 
-                        onClick={handleNext}
-                        disabled={formData.description.length === 0 || isLoading}
-                        aria-describedby={errorMessage ? 'profile-description-error' : undefined}
-                        className="w-full py-3 bg-[#3f4a9b] text-white rounded-lg shadow-md font-semibold"
-                    >
-                        Siguiente
-                    </Button>
+                            <textarea 
+                                id="profile-description"
+                                aria-label="Tu descripción personal"
+                                aria-describedby={`char-count ${errorMessage ? 'profile-description-error' : ''}`.trim()}
+                                aria-invalid={!!errorMessage}
+                                value={formData.description}
+                                onChange={(e) => {
+                                    const sanitizedValue = e.target.value.replace(/[<>]/g, '');
+                                    updateFormData({description: sanitizedValue.slice(0, MAX_CHARS)});
+                                    if (errorMessage) {
+                                        setErrorMessage('');
+                                    }
+                                }}
+                                className="w-full h-64 p-6 rounded-3xl bg-white/40 border border-white/20 shadow-sm backdrop-blur-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40 text-gray-700 resize-none placeholder:text-gray-400/80 transition-all font-sans text-lg"
+                                placeholder="Escribe aquí..."
+                            />
+                        </div>
+
+                        <AccessibleErrorTooltip id="profile-description-error" message={errorMessage} className="w-full max-w-md mt-4" />
+                    </div>
+
+                    <div className="pt-4 shrink-0 w-full flex justify-center">
+                        <Button 
+                            onClick={handleNext}
+                            disabled={formData.description.length === 0 || isLoading}
+                            aria-describedby={errorMessage ? 'profile-description-error' : undefined}
+                            className={`w-full max-w-sm py-4 rounded-full text-base md:text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300
+                                ${formData.description.length > 0 && !isLoading 
+                                    ? 'bg-bluvi-purple text-white hover:scale-105 active:scale-95' 
+                                    : 'bg-gray-200 text-gray-400 opacity-50 cursor-not-allowed'
+                                }
+                            `}
+                        >
+                            {isLoading ? 'Cargando...' : 'Siguiente'}
+                        </Button>
+                    </div>
+
                 </div>
             </div>
         </AnimatedStep>

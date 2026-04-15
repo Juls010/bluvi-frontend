@@ -19,8 +19,9 @@ export interface RegisterPayload {
 }
 
 interface ApiResponse {
-    success: boolean;
+    success?: boolean;
     message?: string;
+    exists?: boolean;
 }
 
 export const authService = {

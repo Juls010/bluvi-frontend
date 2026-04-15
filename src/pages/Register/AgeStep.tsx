@@ -4,6 +4,7 @@ import { AnimatedStep } from '../../components/AnimatedStep';
 import { Button } from '../../components/Button';
 import { DatePicker } from '../../components/DatePicker';
 import { useRegister } from '../../context/RegisterContext';
+import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 import { CalendarDate, parseDate } from '@internationalized/date';
 
 const MIN_AGE = 18;
@@ -109,47 +110,53 @@ export const AgeStep: React.FC = () => {
 
     return (
         <AnimatedStep>
-            <div className="w-full max-w-md px-6 flex flex-col items-center">
-                <div className="w-full text-left mb-8">
-                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-bluvi-purple mb-2">
-                        ¿Cuándo naciste?
-                    </h1>
-                    <p className="text-bluvi-purple/70 text-lg font-medium">
-                        Esto nos ayuda a asegurar que Bluvi sea un espacio seguro.
-                    </p>
+            <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
+                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
+                    
+                    <div className="shrink-0 flex flex-col items-start w-full">
+                        <RegisterStepHeader
+                            title="¿Cuándo naciste?"
+                            subtitle="Esto nos ayuda a asegurar que Bluvi sea un espacio seguro."
+                            align="left"
+                            compactOnShort
+                            className="mb-0"
+                        />
+                    </div>
+
+                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-10 px-1">
+                        <div className="flex flex-col gap-6">
+                            <DatePicker
+                                label="Fecha de Nacimiento"
+                                defaultValue={defaultCalendarValue ?? undefined}
+                                onChange={handleBirthDateChange}
+                                maxValue={maxBirthDateValue}
+                                shouldForceLeadingZeros
+                                description={`Debes tener al menos ${MIN_AGE} años.`}
+                                errorMessage={error || undefined}
+                                aria-invalid={!!error}
+                                aria-describedby={errorId}
+                            />
+
+                            <p className="text-sm text-bluvi-purple/60 italic font-medium ml-2" id={errorId}>
+                                * Tu fecha de nacimiento no será pública en tu perfil.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="pt-4 shrink-0 w-full flex justify-center">
+                        <Button
+                            aria-label="Ir al siguiente paso"
+                            disabled={!formData.birthDate}
+                            className={`w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all ${
+                                !formData.birthDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                            }`}
+                            onClick={handleNext}
+                        >
+                            Siguiente
+                        </Button>
+                    </div>
+
                 </div>
-
-                <div className="w-full flex flex-col gap-6 mb-20">
-                    <DatePicker
-                        label="Fecha de Nacimiento"
-                        defaultValue={defaultCalendarValue ?? undefined}
-                        onChange={handleBirthDateChange}
-                        maxValue={maxBirthDateValue}
-                        shouldForceLeadingZeros
-                        description={`Debes tener al menos ${MIN_AGE} años.`}
-                        errorMessage={error || undefined}
-                        aria-invalid={!!error}
-                        aria-describedby={errorId}
-                    />
-
-                    <p className="text-sm text-bluvi-purple/60 italic font-medium ml-2" id={errorId}>
-                        * Tu fecha de nacimiento no será pública en tu perfil.
-                    </p>
-                </div>
-
-                <div className="w-full">
-                    <Button
-                        aria-label="Ir al siguiente paso"
-                        disabled={!formData.birthDate}
-                        className={`w-full py-3.5 text-lg shadow-md transition-all ${
-                            !formData.birthDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'
-                        }`}
-                        onClick={handleNext}
-                    >
-                        Siguiente
-                    </Button>
-                </div>
-
             </div>
         </AnimatedStep>
     );

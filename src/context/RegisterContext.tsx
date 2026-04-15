@@ -174,11 +174,11 @@ const validateMappedRegisterData = (payload: RegisterPayload): string | null => 
         return 'La fecha de nacimiento no es valida.';
     }
 
-    if (!Number.isInteger(payload.id_gender) || payload.id_gender <= 0) {
+    if (payload.id_gender === null || !Number.isInteger(payload.id_gender) || payload.id_gender <= 0) {
         return 'Selecciona un genero valido.';
     }
 
-    if (!Number.isInteger(payload.id_preference) || payload.id_preference <= 0) {
+    if (payload.id_preference === null || !Number.isInteger(payload.id_preference) || payload.id_preference <= 0) {
         return 'Selecciona una preferencia valida.';
     }
 
@@ -264,8 +264,7 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
             const validationError = validateMappedRegisterData(mappedData);
             if (validationError) {
-                alert(validationError);
-                return false;
+                throw new Error(validationError + (formData.password === '' ? ' (Es posible que se haya borrado la contraseña al refrescar la página, por favor vuelve atrás para introducirla)' : ''));
             }
 
             const result = await authService.register(mappedData);
@@ -280,7 +279,8 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             
         } catch (error: any) {
             console.error("Error en registro:", error);
-            return false;
+            const serverMessage = error.response?.data?.message || error.message || 'Error desconocido al procesar el registro';
+            throw new Error(serverMessage);
         }
     };
 
