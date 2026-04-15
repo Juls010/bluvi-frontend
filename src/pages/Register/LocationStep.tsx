@@ -168,25 +168,25 @@ export const LocationStep = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in overflow-visible">
-                <div className="max-w-xl w-full h-full flex flex-col justify-between pt-0 pb-0 md:pt-8 md:pb-4 overflow-visible">
+                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between pt-14 pb-12 md:pt-24 md:pb-24 md:[@media(max-height:1000px)]:pt-10 md:[@media(max-height:1000px)]:pb-8 overflow-visible">
 
-                    <div className="shrink-0 flex flex-col w-full">
+                    <div className="shrink-0 flex flex-col items-center w-full">
                         <RegisterStepHeader
                             title="¿Desde dónde te conectas?"
                             subtitle="Busca tu ciudad para encontrar personas cerca de ti."
                             align="left"
                             compactOnShort
-                            className="mb-6 w-full"
+                            className="mb-10 md:mb-14 md:[@media(max-height:1000px)]:mb-10 w-full max-w-xl"
                         />
-                        <div className="flex justify-center w-full mb-2">
-                            <div className="w-16 h-16 md:w-20 md:h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-lg border border-white/10 shrink-0">
-                                <MapPin size={32} className="text-bluvi-purple md:w-10 md:h-10" strokeWidth={1.5} aria-hidden="true" />
+                        <div className="w-full flex justify-center mb-10 md:mb-16 md:[@media(max-height:1000px)]:mb-12">
+                            <div className="bg-white/40 p-5 rounded-full backdrop-blur-sm border border-white/20 shadow-sm shrink-0">
+                                <MapPin className="text-bluvi-purple" size={36} />
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex-grow min-h-0 overflow-visible py-10 px-1">
-                        <div className="relative" ref={comboboxContainerRef}>
+                    <div className="flex-grow min-h-0 overflow-visible no-scrollbar py-10 md:py-32 md:[@media(max-height:1000px)]:py-12 px-5 flex flex-col items-center w-full">
+                        <div className="relative w-full max-w-xl" ref={comboboxContainerRef}>
                             <div className="relative group">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-bluvi-purple/40 group-focus-within:text-bluvi-purple transition-colors" size={20} />
                                 <input 
@@ -264,7 +264,7 @@ export const LocationStep = () => {
                         </div>
                     </div>
 
-                    <div className="pt-2 shrink-0 w-full flex justify-center"> 
+                    <div className="pt-4 md:pt-10 shrink-0 w-full flex justify-center"> 
                         <Button
                             onClick={handleNext}
                             disabled={!formData.city}

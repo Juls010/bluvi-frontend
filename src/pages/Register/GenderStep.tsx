@@ -42,7 +42,7 @@ export const GenderStep: React.FC = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
-                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
+                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between pt-32 pb-12 md:pt-40 md:pb-24 md:[@media(max-height:1000px)]:pt-10 md:[@media(max-height:1000px)]:pb-8">
 
                     <div className="shrink-0 flex flex-col items-start w-full">
                         <RegisterStepHeader
@@ -55,11 +55,11 @@ export const GenderStep: React.FC = () => {
                     </div>
 
                     <div
-                        className="flex-grow min-h-0 overflow-visible no-scrollbar py-10 px-1"
+                        className="flex-grow min-h-0 overflow-visible no-scrollbar py-20 md:py-32 md:[@media(max-height:1000px)]:py-14 px-5 flex flex-col items-center"
                         role="radiogroup"
                         aria-label="Opciones de género"
                     >
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-6 md:gap-10 md:[@media(max-height:1000px)]:gap-4 w-full max-w-sm">
                             {genderOptions.map((option) => {
                                 const isSelected = formData.gender !== '' &&
                                     formData.gender !== undefined &&
@@ -72,7 +72,7 @@ export const GenderStep: React.FC = () => {
                                         aria-checked={isSelected}
                                         onClick={() => updateFormData({ gender: option.id })}
                                         className={`
-                                            w-full py-4 px-6 rounded-2xl text-lg font-medium transition-all duration-300 border-2
+                                            w-full py-4 md:[@media(max-height:1000px)]:py-3 px-6 rounded-2xl text-lg font-medium transition-all duration-300 border-2
                                             focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40
                                             ${isSelected
                                                 ? 'bg-bluvi-purple/20 border-bluvi-purple text-bluvi-purple font-bold shadow-md scale-[1.02]'

@@ -35,7 +35,7 @@ export const ProfileDescriptionStep = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
-                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
+                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between pt-32 pb-12 md:pt-40 md:pb-24 md:[@media(max-height:1000px)]:pt-10 md:[@media(max-height:1000px)]:pb-8">
                     
                     <div className="shrink-0 flex flex-col items-start w-full">
                         <RegisterStepHeader
@@ -48,12 +48,12 @@ export const ProfileDescriptionStep = () => {
                             }
                             align="left"
                             compactOnShort
-                            className="mb-2 w-full max-w-md"
+                            className="mb-2 w-full max-w-xl"
                         />
                     </div>
 
-                    <div className="flex-grow min-h-0 overflow-visible py-12 px-1 flex flex-col items-center">
-                        <div className="w-full max-w-md relative mt-12 px-1">
+                    <div className="flex-grow min-h-0 overflow-visible py-20 md:py-32 md:[@media(max-height:1000px)]:py-14 px-5 flex flex-col items-center">
+                        <div className="w-full max-w-md md:max-w-xl relative mt-12 md:[@media(max-height:1000px)]:mt-8 px-1">
                             <span 
                                 id="char-count" 
                                 className="absolute -top-8 right-1 text-xs text-[#5b6bb1] opacity-80"
@@ -75,12 +75,12 @@ export const ProfileDescriptionStep = () => {
                                         setErrorMessage('');
                                     }
                                 }}
-                                className="w-full h-64 p-6 rounded-3xl bg-white/40 border border-white/20 shadow-sm backdrop-blur-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40 text-gray-700 resize-none placeholder:text-gray-400/80 transition-all font-sans text-lg"
+                                className="w-full h-64 md:h-80 md:[@media(max-height:1000px)]:h-56 p-6 rounded-3xl bg-white/40 border border-white/20 shadow-sm backdrop-blur-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40 text-gray-700 resize-none placeholder:text-gray-400/80 transition-all font-sans text-lg"
                                 placeholder="Escribe aquí..."
                             />
                         </div>
 
-                        <AccessibleErrorTooltip id="profile-description-error" message={errorMessage} className="w-full max-w-md mt-4" />
+                        <AccessibleErrorTooltip id="profile-description-error" message={errorMessage} className="w-full max-w-md md:max-w-xl mt-4" />
                     </div>
 
                     <div className="pt-4 shrink-0 w-full flex justify-center">

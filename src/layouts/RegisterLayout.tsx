@@ -26,16 +26,20 @@ interface HeaderIconButtonProps {
     tooltip: string;
     align: 'left' | 'right';
     children: React.ReactNode;
+    className?: string;
 }
 
-const HeaderIconButton: React.FC<HeaderIconButtonProps> = ({ onClick, ariaLabel, tooltip, align, children }) => {
+const HeaderIconButton: React.FC<HeaderIconButtonProps> = ({ onClick, ariaLabel, tooltip, align, children, className = "" }) => {
     const tooltipPositionClass = align === 'left' ? 'left-0' : 'right-0';
 
     return (
         <div className="relative inline-flex group">
             <button
-                onClick={onClick}
-                className="p-1.5 text-[#3f4a9b]/70 hover:text-[#3f4a9b] hover:bg-white/20 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4a9b]/40"
+                onClick={(e) => {
+                    e.currentTarget.blur();
+                    onClick();
+                }}
+                className={`w-9 h-9 flex items-center justify-center text-[#3f4a9b]/70 hover:text-[#3f4a9b] hover:bg-white/20 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4a9b]/40 ${className}`}
                 aria-label={ariaLabel}
             >
                 {children}
@@ -123,7 +127,7 @@ export const RegisterLayout: React.FC = () => {
                 </div>
             )}
 
-            <div className="w-full grid grid-cols-3 items-center px-4 py-4 md:px-8 md:py-6 [@media(max-height:900px)]:py-3 [@media(max-height:760px)]:py-2.5 z-10">
+            <div className="w-full grid grid-cols-3 items-center px-4 py-4 md:px-8 md:py-6 [@media(max-height:1000px)]:pt-7 [@media(max-height:1000px)]:pb-3 [@media(max-height:760px)]:pt-5 [@media(max-height:760px)]:pb-2 z-10">
                 <div className="justify-self-start -ml-2">
                     <HeaderIconButton
                         onClick={() => navigate(-1)}
@@ -131,7 +135,7 @@ export const RegisterLayout: React.FC = () => {
                         tooltip="Volver"
                         align="left"
                     >
-                        <ChevronLeft size={24} strokeWidth={2} className="group-hover:-translate-x-0.5 transition-transform" />
+                        <ChevronLeft size={24} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
                     </HeaderIconButton>
                 </div>
 
@@ -147,8 +151,9 @@ export const RegisterLayout: React.FC = () => {
                         ariaLabel="Ir al inicio"
                         tooltip="Inicio"
                         align="right"
+                        className="w-11 h-11 md:w-12 md:h-12"
                     >
-                        <Home size={26} strokeWidth={2.5} className="group-hover:scale-[1.03] transition-transform" />
+                        <Home size={21} strokeWidth={2} className="group-hover:scale-110 transition-transform" />
                     </HeaderIconButton>
                 </div>
             </div>
@@ -160,7 +165,7 @@ export const RegisterLayout: React.FC = () => {
             )}
 
 
-            <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center -mt-10 md:-mt-8 [@media(max-height:900px)]:-mt-6 [@media(max-height:760px)]:-mt-4 overflow-y-auto">
+            <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center -mt-10 md:-mt-2 [@media(max-height:1000px)]:-mt-6 [@media(max-height:760px)]:-mt-4 overflow-y-auto">
                 <AnimatePresence mode="wait">
                     <div key={location.pathname} className="w-full h-full flex justify-center">
                         <Outlet /> 

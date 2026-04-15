@@ -21,21 +21,21 @@ export const RegisterStepHeader: React.FC<RegisterStepHeaderProps> = ({
     const headerHeightClass = !subtitle
         ? 'min-h-0'
         : compact
-            ? 'min-h-[88px] md:min-h-[100px]'
+            ? 'min-h-[80px] md:min-h-[90px]'
             : compactOnShort
-                ? 'min-h-[108px] md:min-h-[122px] [@media(max-height:900px)]:min-h-[88px]'
-                : 'min-h-[108px] md:min-h-[122px]';
+                ? 'min-h-[100px] md:min-h-[110px] [@media(max-height:1000px)]:min-h-[70px]'
+                : 'min-h-[100px] md:min-h-[110px]';
     const subtitleMinHeightClass = !subtitle
         ? 'min-h-0'
         : compact
-            ? 'min-h-[36px]'
+            ? 'min-h-[30px]'
             : compactOnShort
-                ? 'min-h-[52px] [@media(max-height:900px)]:min-h-[36px]'
-                : 'min-h-[52px]';
+                ? 'min-h-[48px] [@media(max-height:1000px)]:min-h-[20px]'
+                : 'min-h-[48px]';
     const subtitleTextClass = compact
         ? 'text-bluvi-purple/70 text-sm md:text-base font-medium'
         : compactOnShort
-            ? 'text-bluvi-purple/70 text-lg font-medium [@media(max-height:900px)]:text-sm'
+            ? 'text-bluvi-purple/70 text-lg font-medium [@media(max-height:1000px)]:text-xs'
             : 'text-bluvi-purple/70 text-lg font-medium';
 
     return (

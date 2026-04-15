@@ -37,7 +37,7 @@ export const SafetyTipsStep = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
-                <div className="max-w-4xl w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
+                <div className="max-w-4xl w-full h-full min-h-0 flex flex-col justify-between pt-32 pb-12 md:pt-40 md:pb-24 md:[@media(max-height:1000px)]:pt-10 md:[@media(max-height:1000px)]:pb-8">
 
                     <div className="shrink-0 flex flex-col items-start w-full">
                         <RegisterStepHeader
@@ -50,7 +50,7 @@ export const SafetyTipsStep = () => {
                     </div>
 
                     <div 
-                        className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-10 px-1 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4"
+                        className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-20 md:py-32 md:[@media(max-height:1000px)]:py-14 px-1 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 md:[@media(max-height:1000px)]:gap-2 place-items-center"
                         role="list"
                         aria-label="Lista de consejos de seguridad"
                     >
@@ -58,7 +58,7 @@ export const SafetyTipsStep = () => {
                             <section 
                                 key={index}
                                 role="listitem"
-                                className="flex items-start text-left gap-3 md:gap-4 p-4 md:p-6 rounded-[2rem] bg-white/30 backdrop-blur-md border border-white/60 shadow-sm hover:shadow-md transition-shadow h-fit"
+                                className="flex items-start text-left gap-3 md:gap-4 md:[@media(max-height:1000px)]:gap-2 p-4 md:p-6 md:[@media(max-height:1000px)]:py-3 rounded-[2rem] bg-white/30 backdrop-blur-md border border-white/60 shadow-sm hover:shadow-md transition-shadow h-fit"
                             >
                                 <div className="p-3 bg-white/50 rounded-2xl shadow-inner shrink-0 text-bluvi-purple">
                                     {tip.icon}

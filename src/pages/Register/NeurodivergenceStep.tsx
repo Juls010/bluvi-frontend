@@ -48,7 +48,7 @@ export const NeurodivergenceStep: React.FC = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
-                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between py-4 md:py-8">
+                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between pt-10 pb-12 md:pt-40 md:pb-24 md:[@media(max-height:1000px)]:pt-10 md:[@media(max-height:1000px)]:pb-8">
 
                     <div className="shrink-0">
                         <RegisterStepHeader 
@@ -58,15 +58,15 @@ export const NeurodivergenceStep: React.FC = () => {
                         />
                     </div>
 
-                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-2 px-1">
-                        <div className="flex justify-end mb-4">
+                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-4 md:py-32 md:[@media(max-height:1000px)]:py-14 px-1">
+                        <div className="flex justify-end mb-8 w-full max-w-2xl">
                             <span className={`text-sm font-medium ${formData.neurodivergences.length === 4 ? 'text-red-400' : 'text-bluvi-purple/60'}`}>
                                 Máximo 4 
                             </span>
                         </div>
 
                         <div 
-                            className="grid grid-cols-2 grid-flow-dense md:flex md:flex-wrap justify-center gap-3"
+                            className="grid grid-cols-2 grid-flow-dense md:flex md:flex-wrap justify-center gap-3 md:gap-5 md:[@media(max-height:1000px)]:gap-2"
                             role="group"
                             aria-label="Opciones de neurodivergencia"
                         >
@@ -83,7 +83,7 @@ export const NeurodivergenceStep: React.FC = () => {
                                         onClick={() => toggleTrait(trait.id)}
                                         disabled={isDisabled}
                                         className={`
-                                            py-3 px-4 md:px-5 rounded-2xl text-sm md:text-base font-medium transition-all duration-300 border-2
+                                            py-2.5 md:[@media(max-height:1000px)]:py-2 px-4 md:px-5 rounded-2xl text-sm md:text-base font-medium transition-all duration-300 border-2
                                             focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40
                                             ${isLongName ? 'col-span-2' : 'col-span-1'}
                                             ${isSelected 
@@ -100,7 +100,7 @@ export const NeurodivergenceStep: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="pt-4 shrink-0 w-full flex justify-center"> 
+                    <div className="pt-8 md:pt-12 shrink-0 w-full flex justify-center"> 
                         <Button 
                             aria-label="Siguiente paso" 
                             className="w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 hover:scale-105 active:scale-95"

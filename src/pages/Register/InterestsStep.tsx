@@ -29,10 +29,9 @@ export const InterestsStep = () => {
 
     // 1. Definición de temáticas (sin emojis en el texto)
     const CATEGORIES_MAPPING: Record<string, string[]> = {
-        'Cultura y Ocio': ['Anime', 'Música', 'Videojuegos', 'Ciencia ficción', 'Lectura', 'Comics', 'Humor'],
+        'Cultura y Ocio': ['Anime', 'Música', 'Videojuegos', 'Ciencia ficción', 'Lectura', 'Comics', 'Humor', 'Deporte'],
         'Creatividad': ['Diseño', 'Moda', 'Fotografía', 'Cosplay', 'Muñecos', 'Maquetas'],
         'Naturaleza y Viajes': ['Naturaleza', 'Mascotas', 'Playa', 'Montaña', 'Viajes', 'Paseos', 'Picnic'],
-        'Deporte y Salud': ['Deporte', 'Salud'],
         'Conocimiento': ['Historia', 'Matemáticas', 'Tecnología', 'Puzzles', 'Magia', 'Trenes'],
         'Comunidad y Valores': ['Feminismo', 'Veganismo', 'LGTBIQ+', 'Poliamor', 'Religión']
     };
@@ -41,7 +40,6 @@ export const InterestsStep = () => {
         'Cultura y Ocio': <Sparkles size={16} />,
         'Creatividad': <Palette size={16} />,
         'Naturaleza y Viajes': <Compass size={16} />,
-        'Deporte y Salud': <Activity size={16} />,
         'Conocimiento': <Book size={16} />,
         'Comunidad y Valores': <Heart size={16} />,
         'Otros': <HelpCircle size={16} />
@@ -94,7 +92,7 @@ export const InterestsStep = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
-                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
+                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between pt-14 pb-12 md:pt-40 md:pb-24 md:[@media(max-height:1000px)]:pt-10 md:[@media(max-height:1000px)]:pb-8">
 
                     <div className="shrink-0">
                         <RegisterStepHeader
@@ -102,18 +100,18 @@ export const InterestsStep = () => {
                             subtitle="Selecciona entre 2 y 5 intereses"
                             align="left"
                             compactOnShort
-                            className="mb-0"
+                            className="mb-12 md:mb-10"
                         />
                     </div>
 
                     <div 
-                        className="flex-grow min-h-0 overflow-y-auto overflow-x-visible no-scrollbar py-2 px-1"
+                        className="flex-grow min-h-0 overflow-y-auto overflow-x-visible no-scrollbar py-4 px-1"
                         role="group" 
                         aria-label="Lista de intereses"
                     >
-                        <div className="flex flex-col gap-8 pb-4">
+                        <div className="flex flex-col gap-6 md:gap-10 pb-6">
                             {Object.entries(groupedInterests).map(([catName, items]) => (
-                                <div key={catName} className="flex flex-col gap-4">
+                                <div key={catName} className="flex flex-col gap-3 md:gap-5">
                                     <h3 className="text-bluvi-purple/60 text-xs font-bold uppercase tracking-widest pl-1 flex items-center gap-2">
                                         <span className="text-bluvi-purple/40">
                                             {CATEGORY_ICONS[catName] || <HelpCircle size={16} />}
@@ -135,7 +133,7 @@ export const InterestsStep = () => {
                                                     onClick={() => toggleInterest(interest.id)}
                                                     disabled={isDisabled}
                                                     className={`
-                                                        px-4 md:px-6 py-2.5 rounded-xl border-2 text-sm md:text-base font-medium transition-all duration-300 text-left md:text-center
+                                                        px-4 md:px-6 py-3 rounded-xl border-2 text-sm md:text-base font-medium transition-all duration-300 text-left md:text-center
                                                         focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40
                                                         ${isLongName ? 'col-span-2' : 'col-span-1'}
                                                         ${isSelected 

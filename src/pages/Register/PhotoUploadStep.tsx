@@ -49,7 +49,7 @@ export const PhotoUploadStep = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
-                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between py-4 md:py-8">
+                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between pt-10 pb-12 md:pt-40 md:pb-24 md:[@media(max-height:1000px)]:pt-6 md:[@media(max-height:1000px)]:pb-4">
                     
                     <div className="shrink-0">
                         <RegisterStepHeader
@@ -57,12 +57,12 @@ export const PhotoUploadStep = () => {
                             subtitle="Las fotos ayudan a que las conexiones sean más reales y seguras. ¡Elige tus favoritas!"
                             align="left"
                             compactOnShort
-                            className="mb-0"
+                            className="mb-0 md:mb-10"
                         />
                     </div>
 
-                    <div className="flex-grow min-h-0 overflow-y-auto overflow-x-visible no-scrollbar px-1 py-6">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-3.5 auto-rows-fr">
+                    <div className="flex-grow min-h-0 overflow-y-auto overflow-x-visible no-scrollbar px-10 py-10 md:py-32 md:[@media(max-height:1000px)]:py-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-3 auto-rows-fr">
 
                             <div className="col-span-2 row-span-2 relative aspect-square group rounded-[2rem]">
                                 <button 
@@ -137,7 +137,7 @@ export const PhotoUploadStep = () => {
                         
                         </div>
 
-                        <div className="mt-6 bg-white/20 backdrop-blur-sm border border-white/40 p-4 rounded-2xl flex items-start gap-3 max-w-2xl mx-auto shadow-sm">
+                        <div className="hidden md:flex mt-8 md:[@media(max-height:1000px)]:mt-4 bg-white/20 backdrop-blur-sm border border-white/40 p-3 md:[@media(max-height:1000px)]:p-2 rounded-2xl items-start gap-2.5 max-w-2xl mx-auto shadow-sm">
                             <Info className="text-bluvi-purple shrink-0 mt-0.5" size={18} />
                             <p className="text-sm text-gray-700 italic leading-relaxed">
                                 Consejo: Las fotos con buena iluminación y donde se vea tu sonrisa suelen tener mejores conexiones.

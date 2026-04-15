@@ -35,7 +35,7 @@ export const SexualityStep: React.FC = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
-                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between pt-12 pb-4 md:pt-8 md:pb-8">
+                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between pt-10 pb-12 md:pt-40 md:pb-24 md:[@media(max-height:1000px)]:pt-6 md:[@media(max-height:1000px)]:pb-4">
                     
                     <div className="shrink-0 flex flex-col items-start w-full">
                         <RegisterStepHeader 
@@ -47,11 +47,11 @@ export const SexualityStep: React.FC = () => {
                     </div>
 
                     <div 
-                        className="flex-grow min-h-0 overflow-visible no-scrollbar py-10 px-1"
+                        className="flex-grow min-h-0 overflow-visible no-scrollbar py-6 md:py-32 md:[@media(max-height:1000px)]:py-6 px-5 flex flex-col items-center"
                         role="radiogroup" 
                         aria-label="Opciones de sexualidad"
                     >
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-5 md:gap-10 md:[@media(max-height:1000px)]:gap-2 w-full max-w-sm">
                             {sexualityOptions.map((option) => {
                                 const isSelected = formData.sexuality === option.id;
 
@@ -62,7 +62,7 @@ export const SexualityStep: React.FC = () => {
                                         aria-checked={isSelected}
                                         onClick={() => updateFormData({ sexuality: option.id })}
                                         className={`
-                                            w-full py-3.5 px-6 rounded-2xl text-lg font-medium transition-all duration-300 border-2
+                                            w-full py-3.5 md:[@media(max-height:1000px)]:py-2.5 px-6 rounded-2xl text-lg font-medium transition-all duration-300 border-2
                                             focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40
                                             ${isSelected
                                                 ? 'bg-bluvi-purple/20 border-bluvi-purple text-bluvi-purple font-bold shadow-md scale-[1.02]'
@@ -77,7 +77,7 @@ export const SexualityStep: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="pt-4 shrink-0 w-full flex justify-center">
+                    <div className="pt-8 md:pt-14 md:[@media(max-height:1000px)]:pt-2 shrink-0 w-full flex justify-center">
                         <Button
                             aria-label="Siguiente paso"
                             disabled={!formData.sexuality}

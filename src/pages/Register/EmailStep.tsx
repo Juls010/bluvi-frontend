@@ -58,7 +58,7 @@ export const EmailStep: React.FC = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
-                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between py-4 md:py-8">
+                <div className="max-w-md w-full h-full min-h-0 flex flex-col justify-between pt-32 pb-12 md:pt-40 md:pb-24 md:[@media(max-height:1000px)]:pt-10 md:[@media(max-height:1000px)]:pb-8">
                     
                     <div className="shrink-0">
                         <RegisterStepHeader
@@ -69,8 +69,8 @@ export const EmailStep: React.FC = () => {
                         />
                     </div>
 
-                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-10 px-1">
-                        <div className="flex flex-col gap-6">
+                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-20 md:py-32 md:[@media(max-height:1000px)]:py-14 px-5 flex flex-col items-center">
+                        <div className="flex flex-col gap-8 md:gap-12 md:[@media(max-height:1000px)]:gap-6 w-full max-w-sm">
                             <InputField 
                                 id="email"
                                 label="Correo Electrónico" 

@@ -53,7 +53,7 @@ export const CommunicationStyleStep: React.FC = () => {
     return (
         <AnimatedStep>
             <div className="w-full h-full flex flex-col items-center px-4 animate-fade-in min-h-0">
-                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between py-4 md:py-8">
+                <div className="max-w-2xl w-full h-full min-h-0 flex flex-col justify-between pt-10 pb-12 md:pt-40 md:pb-24 md:[@media(max-height:1000px)]:pt-10 md:[@media(max-height:1000px)]:pb-8">
 
                     <div className="shrink-0">
                         <RegisterStepHeader 
@@ -64,15 +64,15 @@ export const CommunicationStyleStep: React.FC = () => {
                         />
                     </div>
 
-                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-2 px-1">
-                        <div className="flex justify-end mb-4">
+                    <div className="flex-grow min-h-0 overflow-y-auto no-scrollbar py-4 md:py-32 md:[@media(max-height:1000px)]:py-14 px-5 flex flex-col items-center">
+                        <div className="flex justify-end mb-4 w-full max-w-2xl">
                             <span className={`text-sm font-medium ${!isValid ? 'text-red-400 font-bold' : 'text-green-600/70'}`}>
                                 Mínimo 1
                             </span>
                         </div>
 
                         <div 
-                            className="grid grid-cols-2 grid-flow-dense md:flex md:flex-wrap justify-center gap-3"
+                            className="grid grid-cols-2 grid-flow-dense md:flex md:flex-wrap justify-center gap-3 md:[@media(max-height:1000px)]:gap-2"
                             role="group"
                             aria-label="Estilos de comunicación"
                         >
@@ -87,7 +87,7 @@ export const CommunicationStyleStep: React.FC = () => {
                                         aria-checked={isSelected}
                                         onClick={() => toggleStyle(style.id)}
                                         className={`
-                                            py-3 px-4 md:px-5 rounded-2xl text-sm md:text-base font-medium transition-all duration-300 border-2
+                                            py-2.5 md:[@media(max-height:1000px)]:py-2 px-4 md:px-5 rounded-2xl text-sm md:text-base font-medium transition-all duration-300 border-2
                                             focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40
                                             ${isLongName ? 'col-span-2' : 'col-span-1'}
                                             ${isSelected 
@@ -103,7 +103,7 @@ export const CommunicationStyleStep: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="pt-4 shrink-0 w-full flex justify-center">
+                    <div className="pt-8 md:pt-12 shrink-0 w-full flex justify-center">
                         <Button 
                             aria-label="Siguiente paso" 
                             disabled={!isValid}

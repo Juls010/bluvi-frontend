@@ -12,7 +12,7 @@ export const AnimatedStep = ({ children, className = "justify-between" }: Animat
     const isRegisterRoute = pathname.startsWith('/register/');
     const minHeightClass = isRegisterRoute ? 'h-full min-h-full' : 'min-h-screen';
     const spacingClass = isRegisterRoute
-        ? 'pt-1 pb-1 md:pt-4 md:pb-4 [@media(max-height:900px)]:pt-1 [@media(max-height:900px)]:pb-2 [@media(max-height:760px)]:pt-1 [@media(max-height:760px)]:pb-1'
+        ? 'pt-1 pb-1 md:pt-4 md:pb-4 md:[@media(max-height:1000px)]:pt-1 md:[@media(max-height:1000px)]:pb-2 md:[@media(max-height:760px)]:pt-1 md:[@media(max-height:760px)]:pb-1'
         : 'pt-12 pb-7';
     const initialAnimation = isRegisterRoute ? { opacity: 0 } : { opacity: 0, y: 15 };
     const animateAnimation = isRegisterRoute ? { opacity: 1 } : { opacity: 1, y: 0 };
@@ -29,7 +29,7 @@ export const AnimatedStep = ({ children, className = "justify-between" }: Animat
                 damping: 20,
                 mass: 0.5 
             }}
-            className={`w-full ${minHeightClass} flex flex-col items-center ${spacingClass} px-6 [@media(max-height:900px)]:px-5 [@media(max-height:760px)]:px-4 ${className}`}
+            className={`w-full ${minHeightClass} flex flex-col items-center ${spacingClass} px-6 md:[@media(max-height:1000px)]:px-5 md:[@media(max-height:760px)]:px-4 ${className}`}
             >
             {children}
         </motion.div>
