@@ -151,7 +151,7 @@ export const PhotoUploadStep = () => {
                             onClick={handleNext} 
                             disabled={!photos[0]}
                             className={`w-full max-w-sm py-4 rounded-full text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300
-                            ${photos[0] ? 'bg-bluvi-purple text-white hover:scale-105 active:scale-95' : 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-50'}`}
+                            ${photos[0] ? 'bg-bluvi-purple text-white hover:scale-102 active:scale-98' : 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-50'}`}
                         >
                             Continuar
                         </Button>

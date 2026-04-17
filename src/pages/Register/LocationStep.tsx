@@ -270,7 +270,7 @@ export const LocationStep = () => {
                             disabled={!formData.city}
                             className={`w-full max-w-sm py-4 rounded-full text-base md:text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 ${
                                 formData.city 
-                                ? 'bg-bluvi-purple text-white hover:scale-105 active:scale-95' 
+                                ? 'bg-bluvi-purple text-white hover:scale-102 active:scale-98' 
                                 : 'bg-gray-200 text-gray-400 opacity-50 cursor-not-allowed'
                             }`}
                             aria-label="Confirmar ciudad y continuar"

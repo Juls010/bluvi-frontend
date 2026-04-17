@@ -152,7 +152,7 @@ export const AgeStep: React.FC = () => {
                             aria-label="Ir al siguiente paso"
                             disabled={!formData.birthDate}
                             className={`w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all ${
-                                !formData.birthDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                                !formData.birthDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-102 active:scale-98'
                             }`}
                             onClick={handleNext}
                         >

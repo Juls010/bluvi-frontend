@@ -91,7 +91,7 @@ export const GenderStep: React.FC = () => {
                         <Button
                             aria-label="Siguiente paso"
                             disabled={!formData.gender}
-                            className={`w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 ${!formData.gender ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
+                            className={`w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 ${!formData.gender ? 'opacity-50 cursor-not-allowed' : 'hover:scale-102 active:scale-98'}`}
                             onClick={handleNext}
                         >
                             Siguiente

@@ -96,7 +96,7 @@ export const DocumentStep: React.FC = () => {
                     <div className="pt-4 shrink-0 w-full flex justify-center">
                         <Button 
                             aria-label="Enviar documentación y finalizar" 
-                            className={`w-full max-w-sm py-4 rounded-full text-lg shadow-xl shadow-bluvi-purple/10 transition-all ${!fileName ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
+                            className={`w-full max-w-sm py-4 rounded-full text-lg shadow-xl shadow-bluvi-purple/10 transition-all ${!fileName ? 'opacity-50 cursor-not-allowed' : 'hover:scale-102 active:scale-98'}`}
                             onClick={handleNext}
                             disabled={!fileName}
                         >

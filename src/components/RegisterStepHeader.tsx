@@ -33,10 +33,10 @@ export const RegisterStepHeader: React.FC<RegisterStepHeaderProps> = ({
                 ? 'min-h-[48px] [@media(max-height:1000px)]:min-h-[20px]'
                 : 'min-h-[48px]';
     const subtitleTextClass = compact
-        ? 'text-bluvi-purple/70 text-sm md:text-base font-medium'
+        ? 'text-bluvi-purple/70 text-base md:text-lg font-medium'
         : compactOnShort
-            ? 'text-bluvi-purple/70 text-lg font-medium [@media(max-height:1000px)]:text-xs'
-            : 'text-bluvi-purple/70 text-lg font-medium';
+            ? 'text-bluvi-purple/70 text-xl font-medium [@media(max-height:1000px)]:text-sm'
+            : 'text-bluvi-purple/70 text-xl font-medium';
 
     return (
         <header className={`w-full ${alignmentClass} ${headerHeightClass} ${className}`}>

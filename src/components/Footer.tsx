@@ -26,6 +26,7 @@ const NAV_SECTIONS = [
       { label: 'Privacidad', to: '/privacidad' },
       { label: 'Términos', to: '/terminos' },
       { label: 'Cookies', to: '/cookies' },
+      { label: 'Accesibilidad', to: '/accesibilidad' },
     ],
   },
 ] as const;

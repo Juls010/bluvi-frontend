@@ -25,12 +25,13 @@ export const AnimatedStep = ({ children, className = "justify-between" }: Animat
             exit={exitAnimation}
             transition={{ 
                 type: "spring", 
-                stiffness: 100, 
-                damping: 20,
-                mass: 0.5 
+                stiffness: 20, 
+                damping: 8,
+                mass: 0.9,
+                duration: 1.7
             }}
             className={`w-full ${minHeightClass} flex flex-col items-center ${spacingClass} px-6 md:[@media(max-height:1000px)]:px-5 md:[@media(max-height:760px)]:px-4 ${className}`}
-            >
+        >
             {children}
         </motion.div>
     );

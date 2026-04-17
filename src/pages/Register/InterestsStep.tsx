@@ -8,8 +8,7 @@ import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 import { 
     Sparkles, 
     Palette, 
-    Compass, 
-    Activity, 
+    Compass,  
     Book, 
     Heart, 
     HelpCircle 
@@ -27,7 +26,6 @@ export const InterestsStep = () => {
     const [interests, setInterests] = useState<Interest[]>([]); 
     const MIN_SELECTION = 2;
 
-    // 1. Definición de temáticas (sin emojis en el texto)
     const CATEGORIES_MAPPING: Record<string, string[]> = {
         'Cultura y Ocio': ['Anime', 'Música', 'Videojuegos', 'Ciencia ficción', 'Lectura', 'Comics', 'Humor', 'Deporte'],
         'Creatividad': ['Diseño', 'Moda', 'Fotografía', 'Cosplay', 'Muñecos', 'Maquetas'],
@@ -158,7 +156,7 @@ export const InterestsStep = () => {
                             onClick={handleNext}
                             disabled={formData.interests.length < MIN_SELECTION}
                             className={`w-full max-w-sm py-4 rounded-full text-base md:text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300
-                            ${formData.interests.length >= MIN_SELECTION ? 'bg-bluvi-purple text-white hover:scale-105' : 'bg-gray-200 text-gray-400 opacity-50 cursor-not-allowed'}`}
+                            ${formData.interests.length >= MIN_SELECTION ? 'bg-bluvi-purple text-white hover:scale-102 active:scale-98' : 'bg-gray-200 text-gray-400 opacity-50 cursor-not-allowed'}`}
                         >
                             Siguiente {formData.interests.length > 0 ? `(${formData.interests.length}/5)` : ''}
                         </Button>

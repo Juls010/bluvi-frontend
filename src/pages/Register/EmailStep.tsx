@@ -119,7 +119,7 @@ export const EmailStep: React.FC = () => {
                             aria-label="Continuar" 
                             disabled={!canContinue || isLoading}
                             className={`w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 
-                                ${!canContinue || isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95 bg-bluvi-purple text-white shadow-bluvi-purple/20'}`}
+                                ${!canContinue || isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-102 active:scale-98 bg-bluvi-purple text-white shadow-bluvi-purple/20'}`}
                             onClick={handleNext}
                         >
                             {isLoading ? 'Verificando...' : 'Continuar'}

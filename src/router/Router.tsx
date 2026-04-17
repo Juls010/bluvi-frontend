@@ -7,6 +7,7 @@ import { RegisterLayout } from '../layouts/RegisterLayout';
 import { AppLayout } from '../layouts/AppLayout';
 import { ChatLayout } from '../layouts/ChatLayout';
 import { PublicThemeScope, PrivateThemeScope } from '../layouts/ThemeScopes';
+import LegalLayout from '../layouts/LegalLayout';
 
 // Contexts
 import { RegisterProvider } from '../context/RegisterContext';
@@ -36,7 +37,15 @@ const ChatDetailPage = lazy(() => import('../pages/ChatDetails').then((m) => ({ 
 const ChatUserProfilePage = lazy(() => import('../pages/ChatUserProfile').then((m) => ({ default: m.ChatUserProfile })));
 const UserProfilePage = lazy(() => import('../pages/App/UserProfile').then((m) => ({ default: m.UserProfile })));
 const SettingsPage = lazy(() => import('../pages/Settings/Settings').then((m) => ({ default: m.Settings })));
-const ReportsAndBlocksPage = lazy(() => import('../pages/Settings/ReportsAndBlocks').then((m) => ({ default: m.ReportsAndBlocks })));
+
+const ReportsAndBlocksPage = lazy(() => import('../pages/Settings/ReportsAndBlocks').then(m => ({ default: m.ReportsAndBlocks })));
+
+// Legal & Privacy Pages
+const PrivacyPolicy = lazy(() => import('../pages/Privacy/PrivacyPolicy'));
+const CookiePolicy = lazy(() => import('../pages/Privacy/CookiesPolicy'));
+const Accessibility = lazy(() => import('../pages/Privacy/Accessibility'));
+const LegalNotice = lazy(() => import('../pages/Privacy/LegalNotice'));
+
 
 const withSuspense = (element: React.ReactNode) => (
     <Suspense fallback={<div className="min-h-screen w-full bg-app-surface" />}>
@@ -51,6 +60,46 @@ const withRegisterSuspense = (element: React.ReactNode) => (
 );
 
 export const router = createBrowserRouter([
+    {
+        path: "/privacidad",
+        element: (
+            <LegalLayout>
+                {withSuspense(<PrivacyPolicy />)}
+            </LegalLayout>
+        )
+    },
+    {
+        path: "/cookies",
+        element: (
+            <LegalLayout>
+                {withSuspense(<CookiePolicy />)}
+            </LegalLayout>
+        )
+    },
+    {
+        path: "/accesibilidad",
+        element: (
+            <LegalLayout>
+                {withSuspense(<Accessibility />)}
+            </LegalLayout>
+        )
+    },
+    {
+        path: "/legal",
+        element: (
+            <LegalLayout>
+                {withSuspense(<LegalNotice />)}
+            </LegalLayout>
+        )
+    },
+    {
+        path: "/terminos",
+        element: (
+            <LegalLayout>
+                {withSuspense(<LegalNotice />)}
+            </LegalLayout>
+        )
+    },
     {
         path: "/",
         element: (

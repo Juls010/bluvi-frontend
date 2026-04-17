@@ -103,7 +103,7 @@ export const NeurodivergenceStep: React.FC = () => {
                     <div className="pt-8 md:pt-12 shrink-0 w-full flex justify-center"> 
                         <Button 
                             aria-label="Siguiente paso" 
-                            className="w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 hover:scale-105 active:scale-95"
+                            className="w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 hover:scale-102 active:scale-98"
                             onClick={handleNext}
                         >
                             {formData.neurodivergences.length === 0 ? 'Omitir' : 'Siguiente'}

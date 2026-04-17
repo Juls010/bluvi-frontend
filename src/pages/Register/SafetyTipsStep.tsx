@@ -74,7 +74,7 @@ export const SafetyTipsStep = () => {
                     <div className="pt-4 shrink-0 w-full flex justify-center">
                         <Button
                             onClick={handleFinishRegistration} 
-                            className="w-full max-w-sm py-4 rounded-full text-base md:text-lg shadow-xl shadow-bluvi-purple/10 bg-bluvi-purple text-white transition-all hover:scale-105 active:scale-95"
+                            className="w-full max-w-sm py-4 rounded-full text-base md:text-lg shadow-xl shadow-bluvi-purple/10 bg-bluvi-purple text-white transition-all hover:scale-102 active:scale-98"
                             aria-label="Entendido, finalizar registro"
                         >
                             ¡Entendido, vamos allá!

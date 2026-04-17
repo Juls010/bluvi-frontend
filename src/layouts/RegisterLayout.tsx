@@ -30,8 +30,8 @@ interface HeaderIconButtonProps {
 }
 
 const HeaderIconButton: React.FC<HeaderIconButtonProps> = ({ onClick, ariaLabel, tooltip, align, children, className = "" }) => {
+    // Solo mostrar tooltip y aria-label en móvil, donde no hay texto visible
     const tooltipPositionClass = align === 'left' ? 'left-0' : 'right-0';
-
     return (
         <div className="relative inline-flex group">
             <button
@@ -39,15 +39,23 @@ const HeaderIconButton: React.FC<HeaderIconButtonProps> = ({ onClick, ariaLabel,
                     e.currentTarget.blur();
                     onClick();
                 }}
-                className={`w-9 h-9 flex items-center justify-center text-[#3f4a9b]/70 hover:text-[#3f4a9b] hover:bg-white/20 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4a9b]/40 ${className}`}
+                className={`
+                    flex items-center justify-center text-[#3f4a9b]/70 transition-all duration-300 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4a9b]/40
+                    w-9 h-9 rounded-full md:w-auto md:h-auto md:rounded-full md:px-5 md:py-2
+                    hover:bg-white/20 md:hover:bg-[#e6eaff] md:shadow-none md:hover:shadow-md
+                    group
+                    ${className}
+                `}
                 aria-label={ariaLabel}
             >
+                {/* En móvil solo icono, aria-label y tooltip útiles; en md+ hay texto visible */}
                 {children}
             </button>
+            {/* Tooltip solo visible en móvil, oculto en md+ */}
             <span
                 role="tooltip"
                 aria-hidden="true"
-                className={`pointer-events-none absolute ${tooltipPositionClass} top-full mt-2 origin-top z-20 rounded-lg border border-white/70 bg-white/90 px-2.5 py-1.5 text-xs font-semibold text-[#3f4a9b] shadow-md backdrop-blur-sm opacity-0 translate-y-1 scale-95 transition-all duration-150 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:scale-100`}
+                className={`pointer-events-none absolute ${tooltipPositionClass} top-full mt-2 origin-top z-20 rounded-lg border border-white/70 bg-white/90 px-2.5 py-1.5 text-xs font-semibold text-[#3f4a9b] shadow-md backdrop-blur-sm opacity-0 translate-y-1 scale-95 transition-all duration-150 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:scale-100 md:hidden`}
             >
                 {tooltip}
             </span>
@@ -131,11 +139,17 @@ export const RegisterLayout: React.FC = () => {
                 <div className="justify-self-start -ml-2">
                     <HeaderIconButton
                         onClick={() => navigate(-1)}
-                        ariaLabel="Volver atras"
+                        ariaLabel="Volver atrás"
                         tooltip="Volver"
                         align="left"
                     >
-                        <ChevronLeft size={24} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
+                            <span className="hidden md:inline-flex items-center gap-2">
+                                <ChevronLeft size={24} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
+                                <span>Atrás</span>
+                            </span>
+                        <span className="md:hidden">
+                            <ChevronLeft size={24} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
+                        </span>
                     </HeaderIconButton>
                 </div>
 
@@ -153,7 +167,13 @@ export const RegisterLayout: React.FC = () => {
                         align="right"
                         className="w-11 h-11 md:w-12 md:h-12"
                     >
-                        <Home size={21} strokeWidth={2} className="group-hover:scale-110 transition-transform" />
+                            <span className="hidden md:inline-flex items-center gap-2">
+                                <span>Inicio</span>
+                                <Home size={21} strokeWidth={2} className="group-hover:scale-110 transition-transform" />
+                            </span>
+                        <span className="md:hidden">
+                            <Home size={21} strokeWidth={2} className="group-hover:scale-110 transition-transform" />
+                        </span>
                     </HeaderIconButton>
                 </div>
             </div>
@@ -168,7 +188,7 @@ export const RegisterLayout: React.FC = () => {
             <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center -mt-10 md:-mt-2 [@media(max-height:1000px)]:-mt-6 [@media(max-height:760px)]:-mt-4 overflow-y-auto">
                 <AnimatePresence mode="wait">
                     <div key={location.pathname} className="w-full h-full flex justify-center">
-                        <Outlet /> 
+                        <Outlet />
                     </div>
                 </AnimatePresence>
             </div>
