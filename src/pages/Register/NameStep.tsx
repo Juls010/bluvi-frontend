@@ -8,10 +8,10 @@ import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 const PERSON_NAME_REGEX = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/;
 
-const toTitleCase = (value: string) =>
+export const toTitleCase = (value: string) =>
     value.replace(/(^|\s)(\S)/g, (_, space, char) => space + char.toUpperCase());
 
-const sanitizeNameInput = (value: string) =>
+export const sanitizeNameInput = (value: string) =>
     toTitleCase(
         value
             .replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]/g, '')

@@ -15,7 +15,7 @@ const getMaxBirthDate = () => {
     return `${today.getFullYear() - MIN_AGE}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 };
 
-const isValidIsoDate = (value: string) => {
+export const isValidIsoDate = (value: string) => {
     const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!isoDateRegex.test(value)) return false;
 
@@ -29,7 +29,7 @@ const isValidIsoDate = (value: string) => {
     );
 };
 
-const normalizeIsoDate = (value: string) => {
+export const normalizeIsoDate = (value: string) => {
     const match = value.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
     if (!match) return value;
 
@@ -37,7 +37,7 @@ const normalizeIsoDate = (value: string) => {
     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 };
 
-const isAtLeastAge = (birthDateIso: string, minAge: number) => {
+export const isAtLeastAge = (birthDateIso: string, minAge: number) => {
     const [year, month, day] = birthDateIso.split('-').map(Number);
     const today = new Date();
 
@@ -150,7 +150,6 @@ export const AgeStep: React.FC = () => {
                     <div className="pt-4 shrink-0 w-full flex justify-center">
                         <Button
                             aria-label="Ir al siguiente paso"
-                            disabled={!formData.birthDate}
                             className={`w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all ${
                                 !formData.birthDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-102 active:scale-98'
                             }`}

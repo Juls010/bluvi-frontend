@@ -158,6 +158,7 @@ export const PhotoUploadStep = () => {
                     </div>
 
                     <input 
+                        id="register-file-input"
                         type="file" 
                         ref={fileInputRef} 
                         onChange={handleFileChange} 
