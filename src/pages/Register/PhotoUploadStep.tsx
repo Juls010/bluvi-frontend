@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Plus, X, CheckCircle2, Info } from 'lucide-react';
+import { Camera, Plus, X, CheckCircle2, Info, Loader2 } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { useRegister } from '../../context/RegisterContext';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
+import { uploadUserPhoto } from '../../services/uploadService';
 
 export const PhotoUploadStep = () => {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ export const PhotoUploadStep = () => {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectingIndex, setSelectingIndex] = useState<number | null>(null);
+    const [loadingIndices, setLoadingIndices] = useState<Set<number>>(new Set());
 
     const handleNext = () => {
         if (photos[0]) {
@@ -21,26 +23,44 @@ export const PhotoUploadStep = () => {
         }
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file && selectingIndex !== null) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const newPhotos = [...photos];
-                newPhotos[selectingIndex] = reader.result as string;
-                updateFormData({ photos: newPhotos });
-            };
-            reader.readAsDataURL(file);
+            setLoadingIndices(prev => new Set(prev).add(selectingIndex));
+            
+            try {
+                const { url, error } = await uploadUserPhoto(file);
+                
+                if (error) {
+                    console.error('Error al subir foto:', error);
+                    alert('Hubo un error al subir la foto. Por favor, inténtalo de nuevo.');
+                } else if (url) {
+                    const newPhotos = [...photos];
+                    newPhotos[selectingIndex] = url;
+                    updateFormData({ photos: newPhotos });
+                }
+            } finally {
+                setLoadingIndices(prev => {
+                    const next = new Set(prev);
+                    next.delete(selectingIndex);
+                    return next;
+                });
+                setSelectingIndex(null);
+                // Reset input to allow selecting same file again if needed
+                if (fileInputRef.current) fileInputRef.current.value = '';
+            }
         }
     };
 
     const triggerUpload = (index: number) => {
+        if (loadingIndices.has(index)) return;
         setSelectingIndex(index);
         fileInputRef.current?.click();
     };
 
     const removePhoto = (index: number, e: React.MouseEvent) => {
         e.stopPropagation();
+        if (loadingIndices.has(index)) return;
         const newPhotos = [...photos];
         newPhotos[index] = null;
         updateFormData({ photos: newPhotos });
@@ -73,7 +93,12 @@ export const PhotoUploadStep = () => {
                                         ${photos[0] ? 'border-white shadow-2xl' : 'border-bluvi-light-purple bg-white/30 hover:bg-white/50'}`}
                                 >
                                     
-                                    {photos[0] ? (
+                                    {loadingIndices.has(0) ? (
+                                        <div className="flex flex-col items-center justify-center animate-pulse">
+                                            <Loader2 size={42} className="text-bluvi-purple animate-spin mb-1.5" />
+                                            <span className="text-xs font-bold uppercase tracking-widest text-bluvi-purple/60">Subiendo...</span>
+                                        </div>
+                                    ) : photos[0] ? (
                                         <img src={photos[0]} className="w-full h-full object-cover" alt="Tu foto principal de perfil" />
                                     ) : (
                                         <div className="text-center">
@@ -114,8 +139,10 @@ export const PhotoUploadStep = () => {
                                             className={`w-full h-full rounded-2xl border-2 border-dashed transition-all duration-300 flex items-center justify-center overflow-hidden focus:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40
                                                 ${photo ? 'border-white shadow-lg' : 'border-bluvi-light-purple/40 bg-white/10 hover:bg-white/30'}`}
                                         >
-                                            {photo ? (
-                                                <img src={photo} className="w-full h-full object-cover" alt={`Foto secundaria ${actualIndex + 1}`} />
+                                            {loadingIndices.has(actualIndex) ? (
+                                                <Loader2 size={24} className="text-bluvi-purple animate-spin" />
+                                            ) : photo ? (
+                                                <img src={photo} className="w-full h-full object-cover" alt={`Foto secundaria ${actualIndex +actualIndex}`} />
                                             ) : (
                                                 <Plus size={24} className="text-bluvi-purple/30" aria-hidden="true" />
                                             )}

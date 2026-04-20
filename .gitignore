@@ -11,12 +11,10 @@ dist-ssr/
 .env.test.local
 .env.production.local
 
-# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Editor (Archivos que crea VS Code o tu sistema)
 .vscode/
 .idea/
 .DS_Store
@@ -26,7 +24,6 @@ yarn-error.log*
 *.sln
 *.sw?
 
-# Testing
 coverage/
 *.lcov
 .vitest-result.json

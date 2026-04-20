@@ -1,10 +1,11 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { PhotoUploadStep } from '../PhotoUploadStep';
 import { LocationStep } from '../LocationStep';
 import { ProfileDescriptionStep } from '../ProfileDescriptionStep';
 import { useRegister } from '../../../context/RegisterContext';
 import { useNavigate, MemoryRouter } from 'react-router-dom';
 import { searchCities } from '../../../services/cities.service';
+import { uploadUserPhoto } from '../../../services/uploadService';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 vi.mock('../../../context/RegisterContext');
@@ -16,6 +17,7 @@ vi.mock('react-router-dom', async () => {
     };
 });
 vi.mock('../../../services/cities.service');
+vi.mock('../../../services/uploadService');
 
 describe('Media and Location Registration Steps', () => {
     const mockUpdateFormData = vi.fn();
@@ -27,7 +29,7 @@ describe('Media and Location Registration Steps', () => {
         (useNavigate as any).mockReturnValue(mockNavigate);
         (useRegister as any).mockReturnValue({
             formData: {
-                photos: [null, null, null, null],
+                photos: [null, null, null, null, null],
                 city: '',
                 description: '',
             },
@@ -44,13 +46,13 @@ describe('Media and Location Registration Steps', () => {
                 </MemoryRouter>
             );
             expect(screen.getByLabelText(/Subir foto principal/i)).toBeDefined();
-            expect(screen.getAllByLabelText(/Subir foto secundaria/i).length).toBe(3);
+            expect(screen.getAllByLabelText(/Subir foto secundaria/i).length).toBe(4);
         });
 
         it('should allow removing a photo', () => {
              (useRegister as any).mockReturnValue({
                 formData: {
-                    photos: ['data:image/png;base64,sample', null, null, null],
+                    photos: ['https://example.com/photo.jpg', null, null, null, null],
                 },
                 updateFormData: mockUpdateFormData,
             });
@@ -63,20 +65,12 @@ describe('Media and Location Registration Steps', () => {
 
             const removeButton = screen.getByLabelText(/Eliminar foto principal/i);
             fireEvent.click(removeButton);
-            expect(mockUpdateFormData).toHaveBeenCalledWith({ photos: [null, null, null, null] });
+            expect(mockUpdateFormData).toHaveBeenCalledWith({ photos: [null, null, null, null, null] });
         });
 
-        it('should handle file selection', async () => {
-            let lastFileReader: any;
-            class MockFileReader {
-                onloadend: any = null;
-                result = 'data:image/png;base64,new-photo';
-                readAsDataURL = vi.fn();
-                constructor() {
-                    lastFileReader = this;
-                }
-            }
-            vi.stubGlobal('FileReader', MockFileReader);
+        it('should handle file selection and upload', async () => {
+            const mockUrl = 'https://supabase.co/photo.jpg';
+            (uploadUserPhoto as any).mockResolvedValue({ url: mockUrl, error: null });
 
             render(
                 <MemoryRouter>
@@ -88,19 +82,16 @@ describe('Media and Location Registration Steps', () => {
             const file = new File([''], 'test.png', { type: 'image/png' });
             
             fireEvent.click(screen.getByLabelText(/Subir foto principal/i));
+            
+            // Simular el cambio en el input de archivo
             fireEvent.change(input, { target: { files: [file] } });
             
-            // Wait for the reader to be instantiated and onloadend assigned
-            await waitFor(() => expect(lastFileReader).toBeDefined());
-            act(() => {
-                lastFileReader.onloadend();
+            await waitFor(() => {
+                expect(uploadUserPhoto).toHaveBeenCalledWith(file);
+                expect(mockUpdateFormData).toHaveBeenCalledWith({
+                    photos: [mockUrl, null, null, null, null]
+                });
             });
-
-            expect(mockUpdateFormData).toHaveBeenCalledWith({
-                photos: ['data:image/png;base64,new-photo', null, null, null]
-            });
-            
-            vi.unstubAllGlobals();
         });
     });
 

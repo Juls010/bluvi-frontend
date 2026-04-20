@@ -41,7 +41,7 @@ vi.mock('../PhotoUploadStep', () => ({
             <div>
                 <h1>Muestra tu esencia</h1>
                 <button aria-label="Continuar" onClick={() => {
-                    updateFormData({ photos: ['data:image/png;base64,mock', null, null, null, null] });
+                    updateFormData({ photos: ['https://bfwvxoxjvgnrqylvdouv.supabase.co/storage/v1/object/public/Bluvi_photos/registration/mock.jpg', null, null, null, null] });
                     navigate('/register/location');
                 }}>Continuar</button>
             </div>

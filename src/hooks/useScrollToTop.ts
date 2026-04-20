@@ -7,12 +7,10 @@ import React from 'react';
  */
 export const useScrollToTop = () => {
   React.useEffect(() => {
-    // Desactiva la restauración automática del scroll del navegador
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
     
-    // Fuerza el scroll al top
     window.scrollTo(0, 0);
   }, []);
 };

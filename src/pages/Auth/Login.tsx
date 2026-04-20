@@ -9,8 +9,8 @@ import { useAuth } from '../../context/AuthContext';
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
-    const auth = useAuth(); // Primero cogemos todo el objeto
-    const authLogin = auth.login; // Luego sacamos la función con un nombre distinto
+    const auth = useAuth(); 
+    const authLogin = auth.login; 
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -44,6 +44,9 @@ export const Login: React.FC = () => {
                     >
                         <ArrowLeft size={28} />
                     </button>
+
+
+                    
                 </div>
 
                 <div className="flex flex-col items-center w-full max-w-md px-2">
