@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { Button } from '../../components/Button';
 import { InputField } from '../../components/InputField';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 import { authService } from '../../services/auth.service';
+import { Check } from 'lucide-react';
 
 export const EmailStep: React.FC = () => {
     const navigate = useNavigate();
     const { formData, updateFormData } = useRegister();
     const [isLoading, setIsLoading] = useState(false);
     const [serverError, setServerError] = useState('');
+    const [showConsentError, setShowConsentError] = useState(false);
 
     const validateEmail = (email: string) => {
         const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -25,10 +27,17 @@ export const EmailStep: React.FC = () => {
 
     const isEmailValid = validateEmail(formData.email);
     const isPasswordValid = validatePassword(formData.password);
-    const canContinue = isEmailValid && isPasswordValid;
+    const fieldsValid = isEmailValid && isPasswordValid;
+    const canContinue = fieldsValid && formData.privacyAccepted;
 
     const handleNext = async () => {
-        if (!canContinue || isLoading) return;
+        if (isLoading) return;
+        if (!formData.privacyAccepted) {
+            setShowConsentError(true);
+            setTimeout(() => setShowConsentError(false), 2500);
+            return;
+        }
+        if (!canContinue) return;
 
         setIsLoading(true);
         setServerError('');
@@ -108,16 +117,74 @@ export const EmailStep: React.FC = () => {
                                 helperText={
                                     formData.password.length > 0 && !isPasswordValid 
                                     ? "Usa mayúscula, minúscula, número y símbolo." 
-                                    : "8-16 caracteres, mayús, minús, número y símbolo."
+                                    : "8-16 caracteres, mayúscula, minúscula, número y símbolo."
                                 }
                             />
                         </div>
+
+                        <label
+                            htmlFor="privacy-consent"
+                            className="flex items-center gap-3 cursor-pointer group mt-10"
+                        >
+                            <button
+                                id="privacy-consent"
+                                type="button"
+                                role="checkbox"
+                                aria-checked={formData.privacyAccepted}
+                                aria-label="Aceptar política de privacidad y aviso legal"
+                                onClick={() => {
+                                    updateFormData({ privacyAccepted: !formData.privacyAccepted });
+                                    if (showConsentError) setShowConsentError(false);
+                                }}
+                                className={`
+                                    shrink-0 mt-0.5 w-5 h-5 rounded-md border-2 transition-all duration-500
+                                    flex items-center justify-center
+                                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4a9b]/50
+                                    ${formData.privacyAccepted
+                                        ? 'bg-[#3f4a9b] border-[#3f4a9b] shadow-sm'
+                                        : showConsentError
+                                            ? 'bg-white/60 border-red-400'
+                                            : 'bg-white/60 border-[#3f4a9b]/40 group-hover:border-[#3f4a9b]/70'
+                                    }
+                                `}
+                            >
+                                {formData.privacyAccepted && (
+                                    <Check size={12} strokeWidth={3} className="text-white" aria-hidden="true" />
+                                )}
+                            </button>
+                            <span className={`text-xs leading-relaxed transition-colors duration-700 ${showConsentError ? 'text-red-400' : 'text-gray-600'}`}>
+                                He leído y acepto la{' '}
+                                <Link
+                                    to="/privacidad"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="font-semibold underline underline-offset-2 transition-colors duration-700"
+                                    style={{ color: showConsentError ? '#f87171' : '#3f4a9b' }}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    Política de Privacidad
+                                </Link>
+                                {' '}y el{' '}
+                                <Link
+                                    to="/legal"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="font-semibold underline underline-offset-2 transition-colors duration-700"
+                                    style={{ color: showConsentError ? '#f87171' : '#3f4a9b' }}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    Aviso Legal
+                                </Link>
+                                {' '}de Bluvi.
+                            </span>
+                        </label>
                     </div>
+                
 
                     <div className="pt-4 shrink-0 w-full flex justify-center">
                         <Button 
                             aria-label="Continuar" 
-                            disabled={!canContinue || isLoading}
+                            disabled={!fieldsValid || isLoading}
                             className={`w-full max-w-sm py-4 text-lg shadow-xl shadow-bluvi-purple/10 transition-all duration-300 
                                 ${!canContinue || isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-102 active:scale-98 bg-bluvi-purple text-white shadow-bluvi-purple/20'}`}
                             onClick={handleNext}

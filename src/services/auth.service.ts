@@ -16,6 +16,8 @@ export interface RegisterPayload {
     communication_style: number[];
     interests: number[];
     photos: string[];
+    privacy_accepted_at: string;
+    privacy_version: string;
 }
 
 interface ApiResponse {

@@ -15,6 +15,7 @@ interface RegisterData {
     city: string;
     interests: number[]; 
     description: string;
+    privacyAccepted: boolean;
 }
 
 type RegisterBackupData = Omit<RegisterData, 'password'>;
@@ -23,6 +24,8 @@ const PERSON_NAME_REGEX = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 const DATA_URI_OR_HTTP_URL_REGEX = /^(data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n]+|https?:\/\/\S+)$/;
+
+const PRIVACY_POLICY_VERSION = 'v1.0';
 
 const DEFAULT_REGISTER_DATA: RegisterData = {
     firstName: '',
@@ -38,6 +41,7 @@ const DEFAULT_REGISTER_DATA: RegisterData = {
     city: '',
     interests: [],
     description: '',
+    privacyAccepted: false,
 };
 
 const sanitizePlainText = (value: string, maxLength: number) =>
@@ -58,6 +62,7 @@ const serializeBackupData = (data: RegisterData): RegisterBackupData => ({
     city: data.city,
     interests: data.interests,
     description: data.description,
+    privacyAccepted: data.privacyAccepted,
 });
 
 const sanitizeRegisterPatch = (newData: Partial<RegisterData>): Partial<RegisterData> => {
@@ -109,6 +114,10 @@ const sanitizeRegisterPatch = (newData: Partial<RegisterData>): Partial<Register
         sanitized.interests = [...new Set(newData.interests.filter((value) => Number.isInteger(value) && value > 0))];
     }
 
+    if (typeof newData.privacyAccepted === 'boolean') {
+        sanitized.privacyAccepted = newData.privacyAccepted;
+    }
+
     return sanitized;
 };
 
@@ -147,6 +156,7 @@ const normalizeRegisterData = (raw: unknown): RegisterData => {
             ? data.interests.filter((v): v is number => typeof v === 'number')
             : [],
         description: typeof data.description === 'string' ? data.description : '',
+        privacyAccepted: typeof data.privacyAccepted === 'boolean' ? data.privacyAccepted : false,
     };
 };
 
@@ -214,6 +224,10 @@ const validateMappedRegisterData = (payload: RegisterPayload): string | null => 
         return 'Hay fotos con un formato no valido.';
     }
 
+    if (!payload.privacy_accepted_at) {
+        return 'Debes aceptar los términos y política de privacidad.';
+    }
+
     return null;
 };
 
@@ -259,7 +273,9 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 neurodivergences: formData.neurodivergences,
                 communication_style: formData.communicationStyle,
                 interests: formData.interests,
-                photos: formData.photos.filter((photo): photo is string => typeof photo === 'string' && photo.length > 0)
+                photos: formData.photos.filter((photo): photo is string => typeof photo === 'string' && photo.length > 0),
+                privacy_accepted_at: formData.privacyAccepted ? new Date().toISOString() : '',
+                privacy_version: formData.privacyAccepted ? PRIVACY_POLICY_VERSION : '',
             };
 
             const validationError = validateMappedRegisterData(mappedData);
@@ -290,73 +306,6 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         </RegisterContext.Provider>
     );
 };
-
-/*
-export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [formData, setData] = useState<RegisterData>({
-        firstName: '',
-        lastName: '',
-        birthDate: '',
-        gender: '', 
-        sexuality: '',
-        neurodivergences: [],
-        communicationStyle: [],
-        email: '',
-        password: '',
-        photos: [null, null, null, null, null],
-        city: '',
-        interests: [],
-        description: '',
-    });
-
-    const updateFormData = (newData: Partial<RegisterData>) => {
-        console.log("💾 CONTEXTO RECIBE:", newData);
-        setData((prev) => ({ ...prev, ...newData }));
-    };
-
-    const sendToBackend = async () => {
-        console.log("📦 ESTADO BRUTO (formData):", formData);
-        try {
-            // Mapeo exacto según tu definición de tabla public.users
-            const mappedData = {
-                email: formData.email,
-                password: formData.password,
-                first_name: formData.firstName,
-                last_name: formData.lastName,
-                birth_date: formData.birthDate, // Aquí ya va el YYYY-MM-DD con ceros
-                city: formData.city,
-                description: formData.description,
-                id_gender: formData.gender !== '' ? Number(formData.gender) : null,
-                // id_preference en tu tabla es varchar(50), enviamos la sexualidad ahí
-                id_preference: String(formData.sexuality), 
-                
-                // Estos campos no están en la tabla users directamente (irán a tablas relacionales)
-                // pero los enviamos para que el controlador los procese:
-                neurodivergences: formData.neurodivergences,
-                communication_style: formData.communicationStyle,
-                interests: formData.interests,
-                photos: formData.photos
-            };
-
-            console.log("🚀 ENVIANDO A API (mappedData):", mappedData);
-
-            const result = await authService.register(mappedData);
-
-            if (result.success) return true;
-            return false;
-        } catch (error: any) {
-            console.error("❌ Error en el registro:", error.response?.data);
-            return false;
-        }
-    };
-
-    return (
-        <RegisterContext.Provider value={{ formData, updateFormData, sendToBackend }}>
-            {children}
-        </RegisterContext.Provider>
-    );
-};
-*/
 
 export const useRegister = () => {
     const context = useContext(RegisterContext);

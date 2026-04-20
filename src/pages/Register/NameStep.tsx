@@ -8,11 +8,16 @@ import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 const PERSON_NAME_REGEX = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/;
 
+const toTitleCase = (value: string) =>
+    value.replace(/(^|\s)(\S)/g, (_, space, char) => space + char.toUpperCase());
+
 const sanitizeNameInput = (value: string) =>
-    value
-        .replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]/g, '')
-        .replace(/\s{2,}/g, ' ')
-        .slice(0, 80);
+    toTitleCase(
+        value
+            .replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]/g, '')
+            .replace(/\s{2,}/g, ' ')
+            .slice(0, 80)
+    );
 
 const isOnlyLettersAndSpaces = (value: string) => PERSON_NAME_REGEX.test(value.trim());
 
