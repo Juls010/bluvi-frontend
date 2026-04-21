@@ -14,6 +14,8 @@ export interface CitySuggestion {
     id: string;
     label: string;
     value: string;
+    lat?: number;
+    lng?: number;
 }
 
 interface OpenMeteoCityResult {
@@ -21,6 +23,8 @@ interface OpenMeteoCityResult {
     name?: string;
     admin1?: string;
     country?: string;
+    latitude?: number;
+    longitude?: number;
 }
 
 interface OpenMeteoCitiesResponse {
@@ -40,10 +44,12 @@ const toId = (label: string) =>
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
-const toSuggestion = (label: string, value?: string): CitySuggestion => ({
+const toSuggestion = (label: string, value?: string, lat?: number, lng?: number): CitySuggestion => ({
     id: toId(label),
     label,
     value: (value && value.trim()) || toCityValue(label),
+    lat,
+    lng,
 });
 
 const formatOpenMeteoLabel = (result: OpenMeteoCityResult) => {
@@ -94,7 +100,7 @@ export const searchCities = async (
                 continue;
             }
             const cityName = typeof result.name === 'string' ? result.name.trim() : undefined;
-            const suggestion = toSuggestion(label, cityName);
+            const suggestion = toSuggestion(label, cityName, result.latitude, result.longitude);
             if (!unique.has(suggestion.label)) {
                 unique.set(suggestion.label, suggestion);
             }

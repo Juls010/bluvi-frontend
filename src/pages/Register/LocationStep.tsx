@@ -93,7 +93,11 @@ export const LocationStep = () => {
 
     const handleCitySelect = (city: CitySuggestion) => {
         setQuery(city.value);
-        updateFormData({ city: city.value });
+        updateFormData({ 
+            city: city.value,
+            cityLat: city.lat ?? null,
+            cityLng: city.lng ?? null
+        });
         setShowSuggestions(false);
         setActiveIndex(-1);
         setCitySearchError(null);

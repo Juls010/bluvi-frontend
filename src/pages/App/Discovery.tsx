@@ -25,6 +25,7 @@ export const Discovery: React.FC = () => {
   const [activeFilters, setActiveFilters] = useState<FilterData>({
     selectedTags: [] as string[],
     city: '',
+    distance: 0,
     communicationStyle: [] as string[],
     sensoryPref: [] as string[]
   });
@@ -50,6 +51,7 @@ export const Discovery: React.FC = () => {
 
   const exploreParams = useMemo(() => ({
     city: activeFilters.city,
+    distance: activeFilters.distance > 0 ? String(activeFilters.distance) : undefined,
     interests: activeFilters.selectedTags.join(','),
     communicationStyle: activeFilters.communicationStyle.join(','),
     sensory: activeFilters.sensoryPref.join(','),
@@ -77,11 +79,13 @@ export const Discovery: React.FC = () => {
   const activeFilterCount = 
     activeFilters.selectedTags.length + 
     (activeFilters.city ? 1 : 0) +
+    (activeFilters.distance > 0 ? 1 : 0) +
     activeFilters.communicationStyle.length +
     activeFilters.sensoryPref.length;
 
   const activeFilterChips = [
     ...(activeFilters.city ? [`Ciudad: ${activeFilters.city}`] : []),
+    ...(activeFilters.distance > 0 ? [`Radio: ${activeFilters.distance}km`] : []),
     ...activeFilters.selectedTags,
     ...activeFilters.communicationStyle,
     ...activeFilters.sensoryPref,
@@ -161,7 +165,7 @@ export const Discovery: React.FC = () => {
         <h2 className="text-3xl font-heading font-bold text-app-primary mb-4">¡No hay más perfiles!</h2>
         <Button onClick={() => {
           setIncludeSeenProfiles(false);
-          setActiveFilters({ selectedTags: [], city: '', communicationStyle: [], sensoryPref: [] });
+          setActiveFilters({ selectedTags: [], city: '', distance: 0, communicationStyle: [], sensoryPref: [] });
         }}>Reiniciar filtros</Button>
       </div>
     );

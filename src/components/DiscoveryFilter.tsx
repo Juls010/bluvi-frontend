@@ -5,6 +5,7 @@ import { Filter, X } from 'lucide-react';
 export interface FilterData {
   selectedTags: string[];
   city: string;
+  distance: number;
   communicationStyle: string[]; 
   sensoryPref: string[]; 
 }
@@ -30,6 +31,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
 }) => {
   const [selectedTags, setSelectedTags] = useState<string[]>(initialFilters.selectedTags);
   const [city, setCity] = useState(initialFilters.city);
+  const [distance, setDistance] = useState(initialFilters.distance || 0);
   const [communicationStyle, setCommunicationStyle] = useState<string[]>(initialFilters.communicationStyle || []);
   const [sensoryPref, setSensoryPref] = useState<string[]>(initialFilters.sensoryPref || []);
 
@@ -37,6 +39,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
     if (!isOpen) return;
     setSelectedTags(initialFilters.selectedTags || []);
     setCity(initialFilters.city || '');
+    setDistance(initialFilters.distance || 0);
     setCommunicationStyle(initialFilters.communicationStyle || []);
     setSensoryPref(initialFilters.sensoryPref || []);
   }, [isOpen, initialFilters]);
@@ -72,25 +75,49 @@ export const DiscoveryFilter: React.FC<Props> = ({
 
           <details open className="rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-3">
             <summary className="cursor-pointer list-none flex items-center justify-between focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 rounded-xl">
-              <span className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">Ciudad</span>
-              {city && (
-                <span className="text-[10px] font-bold text-app-primary bg-app-pill border border-app-soft px-2 py-1 rounded-lg">Activa</span>
+              <span className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">Ubicación y Distancia</span>
+              {(city || distance > 0) && (
+                <span className="text-[10px] font-bold text-app-primary bg-app-pill border border-app-soft px-2 py-1 rounded-lg">Activo</span>
               )}
             </summary>
 
-            <section className="space-y-4 mt-4">
-            <div>
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-2 block">
-                Ciudad
-              </label>
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="Ej: Madrid"
-                className="w-full px-4 py-3 rounded-2xl border border-app-soft bg-app-surface text-app-primary text-sm placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-bluvi-purple/20"
-              />
-            </div>
+            <section className="space-y-6 mt-4">
+              <div>
+                <label className="text-[11px] font-bold text-app-secondary uppercase tracking-widest ml-1 mb-2 block">
+                  Ciudad
+                </label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="Ej: Madrid"
+                  className="w-full px-4 py-3 rounded-2xl border border-app-soft bg-app-surface text-app-primary text-sm placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-bluvi-purple/20 transition-all font-medium"
+                />
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center px-1">
+                  <label className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">
+                    Distancia Máxima
+                  </label>
+                  <span className="text-xs font-bold text-bluvi-purple bg-bluvi-purple/10 px-3 py-1 rounded-full">
+                    {distance === 0 ? 'Sin límite' : `${distance} km`}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="200"
+                  step="5"
+                  value={distance}
+                  onChange={(e) => setDistance(Number(e.target.value))}
+                  className="w-full h-2 bg-app-surface rounded-lg appearance-none cursor-pointer accent-bluvi-purple"
+                />
+                <div className="flex justify-between px-1 text-[10px] text-app-muted font-bold opacity-60">
+                  <span>CERCA</span>
+                  <span>+200 KM</span>
+                </div>
+              </div>
             </section>
           </details>
 
@@ -194,6 +221,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
               onClick={() => {
                 setSelectedTags([]);
                 setCity('');
+                setDistance(0);
                 setCommunicationStyle([]);
                 setSensoryPref([]);
               }}
@@ -206,6 +234,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
               onClick={() => onApply({ 
                   selectedTags, 
                   city, 
+                  distance,
                   communicationStyle, 
                   sensoryPref 
               })}

@@ -45,7 +45,7 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
             )}
 
             {requests.map((request) => (
-                <div key={request.id_request} className="rounded-2xl border border-app-soft bg-app-surface p-4 shadow-sm">
+                <div key={request.id_match} className="rounded-2xl border border-app-soft bg-app-surface p-4 shadow-sm">
                     <div className="flex items-center gap-3">
                         <img
                             src={request.main_photo || 'https://via.placeholder.com/120'}
@@ -60,17 +60,17 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
                         </div>
                     </div>
 
-                    <p className="text-sm text-app-secondary mt-3">"{request.icebreaker_message}"</p>
+                    <p className="text-sm text-app-secondary mt-3">"{request.message}"</p>
 
                     <div className="flex gap-2 mt-4">
                         <button
-                            onClick={() => onRespond(request.id_request, 'reject')}
+                            onClick={() => onRespond(request.id_match, 'reject')}
                             className="flex-1 rounded-xl border border-app-soft py-2 text-sm font-semibold text-app-secondary hover:bg-app-surface-soft"
                         >
                             Rechazar
                         </button>
                         <button
-                            onClick={() => onRespond(request.id_request, 'accept')}
+                            onClick={() => onRespond(request.id_match, 'accept')}
                             className="flex-1 rounded-xl bg-bluvi-purple py-2 text-sm font-semibold text-white hover:opacity-90"
                         >
                             Aceptar
@@ -107,7 +107,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[] }> = ({ convers
 
         <ul aria-label="Lista de conversaciones" className="flex flex-col gap-2.5">
             {conversations.map((conversation) => (
-                <li key={conversation.match_request_id}>
+                <li key={conversation.chat_id}>
                     <Link
                         to={`/app/chat/${conversation.id_user}`}
                         aria-label={`
@@ -214,9 +214,9 @@ export const Messages: React.FC = () => {
         };
     }, []);
 
-    const handleRespond = async (idRequest: number, action: 'accept' | 'reject') => {
+    const handleRespond = async (idMatch: number, action: 'accept' | 'reject') => {
         try {
-            await respondToMatchRequest(idRequest, action);
+            await respondToMatchRequest(idMatch, action);
             await loadData();
             await refreshNotifications();
         } catch (error) {

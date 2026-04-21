@@ -13,6 +13,8 @@ interface RegisterData {
     password: string;
     photos: (string | null)[];
     city: string;
+    cityLat: number | null;
+    cityLng: number | null;
     interests: number[]; 
     description: string;
     privacyAccepted: boolean;
@@ -39,6 +41,8 @@ const DEFAULT_REGISTER_DATA: RegisterData = {
     password: '',
     photos: [null, null, null, null, null],
     city: '',
+    cityLat: null,
+    cityLng: null,
     interests: [],
     description: '',
     privacyAccepted: false,
@@ -60,6 +64,8 @@ const serializeBackupData = (data: RegisterData): RegisterBackupData => ({
     email: data.email,
     photos: data.photos,
     city: data.city,
+    cityLat: data.cityLat,
+    cityLng: data.cityLng,
     interests: data.interests,
     description: data.description,
     privacyAccepted: data.privacyAccepted,
@@ -86,6 +92,14 @@ const sanitizeRegisterPatch = (newData: Partial<RegisterData>): Partial<Register
 
     if (typeof newData.city === 'string') {
         sanitized.city = sanitizePlainText(newData.city, 120);
+    }
+
+    if (newData.cityLat !== undefined) {
+        sanitized.cityLat = typeof newData.cityLat === 'number' ? newData.cityLat : null;
+    }
+
+    if (newData.cityLng !== undefined) {
+        sanitized.cityLng = typeof newData.cityLng === 'number' ? newData.cityLng : null;
     }
 
     if (typeof newData.description === 'string') {
@@ -152,6 +166,8 @@ const normalizeRegisterData = (raw: unknown): RegisterData => {
         password: '',
         photos,
         city: typeof data.city === 'string' ? data.city : '',
+        cityLat: typeof data.cityLat === 'number' ? data.cityLat : null,
+        cityLng: typeof data.cityLng === 'number' ? data.cityLng : null,
         interests: Array.isArray(data.interests)
             ? data.interests.filter((v): v is number => typeof v === 'number')
             : [],
@@ -267,6 +283,8 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 last_name: formData.lastName.trim(),
                 birth_date: formData.birthDate,
                 city: formData.city.trim(),
+                city_lat: formData.cityLat,
+                city_lng: formData.cityLng,
                 description: formData.description.trim(),
                 id_gender: formData.gender !== '' ? Number(formData.gender) : null,
                 id_preference: formData.sexuality !== '' ? Number(formData.sexuality) : null,

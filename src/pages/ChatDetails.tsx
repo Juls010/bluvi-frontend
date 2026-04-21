@@ -418,7 +418,7 @@ export const ChatDetail: React.FC = () => {
                                             ...(isMe ? { backgroundColor: 'var(--app-accent)' } : {}),
                                         }}
                                     >
-                                        {msg.body}
+                                        {msg.content}
                                     </div>
 
                                     <div className="flex items-center gap-1 mt-1 px-1">

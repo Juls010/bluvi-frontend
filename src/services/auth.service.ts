@@ -8,13 +8,15 @@ export interface RegisterPayload {
     first_name: string;
     last_name: string;
     birth_date: string;
-    city: string;
-    description: string;
     id_gender: number | null;
     id_preference: number | null;
+    city: string;
+    city_lat?: number | null;
+    city_lng?: number | null;
+    description: string;
+    interests: number[];
     neurodivergences: number[];
     communication_style: number[];
-    interests: number[];
     photos: string[];
     privacy_accepted_at: string;
     privacy_version: string;

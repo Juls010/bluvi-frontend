@@ -1,8 +1,8 @@
 import api from './api';
 
 export interface IncomingMatchRequest {
-    id_request: number;
-    icebreaker_message: string;
+    id_match: number;
+    message: string;
     created_at: string;
     id_user: number;
     first_name: string;
@@ -11,10 +11,10 @@ export interface IncomingMatchRequest {
 }
 
 export interface MatchItem {
-    id_request: number;
+    id_match: number;
     created_at: string;
-    responded_at: string | null;
-    icebreaker_message: string;
+    updated_at: string | null;
+    message: string;
     id_user: number;
     first_name: string;
     last_name: string;

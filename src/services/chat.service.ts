@@ -1,7 +1,7 @@
 import api from './api';
 
 export interface ConversationItem {
-    match_request_id: number;
+    chat_id: number;
     id_user: number;
     first_name: string;
     last_name: string;
@@ -21,10 +21,10 @@ export interface ChatCounterpart {
 
 export interface ChatMessage {
     id_message: number;
-    match_request_id: number;
+    chat_id: number;
     sender_id: number;
     receiver_id: number;
-    body: string;
+    content: string;
     created_at: string;
     read_at: string | null;
     is_read?: boolean;
@@ -38,7 +38,7 @@ interface ConversationsResponse {
 interface ConversationMessagesResponse {
     success: boolean;
     counterpart: ChatCounterpart | null;
-    matchRequestId: number;
+    chatId: number;
     otherUserReadCursor: number;
     hasMore: boolean;
     messages: ChatMessage[];
