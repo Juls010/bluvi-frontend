@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Search, MapPin, CheckCircle2, ChevronRight, X } from 'lucide-react';
+import { Search, MapPin, CheckCircle2, ChevronRight, X, ShieldCheck } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
@@ -180,16 +180,16 @@ export const LocationStep = () => {
                             subtitle="Busca tu ciudad para encontrar personas cerca de ti."
                             align="left"
                             compactOnShort
-                            className="mb-10 md:mb-14 md:[@media(max-height:1000px)]:mb-10 w-full max-w-xl"
+                            className="mb-8 md:mb-10 md:[@media(max-height:1000px)]:mb-6 w-full max-w-xl"
                         />
-                        <div className="w-full flex justify-center mb-10 md:mb-16 md:[@media(max-height:1000px)]:mb-12">
-                            <div className="bg-white/40 p-5 rounded-full backdrop-blur-sm border border-white/20 shadow-sm shrink-0">
-                                <MapPin className="text-bluvi-purple" size={36} />
+                        <div className="w-full flex justify-center mb-6 md:mb-8 md:[@media(max-height:1000px)]:mb-6">
+                            <div className="bg-white/40 p-4 rounded-full backdrop-blur-sm border border-white/20 shadow-sm shrink-0">
+                                <MapPin className="text-bluvi-purple" size={32} />
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex-grow min-h-0 overflow-visible no-scrollbar py-10 md:py-32 md:[@media(max-height:1000px)]:py-12 px-5 flex flex-col items-center w-full">
+                    <div className="flex-grow min-h-0 overflow-visible no-scrollbar py-6 md:py-12 md:[@media(max-height:1000px)]:py-8 px-5 flex flex-col items-center w-full">
                         <div className="relative w-full max-w-xl" ref={comboboxContainerRef}>
                             <div className="relative group">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-bluvi-purple/40 group-focus-within:text-bluvi-purple transition-colors" size={20} />
@@ -265,6 +265,14 @@ export const LocationStep = () => {
                                     )}
                                 </ul>
                             )}
+                        </div>
+
+                        <div className="mt-8 flex items-start gap-3 p-3 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/40 max-w-xl mx-auto shadow-sm animate-fade-in">
+                            <ShieldCheck className="text-bluvi-purple shrink-0 mt-0.5" size={18} />
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                                <strong className="block mb-0.5 text-bluvi-purple">Tu privacidad es prioritaria</strong>
+                                Tu ubicación exacta nunca se comparte ni se guarda. Solo utilizamos un punto aproximado para mostrarte personas en tu zona.
+                            </p>
                         </div>
                     </div>
 
