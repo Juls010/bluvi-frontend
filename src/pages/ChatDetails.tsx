@@ -311,7 +311,7 @@ export const ChatDetail: React.FC = () => {
                         <button
                             onClick={() => navigate(-1)}
                             aria-label="Volver a la lista de conversaciones"
-                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-app-surface-soft text-app-accent transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/30"
+                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-app-surface-soft text-app-accent transition-all active:scale-90 focus-visible:outline-none"
                         >
                             <ArrowLeft size={22} strokeWidth={2} />
                         </button>

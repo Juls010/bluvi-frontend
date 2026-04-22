@@ -11,7 +11,7 @@ export const ReportsAndBlocks: React.FC = () => {
                 <button
                     type="button"
                     onClick={() => navigate('/app/settings')}
-                    className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-sm font-semibold text-app-primary hover:bg-app-surface-strong focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/35"
+                    className="inline-flex items-center gap-2 rounded-xl bg-app-surface-soft px-3 py-2 text-sm font-semibold text-app-primary hover:bg-app-surface-strong focus-visible:outline-none"
                 >
                     <ArrowLeft size={16} aria-hidden="true" />
                     Volver a ajustes

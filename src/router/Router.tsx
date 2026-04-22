@@ -45,6 +45,7 @@ const PrivacyPolicy = lazy(() => import('../pages/Privacy/PrivacyPolicy'));
 const CookiePolicy = lazy(() => import('../pages/Privacy/CookiesPolicy'));
 const Accessibility = lazy(() => import('../pages/Privacy/Accessibility'));
 const LegalNotice = lazy(() => import('../pages/Privacy/LegalNotice'));
+const FAQ = lazy(() => import('../pages/Privacy/FAQ'));
 
 
 const withSuspense = (element: React.ReactNode) => (
@@ -65,6 +66,14 @@ export const router = createBrowserRouter([
         element: (
             <LegalLayout>
                 {withSuspense(<PrivacyPolicy />)}
+            </LegalLayout>
+        )
+    },
+    {
+        path: "/faq",
+        element: (
+            <LegalLayout>
+                {withSuspense(<FAQ />)}
             </LegalLayout>
         )
     },

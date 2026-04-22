@@ -15,9 +15,7 @@ const NAV_SECTIONS = [
   {
     title: 'Comunidad',
     links: [
-      { label: 'Discord', to: '/discord' },
-      { label: 'Foros', to: '/foros' },
-      { label: 'Eventos', to: '/eventos' },
+      { label: 'Instagram', to: '/instagram' },
     ],
   },
   {

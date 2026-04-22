@@ -1,9 +1,12 @@
 
+import React from 'react';
+import { useScrollToTop } from '../../hooks/useScrollToTop';
 
 const PrivacyPolicy = () => {
+    useScrollToTop();
     return (
-        <div className="max-w-4xl mx-auto p-8 text-gray-800 leading-relaxed bg-white/90 shadow-sm mt-10 rounded-lg font-sans">
-        <h1 className="text-3xl font-bold mb-6 border-b pb-4 text-slate-900">Política de Privacidad</h1>
+        <div className="max-w-4xl mx-auto p-8 text-bluvi-purple leading-relaxed bg-white/90 shadow-sm mt-10 rounded-lg font-sans">
+        <h1 className="text-3xl font-bold mb-6 border-b pb-4 text-bluvi-purple">Política de Privacidad</h1>
         
         <section className="mb-8">
             <h2 className="text-xl font-semibold mb-3">1. Responsable del Tratamiento</h2>
@@ -40,7 +43,7 @@ const PrivacyPolicy = () => {
         <section className="mb-8">
             <h2 className="text-xl font-semibold mb-3">4. Destinatarios</h2>
             <p>No se cederán datos a terceros salvo obligación legal. Para el funcionamiento técnico, utilizamos los siguientes proveedores:</p>
-            <ul className="list-disc ml-6 mt-2 space-y-1 text-sm text-gray-600">
+            <ul className="list-disc ml-6 mt-2 space-y-1 text-sm text-bluvi-purple">
             <li><strong>Supabase, Inc:</strong> Alojamiento de datos y autenticación (EE.UU/UE).</li>
             <li><strong>Zoho Corporation:</strong> Gestión de correos electrónicos del sistema (UE).</li>
             <li><strong>Upstash, Inc:</strong> Gestión de caché y códigos de verificación.</li>

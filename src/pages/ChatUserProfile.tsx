@@ -102,7 +102,7 @@ export const ChatUserProfile: React.FC = () => {
                 <button
                     onClick={() => navigate(-1)}
                     aria-label="Volver"
-                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-purple-50 text-bluvi-purple transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
+                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-purple-50 text-bluvi-purple transition-all active:scale-90 focus-visible:outline-none"
                 >
                     <ArrowLeft size={24} strokeWidth={2} />
                 </button>

@@ -9,12 +9,12 @@ interface LegalLayoutProps {
 const LegalLayout: React.FC<LegalLayoutProps> = ({ children }) => {
     const navigate = useNavigate();
     return (
-        <main className="min-h-screen w-full bg-app-gradient text-app-primary flex flex-col font-sans relative overflow-x-hidden" aria-label="Contenido principal">
+        <main className="min-h-screen w-full bg-app-gradient text-bluvi-purple flex flex-col font-sans relative overflow-x-hidden" aria-label="Contenido principal">
             <nav className="w-full flex items-center justify-between px-0 sm:px-6 pt-6 pb-2" aria-label="Navegación legal">
                 <button
                     type="button"
                     onClick={() => navigate('/')}
-                    className="ml-2 sm:ml-0 flex items-center gap-2 text-app-primary/80 hover:text-app-accent font-semibold text-sm px-3 py-1.5 rounded-lg bg-white/60 hover:bg-white/80 shadow-sm border border-app-border-soft backdrop-blur-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-accent"
+                    className="ml-2 sm:ml-0 flex items-center gap-2 text-bluvi-purple/80 hover:text-app-accent font-semibold text-sm px-3 py-1.5 rounded-lg bg-white/60 hover:bg-white/80 shadow-sm backdrop-blur-md transition-colors focus:outline-none"
                     tabIndex={0}
                     aria-label="Volver al inicio"
                 >
@@ -38,7 +38,7 @@ const LegalLayout: React.FC<LegalLayoutProps> = ({ children }) => {
                     {children}
                 </div>
             </div>
-            <footer className="w-full text-xs text-app-text-muted mt-auto mb-3 text-center font-medium tracking-wide" role="contentinfo">
+            <footer className="w-full text-xs text-bluvi-purple/60 mt-auto mb-8 text-center font-medium tracking-wide" role="contentinfo">
                 &copy; {new Date().getFullYear()} Bluvi. Proyecto académico sin ánimo de lucro.
             </footer>
         </main>

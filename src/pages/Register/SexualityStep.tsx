@@ -18,7 +18,12 @@ export const SexualityStep: React.FC = () => {
             try {
                 const response = await authService.getMetadata();
                 if (response.success) {
-                    setSexualityOptions(response.data.sexualities);
+                    const sortedOptions = [...response.data.sexualities].sort((a, b) => {
+                        if (a.id === 7) return 1;
+                        if (b.id === 7) return -1;
+                        return 0;
+                    });
+                    setSexualityOptions(sortedOptions);
                 }
             } catch (error) {
                 console.error("Error cargando sexualidades:", error);

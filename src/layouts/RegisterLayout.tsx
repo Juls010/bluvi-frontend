@@ -40,7 +40,7 @@ const HeaderIconButton: React.FC<HeaderIconButtonProps> = ({ onClick, ariaLabel,
                     onClick();
                 }}
                 className={`
-                    flex items-center justify-center text-[#3f4a9b]/70 transition-all duration-300 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4a9b]/40
+                    flex items-center justify-center text-[#3f4a9b]/70 transition-all duration-300 ease-out cursor-pointer focus-visible:outline-none 
                     w-9 h-9 rounded-full md:w-auto md:h-auto md:rounded-full md:px-5 md:py-2
                     hover:bg-white/20 md:hover:bg-[#e6eaff] md:shadow-none md:hover:shadow-md
                     group
