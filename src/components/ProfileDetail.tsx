@@ -44,14 +44,6 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
         <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary mb-6 pl-2 outline-none" tabIndex={-1}>
             {user.first_name} {user.last_name}
         </h1>
-        <div className="flex justify-end mb-4 px-2">
-            <button
-                onClick={onClose}
-                className="text-xs font-medium text-app-secondary hover:text-app-primary bg-app-surface-soft px-3 py-1.5 rounded-lg transition-colors"
-            >
-                Cerrar perfil
-            </button>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
             

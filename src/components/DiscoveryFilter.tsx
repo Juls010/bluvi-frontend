@@ -1,13 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from '../components/Button';
-import { Filter, X } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+
+// ── ARIA id constants ──────────────────────────────────────────────────────────
+const DIALOG_TITLE_ID      = 'filter-dialog-title';
+const CITY_INPUT_ID        = 'filter-city-input';
+const CITY_LISTBOX_ID      = 'filter-city-listbox';
+const DISTANCE_INPUT_ID    = 'filter-distance-input';
+const SEC_LOCATION_ID      = 'filter-sec-location';
+const SEC_INTERESTS_ID     = 'filter-sec-interests';
+const SEC_COMMUNICATION_ID = 'filter-sec-communication';
+const SEC_SENSORY_ID       = 'filter-sec-sensory';
+import { Filter, X, MapPin, Sparkles, MessageCircle, Search, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { searchCities, type CitySuggestion } from '../services/cities.service';
 
 export interface FilterData {
   selectedTags: string[];
   city: string;
   distance: number;
-  communicationStyle: string[]; 
-  sensoryPref: string[]; 
+  communicationStyle: string[];
+  sensoryPref: string[];
 }
 
 interface Props {
@@ -35,123 +45,398 @@ export const DiscoveryFilter: React.FC<Props> = ({
   const [communicationStyle, setCommunicationStyle] = useState<string[]>(initialFilters.communicationStyle || []);
   const [sensoryPref, setSensoryPref] = useState<string[]>(initialFilters.sensoryPref || []);
 
+  const [cityQuery, setCityQuery] = useState(initialFilters.city || '');
+  const [selectedCity, setSelectedCity] = useState(initialFilters.city || '');
+  const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isLoadingCities, setIsLoadingCities] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const [cityLiveMsg, setCityLiveMsg] = useState('');
+  const [isClosing, setIsClosing] = useState(false);
+
+  const drawerRef      = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const comboboxRef    = useRef<HTMLDivElement>(null);
+
+  const CLOSE_DURATION_MS = 250;
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, CLOSE_DURATION_MS);
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsClosing(false);
+      setSelectedTags(initialFilters.selectedTags || []);
+      setCity(initialFilters.city || '');
+      setCityQuery(initialFilters.city || '');
+      setSelectedCity(initialFilters.city || '');
+      setDistance(initialFilters.distance || 0);
+      setCommunicationStyle(initialFilters.communicationStyle || []);
+      setSensoryPref(initialFilters.sensoryPref || []);
+
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      // Move focus into dialog
+      requestAnimationFrame(() => closeButtonRef.current?.focus());
+    } else {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, initialFilters]);
+
+  useEffect(() => {
+    const trimmedQuery = cityQuery.trim();
+    if (trimmedQuery.length < 2) {
+      setSuggestions([]);
+      setIsLoadingCities(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      setIsLoadingCities(true);
+      try {
+        const results = await searchCities(trimmedQuery, 6, controller.signal);
+        if (!controller.signal.aborted) {
+          setSuggestions(results);
+          setActiveIndex(-1);
+          setIsLoadingCities(false);
+          setCityLiveMsg(results.length === 0
+            ? 'No se encontraron ciudades.'
+            : `${results.length} ${results.length === 1 ? 'ciudad disponible' : 'ciudades disponibles'}.`);
+        }
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) {
+          console.error('Error searching cities:', error);
+        }
+        setIsLoadingCities(false);
+      }
+    }, 250);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
+  }, [cityQuery]);
+
+  // ── Focus trap + Escape closes dialog ──────────────────────────────────────
   useEffect(() => {
     if (!isOpen) return;
-    setSelectedTags(initialFilters.selectedTags || []);
-    setCity(initialFilters.city || '');
-    setDistance(initialFilters.distance || 0);
-    setCommunicationStyle(initialFilters.communicationStyle || []);
-    setSensoryPref(initialFilters.sensoryPref || []);
-  }, [isOpen, initialFilters]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { e.preventDefault(); handleClose(); return; }
+      if (e.key !== 'Tab') return;
+      const drawer = drawerRef.current;
+      if (!drawer) return;
+      const focusable = Array.from(
+        drawer.querySelectorAll<HTMLElement>(
+          'button:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])'
+        )
+      ).filter(el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last  = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  // ── Close suggestions on outside pointer ────────────────────────────────────
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (comboboxRef.current && !comboboxRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+        setActiveIndex(-1);
+      }
+    };
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, []);
 
   const toggleItem = (setList: React.Dispatch<React.SetStateAction<string[]>>, item: string) => {
     setList(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
   };
 
-  if (!isOpen) return null;
+  // Derived combobox state
+  const normalizedQuery    = cityQuery.trim().toLowerCase();
+  const normalizedSelected = selectedCity.trim().toLowerCase();
+  const isConfirmed        = normalizedSelected.length > 0 && normalizedQuery === normalizedSelected;
+  const hasSuggestions     = showSuggestions && cityQuery.length > 0 && !isConfirmed;
+  const activeDescendantId = activeIndex >= 0 && suggestions[activeIndex]
+    ? `filter-city-option-${suggestions[activeIndex].id}`
+    : undefined;
+
+  const handleCitySelect = (suggestion: CitySuggestion) => {
+    setCity(suggestion.value);
+    setCityQuery(suggestion.value);
+    setSelectedCity(suggestion.value);
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setActiveIndex(-1);
+    setCityLiveMsg(`Ciudad seleccionada: ${suggestion.value}.`);
+  };
+
+  const handleCityInputChange = (value: string) => {
+    setCityQuery(value);
+    setShowSuggestions(true);
+    setCityLiveMsg('Buscando ciudades...');
+    const normalizedTyped = value.trim().toLowerCase();
+    if (normalizedTyped !== selectedCity.trim().toLowerCase()) {
+      setSelectedCity('');
+      setCity('');
+    }
+    setActiveIndex(-1);
+  };
+
+  const handleCityClear = () => {
+    setCityQuery('');
+    setCity('');
+    setSelectedCity('');
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setActiveIndex(-1);
+    setCityLiveMsg('Ciudad eliminada.');
+  };
+
+  const handleCityKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!hasSuggestions) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIndex(prev => (suggestions.length === 0 ? -1 : prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIndex(prev => (suggestions.length === 0 ? -1 : prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === 'Enter' && activeIndex >= 0 && suggestions[activeIndex]) {
+      e.preventDefault();
+      handleCitySelect(suggestions[activeIndex]);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setShowSuggestions(false);
+      setActiveIndex(-1);
+    }
+  };
+
+  if (!isOpen && !isClosing) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4">
-      <div className="absolute inset-0 bg-black/25 dark:bg-black/45 backdrop-blur-md animate-fade-in motion-reduce:animate-none" onClick={onClose} />
+    <div className="fixed inset-0 z-[100] flex items-end md:items-stretch justify-center md:justify-start p-0">
+      <div
+        className={`absolute inset-0 bg-black/40 dark:bg-black/70 motion-reduce:animate-none z-0 ${
+          isClosing ? 'animate-fade-out' : 'animate-fade-in'
+        }`}
+        onClick={handleClose}
+        aria-hidden="true"
+      />
+      <div
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={DIALOG_TITLE_ID}
+        className={`
+          relative z-10 w-full md:w-[420px] bg-app-surface-solid 
+          text-app-primary shadow-2xl overflow-hidden border-t md:border-t-0 md:border-r border-app-soft/50
+          transition-none flex flex-col
+          max-h-[90svh] md:max-h-none
+          ${isClosing
+            ? 'animate-slide-down md:animate-slide-out-left'
+            : 'animate-slide-up md:animate-slide-in-left'
+          }
+          rounded-t-[40px] md:rounded-t-none md:rounded-r-[48px]
+        `}
+      >
+        {/* Drag handle — only visible on mobile */}
+        <div className="flex justify-center pt-3 pb-1 md:hidden" aria-hidden="true">
+          <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-white/20" />
+        </div>
 
-      <div className="relative w-full max-w-lg bg-app-surface-strong text-app-primary rounded-t-[40px] md:rounded-[32px] shadow-2xl overflow-hidden animate-slide-up motion-reduce:animate-none border border-app-soft">
-        
-        <div className="h-1.5 w-12 bg-app-surface-soft rounded-full mx-auto mt-4 mb-2 md:hidden" />
-
-        <div className="p-6 md:p-8 space-y-6 max-h-[85vh] overflow-y-auto">
-          <header className="flex justify-between items-center gap-4">
+        <div className="px-6 pt-4 pb-4 md:px-8 md:pt-10 md:pb-6">
+          <header className="flex justify-between items-start gap-4">
             <div>
-              <h2 className="text-2xl md:text-3xl font-heading font-bold text-app-primary">Filtros</h2>
-              <p className="text-sm text-app-secondary mt-1">Ajusta tu exploración sin sobrecargar la pantalla.</p>
+              <h2 id={DIALOG_TITLE_ID} className="text-2xl md:text-3xl font-heading font-bold text-app-primary tracking-tight">Explorar</h2>
+              <p className="text-xs md:text-sm text-app-secondary mt-0.5 md:mt-1 font-medium">Personaliza tu búsqueda</p>
             </div>
             <button
-              onClick={onClose}
-              aria-label="Cerrar filtros"
-              className="w-10 h-10 rounded-full bg-app-surface-soft flex items-center justify-center text-app-secondary hover:bg-app-surface transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
+              ref={closeButtonRef}
+              onClick={handleClose}
+              aria-label="Cerrar panel de filtros"
+              className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-app-surface-soft flex items-center justify-center text-app-secondary hover:text-app-primary hover:bg-app-surface transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30 mt-0.5 md:mt-1"
             >
-              <X size={18} aria-hidden="true" />
+              <X size={20} aria-hidden="true" />
             </button>
           </header>
+        </div>
 
-          <details open className="rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-3">
-            <summary className="cursor-pointer list-none flex items-center justify-between focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 rounded-xl">
-              <span className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">Ubicación y Distancia</span>
-              {(city || distance > 0) && (
-                <span className="text-[10px] font-bold text-app-primary bg-app-pill border border-app-soft px-2 py-1 rounded-lg">Activo</span>
-              )}
-            </summary>
-
-            <section className="space-y-6 mt-4">
-              <div>
-                <label className="text-[11px] font-bold text-app-secondary uppercase tracking-widest ml-1 mb-2 block">
-                  Ciudad
-                </label>
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder="Ej: Madrid"
-                  className="w-full px-4 py-3 rounded-2xl border border-app-soft bg-app-surface text-app-primary text-sm placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-bluvi-purple/20 transition-all font-medium"
-                />
+        <div className="flex-1 px-6 md:px-8 space-y-8 md:space-y-10 overflow-y-auto overscroll-contain custom-scrollbar pb-36">
+          <section aria-labelledby={SEC_LOCATION_ID} className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
+                aria-hidden="true"
+              >
+                <MapPin size={20} />
               </div>
-
-              <div className="space-y-4">
-                <div className="flex justify-between items-center px-1">
-                  <label className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">
-                    Distancia Máxima
-                  </label>
-                  <span className="text-xs font-bold text-bluvi-purple bg-bluvi-purple/10 px-3 py-1 rounded-full">
-                    {distance === 0 ? 'Sin límite' : `${distance} km`}
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="200"
-                  step="5"
-                  value={distance}
-                  onChange={(e) => setDistance(Number(e.target.value))}
-                  className="w-full h-2 bg-app-surface rounded-lg appearance-none cursor-pointer accent-bluvi-purple"
-                />
-                <div className="flex justify-between px-1 text-[10px] text-app-muted font-bold opacity-60">
-                  <span>CERCA</span>
-                  <span>+200 KM</span>
-                </div>
-              </div>
-            </section>
-          </details>
-
-          <details className="rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-3">
-            <summary className="cursor-pointer list-none flex items-center justify-between focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 rounded-xl">
-              <span className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">Intereses y Hyperfocus</span>
-              <span className="text-[10px] font-bold text-app-primary bg-app-pill border border-app-soft px-2 py-1 rounded-lg">{selectedTags.length}</span>
-            </summary>
-
-            <section className="mt-4">
-            <div className="flex justify-between items-end mb-4">
-              <div>
-                <label className="text-[11px] font-bold text-app-secondary uppercase tracking-widest ml-1 block">
-                  Intereses y Hyperfocus
-                </label>
-                <p className="text-[10px] text-app-muted ml-1 mt-1">Selecciona lo que te apasiona hoy</p>
-              </div>
-              <span className="text-[10px] font-bold text-app-primary bg-app-pill border border-app-soft px-2 py-1 rounded-lg">
-                {selectedTags.length} seleccionados
-              </span>
+              <h3 id={SEC_LOCATION_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Cerca de ti</h3>
             </div>
 
-            <div className="flex flex-wrap gap-2.5" aria-label="Opciones de intereses">
+            <div className="space-y-6 pl-1">
+              <div className="group relative" ref={comboboxRef}>
+                <label
+                  htmlFor={CITY_INPUT_ID}
+                  className="text-[11px] font-bold text-app-muted uppercase tracking-wider mb-2 block transition-colors group-focus-within:text-[#3f4292]"
+                >
+                  Ciudad
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#3f4292] transition-colors" size={18} aria-hidden="true" />
+                  <input
+                    id={CITY_INPUT_ID}
+                    type="text"
+                    value={cityQuery}
+                    onChange={(e) => handleCityInputChange(e.target.value)}
+                    onKeyDown={handleCityKeyDown}
+                    onFocus={() => { if (!isConfirmed) setShowSuggestions(true); }}
+                    placeholder="Escribe una ciudad..."
+                    className="w-full px-5 py-4 pl-12 pr-10 rounded-2xl border text-app-primary text-sm placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-[#3f4292]/10 focus:border-[#3f4292]/40 transition-all font-medium"
+                    style={{ backgroundColor: 'var(--filter-unselected-bg)', borderColor: 'var(--filter-unselected-border)', borderWidth: '1px' }}
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded={hasSuggestions}
+                    aria-controls={CITY_LISTBOX_ID}
+                    aria-activedescendant={activeDescendantId}
+                    aria-label="Buscar ciudad"
+                  />
+                  {cityQuery.length > 0 && !isLoadingCities && (
+                    <button
+                      type="button"
+                      onMouseDown={(e) => { e.preventDefault(); handleCityClear(); }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4292]/40"
+                      aria-label="Limpiar ciudad"
+                    >
+                      <X size={16} aria-hidden="true" />
+                    </button>
+                  )}
+                  {isLoadingCities && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin w-4 h-4 border-2 border-[#3f4292] border-t-transparent rounded-full" aria-hidden="true" />
+                  )}
+                </div>
+                {/* Live region for screen readers */}
+                <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{cityLiveMsg}</p>
+
+                {hasSuggestions && (
+                  <ul
+                    id={CITY_LISTBOX_ID}
+                    role="listbox"
+                    aria-label="Ciudades sugeridas"
+                    className="absolute z-50 w-full mt-2 bg-app-surface-solid border border-app-soft rounded-2xl shadow-xl overflow-hidden max-h-60 overflow-y-auto animate-fade-in"
+                    style={{ backgroundColor: 'var(--app-surface-solid)', borderColor: 'var(--filter-unselected-border)' }}
+                  >
+                    {isLoadingCities ? (
+                      <li role="presentation" className="px-5 py-3.5 text-sm text-app-muted">Buscando ciudades...</li>
+                    ) : suggestions.length > 0 ? (
+                      suggestions.map((suggestion, index) => (
+                        <li
+                          key={suggestion.id}
+                          id={`filter-city-option-${suggestion.id}`}
+                          role="option"
+                          aria-selected={city === suggestion.value}
+                          onMouseDown={(e) => { e.preventDefault(); handleCitySelect(suggestion); }}
+                          onMouseEnter={() => setActiveIndex(index)}
+                          className={`w-full flex items-center justify-between px-5 py-3.5 text-left text-app-primary text-sm transition-colors border-b border-gray-50 last:border-0 cursor-pointer ${
+                            index === activeIndex ? 'bg-[#3f4292]/10' : 'hover:bg-[#f3f4f6]'
+                          }`}
+                        >
+                          <span className="font-medium">{suggestion.label}</span>
+                          {city === suggestion.value
+                            ? <CheckCircle2 size={16} className="text-[#3f4292]" aria-hidden="true" />
+                            : <ChevronRight size={16} className="text-gray-300" aria-hidden="true" />}
+                        </li>
+                      ))
+                    ) : (
+                      <li role="presentation" className="px-5 py-3.5 text-sm text-gray-400 italic">No encontramos esa ciudad...</li>
+                    )}
+                  </ul>
+                )}
+              </div>
+
+              <div className="space-y-5">
+                <div className="flex justify-between items-center">
+                  <label htmlFor={DISTANCE_INPUT_ID} className="text-[11px] font-bold text-app-muted uppercase tracking-wider">
+                    Radio de distancia
+                  </label>
+                  <span
+                    className="text-xs font-bold px-3 py-1 rounded-full transition-colors"
+                    style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-slider-thumb)' }}
+                    aria-hidden="true"
+                  >
+                    {distance === 0 ? 'Toda España' : `${distance} km`}
+                  </span>
+                </div>
+                <div className="relative pt-2">
+                  <input
+                    id={DISTANCE_INPUT_ID}
+                    type="range"
+                    min="0"
+                    max="200"
+                    step="5"
+                    value={distance}
+                    onChange={(e) => setDistance(Number(e.target.value))}
+                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer transition-all"
+                    style={{
+                      '--slider-progress': `${(distance / 200) * 100}%`,
+                      accentColor: 'var(--filter-slider-thumb)'
+                    } as React.CSSProperties}
+                    aria-label="Radio de distancia en kilómetros"
+                    aria-valuetext={distance === 0 ? 'Sin límite, toda España' : `${distance} kilómetros`}
+                  />
+                  <div className="flex justify-between mt-3 text-[10px] text-app-muted font-bold tracking-widest opacity-50" aria-hidden="true">
+                    <span>MÁX. CERCANÍA</span>
+                    <span>+200 KM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section aria-labelledby={SEC_INTERESTS_ID} className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
+                aria-hidden="true"
+              >
+                <Filter size={20} />
+              </div>
+              <h3 id={SEC_INTERESTS_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Intereses y Hyperfocus</h3>
+            </div>
+
+            <div className="flex flex-wrap gap-2 pl-1">
               {interestsOptions.map(tag => {
                 const isSelected = selectedTags.includes(tag);
                 return (
                   <button
                     key={tag}
                     onClick={() => toggleItem(setSelectedTags, tag)}
-                    className={`px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20
-                      ${isSelected 
-                        ? 'text-app-on-accent border-app-strong shadow-md' 
-                        : 'bg-app-surface text-app-secondary border-app-soft hover:border-bluvi-purple/20'}`}
-                    style={isSelected ? { backgroundColor: 'var(--app-accent)' } : undefined}
+                    className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all border`}
+                    style={isSelected ? {
+                      backgroundColor: 'var(--filter-selected-bg)',
+                      color: 'var(--filter-selected-text)',
+                      borderColor: 'var(--filter-selected-border)'
+                    } : {
+                      backgroundColor: 'var(--filter-unselected-bg)',
+                      color: 'var(--app-text-secondary)',
+                      borderColor: 'var(--filter-unselected-border)'
+                    }}
                     aria-pressed={isSelected}
                   >
                     {tag}
@@ -159,90 +444,124 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 );
               })}
             </div>
-            </section>
-          </details>
+          </section>
 
-          <details className="rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-3">
-            <summary className="cursor-pointer list-none flex items-center justify-between focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 rounded-xl">
-              <span className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">Estilo de comunicación</span>
-              <span className="text-[10px] font-bold text-app-primary bg-app-pill border border-app-soft px-2 py-1 rounded-lg">{communicationStyle.length}</span>
-            </summary>
-
-            <section className="mt-4">
-            <div className="flex flex-wrap gap-2" aria-label="Opciones de comunicación">
-              {communicationOptions.map(style => (
-                <button 
-                  key={style}
-                  onClick={() => toggleItem(setCommunicationStyle, style)}
-                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20
-                    ${communicationStyle.includes(style) 
-                      ? 'text-app-on-accent border-app-strong' 
-                      : 'bg-app-surface border-app-soft text-app-secondary'}`}
-                  style={communicationStyle.includes(style) ? { backgroundColor: 'var(--app-accent)' } : undefined}
-                  aria-pressed={communicationStyle.includes(style)}
-                >
-                  {style}
-                </button>
-              ))}
+          <section aria-labelledby={SEC_COMMUNICATION_ID} className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
+                aria-hidden="true"
+              >
+                <MessageCircle size={20} />
+              </div>
+              <h3 id={SEC_COMMUNICATION_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Comunicación</h3>
             </div>
-            </section>
-          </details>
 
-          <details className="rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-3">
-            <summary className="cursor-pointer list-none flex items-center justify-between focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 rounded-xl">
-              <span className="text-[11px] font-bold text-app-secondary uppercase tracking-widest">Preferencias de entorno</span>
-              <span className="text-[10px] font-bold text-app-primary bg-app-pill border border-app-soft px-2 py-1 rounded-lg">{sensoryPref.length}</span>
-            </summary>
-
-            <section className="mt-4">
-            <div className="flex flex-wrap gap-2" aria-label="Opciones de entorno">
-              {sensoryOptions.map(pref => (
-                <button 
-                  key={pref}
-                  onClick={() => toggleItem(setSensoryPref, pref)}
-                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all border-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20
-                    ${sensoryPref.includes(pref) 
-                      ? 'text-app-on-accent border-app-strong' 
-                      : 'bg-app-surface border-app-soft text-app-secondary'}`}
-                  style={sensoryPref.includes(pref) ? { backgroundColor: 'var(--app-accent)' } : undefined}
-                  aria-pressed={sensoryPref.includes(pref)}
-                >
-                  {pref}
-                </button>
-              ))}
+            <div className="flex flex-wrap gap-2 pl-1">
+              {communicationOptions.map(style => {
+                const isSelected = communicationStyle.includes(style);
+                return (
+                  <button
+                    key={style}
+                    onClick={() => toggleItem(setCommunicationStyle, style)}
+                    className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all border`}
+                    style={isSelected ? {
+                      backgroundColor: 'var(--filter-selected-bg)',
+                      color: 'var(--filter-selected-text)',
+                      borderColor: 'var(--filter-selected-border)'
+                    } : {
+                      backgroundColor: 'var(--filter-unselected-bg)',
+                      color: 'var(--app-text-secondary)',
+                      borderColor: 'var(--filter-unselected-border)'
+                    }}
+                    aria-pressed={isSelected}
+                  >
+                    {style}
+                  </button>
+                );
+              })}
             </div>
-            </section>
-          </details>
+          </section>
+
+          <section aria-labelledby={SEC_SENSORY_ID} className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
+                aria-hidden="true"
+              >
+                <Sparkles size={20} />
+              </div>
+              <h3 id={SEC_SENSORY_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Sensibilidad y Entorno</h3>
+            </div>
+
+            <div className="flex flex-wrap gap-2 pl-1">
+              {sensoryOptions.map(pref => {
+                const isSelected = sensoryPref.includes(pref);
+                return (
+                  <button
+                    key={pref}
+                    onClick={() => toggleItem(setSensoryPref, pref)}
+                    className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all border`}
+                    style={isSelected ? {
+                      backgroundColor: 'var(--filter-selected-bg)',
+                      color: 'var(--filter-selected-text)',
+                      borderColor: 'var(--filter-selected-border)'
+                    } : {
+                      backgroundColor: 'var(--filter-unselected-bg)',
+                      color: 'var(--app-text-secondary)',
+                      borderColor: 'var(--filter-unselected-border)'
+                    }}
+                    aria-pressed={isSelected}
+                  >
+                    {pref}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
         </div>
 
-        <div className="p-6 bg-app-surface-strong border-t border-app-soft">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Button
+        <div
+          className="absolute bottom-0 left-0 right-0 px-6 pt-10 pb-6 md:px-8 md:pb-8 pointer-events-none"
+          style={{
+            backgroundImage: 'linear-gradient(to top, var(--app-surface-solid) 0%, var(--app-surface-solid) 65%, transparent 100%)',
+            paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))'
+          }}
+        >
+          <div className="flex gap-3 pointer-events-auto">
+            <button
               onClick={() => {
                 setSelectedTags([]);
                 setCity('');
+                setCityQuery('');
+                setSelectedCity('');
+                setSuggestions([]);
+                setShowSuggestions(false);
                 setDistance(0);
                 setCommunicationStyle([]);
                 setSensoryPref([]);
               }}
-              className="sm:col-span-1 !bg-app-surface-soft border-2 !border-app-soft !text-app-secondary hover:!bg-app-surface hover:!border-bluvi-purple/40 hover:!text-app-primary"
+              aria-label="Resetear todos los filtros"
+              className="px-6 py-4 rounded-2xl bg-[#f3f4f6] border border-[#e5e7eb] text-app-secondary font-bold text-sm transition-all hover:bg-[#e5e7eb] hover:border-[#d1d5db] hover:-translate-y-0.5 active:scale-95 shadow-sm dark:bg-app-surface-soft dark:border-app-soft"
             >
-              Limpiar
-            </Button>
+              Reset
+            </button>
 
-            <Button 
-              onClick={() => onApply({ 
-                  selectedTags, 
-                  city, 
-                  distance,
-                  communicationStyle, 
-                  sensoryPref 
+            <button
+              onClick={() => onApply({
+                selectedTags,
+                city,
+                distance,
+                communicationStyle,
+                sensoryPref
               })}
-              className="sm:col-span-2 w-full py-4 text-app-on-accent rounded-2xl font-bold text-lg shadow-md hover:opacity-95 hover:-translate-y-0.5 active:scale-[0.98] transition-all focus-visible:ring-offset-2"
-              style={{ backgroundColor: 'var(--app-accent)' }}
+              className="flex-1 py-4 text-white rounded-2xl font-bold text-base shadow-xl transition-all hover:brightness-110 hover:-translate-y-0.5 active:scale-[0.98]"
+              style={{ backgroundColor: '#3f4292', boxShadow: '0 20px 25px -5px rgba(63, 66, 146, 0.2)' }}
             >
-              Ver resultados
-            </Button>
+              Aplicar filtros
+            </button>
           </div>
         </div>
       </div>
@@ -251,20 +570,20 @@ export const DiscoveryFilter: React.FC<Props> = ({
 };
 
 export const FilterTriggerButton: React.FC<{
-    activeCount: number;
-    onClick: () => void;
-    }> = ({ activeCount, onClick }) => (
-        <button
-            onClick={onClick}
-          aria-label={activeCount > 0 ? `Abrir filtros, ${activeCount} activos` : 'Abrir filtros'}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all shadow-sm bg-app-filter-trigger backdrop-blur-sm text-app-primary border-app-soft hover:bg-app-filter-trigger-hover hover:border-bluvi-purple/40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
-        >
-            <Filter size={16} className="text-app-filter-icon shrink-0" aria-hidden="true" />
-            <span>Filtros</span>
-            {activeCount > 0 && (
-            <span className="text-app-on-accent text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pop" style={{ backgroundColor: 'var(--app-accent-strong)' }}>
-                {activeCount}
-            </span>
-            )}
-        </button>
+  activeCount: number;
+  onClick: () => void;
+}> = ({ activeCount, onClick }) => (
+  <button
+    onClick={onClick}
+    aria-label={activeCount > 0 ? `Abrir filtros, ${activeCount} activos` : 'Abrir filtros'}
+    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all shadow-sm hover:shadow bg-app-filter-trigger backdrop-blur-sm text-app-primary border-app-soft hover:bg-app-filter-trigger-hover hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 dark:focus-visible:ring-app-accent/30"
+  >
+    <Filter size={16} className="text-app-filter-icon shrink-0" aria-hidden="true" />
+    <span>Filtros</span>
+    {activeCount > 0 && (
+      <span className="text-app-on-accent text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pop bg-[#3f4292] dark:bg-app-accent-strong">
+        {activeCount}
+      </span>
+    )}
+  </button>
 );

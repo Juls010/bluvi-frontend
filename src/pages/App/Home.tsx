@@ -191,7 +191,7 @@ export const Home: React.FC = () => {
                             <div className="space-y-3">
                                 {unreadNotifications.map((conversation) => (
                                     <button
-                                        key={conversation.match_request_id}
+                                        key={conversation.chat_id}
                                         onClick={() => navigate('/app/messages')}
                                         className="w-full text-left border-l-2 border-green-500/70 pl-4 py-2 hover:bg-app-surface-soft rounded-r-2xl transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
                                     >

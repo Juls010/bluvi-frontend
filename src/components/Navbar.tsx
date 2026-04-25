@@ -419,8 +419,7 @@ export const Navbar: React.FC = () => {
                     </span>
                     <span
                         aria-hidden="true"
-                        className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-app-surface"
-                        style={{ backgroundColor: 'var(--app-accent)' }}
+                        className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-1 ring-app-surface dark:ring-black bg-green-300"
                     />
                 </button>
 
@@ -440,7 +439,7 @@ export const Navbar: React.FC = () => {
                             role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
                             data-navbar-menu-item="true"
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-bluvi-purple/10 hover:text-bluvi-purple dark:hover:bg-bluvi-light-purple/15 dark:hover:text-bluvi-light-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ver mi perfil
                         </Link>
@@ -449,7 +448,7 @@ export const Navbar: React.FC = () => {
                             role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
                             data-navbar-menu-item="true"
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-bluvi-purple/10 hover:text-bluvi-purple dark:hover:bg-bluvi-light-purple/15 dark:hover:text-bluvi-light-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ajustes de cuenta
                         </Link>
