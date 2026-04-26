@@ -270,9 +270,30 @@
         background-color: var(--app-surface-card-strong);
     }
 
-    /* Navbar menu items hovers are now handled directly in Navbar.tsx with Tailwind for better theme isolation */
+    /* All navbar hovers are now strictly controlled by CSS here for maximum reliability */
+    [data-navbar-menu-item="true"] {
+        transition: all 0.2s ease;
+    }
 
-    /* All navbar hovers are now strictly controlled by Tailwind classes in Navbar.tsx */
+    [data-navbar-menu-item="true"]:hover {
+        background-color: rgba(63, 66, 146, 0.12) !important;
+        color: #3f4292 !important;
+    }
+
+    html.dark [data-navbar-menu-item="true"]:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+    }
+
+    [data-navbar-menu-item="true"][data-navbar-menu-danger="true"]:hover {
+        background-color: rgba(239, 68, 68, 0.15) !important;
+        color: #ef4444 !important;
+    }
+
+    html.dark [data-navbar-menu-item="true"][data-navbar-menu-danger="true"]:hover {
+        background-color: rgba(239, 68, 68, 0.2) !important;
+        color: #f87171 !important;
+    }
 
     #root {
         background-color: transparent;

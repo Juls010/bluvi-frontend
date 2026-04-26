@@ -91,8 +91,8 @@ const NavItem: React.FC<{
         {unreadCount > 0 && (
             <span
                 aria-hidden="true"
-                className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-app-surface animate-pulse"
-                style={{ backgroundColor: '#ff4d8d' }}
+                className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-app-surface"
+                style={{ backgroundColor: '#22c55e' }}
             />
         )}
         </span>
@@ -388,8 +388,8 @@ export const Navbar: React.FC = () => {
                         relative w-10 h-10 rounded-xl overflow-visible border shadow-sm transition-all duration-200
                         bg-app-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/50
                         ${isUserSectionActive 
-                            ? 'border-white/80 scale-105 shadow-md ring-1 ring-white/20' 
-                            : 'border-white/40 hover:border-white/60 hover:scale-105'
+                            ? 'border-white/80 shadow-md ring-1 ring-white/20' 
+                            : 'border-white/40 hover:border-white/60'
                         }
                     `}
                 >
@@ -424,7 +424,7 @@ export const Navbar: React.FC = () => {
                             role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
                             data-navbar-menu-item="true"
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-bluvi-purple/20 hover:text-bluvi-purple dark:hover:bg-white/10 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ver mi perfil
                         </Link>
@@ -433,7 +433,7 @@ export const Navbar: React.FC = () => {
                             role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
                             data-navbar-menu-item="true"
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-bluvi-purple/20 hover:text-bluvi-purple dark:hover:bg-white/10 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ajustes de cuenta
                         </Link>
@@ -443,7 +443,7 @@ export const Navbar: React.FC = () => {
                             data-navbar-menu-item="true"
                             data-navbar-menu-danger="true"
                             onClick={handleLogout}
-                            className="w-full text-left rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-red-500/15 hover:text-red-500 dark:hover:bg-red-500/20 dark:hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
+                            className="w-full text-left rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
                         >
                             Cerrar sesión
                         </button>

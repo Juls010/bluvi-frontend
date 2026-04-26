@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 import logo from '../../assets/logo.svg';
@@ -60,8 +61,15 @@ const STEPS = [
 
 export const Welcome: React.FC = () => {
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
     
     useScrollToTop();
+
+    React.useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/app/home', { replace: true });
+        }
+    }, [isAuthenticated, navigate]);
 
     React.useEffect(() => {
         const observerOptions = {
