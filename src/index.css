@@ -19,6 +19,7 @@
     --filter-icon-text: var(--filter-icon-text);
     --filter-slider-track: var(--filter-slider-track);
     --filter-slider-thumb: var(--filter-slider-thumb);
+    --color-app-pill: var(--app-pill-bg);
     
     --background-image-bluvi-gradient: linear-gradient(
         to bottom right, 

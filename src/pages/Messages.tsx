@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, ArrowRight } from 'lucide-react';
 import {
     getIncomingMatchRequests,
     respondToMatchRequest,
@@ -28,50 +28,61 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
                 </h2>
             </div>
             <span
-                aria-label={`${requests.length} solicitudes nuevas`}
-                className="text-[11px] font-semibold px-2.5 py-1 rounded-full border border-app-soft"
-                style={{
-                    color: 'var(--app-messages-accent)',
-                    backgroundColor: 'var(--app-messages-accent-bg)',
-                }}
+                aria-label={`${requests.length} ${requests.length === 1 ? 'solicitud nueva' : 'solicitudes nuevas'}`}
+                className="text-[10px] font-black uppercase tracking-wider bg-app-accent/10 text-app-accent-strong px-3 py-1 rounded-full border border-app-accent/20"
             >
-                {requests.length} nuevas
+                {requests.length} {requests.length === 1 ? 'nueva' : 'nuevas'}
             </span>
         </div>
 
-        <div role="list" aria-label="Solicitudes de conexión" className="flex flex-col gap-3 py-3">
+        <div 
+            role="list" 
+            aria-label="Solicitudes de conexión" 
+            className="flex flex-row gap-4 py-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6"
+        >
             {requests.length === 0 && (
-                <p className="text-sm text-app-secondary">No tienes solicitudes pendientes ahora mismo.</p>
+                <p className="text-sm text-app-secondary px-2">No tienes solicitudes pendientes ahora mismo.</p>
             )}
 
             {requests.map((request) => (
-                <div key={request.id_match} className="rounded-2xl border border-app-soft bg-app-surface p-4 shadow-sm">
-                    <div className="flex items-center gap-3">
-                        <img
-                            src={request.main_photo || 'https://via.placeholder.com/120'}
-                            alt={request.first_name}
-                            className="w-12 h-12 rounded-xl object-cover"
-                        />
+                <div 
+                    key={request.id_match} 
+                    role="listitem"
+                    className="flex-none w-[280px] sm:w-[320px] snap-center bg-app-surface/80 dark:bg-app-surface-strong/60 border border-white dark:border-white/10 rounded-2xl p-6 hover:shadow-md transition-all duration-300"
+                >
+                    <Link to={`/app/user/${request.id_user}`} className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/50 rounded-2xl">
+                        <div className="relative overflow-hidden rounded-2xl flex-shrink-0 shadow-inner">
+                            <img
+                                src={request.main_photo || 'https://via.placeholder.com/120'}
+                                alt={request.first_name}
+                                className="w-14 h-14 object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                        </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-app-primary truncate">
+                            <p className="text-[15px] font-bold text-app-primary truncate transition-colors duration-200 group-hover:text-app-accent">
                                 {request.first_name} {request.last_name}
                             </p>
-                            <p className="text-xs text-app-muted mt-0.5">{formatTime(request.created_at)}</p>
+                            <p className="text-[11px] text-app-muted mt-0.5 font-medium uppercase tracking-wider">{formatTime(request.created_at)}</p>
                         </div>
+                    </Link>
+
+                    <div 
+                        style={{ backgroundColor: 'white' }}
+                        className="mt-4 p-4 dark:!bg-app-pill/80 rounded-2xl italic text-[13.5px] text-app-secondary line-clamp-2 min-h-[3.5rem] flex items-center justify-center text-center leading-relaxed shadow-md border border-app-soft/30"
+                    >
+                        "{request.message}"
                     </div>
 
-                    <p className="text-sm text-app-secondary mt-3">"{request.message}"</p>
-
-                    <div className="flex gap-2 mt-4">
+                    <div className="flex gap-2.5 mt-5">
                         <button
                             onClick={() => onRespond(request.id_match, 'reject')}
-                            className="flex-1 rounded-xl border border-app-soft py-2 text-sm font-semibold text-app-secondary hover:bg-app-surface-soft"
+                            className="flex-1 rounded-2xl border border-app-soft bg-app-surface-soft/80 py-2.5 text-xs font-bold text-app-secondary hover:bg-app-surface-strong transition-all active:scale-95"
                         >
-                            Rechazar
+                            Pasar
                         </button>
                         <button
                             onClick={() => onRespond(request.id_match, 'accept')}
-                            className="flex-1 rounded-xl bg-bluvi-purple py-2 text-sm font-semibold text-white hover:opacity-90"
+                            className="flex-1 rounded-2xl bg-app-accent py-2.5 text-xs font-bold text-white hover:opacity-90 shadow-lg shadow-app-accent/20 transition-all active:scale-95"
                         >
                             Aceptar
                         </button>
@@ -84,23 +95,22 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
 
 const ChatsSection: React.FC<{ conversations: ConversationItem[] }> = ({ conversations }) => (
     <section aria-labelledby="chats-heading">
-        <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-                <MessageCircle size={14} className="text-app-muted" aria-hidden="true" />
+        <div className="flex items-center justify-between mb-5 px-1">
+            <div className="flex items-center gap-2.5">
+                <MessageCircle size={16} className="text-app-accent dark:text-app-orange" aria-hidden="true" />
                 <h2
                     id="chats-heading"
-                    className="text-[11px] font-bold text-app-secondary uppercase tracking-[0.2em]"
+                    className="text-[12px] font-black text-app-secondary/80 uppercase tracking-[0.15em]"
                 >
                     Conversaciones
                 </h2>
             </div>
             {conversations.length > 0 && (
                 <span
-                    aria-label={`Tienes ${conversations.length} conversaciones activas`}
-                    className="text-[11px] font-semibold text-app-on-accent px-2.5 py-1 rounded-full shadow-sm"
-                    style={{ backgroundColor: 'var(--app-accent)' }}
+                    aria-label={`Tienes ${conversations.length} ${conversations.length === 1 ? 'conversación activa' : 'conversaciones activas'}`}
+                    className="text-[10px] font-black uppercase tracking-wider bg-app-accent/10 text-app-accent-strong px-3 py-1 rounded-full border border-app-accent/20"
                 >
-                    {conversations.length} activas
+                    {conversations.length} {conversations.length === 1 ? 'activa' : 'activas'}
                 </span>
             )}
         </div>
@@ -114,21 +124,22 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[] }> = ({ convers
                             Chat con ${conversation.first_name} ${conversation.last_name}.
                             Último mensaje: ${conversation.last_message || 'Sin mensajes todavía'}
                         `}
-                        className="flex items-center gap-4 p-4 rounded-2xl bg-app-surface border border-app-soft backdrop-blur-md hover:bg-app-surface-strong transition-all duration-200 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40"
+                        className="flex items-center gap-4 p-4 rounded-[22px] bg-app-surface/80 dark:bg-app-surface-strong/60 border border-white dark:border-white/10 transition-all duration-300 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
                     >
                         <div className="relative flex-shrink-0">
-                            <img
-                                src={conversation.main_photo || 'https://via.placeholder.com/120'}
-                                alt=""          
-                                className="w-14 h-14 rounded-2xl object-cover shadow-sm"
-                                loading="lazy"
-                            />
+                            <div className="relative overflow-hidden rounded-[18px] shadow-inner">
+                                <img
+                                    src={conversation.main_photo || 'https://via.placeholder.com/120'}
+                                    alt=""          
+                                    className="w-16 h-16 object-cover transition-transform duration-500 group-hover:scale-110"
+                                    loading="lazy"
+                                />
+                            </div>
 
                             {conversation.unread_count > 0 && (
                                 <span
-                                    aria-label={`${conversation.unread_count} mensajes no leidos`}
-                                    className="absolute -bottom-1 -right-1 min-w-4 h-4 px-1 text-[10px] leading-4 text-center font-semibold text-app-on-accent rounded-full ring-2 ring-white"
-                                    style={{ backgroundColor: 'var(--app-accent)' }}
+                                    aria-label={`${conversation.unread_count} mensajes no leídos`}
+                                    className="absolute -top-1.5 -right-1.5 min-w-[22px] h-[22px] flex items-center justify-center px-1.5 text-[11px] font-black text-white rounded-full ring-4 ring-app-surface-solid bg-app-accent dark:bg-app-orange shadow-lg shadow-app-accent/20"
                                 >
                                     {conversation.unread_count > 9 ? '9+' : conversation.unread_count}
                                 </span>
@@ -136,17 +147,24 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[] }> = ({ convers
                         </div>
 
                         <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-baseline gap-2">
-                                <h3 className="text-[15px] truncate transition-colors duration-200 font-semibold text-app-primary group-hover:text-bluvi-purple">
+                            <div className="flex justify-between items-center gap-2 mb-1">
+                                <h3 className="text-[16px] font-bold text-app-primary truncate transition-colors duration-200 group-hover:text-app-accent">
                                     {conversation.first_name} {conversation.last_name}
                                 </h3>
-                                <span className="text-[11px] text-app-muted flex-shrink-0 font-medium">
+                                <span className="text-[11px] text-app-muted flex-shrink-0 font-bold uppercase tracking-tight">
                                     {formatTime(conversation.last_message_at)}
                                 </span>
                             </div>
-                            <p className="text-[13px] truncate mt-0.5 text-app-muted italic">
+                            <p className="text-[13.5px] truncate text-app-secondary font-medium leading-normal">
+                                {conversation.unread_count > 0 ? (
+                                    <span className="text-app-accent dark:text-app-orange font-bold mr-1">●</span>
+                                ) : null}
                                 {conversation.last_message || 'Empieza la conversación'}
                             </p>
+                        </div>
+                        
+                        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                            <ArrowRight size={18} className="text-app-accent/40" />
                         </div>
                     </Link>
                 </li>
@@ -237,7 +255,7 @@ export const Messages: React.FC = () => {
             </h1>
             {requests.length > 0 && (
                 <p className="text-app-secondary text-sm mt-1.5">
-                    {requests.length} solicitudes nuevas esperándote
+                    {requests.length} {requests.length === 1 ? 'solicitud nueva' : 'solicitudes nuevas'} esperándote
                 </p>
             )}
         </header>
@@ -247,7 +265,7 @@ export const Messages: React.FC = () => {
             <div aria-hidden="true" className="flex items-center gap-3 -my-5">
                 <div className="flex-1 h-px" style={{ backgroundColor: 'var(--app-border-soft)' }} />
                 <span className="text-[10px] font-semibold text-app-muted uppercase tracking-widest">
-                    activas
+                    {conversations.length === 1 ? 'activa' : 'activas'}
                 </span>
                 <div className="flex-1 h-px" style={{ backgroundColor: 'var(--app-border-soft)' }} />
             </div>

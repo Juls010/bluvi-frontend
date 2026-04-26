@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { UserCircle2 } from 'lucide-react';
+import { UserCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SimpleCarouselProps {
     photos: string[]; 
@@ -64,33 +64,42 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
             </div>
 
             {photos.length > 1 && (
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
-                    {photos.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => scrollTo(index)} 
-                            className={`w-2 h-2 rounded-full transition-all duration-300 shadow-sm
-                                ${currentIndex === index ? 'bg-white w-6' : 'bg-white/50'}`}
-                        />
-                    ))}
-                </div>
+                <>
+                    <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
+                        {photos.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => scrollTo(index)} 
+                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 shadow-sm
+                                    ${currentIndex === index ? 'bg-white w-5' : 'bg-white/40'}`}
+                            />
+                        ))}
+                    </div>
+
+                    <div className="absolute inset-y-0 left-2 flex items-center pointer-events-none">
+                        {currentIndex > 0 && (
+                            <button 
+                                onClick={() => scrollTo(currentIndex - 1)} 
+                                className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
+                                aria-label="Foto anterior"
+                            >
+                                <ChevronLeft size={20} strokeWidth={2.5} />
+                            </button>
+                        )}
+                    </div>
+                    <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+                        {currentIndex < photos.length - 1 && (
+                            <button 
+                                onClick={() => scrollTo(currentIndex + 1)} 
+                                className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
+                                aria-label="Siguiente foto"
+                            >
+                                <ChevronRight size={20} strokeWidth={2.5} />
+                            </button>
+                        )}
+                    </div>
+                </>
             )}
-
-            <div className="absolute inset-y-0 left-0 flex items-center pl-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {currentIndex > 0 && (
-                    <button onClick={() => scrollTo(currentIndex - 1)} className="p-2 rounded-full bg-black/30 text-white hover:bg-black/50 backdrop-blur-sm transition-all">
-                        ←
-                    </button>
-                )}
-            </div>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {currentIndex < photos.length - 1 && (
-                    <button onClick={() => scrollTo(currentIndex + 1)} className="p-2 rounded-full bg-black/30 text-white hover:bg-black/50 backdrop-blur-sm transition-all">
-                        →
-                    </button>
-                )}
-            </div>
-
         </div>
     );
 };

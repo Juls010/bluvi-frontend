@@ -1,14 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Cake, User as UserIcon, MapPin, Heart, Sprout, Brain } from 'lucide-react';
 import type { User } from '../types/User.types';
 import { SimpleCarousel } from '../components/SimpleCarousel';
-import { Cake, User as UserIcon, MapPin, Heart, Sprout, Brain } from 'lucide-react';
 import { 
     GENDER_LABELS,
     SEXUALITY_LABELS 
 } from '../types/User.types';
 import api from '../services/api';
+
+const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
+  <div className={`bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm ${className}`}>
+    {children}
+  </div>
+);
+
+const SectionLabel: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon, label }) => (
+  <h2 className="text-[12px] font-black text-app-secondary/80 uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+    <span className="flex items-center gap-1.5">
+      <span className="text-app-accent dark:text-app-orange">{icon}</span>
+      {label}
+    </span>
+  </h2>
+);
 
 export const ChatUserProfile: React.FC = () => {
     const navigate = useNavigate();
@@ -26,7 +40,6 @@ export const ChatUserProfile: React.FC = () => {
             try {
                 setLoading(true);
                 const response = await api.get(`/users/${userId}`);
-                console.log('Profile response:', response.data);
                 if (response.data.success && response.data.user) {
                     setUser(response.data.user);
                 } else {
@@ -45,34 +58,33 @@ export const ChatUserProfile: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="flex flex-col h-screen bg-white">
-                <header className="flex-none py-4 px-6 border-b border-purple-100/60">
-                    <button
-                        onClick={() => navigate(-1)}
-                        aria-label="Volver"
-                        className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-purple-50 text-bluvi-purple transition-all"
-                    >
-                        <ArrowLeft size={24} />
-                    </button>
-                </header>
-                <div className="flex-1 flex items-center justify-center text-bluvi-purple font-medium">Cargando perfil...</div>
+            <div className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-pulse pt-20">
+                <div className="h-10 w-48 bg-app-surface-soft rounded-xl mb-8" />
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div className="md:col-span-4"><div className="aspect-[4/5] rounded-3xl bg-app-surface-soft" /></div>
+                    <div className="md:col-span-8 space-y-4">
+                        <div className="h-48 rounded-3xl bg-app-surface-soft" />
+                        <div className="h-32 rounded-3xl bg-app-surface-soft" />
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (!user) {
         return (
-            <div className="flex flex-col h-screen bg-white">
-                <header className="flex-none py-4 px-6 border-b border-purple-100/60">
-                    <button
-                        onClick={() => navigate(-1)}
-                        aria-label="Volver"
-                        className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-purple-50 text-bluvi-purple transition-all"
-                    >
-                        <ArrowLeft size={24} />
-                    </button>
-                </header>
-                <div className="flex-1 flex items-center justify-center text-gray-500 font-medium">Usuario no encontrado</div>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
+                <div className="w-20 h-20 bg-app-surface-soft rounded-full flex items-center justify-center mb-4">
+                    <UserIcon size={32} className="text-app-muted" />
+                </div>
+                <h2 className="text-xl font-bold text-app-primary mb-2">Usuario no encontrado</h2>
+                <p className="text-app-secondary mb-6 max-w-xs">El perfil que buscas no existe o no tienes los permisos necesarios para verlo.</p>
+                <button
+                    onClick={() => navigate(-1)}
+                    className="px-6 py-2 bg-app-accent text-white rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-app-accent/20"
+                >
+                    Volver atrás
+                </button>
             </div>
         );
     }
@@ -84,133 +96,116 @@ export const ChatUserProfile: React.FC = () => {
     const preferenceId = (user as any).id_preference;
     const sexualityLabel = SEXUALITY_LABELS[preferenceId] || 'No especificada';
 
-    const communicationLabels: string[] = Array.isArray(user.communication_style) 
-        ? (user.communication_style as string[]) 
-        : [];
-
-    const traitLabels = Array.isArray(user.features) ? user.features : [];
-    const interestLabels = Array.isArray(user.interests) ? user.interests : [];
+    const communicationStyle = Array.isArray(user.communication_style) ? user.communication_style : [];
+    const features = Array.isArray(user.features) ? user.features : [];
+    const interestNames = Array.isArray(user.interests) ? user.interests : [];
 
     const photosForCarousel = (user.photos && Array.isArray(user.photos) && user.photos.length > 0) 
         ? user.photos.filter((p): p is string => typeof p === 'string') 
-        : [(user as any).main_photo || '/assets/images/default-avatar.png'];
+        : [user.main_photo || '/assets/images/default-avatar.png'];
 
     return (
-        <div className="flex flex-col h-screen bg-transparent">
+        <article className="w-full max-w-5xl mx-auto p-4 md:p-0 pt-6 md:pt-10 animate-fade-in motion-reduce:animate-none">
             {/* Header */}
-            <header className="flex-none py-4 px-6 bg-white/80 backdrop-blur-md flex items-center justify-between mx-4 mt-2 rounded-3xl">
-                <button
-                    onClick={() => navigate(-1)}
-                    aria-label="Volver"
-                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-purple-50 text-bluvi-purple transition-all active:scale-90 focus-visible:outline-none"
-                >
-                    <ArrowLeft size={24} strokeWidth={2} />
-                </button>
-                <h1 className="text-lg font-semibold text-bluvi-purple">
-                    {user.first_name} {user.last_name}
-                </h1>
-                <div className="w-10" />
-            </header>
-
-            {/* Content */}
-            <main className="flex-1 overflow-y-auto px-4 py-6 md:px-6">
-                <div className="max-w-4xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                        {/* Photos Column */}
-                        <div className="md:col-span-4">
-                            <div className="sticky top-6">
-                                <SimpleCarousel 
-                                    photos={photosForCarousel}
-                                    firstName={user.first_name}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Info Column */}
-                        <div className="md:col-span-8 space-y-4">
-                            {/* Basic Info */}
-                            <div className="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm">
-                                <ul className="flex flex-wrap gap-4 sm:gap-6 text-bluvi-purple font-semibold mb-4 text-sm md:text-base border-b border-bluvi-purple/10 pb-4">
-                                    <li className="flex items-center gap-1.5">
-                                        <Cake className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
-                                        <span>{age} <span className="sr-only">años</span></span>
-                                    </li>
-                                    <li className="flex items-center gap-1.5">
-                                        <UserIcon className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
-                                        <span className="sr-only">Género:</span>
-                                        {genderLabel}
-                                    </li>
-                                    <li className="flex items-center gap-1.5">
-                                        <MapPin className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
-                                        <span className="sr-only">Ubicación:</span>
-                                        {user.city}
-                                    </li>
-                                    <li className="flex items-center gap-1.5">
-                                        <Heart className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" />
-                                        <span className="sr-only">Orientación sexual:</span>
-                                        {sexualityLabel}
-                                    </li>
-                                </ul>
-                                <p className="text-gray-700 leading-relaxed">
-                                    {user.description || 'Sin descripción'}
-                                </p>
-                            </div>
-
-                            {/* Interests */}
-                            {interestLabels.length > 0 && (
-                                <section className="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm">
-                                    <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wider flex items-center gap-2">
-                                        <Sprout className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" /> Intereses
-                                    </h2>
-                                    <ul className="flex flex-wrap gap-2">
-                                        {interestLabels.map((label) => (
-                                            <li key={label} className="px-3 py-1.5 bg-bluvi-purple/5 border border-bluvi-purple/10 rounded-lg text-sm font-medium text-bluvi-purple">
-                                                {label}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </section>
-                            )}
-
-                            {/* Mind & Communication */}
-                            {(traitLabels.length > 0 || communicationLabels.length > 0) && (
-                                <section className="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm">
-                                    <h2 className="text-sm font-bold text-gray-500 mb-4 uppercase tracking-wider flex items-center gap-2">
-                                        <Brain className="w-4 h-4 text-bluvi-purple/60" aria-hidden="true" /> Mente y Comunicación
-                                    </h2>
-                                    {traitLabels.length > 0 && (
-                                        <div className="mb-5">
-                                            <h3 className="text-xs font-bold text-gray-400 uppercase block mb-2">Rasgos</h3>
-                                            <ul className="flex flex-wrap gap-2">
-                                                {traitLabels.map((label) => (
-                                                    <li key={label} className="px-3 py-1.5 bg-bluvi-purple/5 text-bluvi-purple border border-bluvi-purple/10 rounded-lg text-sm font-medium">
-                                                        {label}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-                                    {communicationLabels.length > 0 && (
-                                        <div>
-                                            <h3 className="text-xs font-bold text-gray-400 uppercase block mb-2">Comunicación</h3>
-                                            <ul className="flex flex-wrap gap-2">
-                                                {communicationLabels.map((label, index) => (
-                                                    <li 
-                                                        key={`${label}-${index}`}
-                                                        className="px-3 py-1.5 bg-bluvi-purple/5 text-bluvi-purple border border-bluvi-purple/10 rounded-lg text-sm font-medium"
-                                                    >
-                                                        {label}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-                                </section>
-                            )}
-                        </div>
-                    </div>
+            <div className="flex items-center justify-between mb-8 pl-2">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => navigate(-1)}
+                        aria-label="Volver"
+                        className="p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-app-accent active:scale-90"
+                    >
+                        <ArrowLeft size={24} strokeWidth={2.5} />
+                    </button>
+                    <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
+                        {user.first_name} {user.last_name}
+                    </h1>
                 </div>
-            </main>
-        </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                {/* Carousel Column */}
+                <aside className="md:col-span-4 lg:col-span-4 w-full">
+                    <div className="sticky top-6">
+                        <SimpleCarousel photos={photosForCarousel} firstName={user.first_name} />
+                    </div>
+                </aside>
+
+                {/* Info Column */}
+                <div className="md:col-span-8 lg:col-span-8 flex flex-col gap-6">
+                    <Card>
+                        <ul className="flex flex-wrap gap-4 sm:gap-6 text-app-primary font-semibold mb-4 text-sm border-b border-app-soft pb-4">
+                            <li className="flex items-center gap-2">
+                                <Cake className="w-4 h-4 text-app-accent dark:text-app-orange" /> {age} años
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" /> {genderLabel}
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <MapPin className="w-4 h-4 text-app-accent dark:text-app-orange" /> {user.city}
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <Heart className="w-4 h-4 text-app-accent dark:text-app-orange" /> {sexualityLabel}
+                            </li>
+                        </ul>
+                        <p className="text-app-secondary leading-relaxed text-lg">{user.description || 'Sin descripción'}</p>
+                    </Card>
+
+                    {interestNames.length > 0 && (
+                        <Card>
+                            <div className="mb-6">
+                                <SectionLabel icon={<Sprout className="w-4.5 h-4.5" />} label="Intereses" />
+                            </div>
+                            <ul className="flex flex-wrap gap-2">
+                                {interestNames.map((name: string) => (
+                                    <li key={name} className="px-3.5 py-1.5 bg-app-accent/10 text-app-accent-strong border border-app-accent/20 rounded-xl text-[13px] font-bold">
+                                        {name}
+                                    </li>
+                                ))}
+                            </ul>
+                        </Card>
+                    )}
+
+                    {(features.length > 0 || communicationStyle.length > 0) && (
+                        <Card>
+                            <div className="mb-6">
+                                <SectionLabel icon={<Brain className="w-4.5 h-4.5" />} label="Mente y Comunicación" />
+                            </div>
+
+                            <div className="space-y-6">
+                                {features.length > 0 && (
+                                    <div>
+                                        <h3 className="text-[10px] font-black text-app-secondary/80 uppercase tracking-[0.15em] mb-3">
+                                            Rasgos distintivos
+                                        </h3>
+                                        <ul className="flex flex-wrap gap-2">
+                                            {features.map((name: string) => (
+                                                <li key={name} className="px-3.5 py-1.5 bg-app-accent/10 text-app-accent-strong border border-app-accent/20 rounded-xl text-[13px] font-bold">
+                                                    {name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {communicationStyle.length > 0 && (
+                                    <div className="pt-6 border-t border-app-soft">
+                                        <h3 className="text-[10px] font-black text-app-secondary/80 uppercase tracking-[0.15em] mb-3">
+                                            Estilo comunicativo
+                                        </h3>
+                                        <ul className="flex flex-wrap gap-2">
+                                            {communicationStyle.map((name: string) => (
+                                                <li key={name} className="px-3.5 py-1.5 bg-app-accent/10 text-app-accent-strong border border-app-accent/20 rounded-xl text-[13px] font-bold">
+                                                    {name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        </Card>
+                    )}
+                </div>
+            </div>
+        </article>
     );
 };

@@ -57,37 +57,37 @@ export const Login: React.FC = () => {
     };
 
     return (
-        <AnimatedStep className="!pt-4">
-                <nav className="w-full flex items-center justify-between px-6 pt-2 pb-0" aria-label="Navegación de acceso">
-                    <button 
-                        onClick={() => navigate('/welcome')}
-                        className="flex items-center gap-2 text-bluvi-purple/80 hover:text-bluvi-purple font-semibold text-sm px-4 py-2 rounded-xl bg-white/40 hover:bg-white/60 shadow-sm border border-white/30 backdrop-blur-md transition-all active:scale-95 cursor-pointer"
-                        aria-label="Volver al inicio"
-                    >
-                        <ArrowLeft size={20} strokeWidth={2.5} />
-                        <span>Volver</span>
-                    </button>
+        <AnimatedStep className="!pt-4 sm:!pt-6">
+                <header className="w-full px-6 sm:px-12 flex flex-col items-center relative z-10">
+                    <nav className="w-full flex justify-start mb-6 sm:mb-10" aria-label="Navegación de acceso">
+                        <button 
+                            onClick={() => navigate('/welcome')}
+                            className="flex items-center gap-2 text-bluvi-purple/60 hover:text-bluvi-purple font-bold text-sm transition-all active:scale-95 cursor-pointer py-1"
+                            aria-label="Volver al inicio"
+                        >
+                            <ArrowLeft size={18} strokeWidth={3} />
+                            <span>Volver</span>
+                        </button>
+                    </nav>
 
-                    <div className="flex-1 flex justify-center">
+                    <div className="relative h-10 sm:h-12 flex items-center justify-center w-full max-w-md">
                         <img 
                             src={logo} 
                             alt="Bluvi" 
-                            className="w-48 sm:w-56 h-auto drop-shadow-md select-none" 
+                            className="w-64 sm:w-80 h-auto drop-shadow-md select-none absolute top-1/2 -translate-y-1/2" 
                             draggable={false}
                         />
                     </div>
+                </header>
 
-                    <div className="w-[88px] hidden sm:block" aria-hidden="true" /> 
-                </nav>
-
-                <div className="flex-1 flex flex-col justify-center w-full max-w-md px-2">
+                <div className="flex-1 flex flex-col justify-center w-full max-w-md px-1 sm:px-0">
                     <h1 className="sr-only">Acceder a Bluvi - Inicia sesión en tu cuenta</h1>
-                    <div className="w-full space-y-6 bg-white/20 backdrop-blur-md p-10 rounded-[3rem] shadow-xl border border-white/30">
+                    <div className="w-full space-y-6 bg-white/20 backdrop-blur-md p-7 sm:p-10 rounded-[2.5rem] sm:rounded-[3rem] shadow-xl border border-white/30">
                         <div className="flex flex-col items-center">
-                            <h2 className="text-2xl font-bold text-bluvi-purple">¡Hola de nuevo!</h2>
+                            <h2 className="text-xl sm:text-2xl font-bold text-bluvi-purple">¡Hola de nuevo!</h2>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-10">
+                        <form onSubmit={handleSubmit} className="space-y-7 sm:space-y-10">
                             <div className="space-y-4">
                                 <InputField
                                     id="email"      

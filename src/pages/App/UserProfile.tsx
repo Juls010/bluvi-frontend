@@ -16,8 +16,11 @@ const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ chi
 );
 
 const SectionLabel: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon, label }) => (
-  <h2 className="text-xs font-bold text-app-secondary uppercase tracking-widest mb-3 flex items-center gap-2">
-    <span className="text-app-accent">{icon}</span> {label}
+  <h2 className="text-[12px] font-black text-app-secondary/80 uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+    <span className="flex items-center gap-1.5">
+      <span className="text-app-accent dark:text-app-orange">{icon}</span>
+      {label}
+    </span>
   </h2>
 );
 
@@ -119,17 +122,7 @@ export const UserProfile: React.FC = () => {
     <>
       <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none">
         
-        <div className="md:hidden flex justify-end mb-2 md:mb-4">
-            <button
-                onClick={() => navigate('/app/settings')}
-                className="flex items-center gap-2 px-4 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95"
-            >
-                <Settings className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-wider">Ajustes</span>
-            </button>
-        </div>
-
-        <div className="flex items-center justify-between mb-6 pl-2">
+        <div className="flex items-center justify-between mb-8 pl-2">
             <div className="flex items-center gap-3">
                 <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
                 {user.first_name} {user.last_name}
@@ -140,6 +133,17 @@ export const UserProfile: React.FC = () => {
                     title="Editar información básica"
                 >
                     <Pencil className="w-5 h-5" /> 
+                </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+                <button
+                    onClick={() => navigate('/app/settings')}
+                    className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95 group"
+                    title="Ajustes de cuenta"
+                >
+                    <Settings className="w-4.5 h-4.5 group-hover:rotate-45 transition-transform duration-500" />
+                    <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Ajustes</span>
                 </button>
             </div>
         </div>
@@ -193,16 +197,16 @@ export const UserProfile: React.FC = () => {
             <Card>
               <ul className="flex flex-wrap gap-4 sm:gap-6 text-app-primary font-semibold mb-4 text-sm border-b border-app-soft pb-4">
                 <li className="flex items-center gap-2">
-                  <Cake className="w-4 h-4 opacity-70" /> {age} años
+                  <Cake className="w-4 h-4 text-app-accent dark:text-app-orange" /> {age} años
                 </li>
                 <li className="flex items-center gap-2">
-                  <UserIcon className="w-4 h-4 opacity-70" /> {GENDER_LABELS[user.id_gender] ?? '—'}
+                  <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" /> {GENDER_LABELS[user.id_gender] ?? '—'}
                 </li>
                 <li className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 opacity-70" /> {user.city}
+                  <MapPin className="w-4 h-4 text-app-accent dark:text-app-orange" /> {user.city}
                 </li>
                 <li className="flex items-center gap-2">
-                  <Heart className="w-4 h-4 opacity-70" /> 
+                  <Heart className="w-4 h-4 text-app-accent dark:text-app-orange" /> 
                   {user.sexuality && user.sexuality.length > 0 
                     ? (SEXUALITY_LABELS[user.sexuality[0]] ?? 'Sin especificar') 
                     : 'Sin especificar'}
@@ -212,8 +216,8 @@ export const UserProfile: React.FC = () => {
             </Card>
 
             <Card>
-              <div className="flex justify-between items-center mb-4">
-                <SectionLabel icon={<Sprout className="w-4 h-4" />} label="Mis intereses" />
+              <div className="flex justify-between items-center mb-6">
+                <SectionLabel icon={<Sprout className="w-4.5 h-4.5" />} label="Mis intereses" />
                 <button 
                   onClick={() => setShowInterestsModal(true)} 
                   className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"
@@ -223,14 +227,16 @@ export const UserProfile: React.FC = () => {
               </div>
               <ul className="flex flex-wrap gap-2">
                 {interestNames.map((name: string) => (
-                  <li key={name} className="px-4 py-2 bg-app-pill text-app-primary rounded-xl text-sm font-medium">{name}</li>
+                  <li key={name} className="px-3.5 py-1.5 bg-app-accent/10 text-app-accent-strong border border-app-accent/20 rounded-xl text-[13px] font-bold">
+                    {name}
+                  </li>
                 ))}
               </ul>
             </Card>
 
             <Card>
-              <div className="flex justify-between items-center mb-4">
-                <SectionLabel icon={<Brain className="w-4 h-4" />} label="Mente y Comunicación" />
+              <div className="flex justify-between items-center mb-6">
+                <SectionLabel icon={<Brain className="w-4.5 h-4.5" />} label="Mente y Comunicación" />
                 <button 
                   onClick={() => setShowMindModal(true)} 
                   className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 outline-none dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"
@@ -239,34 +245,40 @@ export const UserProfile: React.FC = () => {
                 </button>
               </div>
 
-              <div className="mb-5">
-                <h3 className="text-xs font-bold text-app-secondary uppercase mb-2">Rasgos</h3>
-                <ul className="flex flex-wrap gap-2">
-                  {features.length > 0 ? (
-                    features.map((name: string) => (
-                      <li key={name} className="px-4 py-2 bg-app-pill text-app-primary rounded-xl text-sm font-medium">
-                        {name}
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-app-muted italic text-sm italic">Sin rasgos definidos</li>
-                  )}
-                </ul>
-              </div>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-[10px] font-black text-app-secondary/80 uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+                    Rasgos distintivos
+                  </h3>
+                  <ul className="flex flex-wrap gap-2">
+                    {features.length > 0 ? (
+                      features.map((name: string) => (
+                        <li key={name} className="px-3.5 py-1.5 bg-app-accent/10 text-app-accent-strong border border-app-accent/20 rounded-xl text-[13px] font-bold">
+                          {name}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-app-muted italic text-sm">Sin rasgos definidos</li>
+                    )}
+                  </ul>
+                </div>
 
-              <div>
-                <h3 className="text-xs font-bold text-app-secondary uppercase mb-2">Comunicación</h3>
-                <ul className="flex flex-wrap gap-2">
-                  {communication.length > 0 ? (
-                    communication.map((name: string) => (
-                      <li key={name} className="px-4 py-2 bg-app-pill text-app-primary rounded-xl text-sm font-medium">
-                        {name}
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-app-muted italic text-sm italic">Sin estilo definido</li>
-                  )}
-                </ul>
+                <div className="pt-6 border-t border-app-soft">
+                  <h3 className="text-[10px] font-black text-app-secondary/80 uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+                    Estilo comunicativo
+                  </h3>
+                  <ul className="flex flex-wrap gap-2">
+                    {communication.length > 0 ? (
+                      communication.map((name: string) => (
+                        <li key={name} className="px-3.5 py-1.5 bg-app-accent/10 text-app-accent-strong border border-app-accent/20 rounded-xl text-[13px] font-bold">
+                          {name}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-app-muted italic text-sm">Sin estilo definido</li>
+                    )}
+                  </ul>
+                </div>
               </div>
             </Card>
 
