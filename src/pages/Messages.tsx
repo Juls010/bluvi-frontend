@@ -35,9 +35,9 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
             </span>
         </div>
 
-        <div 
-            role="list" 
-            aria-label="Solicitudes de conexión" 
+        <div
+            role="list"
+            aria-label="Solicitudes de conexión"
             className="flex flex-row gap-4 py-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6"
         >
             {requests.length === 0 && (
@@ -45,8 +45,8 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
             )}
 
             {requests.map((request) => (
-                <div 
-                    key={request.id_match} 
+                <div
+                    key={request.id_match}
                     role="listitem"
                     className="flex-none w-[280px] sm:w-[320px] snap-center bg-app-surface/80 dark:bg-app-surface-strong/60 border border-white dark:border-white/10 rounded-2xl p-6 hover:shadow-md transition-all duration-300"
                 >
@@ -66,7 +66,7 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
                         </div>
                     </Link>
 
-                    <div 
+                    <div
                         style={{ backgroundColor: 'white' }}
                         className="mt-4 p-4 dark:!bg-app-pill/80 rounded-2xl italic text-[13.5px] text-app-secondary line-clamp-2 min-h-[3.5rem] flex items-center justify-center text-center leading-relaxed shadow-md border border-app-soft/30"
                     >
@@ -130,7 +130,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[] }> = ({ convers
                             <div className="relative overflow-hidden rounded-[18px] shadow-inner">
                                 <img
                                     src={conversation.main_photo || 'https://via.placeholder.com/120'}
-                                    alt=""          
+                                    alt=""
                                     className="w-16 h-16 object-cover transition-transform duration-500 group-hover:scale-110"
                                     loading="lazy"
                                 />
@@ -162,7 +162,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[] }> = ({ convers
                                 {conversation.last_message || 'Empieza la conversación'}
                             </p>
                         </div>
-                        
+
                         <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
                             <ArrowRight size={18} className="text-app-accent/40" />
                         </div>
@@ -249,29 +249,29 @@ export const Messages: React.FC = () => {
     return (
         <div className="w-full max-w-4xl mx-auto px-6 py-4 animate-fade-in motion-reduce:animate-none">
 
-        <header className="mb-4">
-            <h1 className="text-3xl font-bold text-app-primary leading-tight">
-                Mensajes
-            </h1>
-            {requests.length > 0 && (
-                <p className="text-app-secondary text-sm mt-1.5">
-                    {requests.length} {requests.length === 1 ? 'solicitud nueva' : 'solicitudes nuevas'} esperándote
-                </p>
-            )}
-        </header>
+            <header className="mb-4">
+                <h1 className="text-3xl font-bold text-app-primary leading-tight">
+                    Mensajes
+                </h1>
+                {requests.length > 0 && (
+                    <p className="text-app-secondary text-sm mt-1.5">
+                        {requests.length} {requests.length === 1 ? 'solicitud nueva' : 'solicitudes nuevas'} esperándote
+                    </p>
+                )}
+            </header>
 
-        <main className="flex flex-col gap-10">
-            <MatchesSection requests={requests} onRespond={handleRespond} />
-            <div aria-hidden="true" className="flex items-center gap-3 -my-5">
-                <div className="flex-1 h-px" style={{ backgroundColor: 'var(--app-border-soft)' }} />
-                <span className="text-[10px] font-semibold text-app-muted uppercase tracking-widest">
-                    {conversations.length === 1 ? 'activa' : 'activas'}
-                </span>
-                <div className="flex-1 h-px" style={{ backgroundColor: 'var(--app-border-soft)' }} />
-            </div>
+            <main className="flex flex-col gap-10">
+                <MatchesSection requests={requests} onRespond={handleRespond} />
+                <div aria-hidden="true" className="flex items-center gap-3 -my-5">
+                    <div className="flex-1 h-px" style={{ backgroundColor: 'var(--app-border-soft)' }} />
+                    <span className="text-[10px] font-semibold text-app-muted uppercase tracking-widest">
+                        {conversations.length === 1 ? 'activa' : 'activas'}
+                    </span>
+                    <div className="flex-1 h-px" style={{ backgroundColor: 'var(--app-border-soft)' }} />
+                </div>
 
-            <ChatsSection conversations={conversations} />
-        </main>
-    </div>
+                <ChatsSection conversations={conversations} />
+            </main>
+        </div>
     );
 };
