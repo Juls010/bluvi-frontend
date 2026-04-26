@@ -53,18 +53,6 @@ const NAV_ITEMS = [
         </svg>
         ),
     },
-    {
-        path: '/app/settings',
-        key: 'settings',
-        label: 'Ajustes',
-        isActive: (pathname: string) => pathname.startsWith('/app/settings'),
-        icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8.92 4.6h.08A1.65 1.65 0 0 0 10.51 3.1V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.31.48.84.8 1.41.84H21a2 2 0 1 1 0 4h-.09c-.57.04-1.1.36-1.41.84z" />
-        </svg>
-        ),
-    },
 ];
 
 const DESKTOP_NAV_KEYS = new Set(['home', 'discovery', 'messages']);
@@ -91,11 +79,11 @@ const NavItem: React.FC<{
         <span
         className={`
             relative
-            transition-all duration-200
+            transition-all duration-300
             ${mobile ? 'w-6 h-6' : 'w-4.5 h-4.5'}
             ${active
             ? 'text-app-accent scale-110 [&>svg]:stroke-[2.3px]'
-            : 'text-app-secondary [&>svg]:stroke-[1.9px]'
+            : 'text-app-secondary/60 [&>svg]:stroke-[1.8px] hover:text-app-secondary'
             }
         `}
         >
@@ -103,28 +91,23 @@ const NavItem: React.FC<{
         {unreadCount > 0 && (
             <span
                 aria-hidden="true"
-                className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ring-2 ring-app-surface"
-                style={{ backgroundColor: 'var(--app-accent)' }}
+                className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-app-surface animate-pulse"
+                style={{ backgroundColor: '#ff4d8d' }}
             />
         )}
         </span>
 
         <span
         className={`
-            font-semibold leading-none tracking-wide transition-all duration-200 overflow-hidden
+            font-semibold leading-none tracking-wide transition-all duration-300 overflow-hidden
             ${mobile
-            ? `text-[10px] max-h-4 opacity-100 ${active ? 'text-app-accent' : 'text-app-muted'}`
-            : `text-[13px] max-h-4 opacity-100 ${active ? 'text-app-accent' : 'text-app-secondary'}`
+            ? `text-[10px] mt-0.5 ${active ? 'text-app-accent opacity-100' : 'text-app-muted opacity-60'}`
+            : `text-[13px] ${active ? 'text-app-accent opacity-100' : 'text-app-secondary opacity-70'}`
             }
         `}
         >
         {label}
         </span>
-        {mobile && unreadCount > 0 && (
-            <span className="mt-1 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[9px] font-bold leading-none text-app-on-accent shadow-sm ring-2 ring-app-surface" style={{ backgroundColor: 'var(--app-accent)' }}>
-                {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
-        )}
         {unreadCount > 0 && <span className="sr-only">Tienes {unreadCount} mensajes sin leer</span>}
     </Link>
 );
@@ -402,10 +385,12 @@ export const Navbar: React.FC = () => {
                     aria-label={`Cuenta de ${displayName}`}
                     onClick={toggleUserMenu}
                     className={`
-                        relative w-10 h-10 rounded-xl overflow-visible border shadow-sm
-                        bg-app-surface transition-all duration-200
-                        focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/50
-                        ${isUserSectionActive ? 'border-app-strong ring-2 ring-app-strong' : 'border-app-soft hover:border-app-strong'}
+                        relative w-10 h-10 rounded-xl overflow-visible border shadow-sm transition-all duration-200
+                        bg-app-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/50
+                        ${isUserSectionActive 
+                            ? 'border-white/80 scale-105 shadow-md ring-1 ring-white/20' 
+                            : 'border-white/40 hover:border-white/60 hover:scale-105'
+                        }
                     `}
                 >
                     <span className="block w-full h-full rounded-xl overflow-hidden">
@@ -439,7 +424,7 @@ export const Navbar: React.FC = () => {
                             role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
                             data-navbar-menu-item="true"
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-bluvi-purple/10 hover:text-bluvi-purple dark:hover:bg-bluvi-light-purple/15 dark:hover:text-bluvi-light-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-bluvi-purple/20 hover:text-bluvi-purple dark:hover:bg-white/10 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ver mi perfil
                         </Link>
@@ -448,7 +433,7 @@ export const Navbar: React.FC = () => {
                             role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
                             data-navbar-menu-item="true"
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-bluvi-purple/10 hover:text-bluvi-purple dark:hover:bg-bluvi-light-purple/15 dark:hover:text-bluvi-light-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-bluvi-purple/20 hover:text-bluvi-purple dark:hover:bg-white/10 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ajustes de cuenta
                         </Link>
@@ -458,7 +443,7 @@ export const Navbar: React.FC = () => {
                             data-navbar-menu-item="true"
                             data-navbar-menu-danger="true"
                             onClick={handleLogout}
-                            className="w-full text-left rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
+                            className="w-full text-left rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent transition-all duration-200 hover:bg-red-500/15 hover:text-red-500 dark:hover:bg-red-500/20 dark:hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
                         >
                             Cerrar sesión
                         </button>
@@ -468,19 +453,19 @@ export const Navbar: React.FC = () => {
         </nav>
 
         <nav
-            className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-stretch gap-1 px-1.5 bg-app-surface-nav backdrop-blur-xl border-t border-app-soft shadow-[0_-4px_24px_rgba(0,0,0,0.07)]"
+            className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex px-4 bg-app-surface-nav backdrop-blur-xl border-t border-app-soft shadow-[0_-4px_24px_rgba(0,0,0,0.07)] pointer-events-auto"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
             {NAV_ITEMS.map(({ path, key, label, icon, isActive }) => (
-            <NavItem
-                key={key}
-                path={path}
-                label={label}
-                icon={icon}
-                active={isActive(location.pathname)}
-                unreadCount={key === 'messages' ? unreadMessages + pendingMatchRequests : 0}
-                mobile
-            />
+                <NavItem
+                    key={key}
+                    path={path}
+                    label={label}
+                    icon={icon}
+                    active={isActive(location.pathname)}
+                    unreadCount={key === 'messages' ? unreadMessages + pendingMatchRequests : 0}
+                    mobile
+                />
             ))}
         </nav>
 

@@ -6,6 +6,8 @@ import { useNotifications } from '../../context/NotificationContext';
 import { HOME_EVENTS } from '../../data/events';
 import { ArrowRight, Clock } from 'lucide-react';
 
+import { BluAssistant } from '../../components/BluAssistant';
+
 export const Home: React.FC = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -245,6 +247,8 @@ export const Home: React.FC = () => {
                     
                 </aside>
             </div>
+
+            <BluAssistant />
         </div>
     );
 };

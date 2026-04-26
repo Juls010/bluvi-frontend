@@ -5,7 +5,8 @@ import { EditMindModal } from '../../components/modals/EditMindModal';
 import { EditPhotosModal } from '../../components/modals/EditPhotosModal';
 import { EditBasicInfoModal } from '../../components/modals/EditBasicInfoModal';
 import { getMyProfile, updateMyProfile } from '../../services/user.service';
-import { X, Camera, Pencil, MapPin, Cake, User as UserIcon, Heart, Sprout, Brain} from 'lucide-react';
+import { X, Camera, Pencil, MapPin, Cake, User as UserIcon, Heart, Sprout, Brain, Settings, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { type User, GENDER_LABELS,SEXUALITY_LABELS } from '../../types/User.types';
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
@@ -35,6 +36,7 @@ const ProfileSkeleton = () => (
 );
 
 export const UserProfile: React.FC = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -116,18 +118,30 @@ export const UserProfile: React.FC = () => {
   return (
     <>
       <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none">
+        
+        <div className="md:hidden flex justify-end mb-2 md:mb-4">
+            <button
+                onClick={() => navigate('/app/settings')}
+                className="flex items-center gap-2 px-4 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95"
+            >
+                <Settings className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase tracking-wider">Ajustes</span>
+            </button>
+        </div>
 
-        <div className="flex items-end justify-between mb-6 pl-2">
-            <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary flex items-center gap-3">
-              {user.first_name} {user.last_name}
-                  <button 
+        <div className="flex items-center justify-between mb-6 pl-2">
+            <div className="flex items-center gap-3">
+                <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
+                {user.first_name} {user.last_name}
+                </h1>
+                <button 
                     onClick={() => setShowInfoModal(true)}
                     className="p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple"
                     title="Editar información básica"
-                  >
-                  <Pencil className="w-6 h-6" /> 
-          </button>
-        </h1>
+                >
+                    <Pencil className="w-5 h-5" /> 
+                </button>
+            </div>
         </div>
 
         {saveError && (

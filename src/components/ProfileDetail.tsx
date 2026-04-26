@@ -2,11 +2,12 @@ import React from 'react';
 import type { User } from '../types/User.types';
 import { SimpleCarousel } from './SimpleCarousel';
 import ClickSpark from './ClickSpark';
-import { Cake, User as UserIcon, MapPin, Heart, Sprout, Brain } from 'lucide-react';
+import { Cake, User as UserIcon, MapPin, Heart, Sprout, Brain, X } from 'lucide-react';
 import { 
     GENDER_LABELS,
     SEXUALITY_LABELS 
 } from '../types/User.types';
+import { Tooltip, TooltipTrigger, Button as AriaButton } from './Tooltip';
 interface ProfileDetailProps {
     user: User;
     onClose: () => void;
@@ -39,53 +40,60 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
         : [(user as any).main_photo || '/assets/images/default-avatar.png'];
 
     return (
-        <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none text-app-primary">
+        <article className="w-full max-w-5xl mx-auto p-4 md:p-6 lg:p-0 pb-32 md:pb-0 animate-fade-in motion-reduce:animate-none text-app-primary">
         
-        <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary mb-6 pl-2 outline-none" tabIndex={-1}>
+        <h1 className="text-2xl md:text-4xl font-heading font-bold text-app-primary mb-4 md:mb-8 pl-1 md:pl-2 outline-none" tabIndex={-1}>
             {user.first_name} {user.last_name}
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
             
-            <div className="md:col-span-4 flex flex-col gap-6">
+            <div className="md:col-span-5 lg:col-span-4 flex flex-col gap-6">
                 
-                <div className="w-full"> 
+                <div className="w-full max-h-[450px] flex justify-center"> 
                     <SimpleCarousel 
                     photos={photosForCarousel}
                     firstName={user.first_name} />
                 </div>
 
-                <div className="flex justify-between px-4">
-                    <button 
-                        onClick={onPass}
-                        aria-label={`Pasar perfil de ${user.first_name}`}
-                        className="w-16 h-16 rounded-2xl border-2 border-app-strong text-app-accent hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all flex items-center justify-center focus:ring-4 focus:ring-red-200 outline-none"
-                    >
-                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
+                {/* Botones para Escritorio */}
+                <div className="hidden md:flex justify-center gap-36 px-4 mt-2">
+                    <TooltipTrigger delay={600}>
+                        <AriaButton 
+                            onPress={onPass}
+                            aria-label={`Pasar perfil de ${user.first_name}`}
+                            className="w-16 h-16 rounded-[28px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 dark:hover:bg-red-500/10 dark:hover:border-red-500/30 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
+                        >
+                            <X size={32} strokeWidth={2.5} className="transition-transform group-hover:scale-110" />
+                        </AriaButton>
+                        <Tooltip>Pasar</Tooltip>
+                    </TooltipTrigger>
 
-                    <button 
-                            onClick={onLike}
+                    <TooltipTrigger delay={600}>
+                        <AriaButton 
+                            onPress={onLike}
                             aria-label={`Me gusta ${user.first_name}`}
-                            className="w-16 h-16 relative overflow-visible rounded-2xl text-app-on-accent shadow-md hover:scale-[1.03] hover:brightness-105 transition-all flex items-center justify-center focus:ring-4 focus:ring-purple-300 outline-none"
-                            style={{ backgroundColor: 'var(--app-accent)' }}
+                            className="w-16 h-16 relative overflow-visible rounded-[28px] text-white shadow-xl shadow-red-500/20 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-400/30"
+                            style={{ backgroundColor: '#d3435dff' }}
                         >
                             <ClickSpark 
                                 sparkColor="#ffffff" 
-                                sparkCount={8} 
-                                sparkRadius={30} 
-                                sparkSize={15}
-                                duration={400}
-                                extraScale={1.2} 
+                                sparkCount={10} 
+                                sparkRadius={35} 
+                                sparkSize={12}
+                                duration={500}
+                                extraScale={1.5} 
                                 className="w-full h-full flex items-center justify-center"
                             >
-                                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 pointer-events-none" fill="currentColor" viewBox="0 0 24 24"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" /></svg>
+                                <Heart size={32} fill="currentColor" className="transition-transform group-hover:scale-110" />
                             </ClickSpark>
-                        </button>
+                        </AriaButton>
+                        <Tooltip>Me gusta</Tooltip>
+                    </TooltipTrigger>
                 </div>
             </div>
 
-            <div className="md:col-span-8 flex flex-col gap-4">
+            <div className="md:col-span-7 lg:col-span-8 flex flex-col gap-4">
                 <div className="bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm">
                     <ul className="flex flex-wrap gap-4 sm:gap-6 text-app-primary font-semibold mb-4 text-sm md:text-base border-b border-app-strong pb-4">
                         <li className="flex items-center gap-1.5">
@@ -159,14 +167,45 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                         </ul>
                     </div>
                 </section>
-                <div className="flex justify-end mt-2">
+                <div className="flex justify-end mt-1">
                     <button className="text-xs font-medium text-app-secondary hover:text-red-600 bg-app-surface-soft hover:bg-red-50 px-4 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-red-200 outline-none">
                         Denunciar y bloquear usuario
                     </button>
                 </div>
-
             </div>
         </div>
-        </article>
+
+        {/* Barra de Acciones Flotante para Móvil */}
+        <div className="md:hidden fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-sm z-50 pointer-events-none">
+            <div className="bg-app-surface/85 backdrop-blur-2xl shadow-xl rounded-[40px] py-3 px-10 flex justify-between items-center pointer-events-auto">
+                <AriaButton 
+                    onPress={onPass}
+                    aria-label={`Pasar perfil de ${user.first_name}`}
+                    className="w-16 h-16 rounded-[28px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
+                >
+                    <X size={32} strokeWidth={2.5} className="transition-transform group-hover:scale-110" />
+                </AriaButton>
+
+                <AriaButton 
+                    onPress={onLike}
+                    aria-label={`Me gusta ${user.first_name}`}
+                    className="w-16 h-16 relative overflow-visible rounded-[28px] text-white shadow-xl shadow-red-500/20 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-400/30"
+                    style={{ backgroundColor: '#d3435dff' }}
+                >
+                    <ClickSpark 
+                        sparkColor="#ffffff" 
+                        sparkCount={10} 
+                        sparkRadius={35} 
+                        sparkSize={12}
+                        duration={500}
+                        extraScale={1.5} 
+                        className="w-full h-full flex items-center justify-center"
+                    >
+                        <Heart size={32} fill="currentColor" className="transition-transform group-hover:scale-110" />
+                    </ClickSpark>
+                </AriaButton>
+            </div>
+        </div>
+    </article>
     );
 };

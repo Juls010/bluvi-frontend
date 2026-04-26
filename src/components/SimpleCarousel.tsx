@@ -40,7 +40,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
     }
 
     return (
-        <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-lg bg-app-surface-soft border border-app-soft group">
+        <div className="relative w-full h-full max-h-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden shadow-lg bg-app-surface-soft border border-app-soft group">
 
             <div 
                 ref={scrollRef}

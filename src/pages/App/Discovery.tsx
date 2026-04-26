@@ -177,7 +177,6 @@ export const Discovery: React.FC = () => {
         <IceBreakerModal user={currentUser} onSend={handleSendIcebreaker} onCancel={() => setShowMatchModal(false)} />
       )}
 
-      {/* ✅ USAMOS EL NUEVO FILTRO ZEN */}
       <DiscoveryFilter
         isOpen={showFilters}
         onClose={() => setShowFilters(false)}
@@ -188,7 +187,7 @@ export const Discovery: React.FC = () => {
         sensoryOptions={catalogOptions.neurodivergences}
       />
 
-      <div className="w-full max-w-5xl mx-auto px-4 mb-6 relative z-20">
+      <div className="w-full max-w-5xl mx-auto px-8 md:px-4 mb-6 relative z-20">
         <FilterTriggerButton activeCount={activeFilterCount} onClick={() => setShowFilters(true)} />
         {activeFilterChips.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2" aria-live="polite" aria-label="Filtros activos">

@@ -270,38 +270,9 @@
         background-color: var(--app-surface-card-strong);
     }
 
-    [data-navbar-menu-item='true']:hover,
-    [data-navbar-menu-item='true']:focus-visible {
-        background-color: var(--app-filter-trigger-hover);
-        border-color: var(--app-border-strong);
-        color: var(--app-accent-strong);
-    }
+    /* Navbar menu items hovers are now handled directly in Navbar.tsx with Tailwind for better theme isolation */
 
-    [data-navbar-menu-item='true'][data-navbar-menu-danger='true']:hover,
-    [data-navbar-menu-item='true'][data-navbar-menu-danger='true']:focus-visible {
-        background-color: rgba(239, 68, 68, 0.14);
-        border-color: rgba(239, 68, 68, 0.4);
-        color: #b91c1c;
-    }
-
-    html.dark [data-navbar-menu-item='true'][data-navbar-menu-danger='true']:hover,
-    html.dark [data-navbar-menu-item='true'][data-navbar-menu-danger='true']:focus-visible {
-        background-color: rgba(248, 113, 113, 0.18);
-        border-color: rgba(248, 113, 113, 0.5);
-        color: #fecaca;
-    }
-
-    html.low-transparency [data-navbar-menu-item='true']:hover,
-    html.low-transparency [data-navbar-menu-item='true']:focus-visible {
-        background-color: var(--app-surface-card-strong);
-        border-color: var(--app-border-strong);
-    }
-
-    html.low-transparency [data-navbar-menu-item='true'][data-navbar-menu-danger='true']:hover,
-    html.low-transparency [data-navbar-menu-item='true'][data-navbar-menu-danger='true']:focus-visible {
-        background-color: rgba(239, 68, 68, 0.14);
-        border-color: rgba(239, 68, 68, 0.4);
-    }
+    /* All navbar hovers are now strictly controlled by Tailwind classes in Navbar.tsx */
 
     #root {
         background-color: transparent;
