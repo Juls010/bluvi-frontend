@@ -269,7 +269,8 @@ export const DiscoveryFilter: React.FC<Props> = ({
               ref={closeButtonRef}
               onClick={handleClose}
               aria-label="Cerrar panel de filtros"
-              className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-app-surface-soft flex items-center justify-center text-app-secondary hover:text-app-primary hover:bg-app-surface transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30 mt-0.5 md:mt-1"
+              className="w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3f4292]/20 mt-0.5 md:mt-1"
+              style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
             >
               <X size={20} aria-hidden="true" />
             </button>

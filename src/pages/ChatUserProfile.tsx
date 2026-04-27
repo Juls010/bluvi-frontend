@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Cake, User as UserIcon, MapPin, Heart, Sprout, Brain } from 'lucide-react';
+import { ArrowLeft, Cake, User as UserIcon, MapPin, Heart, Sprout, Brain, MessageCircle } from 'lucide-react';
 import type { User } from '../types/User.types';
 import { SimpleCarousel } from '../components/SimpleCarousel';
 import { 
@@ -112,14 +112,23 @@ export const ChatUserProfile: React.FC = () => {
                     <button
                         onClick={() => navigate(-1)}
                         aria-label="Volver"
-                        className="p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-app-accent active:scale-90"
+                        className="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
+                        style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                     >
-                        <ArrowLeft size={24} strokeWidth={2.5} />
+                        <ArrowLeft size={22} strokeWidth={3} />
                     </button>
                     <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
                         {user.first_name} {user.last_name}
                     </h1>
                 </div>
+
+                <button
+                    onClick={() => navigate(`/app/chat/${user.id_user}`)}
+                    className="flex items-center gap-2 px-6 py-3 bg-[#3f4292] text-white rounded-2xl font-bold text-sm shadow-xl shadow-[#3f4292]/20 hover:scale-105 active:scale-95 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3f4292]/30"
+                >
+                    <MessageCircle size={18} className="transition-transform group-hover:rotate-12" />
+                    <span>Ir al chat</span>
+                </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">

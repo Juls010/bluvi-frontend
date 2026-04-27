@@ -6,9 +6,12 @@ export interface ConversationItem {
     first_name: string;
     last_name: string;
     main_photo: string | null;
+    last_message_id: number | null;
     last_message: string | null;
     last_message_at: string | null;
     last_message_sender_id: number | null;
+    last_message_read: boolean;
+    last_message_delivered: boolean;
     unread_count: number;
 }
 
@@ -28,6 +31,7 @@ export interface ChatMessage {
     created_at: string;
     read_at: string | null;
     is_read?: boolean;
+    is_delivered?: boolean;
 }
 
 interface ConversationsResponse {
@@ -73,6 +77,10 @@ export const sendConversationMessage = async (userId: number, message: string): 
 export const markConversationRead = async (userId: number): Promise<void> => {
     await api.patch(`/chats/${userId}/read`);
 };
+ 
+export const markConversationDelivered = async (userId: number): Promise<void> => {
+    await api.patch(`/chats/${userId}/delivered`);
+};
 
 export interface UserOnlineStatus {
     isOnline: boolean;
@@ -90,4 +98,30 @@ export const checkUserOnline = async (userId: number): Promise<UserOnlineStatus>
         console.error('Error verificando estado online:', error);
         return { isOnline: false, canShowOnlineStatus: true };
     }
+};
+
+export const deleteConversation = async (userId: number, block = false): Promise<void> => {
+    await api.delete(`/chats/${userId}${block ? '?block=true' : ''}`);
+};
+
+export const blockUser = async (userId: number): Promise<void> => {
+    await api.post(`/chats/${userId}/block`);
+};
+
+export const unblockUser = async (userId: number): Promise<void> => {
+    await api.delete(`/chats/${userId}/block`);
+};
+
+export const getBlockedUsers = async (): Promise<any[]> => {
+    const response = await api.get('/chats/blocked');
+    return response.data.blockedUsers;
+};
+
+export const reportUser = async (userId: number, reason?: string): Promise<void> => {
+    await api.post(`/chats/${userId}/report`, { reason });
+};
+
+export const getMyReports = async (): Promise<any[]> => {
+    const response = await api.get('/chats/reports');
+    return response.data.reports;
 };

@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getConversations, type ConversationItem } from '../../services/chat.service';
 import { useNotifications } from '../../context/NotificationContext';
 import { HOME_EVENTS } from '../../data/events';
-import { ArrowRight, Mail, Waves, MessagesSquare, User, ChevronLeft, ChevronRight, Bell, MessageSquareHeart } from 'lucide-react';
+import { ArrowRight, Waves, MessagesSquare, User, ChevronLeft, ChevronRight, Bell, MessageSquareHeart } from 'lucide-react';
 
 import { BluAssistant } from '../../components/BluAssistant';
 
@@ -88,9 +88,9 @@ export const Home: React.FC = () => {
             <header className="pt-1 pb-6 animate-fade-in motion-reduce:animate-none">
                 <span
                     aria-hidden="true"
-                    className="inline-flex items-center gap-1.5 text-[11.5px] font-bold tracking-widest uppercase text-app-secondary bg-app-pill px-3 py-1.5 rounded-full mb-5 select-none"
+                    className="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-app-secondary bg-app-pill px-4 py-2 rounded-full mb-6 select-none shadow-sm"
                 >
-                    <Waves size={13} className="text-app-accent" />
+                    <Waves size={16} className="text-app-accent animate-pulse" />
                     Tu espacio de calma
                 </span>
 
@@ -106,10 +106,10 @@ export const Home: React.FC = () => {
                     aria-label={`Actividad: ${activityMessage}. Pulsa para ir a mensajes.`}
                     className="mt-6 flex items-center gap-3 px-5 py-3 rounded-2xl bg-app-surface-soft/40 backdrop-blur-md border border-app-soft/60 dark:border-app-accent/20 hover:bg-app-surface-soft/60 hover:border-app-accent/30 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
                 >
-                    <div className="relative" aria-hidden="true">
-                        <Bell size={18} className={`${hasNotifications || pendingMatchRequests > 0 ? 'text-app-accent' : 'text-app-muted'}`} />
+                    <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-app-pill/50 group-hover:bg-app-pill transition-colors" aria-hidden="true">
+                        <Bell size={22} className={`${hasNotifications || pendingMatchRequests > 0 ? 'text-app-accent' : 'text-app-muted'} transition-transform group-hover:scale-110`} />
                         {(hasNotifications || pendingMatchRequests > 0) && (
-                            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-app-surface-solid animate-pulse" />
+                            <span className="absolute top-1.5 right-1.5 w-3 h-3 bg-green-500 rounded-full ring-2 ring-app-surface-solid animate-pulse" />
                         )}
                     </div>
                     <span className={`text-[14px] font-semibold ${hasNotifications || pendingMatchRequests > 0 ? 'text-app-primary' : 'text-app-secondary'}`}>
@@ -121,7 +121,7 @@ export const Home: React.FC = () => {
                 </button>
             </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] gap-6">
+            <div className="max-w-4xl mx-auto">
                 <div className="space-y-6">
                     <section
                         className="bg-app-surface backdrop-blur-md border border-app-soft rounded-[22px] p-6"
@@ -147,18 +147,18 @@ export const Home: React.FC = () => {
                             focus:outline-none focus-visible:ring-4 focus-visible:ring-[#7F77DD]/40
                         "
                         >
-                        <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 rounded-2xl bg-app-accent-gradient flex items-center justify-center shrink-0 shadow-md transition-transform group-hover:scale-105" aria-hidden="true">
-                                <MessageSquareHeart size={22} className="text-white" />
+                        <div className="flex items-center gap-6">
+                            <div className="w-16 h-16 rounded-[22px] bg-app-accent-gradient flex items-center justify-center shrink-0 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-app-accent/20" aria-hidden="true">
+                                <MessageSquareHeart size={32} className="text-white" />
                             </div>
                             <div>
-                                <p className="text-[11px] font-extrabold uppercase tracking-[0.13em] text-app-secondary mb-1">
+                                <p className="text-[12px] font-extrabold uppercase tracking-[0.13em] text-app-accent mb-1.5">
                                 Descubrir
                                 </p>
-                                <p className="text-[17px] font-black text-app-primary leading-tight">
+                                <p className="text-[20px] font-black text-app-primary leading-tight">
                                 Explorar personas
                                 </p>
-                                <p className="text-[13.5px] text-app-muted mt-1.5 leading-relaxed">
+                                <p className="text-[14.5px] text-app-muted mt-2 leading-relaxed">
                                 Nuevas conexiones en tu misma sintonía
                                 </p>
                             </div>
@@ -179,13 +179,13 @@ export const Home: React.FC = () => {
                             focus:outline-none focus-visible:ring-4 focus-visible:ring-[#7F77DD]/40
                             "
                             >
-                            <div className="w-9 h-9 rounded-xl bg-app-pill flex items-center justify-center text-app-accent mb-4 shadow-sm" aria-hidden="true">
-                                <MessagesSquare size={18} />
+                            <div className="w-14 h-14 rounded-2xl bg-app-pill flex items-center justify-center text-app-accent mb-5 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-app-accent group-hover:text-white" aria-hidden="true">
+                                <MessagesSquare size={26} />
                             </div>
-                            <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-app-muted mb-1.5">
+                            <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-app-muted mb-2">
                             Mensajes
                             </p>
-                            <p className="text-[14.5px] font-black text-app-primary">
+                            <p className="text-[16px] font-black text-app-primary">
                             Conversaciones
                             </p>
                         </button>
@@ -202,13 +202,13 @@ export const Home: React.FC = () => {
                             focus:outline-none focus-visible:ring-4 focus-visible:ring-[#7F77DD]/40
                             "
                             >
-                            <div className="w-9 h-9 rounded-xl bg-app-pill flex items-center justify-center text-app-accent mb-4 shadow-sm" aria-hidden="true">
-                                <User size={18} />
+                            <div className="w-14 h-14 rounded-2xl bg-app-pill flex items-center justify-center text-app-accent mb-5 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-app-accent group-hover:text-white" aria-hidden="true">
+                                <User size={26} />
                             </div>
-                            <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-app-muted mb-1.5">
+                            <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-app-muted mb-2">
                             Perfil
                             </p>
-                            <p className="text-[14.5px] font-black text-app-primary">
+                            <p className="text-[16px] font-black text-app-primary">
                             Mi espacio
                             </p>
                         </button>
@@ -281,35 +281,6 @@ export const Home: React.FC = () => {
                         </button>
                     </section>
                 </div>
-
-                <aside className="flex flex-col gap-6" aria-label="Panel lateral">
-                    <section 
-                        className="bg-app-surface-soft border border-app-soft rounded-[22px] p-6" 
-                        aria-labelledby="support-title"
-                    >
-                        <div className="flex items-center gap-3 mb-5">
-                            <div className="w-9 h-9 rounded-xl bg-app-pill flex items-center justify-center shadow-sm" aria-hidden="true">
-                                <Mail size={18} className="text-app-accent" />
-                            </div>
-                            <h2 id="support-title" className="text-[11px] font-black uppercase tracking-[0.15em] text-app-secondary">
-                                Soporte Humano
-                            </h2>
-                        </div>
-                        <p className="text-[15px] font-black text-app-primary mb-2 tracking-tight">
-                            ¿Necesitas ayuda?
-                        </p>
-                        <p className="text-[14px] text-app-secondary leading-relaxed mb-6 opacity-90">
-                            Si tienes cualquier duda o te sientes saturada, escríbenos. Estamos aquí para ti.
-                        </p>
-                        <a 
-                            href="mailto:hola@bluvi.com"
-                            aria-label="Enviar un correo a soporte: hola@bluvi.com"
-                            className="inline-flex items-center justify-center w-full bg-app-surface border border-app-soft/80 py-3 rounded-xl text-[13px] font-black text-app-accent hover:bg-app-surface-strong hover:border-app-accent/40 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
-                        >
-                            Hablar con Bluvi
-                        </a>
-                    </section>
-                </aside>
             </div>
 
             <footer className="mt-16 pt-8 border-t border-app-soft/10 dark:border-app-accent/10 flex flex-col md:flex-row justify-between items-center gap-4 text-app-muted">
