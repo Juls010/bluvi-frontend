@@ -51,7 +51,8 @@ export const EmailStep: React.FC = () => {
             }
         } catch (error: any) {
             console.error("Error comprobando email:", error);
-            setServerError('Error al verificar el correo. Inténtalo de nuevo.');
+            const backendMessage = error.response?.data?.message || 'Error al verificar el correo. Inténtalo de nuevo.';
+            setServerError(backendMessage);
         } finally {
             setIsLoading(false);
         }
