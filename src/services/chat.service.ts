@@ -8,6 +8,7 @@ export interface ConversationItem {
     main_photo: string | null;
     last_message_id: number | null;
     last_message: string | null;
+    last_message_type?: 'text' | 'audio';
     last_message_at: string | null;
     last_message_sender_id: number | null;
     last_message_read: boolean;
@@ -28,6 +29,10 @@ export interface ChatMessage {
     sender_id: number;
     receiver_id: number;
     content: string;
+    message_type?: 'text' | 'audio';
+    audio_url?: string;
+    duration_seconds?: number;
+    transcript?: string | null;
     created_at: string;
     read_at: string | null;
     is_read?: boolean;
@@ -51,6 +56,13 @@ interface ConversationMessagesResponse {
 interface SendMessageResponse {
     success: boolean;
     message: ChatMessage;
+}
+
+interface TranscriptionResponse {
+    success: boolean;
+    text: string;
+    updatedMessage?: ChatMessage;
+    message?: string;
 }
 
 export const getConversations = async (): Promise<ConversationItem[]> => {
@@ -124,4 +136,26 @@ export const reportUser = async (userId: number, reason?: string): Promise<void>
 export const getMyReports = async (): Promise<any[]> => {
     const response = await api.get('/chats/reports');
     return response.data.reports;
+};
+
+export const sendAudioMessage = async (
+    userId: number,
+    audioUrl: string,
+    durationSeconds: number,
+): Promise<ChatMessage> => {
+    const response = await api.post<SendMessageResponse>(`/chats/${userId}/messages/audio`, {
+        audioUrl,
+        durationSeconds,
+    });
+    return response.data.message;
+};
+
+export const transcribeAudioMessage = async (messageId: number, audioUrl: string, language = 'es'): Promise<TranscriptionResponse> => {
+    const response = await api.post<TranscriptionResponse>('/transcriptions', {
+        messageId,
+        audioUrl,
+        language,
+    });
+
+    return response.data;
 };

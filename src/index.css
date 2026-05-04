@@ -66,6 +66,8 @@
         --app-filter-icon-color: #6D5BD0;
         --app-messages-accent: #6C63D8;
         --app-messages-accent-bg: rgba(108, 99, 216, 0.10);
+        /* Background used for messages sent by the current user (light theme) */
+        --app-own-message-bg: rgba(127, 119, 221, 0.92);
         --scrollbar-thumb: rgba(128, 128, 128, 0.72);
         --scrollbar-thumb-hover: rgba(128, 128, 128, 0.72);
         --app-home-safe-dot: #3f4292;
@@ -124,6 +126,8 @@
         --app-filter-icon-color: #FFB16A;
         --app-messages-accent: #FFB16A;
         --app-messages-accent-bg: rgba(255, 177, 106, 0.2);
+        /* Muted background for outgoing messages in dark theme */
+        --app-own-message-bg: rgba(127, 119, 221, 0.18);
         --app-home-safe-dot: #FFB16A;
         --app-home-pace-icon: #ffffff;
         --app-surface-solid: #151941;

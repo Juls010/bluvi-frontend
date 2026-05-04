@@ -13,9 +13,10 @@ interface ProfileDetailProps {
     onClose: () => void;
     onLike: () => void;
     onPass: () => void;
+    onReportAndBlock?: () => void;
 }
 
-export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onLike, onPass }) => {
+export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onLike, onPass, onReportAndBlock }) => {
     console.log("🔍 INVESTIGANDO USUARIO:", user);
 
    
@@ -168,7 +169,10 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onClose, onL
                     </div>
                 </section>
                 <div className="flex justify-end mt-1">
-                    <button className="text-xs font-medium text-app-secondary hover:text-red-600 bg-app-surface-soft hover:bg-red-50 px-4 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-red-200 outline-none">
+                    <button 
+                        onClick={onReportAndBlock}
+                        className="text-xs font-medium text-app-secondary hover:text-red-600 bg-app-surface-soft hover:bg-red-50 px-4 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-red-200 outline-none"
+                    >
                         Denunciar y bloquear usuario
                     </button>
                 </div>

@@ -49,8 +49,8 @@ export const EmailStep: React.FC = () => {
             } else {
                 navigate('/register/photos');
             }
-        } catch (error: any) {
-            console.error("Error comprobando email:", error);
+        } catch (error: unknown) {
+            console.error('Error comprobando email:', error);
             setServerError('Error al verificar el correo. Inténtalo de nuevo.');
         } finally {
             setIsLoading(false);

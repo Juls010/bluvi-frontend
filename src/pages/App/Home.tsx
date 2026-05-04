@@ -29,6 +29,11 @@ export const Home: React.FC = () => {
         return cleaned.split(' ')[0];
     }, [user]);
 
+    const welcomeMessage = useMemo(() => {
+        const gender = (user as { id_gender?: number } | null)?.id_gender;
+        return gender === 2 ? 'Bienvenido' : 'Bienvenida';
+    }, [user]);
+
     const activityMessage = useMemo(() => {
         if (!hasNotifications && pendingMatchRequests === 0) {
             return "Todo está en calma por aquí. Disfruta de tu espacio.";
@@ -95,7 +100,7 @@ export const Home: React.FC = () => {
                 </span>
 
                 <h1 className="text-3xl md:text-5xl font-bold text-app-primary leading-[1.1] tracking-tight">
-                    Bienvenida, <span className="text-app-accent">{displayName}</span>
+                    {welcomeMessage}, <span className="text-app-accent">{displayName}</span>
                 </h1>
                 <p className="text-app-secondary text-base md:text-lg mt-4 max-w-2xl leading-relaxed">
                     ¿Qué te pide el cuerpo hoy? Navega a tu ritmo, sin presiones. Todo está pensado para ser tu refugio sensorial.

@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Ban, Flag, UserX, Loader2, MessageSquare } from 'lucide-react';
 import { getBlockedUsers, unblockUser, getMyReports } from '../../services/chat.service';
+import { ConfirmModal } from '../../components/ConfirmModal';
+import { toastQueue } from '../../components/Toast/GlobalToast';
 
 export const ReportsAndBlocks: React.FC = () => {
     const navigate = useNavigate();
     const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
     const [reports, setReports] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [unblockId, setUnblockId] = useState<number | null>(null);
 
     useEffect(() => {
         loadData();
@@ -29,15 +32,28 @@ export const ReportsAndBlocks: React.FC = () => {
         }
     };
 
-    const handleUnblock = async (userId: number) => {
-        if (!window.confirm('¿Quieres desbloquear a este usuario?')) return;
+    const handleUnblockClick = (userId: number) => {
+        setUnblockId(userId);
+    };
+
+    const confirmUnblock = async () => {
+        if (unblockId === null) return;
         
         try {
-            await unblockUser(userId);
-            setBlockedUsers(prev => prev.filter(u => u.id !== userId));
+            await unblockUser(unblockId);
+            setBlockedUsers(prev => prev.filter(u => u.id !== unblockId));
+            toastQueue.add(
+                { message: 'Usuario desbloqueado correctamente', type: 'success' },
+                { timeout: 4000 }
+            );
         } catch (error) {
             console.error('Error unblocking user:', error);
-            alert('No se pudo desbloquear al usuario.');
+            toastQueue.add(
+                { message: 'No se pudo desbloquear al usuario.', type: 'error' },
+                { timeout: 5000 }
+            );
+        } finally {
+            setUnblockId(null);
         }
     };
 
@@ -91,7 +107,7 @@ export const ReportsAndBlocks: React.FC = () => {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => handleUnblock(user.id)}
+                                    onClick={() => handleUnblockClick(user.id)}
                                     className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-app-accent-strong hover:bg-app-accent-soft/20 rounded-xl transition-all active:scale-95"
                                 >
                                     <UserX size={14} />
@@ -159,6 +175,15 @@ export const ReportsAndBlocks: React.FC = () => {
                     </div>
                 )}
             </section>
+
+            <ConfirmModal 
+                isOpen={unblockId !== null}
+                title="Desbloquear usuario"
+                description="¿Estás seguro de que deseas desbloquear a este usuario? Volveréis a poder interactuar si coincidís."
+                confirmText="Desbloquear"
+                onConfirm={confirmUnblock}
+                onCancel={() => setUnblockId(null)}
+            />
         </article>
     );
 };

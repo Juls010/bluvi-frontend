@@ -11,10 +11,16 @@ import {
     deleteConversation,
     reportUser,
     blockUser,
+    sendAudioMessage,
+    transcribeAudioMessage,
     type ChatCounterpart,
     type ChatMessage,
 } from '../services/chat.service';
 import { connectRealtime, disconnectRealtime } from '../services/realtime.service';
+import { uploadAudioMessage } from '../services/audioService';
+import { AudioRecorder } from '../components/AudioRecorder';
+import { AudioMessage } from '../components/AudioMessage';
+import { DropdownMenu, DropdownMenuButton, DropdownMenuSeparator } from '../components/DropdownMenu';
 
 interface RealtimeChatPayload {
     fromUserId: number;
@@ -22,8 +28,17 @@ interface RealtimeChatPayload {
     isTyping?: boolean;
     message?: ChatMessage;
     lastReadMessageId?: number;
+    lastDeliveredMessageId?: number;
     byUserId?: number;
 }
+
+type ConversationResponsePartial = {
+    counterpart?: ChatCounterpart;
+    messages?: ChatMessage[];
+    hasMore?: boolean;
+    isBlockedByMe?: boolean;
+    isBlockedByOther?: boolean;
+};
 
 const PAGE_SIZE = 30;
 const TYPING_STOP_DELAY = 1200;
@@ -49,6 +64,7 @@ export const ChatDetail: React.FC = () => {
     const [canShowOnlineStatus, setCanShowOnlineStatus] = useState(true);
     const [showPicker, setShowPicker] = useState(false);
     const [showOptions, setShowOptions] = useState(false);
+    const [isOptionsClosing, setIsOptionsClosing] = useState(false);
     const [isBlockedByMe, setIsBlockedByMe] = useState(false);
     const [isBlockedByOther, setIsBlockedByOther] = useState(false);
     const [showBlockModal, setShowBlockModal] = useState(false);
@@ -57,17 +73,31 @@ export const ChatDetail: React.FC = () => {
     const [reportSuccess, setReportSuccess] = useState(false);
     const [isBlocking, setIsBlocking] = useState(false);
     const [isReporting, setIsReporting] = useState(false);
+    const [isRecordingAudio, setIsRecordingAudio] = useState(false);
+    const [hasRecordedAudio, setHasRecordedAudio] = useState(false);
+    const [transcribingMessageIds, setTranscribingMessageIds] = useState<Set<number>>(new Set());
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLElement | null>(null);
     const typingStopTimerRef = useRef<number | null>(null);
     const isPrependingRef = useRef(false);
+    const optionsMenuRef = useRef<HTMLDivElement>(null);
+    const optionsButtonRef = useRef<HTMLButtonElement>(null);
+    const optionsCloseTimerRef = useRef<number | null>(null);
 
     const currentUserRaw = localStorage.getItem('user');
     const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) as { id?: number } : null;
     const currentUserId = Number(currentUser?.id);
     const reduceMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prevIsRecordingRef = useRef(isRecordingAudio);
+
+    useEffect(() => {
+        if (prevIsRecordingRef.current && !isRecordingAudio) {
+            setHasRecordedAudio(true);
+        }
+        prevIsRecordingRef.current = isRecordingAudio;
+    }, [isRecordingAudio]);
 
     const sendTypingState = (isTyping: boolean) => {
         const socket = connectRealtime();
@@ -108,10 +138,10 @@ export const ChatDetail: React.FC = () => {
             setCounterpart(response.counterpart);
             setMessages(response.messages || []);
             setHasMore(Boolean(response.hasMore));
-            setIsBlockedByMe(Boolean((response as any).isBlockedByMe));
-            setIsBlockedByOther(Boolean((response as any).isBlockedByOther));
+            const resp = response as ConversationResponsePartial;
+            setIsBlockedByMe(Boolean(resp.isBlockedByMe));
+            setIsBlockedByOther(Boolean(resp.isBlockedByOther));
             
-            // Consultar estado online del otro usuario
             const onlineStatus = await checkUserOnline(chatUserId);
             setIsRemoteUserOnline(onlineStatus.isOnline);
             setCanShowOnlineStatus(onlineStatus.canShowOnlineStatus);
@@ -190,6 +220,102 @@ export const ChatDetail: React.FC = () => {
         } finally {
             setSending(false);
         }
+    };
+
+    const handleSendAudio = async (audioBlob: Blob, duration: number) => {
+        if (sending || !Number.isInteger(chatUserId) || chatUserId <= 0) {
+            return;
+        }
+
+        try {
+            setSending(true);
+            const { url: audioUrl, error } = await uploadAudioMessage(audioBlob, currentUserId);
+
+            if (error || !audioUrl) {
+                throw new Error(error || 'No se pudo subir el audio');
+            }
+
+            const sent = await sendAudioMessage(chatUserId, audioUrl, duration);
+            setMessages((prev) => [...prev, { ...sent, is_read: false, is_delivered: false }]);
+        } catch (error) {
+            console.error('Error enviando audio:', error);
+        } finally {
+            setSending(false);
+            setHasRecordedAudio(false);
+        }
+    };
+
+    const handleTranscribeAudio = async (message: ChatMessage) => {
+        if (!message.audio_url || transcribingMessageIds.has(message.id_message)) {
+            return;
+        }
+
+        try {
+            setTranscribingMessageIds((prev) => {
+                const next = new Set(prev);
+                next.add(message.id_message);
+                return next;
+            });
+
+            const result = await transcribeAudioMessage(message.id_message, message.audio_url);
+            const transcript = result.updatedMessage?.transcript || result.text;
+
+            setMessages((prev) => prev.map((item) => (
+                item.id_message === message.id_message
+                    ? { ...item, transcript }
+                    : item
+            )));
+        } catch (error) {
+            const apiMessage = error && typeof error === 'object' && 'response' in error
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+                : null;
+
+            console.error('Error transcribiendo audio:', apiMessage || error);
+
+            setMessages((prev) => prev.map((item) => (
+                item.id_message === message.id_message
+                    ? { ...item, transcript: 'No es posible transcribir' }
+                    : item
+            )));
+        } finally {
+            setTranscribingMessageIds((prev) => {
+                const next = new Set(prev);
+                next.delete(message.id_message);
+                return next;
+            });
+        }
+    };
+
+    const closeOptionsMenu = (returnFocus = true) => {
+        if (!showOptions || isOptionsClosing) {
+            return;
+        }
+
+        setIsOptionsClosing(true);
+
+        if (optionsCloseTimerRef.current) {
+            window.clearTimeout(optionsCloseTimerRef.current);
+        }
+
+        optionsCloseTimerRef.current = window.setTimeout(() => {
+            setShowOptions(false);
+            setIsOptionsClosing(false);
+            optionsCloseTimerRef.current = null;
+
+            if (returnFocus) {
+                optionsButtonRef.current?.focus();
+            }
+        }, 170);
+    };
+
+    const openOptionsMenu = () => {
+        if (optionsCloseTimerRef.current) {
+            window.clearTimeout(optionsCloseTimerRef.current);
+            optionsCloseTimerRef.current = null;
+        }
+
+        setIsOptionsClosing(false);
+        setShowOptions(true);
     };
 
     const handleEnterSend = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -298,7 +424,7 @@ export const ChatDetail: React.FC = () => {
             }
         };
 
-        const onRead = (payload: any) => {
+        const onRead = (payload: RealtimeChatPayload) => {
             if (payload.byUserId !== chatUserId || !payload.lastReadMessageId) {
                 return;
             }
@@ -312,7 +438,7 @@ export const ChatDetail: React.FC = () => {
             );
         };
 
-        const onDelivered = (payload: any) => {
+        const onDelivered = (payload: RealtimeChatPayload) => {
             if (payload.byUserId !== chatUserId || !payload.lastDeliveredMessageId) {
                 return;
             }
@@ -380,12 +506,63 @@ export const ChatDetail: React.FC = () => {
     }, [messages, isTypingRemote, loading]);
 
     useEffect(() => {
-        const handleClickOutside = () => setShowOptions(false);
+        const handlePointerDownOutside = (e: PointerEvent) => {
+            const target = e.target as Node;
+
+            if (
+                optionsMenuRef.current && !optionsMenuRef.current.contains(target) &&
+                optionsButtonRef.current && !optionsButtonRef.current.contains(target)
+            ) {
+                closeOptionsMenu();
+            }
+        };
+        
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && showOptions) {
+                closeOptionsMenu();
+            }
+            
+            // Focus trap: mantener el foco dentro del menú cuando está abierto
+            if (e.key === 'Tab' && showOptions && optionsMenuRef.current) {
+                const buttons = Array.from(optionsMenuRef.current.querySelectorAll('button')) as HTMLButtonElement[];
+                if (buttons.length === 0) return;
+                
+                const activeElement = document.activeElement;
+                const firstButton = buttons[0];
+                const lastButton = buttons[buttons.length - 1];
+                
+                if (e.shiftKey) {
+                    // Shift+Tab
+                    if (activeElement === firstButton) {
+                        e.preventDefault();
+                        lastButton.focus();
+                    }
+                } else {
+                    // Tab
+                    if (activeElement === lastButton) {
+                        e.preventDefault();
+                        firstButton.focus();
+                    }
+                }
+            }
+        };
+        
         if (showOptions) {
-            window.addEventListener('click', handleClickOutside);
+            document.addEventListener('pointerdown', handlePointerDownOutside, true);
+            document.addEventListener('keydown', handleKeyDown);
+            // Dar focus al primer botón cuando se abre el menú
+            setTimeout(() => {
+                const firstButton = optionsMenuRef.current?.querySelector('button');
+                (firstButton as HTMLButtonElement)?.focus();
+            }, 0);
         }
+        
         return () => {
-            window.removeEventListener('click', handleClickOutside);
+            document.removeEventListener('pointerdown', handlePointerDownOutside, true);
+            document.removeEventListener('keydown', handleKeyDown);
+            if (optionsCloseTimerRef.current) {
+                window.clearTimeout(optionsCloseTimerRef.current);
+            }
             if (typingStopTimerRef.current) {
                 window.clearTimeout(typingStopTimerRef.current);
             }
@@ -409,14 +586,14 @@ export const ChatDetail: React.FC = () => {
                         <button
                             onClick={() => navigate(-1)}
                             aria-label="Volver a la lista de conversaciones"
-                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-app-surface-soft text-app-accent transition-all active:scale-90 focus-visible:outline-none"
+                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-app-surface-soft text-app-accent transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/50 focus-visible:ring-offset-2 focus-visible:shadow-lg"
                         >
                             <ArrowLeft size={22} strokeWidth={2} />
                         </button>
 
                         <Link 
                             to={`/app/user/${chatUserId}`}
-                            className="flex items-center gap-3 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 rounded-2xl px-1 py-1"
+                            className="flex items-center gap-3 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-lg rounded-2xl px-1 py-1"
                         >
                             <div className="relative">
                                 <img
@@ -447,45 +624,53 @@ export const ChatDetail: React.FC = () => {
 
                     <div className="relative">
                         <button
+                            ref={optionsButtonRef}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                setShowOptions(!showOptions);
+                                if (showOptions) {
+                                    closeOptionsMenu();
+                                } else {
+                                    openOptionsMenu();
+                                }
                             }}
-                            className="w-10 h-10 flex items-center justify-center rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
+                            className="w-10 h-10 flex items-center justify-center rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
                             aria-label="Más opciones del chat"
+                            aria-expanded={showOptions}
+                            aria-haspopup="menu"
                         >
                             <MoreVertical size={20} strokeWidth={1.8} />
                         </button>
 
                         {showOptions && (
-                            <div className="absolute right-0 top-12 w-56 bg-app-surface-strong border border-app-soft rounded-2xl shadow-xl z-50 overflow-hidden animate-navbar-menu">
-                                <div className="py-2">
-                                    <button
-                                        onClick={() => void handleReportUser()}
-                                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-app-primary hover:bg-app-surface-soft transition-colors"
-                                    >
-                                        <Flag size={16} className="text-app-muted" />
-                                        Denunciar usuario
-                                    </button>
-                                    {!isBlockedByMe && (
-                                        <button
-                                            onClick={() => void handleBlockUser()}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-app-primary hover:bg-app-surface-soft transition-colors"
-                                        >
-                                            <ShieldOff size={16} className="text-app-muted" />
-                                            Bloquear usuario
-                                        </button>
-                                    )}
-                                    <div className="h-px bg-app-soft mx-4 my-1" />
-                                    <button
-                                        onClick={() => void handleDeleteConversation()}
-                                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
-                                    >
-                                        <Trash2 size={16} />
-                                        Borrar conversación
-                                    </button>
-                                </div>
-                            </div>
+                            <DropdownMenu
+                                ref={optionsMenuRef}
+                                label="Menú de chat"
+                                isOpen={showOptions}
+                                isClosing={isOptionsClosing}
+                                className="bg-app-surface-strong"
+                            >
+                                <DropdownMenuButton onClick={() => { closeOptionsMenu(false); void handleReportUser(); }}>
+                                    <div className="flex items-center gap-3">
+                                        <Flag size={16} className="text-app-muted flex-shrink-0" />
+                                        <span>Denunciar usuario</span>
+                                    </div>
+                                </DropdownMenuButton>
+                                {!isBlockedByMe && (
+                                    <DropdownMenuButton onClick={() => { closeOptionsMenu(false); void handleBlockUser(); }}>
+                                        <div className="flex items-center gap-3">
+                                            <ShieldOff size={16} className="text-app-muted flex-shrink-0" />
+                                            <span>Bloquear usuario</span>
+                                        </div>
+                                    </DropdownMenuButton>
+                                )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuButton onClick={() => { closeOptionsMenu(false); void handleDeleteConversation(); }} danger>
+                                    <div className="flex items-center gap-3">
+                                        <Trash2 size={16} className="flex-shrink-0" />
+                                        <span>Borrar conversación</span>
+                                    </div>
+                                </DropdownMenuButton>
+                            </DropdownMenu>
                         )}
                     </div>
                 </header>
@@ -529,7 +714,7 @@ export const ChatDetail: React.FC = () => {
                                 className={`flex items-end gap-2.5 ${isMe ? 'justify-end' : 'justify-start'} ${isSameSender ? 'mt-1' : 'mt-3'}`}
                             >
                                 {!isMe && (
-                                    <div className="w-7 flex-none">
+                                    <div className="w-7 flex-none self-end">
                                         {(!messages[index + 1] || messages[index + 1].sender_id === currentUserId) && (
                                             <img
                                                 src={counterpart?.main_photo || 'https://via.placeholder.com/120'}
@@ -540,22 +725,35 @@ export const ChatDetail: React.FC = () => {
                                     </div>
                                 )}
 
-                                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[75%]`}>
-                                    <div
-                                        className={`
+                                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} ${msg.message_type === 'audio' ? 'w-full' : 'max-w-[75%]'}`}>
+                                    {msg.message_type === 'audio' && msg.audio_url ? (
+                                        <div className="mb-1">
+                                            <AudioMessage
+                                                audioUrl={msg.audio_url}
+                                                duration={msg.duration_seconds || 0}
+                                                isOwn={isMe}
+                                                transcript={msg.transcript}
+                                                isTranscribing={transcribingMessageIds.has(msg.id_message)}
+                                                onTranscribe={!msg.transcript ? () => void handleTranscribeAudio(msg) : undefined}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className={`
                                                 px-4 py-2.5 text-[15px] leading-7
                                             ${isMe
                                                     ? 'text-app-on-accent rounded-2xl rounded-br-md shadow-md'
                                                     : 'bg-app-surface text-app-primary rounded-2xl rounded-bl-md shadow-sm border border-app-soft'
                                             }
                                         `}
-                                        style={{
-                                            overflowWrap: 'anywhere',
-                                            ...(isMe ? { backgroundColor: 'var(--app-accent)' } : {}),
-                                        }}
-                                    >
-                                        {msg.content}
-                                    </div>
+                                            style={{
+                                                overflowWrap: 'anywhere',
+                                                ...(isMe ? { backgroundColor: 'var(--app-own-message-bg)' } : {}),
+                                            }}
+                                        >
+                                            {msg.content}
+                                        </div>
+                                    )}
 
                                     <div className="flex items-center gap-1 mt-1 px-1">
                                         <span className="text-[11px] text-app-muted mr-1">{formatHour(msg.created_at)}</span>
@@ -611,60 +809,74 @@ export const ChatDetail: React.FC = () => {
                         </div>
                     ) : (
                         <div className="flex items-end gap-2">
-                            <div className="flex gap-1 pb-2">
-                                <button className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20" aria-label="Adjuntar imagen">
-                                    <Image size={20} strokeWidth={1.8} />
-                                </button>
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowPicker((o) => !o)}
-                                        aria-controls={typingPickerId}
-                                        aria-expanded={showPicker}
-                                        aria-label="Abrir selector de emoji"
-                                        className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20"
-                                    >
-                                        <Smile size={20} strokeWidth={1.8} />
+                            {!isRecordingAudio && (
+                                <div className="flex gap-1 pb-2">
+                                    <button className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-lg" aria-label="Adjuntar imagen">
+                                        <Image size={20} strokeWidth={1.8} />
                                     </button>
+                                    <div className="relative">
+                                        <button
+                                            onClick={() => setShowPicker((o) => !o)}
+                                            aria-controls={typingPickerId}
+                                            aria-expanded={showPicker}
+                                            aria-label="Abrir selector de emoji"
+                                            className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
+                                        >
+                                            <Smile size={20} strokeWidth={1.8} />
+                                        </button>
 
-                                    {showPicker && (
-                                        <div id={typingPickerId} className="absolute bottom-12 left-0 z-50">
-                                            <EmojiPicker
-                                                onEmojiClick={handleEmojiClick}
-                                                theme={Theme.LIGHT}
-                                                lazyLoadEmojis={true}
-                                            />
-                                        </div>
-                                    )}
+                                        {showPicker && (
+                                            <div id={typingPickerId} className="absolute bottom-12 left-0 z-50">
+                                                <EmojiPicker
+                                                    onEmojiClick={handleEmojiClick}
+                                                    theme={Theme.LIGHT}
+                                                    lazyLoadEmojis={true}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
-                            <div className="flex-1 bg-app-surface border border-app-soft rounded-2xl px-4 py-2.5 shadow-sm flex items-end gap-2">
-                                <textarea
-                                    rows={1}
-                                    placeholder="Escribe un mensaje..."
-                                    aria-label="Escribe un mensaje"
-                                    value={inputText}
-                                    ref={inputRef}
-                                    onChange={(event) => {
-                                        handleInputChange(event.target.value);
-                                        event.target.style.height = 'auto';
-                                        event.target.style.height = `${Math.min(event.target.scrollHeight, 120)}px`;
-                                    }}
-                                    onKeyDown={handleEnterSend}
-                                    className="flex-1 bg-transparent outline-none text-app-primary placeholder:text-app-muted text-[15px] resize-none leading-relaxed max-h-[120px] overflow-y-auto"
-                                    style={{ minHeight: '24px' }}
+                            {!isRecordingAudio && !hasRecordedAudio && (
+                                <div className="flex-1 bg-app-surface border border-app-soft rounded-2xl px-4 py-2.5 shadow-sm flex items-end gap-2">
+                                    <textarea
+                                        rows={1}
+                                        placeholder="Escribe un mensaje..."
+                                        aria-label="Escribe un mensaje"
+                                        value={inputText}
+                                        ref={inputRef}
+                                        onChange={(event) => {
+                                            handleInputChange(event.target.value);
+                                            event.target.style.height = 'auto';
+                                            event.target.style.height = `${Math.min(event.target.scrollHeight, 120)}px`;
+                                        }}
+                                        onKeyDown={handleEnterSend}
+                                        className="flex-1 bg-transparent outline-none text-app-primary placeholder:text-app-muted text-[15px] resize-none leading-relaxed max-h-[120px] overflow-y-auto"
+                                        style={{ minHeight: '24px' }}
+                                    />
+                                </div>
+                            )}
+
+                            {!hasRecordedAudio && inputText.trim() ? (
+                                <button
+                                    onClick={() => void handleSendMessage()}
+                                    aria-label="Enviar mensaje"
+                                    className="w-11 h-11 flex items-center justify-center rounded-full shadow-md transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-xl text-app-on-accent"
+                                    style={{ backgroundColor: 'var(--app-accent)' }}
+                                    disabled={sending}
+                                >
+                                    <Send size={18} strokeWidth={2} className="translate-x-0.5 -translate-y-0.5" />
+                                </button>
+                            ) : (
+                                <AudioRecorder
+                                    onSendAudio={handleSendAudio}
+                                    disabled={sending}
+                                    onRecordingStateChange={setIsRecordingAudio}
+                                    onRecordingCancelled={() => setHasRecordedAudio(false)}
+                                    fullWidth={isRecordingAudio || hasRecordedAudio}
                                 />
-                            </div>
-
-                            <button
-                                onClick={() => void handleSendMessage()}
-                                aria-label="Enviar mensaje"
-                                className={`w-11 h-11 flex items-center justify-center rounded-full shadow-md transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/30 ${inputText.trim() ? 'text-app-on-accent' : 'bg-app-surface-soft text-app-muted'}`}
-                                style={inputText.trim() ? { backgroundColor: 'var(--app-accent)' } : undefined}
-                                disabled={!inputText.trim() || sending}
-                            >
-                                <Send size={18} strokeWidth={2} className={inputText.trim() ? 'translate-x-0.5 -translate-y-0.5' : ''} />
-                            </button>
+                            )}
                         </div>
                     )}
                 </div>

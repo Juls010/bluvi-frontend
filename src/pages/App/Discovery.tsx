@@ -4,16 +4,19 @@ import { ProfileDetail } from '../../components/ProfileDetail';
 import { Button } from '../../components/Button';
 import { IceBreakerModal } from '../../components/IceBreakerModal';
 import { DiscoveryFilter, FilterTriggerButton, type FilterData } from '../../components/DiscoveryFilter';
-import { getExploreUsers, markDiscoverySeen } from '../../services/user.service';
+import { getExploreUsers, markDiscoverySeen, reportUser, blockUser } from '../../services/user.service';
 import { sendMatchRequest } from '../../services/match.service';
 import { authService } from '../../services/auth.service';
 import type { User } from '../../types/User.types';
+import { ReportUserModal } from '../../components/ReportUserModal';
+import { toastQueue } from '../../components/Toast/GlobalToast';
 
 export const Discovery: React.FC = () => {
   const queryClient = useQueryClient();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sendingLike, setSendingLike] = useState(false);
   const [showMatchModal, setShowMatchModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [includeSeenProfiles, setIncludeSeenProfiles] = useState(false);
   const [catalogOptions, setCatalogOptions] = useState({
@@ -138,6 +141,31 @@ export const Discovery: React.FC = () => {
     }
   };
 
+  const handleConfirmReport = async (reason: string) => {
+    if (!currentUser) return;
+    try {
+      // 1. Reportar
+      await reportUser(currentUser.id_user, reason);
+      // 2. Bloquear
+      await blockUser(currentUser.id_user);
+      
+      toastQueue.add(
+        { message: 'Usuario reportado y bloqueado correctamente', type: 'success' },
+        { timeout: 5000 }
+      );
+      
+      await queryClient.invalidateQueries({ queryKey: ['explore-users'] });
+      setShowReportModal(false);
+      handleNext();
+    } catch (error) {
+      console.error('Error reportando/bloqueando usuario:', error);
+      toastQueue.add(
+        { message: 'Hubo un error al reportar. Por favor, inténtalo de nuevo.', type: 'error' },
+        { timeout: 6000 }
+      );
+    }
+  };
+
   if (isLoading && users.length === 0) return <div className="pt-20 text-center text-app-primary font-medium">Cargando perfiles afines...</div>;
 
   if (isFinished && users.length === 0 && !includeSeenProfiles) {
@@ -175,6 +203,14 @@ export const Discovery: React.FC = () => {
     <div className="w-full pb-24 pt-2 animate-fade-in motion-reduce:animate-none relative text-app-primary">
       {showMatchModal && currentUser && (
         <IceBreakerModal user={currentUser} onSend={handleSendIcebreaker} onCancel={() => setShowMatchModal(false)} />
+      )}
+
+      {showReportModal && currentUser && (
+        <ReportUserModal 
+          user={currentUser} 
+          onConfirm={handleConfirmReport} 
+          onCancel={() => setShowReportModal(false)} 
+        />
       )}
 
       <DiscoveryFilter
@@ -217,6 +253,7 @@ export const Discovery: React.FC = () => {
             }}
             onLike={() => setShowMatchModal(true)}
             onPass={handlePass}
+            onReportAndBlock={() => setShowReportModal(true)}
             onClose={() => {}}
           />
         </div>

@@ -7,50 +7,13 @@ import { useRegister } from '../../context/RegisterContext';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 import { Info } from 'lucide-react';
 import { CalendarDate, parseDate } from '@internationalized/date';
+import { isValidIsoDate, normalizeIsoDate, isAtLeastAge } from './ageStepUtils';
 
 const MIN_AGE = 18;
 
 const getMaxBirthDate = () => {
     const today = new Date();
     return `${today.getFullYear() - MIN_AGE}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-};
-
-export const isValidIsoDate = (value: string) => {
-    const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!isoDateRegex.test(value)) return false;
-
-    const [year, month, day] = value.split('-').map(Number);
-    const date = new Date(Date.UTC(year, month - 1, day));
-
-    return (
-        date.getUTCFullYear() === year &&
-        date.getUTCMonth() === month - 1 &&
-        date.getUTCDate() === day
-    );
-};
-
-export const normalizeIsoDate = (value: string) => {
-    const match = value.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-    if (!match) return value;
-
-    const [, year, month, day] = match;
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-};
-
-export const isAtLeastAge = (birthDateIso: string, minAge: number) => {
-    const [year, month, day] = birthDateIso.split('-').map(Number);
-    const today = new Date();
-
-    let age = today.getFullYear() - year;
-    const hasNotHadBirthdayThisYear =
-        today.getMonth() + 1 < month ||
-        (today.getMonth() + 1 === month && today.getDate() < day);
-
-    if (hasNotHadBirthdayThisYear) {
-        age -= 1;
-    }
-
-    return age >= minAge;
 };
 
 export const AgeStep: React.FC = () => {

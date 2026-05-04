@@ -39,8 +39,6 @@ const UserProfilePage = lazy(() => import('../pages/App/UserProfile').then((m) =
 const SettingsPage = lazy(() => import('../pages/Settings/Settings').then((m) => ({ default: m.Settings })));
 
 const ReportsAndBlocksPage = lazy(() => import('../pages/Settings/ReportsAndBlocks').then(m => ({ default: m.ReportsAndBlocks })));
-
-// Legal & Privacy Pages
 const PrivacyPolicy = lazy(() => import('../pages/Privacy/PrivacyPolicy'));
 const CookiePolicy = lazy(() => import('../pages/Privacy/CookiesPolicy'));
 const Accessibility = lazy(() => import('../pages/Privacy/Accessibility'));

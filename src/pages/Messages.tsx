@@ -308,7 +308,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                         to={`/app/chat/${conversation.id_user}`}
                         aria-label={`
                             Chat con ${conversation.first_name} ${conversation.last_name}.
-                            Último mensaje: ${conversation.last_message || 'Sin mensajes todavía'}
+                            Último mensaje: ${conversation.last_message_type === 'audio' ? 'Nota de audio' : conversation.last_message || 'Sin mensajes todavía'}
                         `}
                         className="flex items-center gap-4 p-4 rounded-[22px] bg-app-surface/80 dark:bg-app-surface-strong/60 border border-white dark:border-white/10 transition-all duration-300 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
                     >
@@ -369,6 +369,11 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                                 <span className="truncate">
                                     {typingUsers[conversation.id_user] ? (
                                         <span className="text-app-accent font-bold animate-pulse">escribiendo…</span>
+                                    ) : conversation.last_message_type === 'audio' ? (
+                                        <span className="flex items-center gap-1 text-app-secondary">
+                                            <span>🎙️</span>
+                                            <span>Nota de audio</span>
+                                        </span>
                                     ) : (
                                         conversation.last_message || 'Empieza la conversación'
                                     )}
@@ -516,7 +521,7 @@ export const Messages: React.FC = () => {
     }
 
     return (
-        <div className="w-full max-w-4xl mx-auto px-6 py-4 animate-fade-in motion-reduce:animate-none">
+        <div className="w-full max-w-5xl mx-auto px-6 py-4 animate-fade-in motion-reduce:animate-none">
             <ContactsDrawer 
                 isOpen={showContacts} 
                 onClose={() => setShowContacts(false)} 

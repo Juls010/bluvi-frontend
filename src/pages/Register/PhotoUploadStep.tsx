@@ -6,6 +6,7 @@ import { AnimatedStep } from '../../components/AnimatedStep';
 import { useRegister } from '../../context/RegisterContext';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 import { uploadUserPhoto } from '../../services/uploadService';
+import { toastQueue } from '../../components/Toast/GlobalToast';
 
 export const PhotoUploadStep = () => {
     const navigate = useNavigate();
@@ -33,11 +34,12 @@ export const PhotoUploadStep = () => {
                 
                 if (error) {
                     console.error('Error al subir foto:', error);
-                    alert('Hubo un error al subir la foto. Por favor, inténtalo de nuevo.');
+                    toastQueue.add({ message: 'Hubo un error al subir la foto. Por favor, inténtalo de nuevo.', type: 'error' }, { timeout: 6000 });
                 } else if (url) {
                     const newPhotos = [...photos];
                     newPhotos[selectingIndex] = url;
                     updateFormData({ photos: newPhotos });
+                    toastQueue.add({ message: 'Foto subida correctamente', type: 'success' }, { timeout: 5000 });
                 }
             } finally {
                 setLoadingIndices(prev => {
@@ -46,7 +48,6 @@ export const PhotoUploadStep = () => {
                     return next;
                 });
                 setSelectingIndex(null);
-                // Reset input to allow selecting same file again if needed
                 if (fileInputRef.current) fileInputRef.current.value = '';
             }
         }

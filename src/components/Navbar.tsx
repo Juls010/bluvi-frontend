@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/icon.svg';
+import { DropdownMenu, DropdownMenuButton, DropdownMenuLink } from './DropdownMenu';
 import { useNotifications } from '../context/NotificationContext';
 import { useAuth } from '../context/AuthContext';
 import { getMyProfile } from '../services/user.service';
@@ -409,45 +410,35 @@ export const Navbar: React.FC = () => {
                 </button>
 
                 {isUserMenuOpen && (
-                    <div
+                    <DropdownMenu
                         id="user-navbar-menu"
-                        role="menu"
-                        aria-label="Menú de cuenta"
-                        className={`absolute right-0 mt-2 w-56 rounded-2xl border border-app-soft bg-app-surface-strong backdrop-blur-md shadow-xl p-1.5 origin-top-right motion-reduce:animate-none ${isUserMenuClosing ? 'animate-navbar-menu-out' : 'animate-navbar-menu'}`}
+                        label="Menú de cuenta"
+                        isOpen={isUserMenuOpen}
+                        isClosing={isUserMenuClosing}
                     >
                         <p className="px-3 py-2 text-xs font-semibold text-app-secondary" aria-live="polite">
                             Sesión iniciada como {displayName}
                         </p>
-                        <Link
+                        <DropdownMenuLink
                             ref={firstMenuItemRef}
                             to="/app/profile"
-                            role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
-                            data-navbar-menu-item="true"
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ver mi perfil
-                        </Link>
-                        <Link
+                        </DropdownMenuLink>
+                        <DropdownMenuLink
                             to="/app/settings"
-                            role="menuitem"
                             onClick={() => setIsUserMenuOpen(false)}
-                            data-navbar-menu-item="true"
-                            className="block rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-light-purple"
                         >
                             Ajustes de cuenta
-                        </Link>
-                        <button
-                            type="button"
-                            role="menuitem"
-                            data-navbar-menu-item="true"
-                            data-navbar-menu-danger="true"
+                        </DropdownMenuLink>
+                        <DropdownMenuButton
                             onClick={handleLogout}
-                            className="w-full text-left rounded-xl px-3 py-2 text-sm font-medium text-app-primary border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
+                            danger
                         >
                             Cerrar sesión
-                        </button>
-                    </div>
+                        </DropdownMenuButton>
+                    </DropdownMenu>
                 )}
             </div>
         </nav>

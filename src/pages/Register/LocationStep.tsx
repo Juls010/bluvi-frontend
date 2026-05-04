@@ -26,7 +26,13 @@ export const LocationStep = () => {
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const sanitizeQuery = (value: string) =>
-        value.replace(/[\u0000-\u001F\u007F]/g, '').slice(0, MAX_CITY_QUERY_LENGTH);
+        Array.from(value)
+            .filter((char) => {
+                const code = char.charCodeAt(0);
+                return code > 31 && code !== 127;
+            })
+            .join('')
+            .slice(0, MAX_CITY_QUERY_LENGTH);
 
     const normalizedQuery = query.trim().toLowerCase();
     const normalizedSelectedCity = formData.city.trim().toLowerCase();
@@ -39,9 +45,6 @@ export const LocationStep = () => {
         const trimmedQuery = query.trim();
 
         if (trimmedQuery.length < 2) {
-            setSuggestions([]);
-            setIsLoading(false);
-            setCitySearchError(null);
             return;
         }
 
@@ -113,7 +116,12 @@ export const LocationStep = () => {
         const normalizedTypedValue = sanitizedValue.trim().toLowerCase();
         const normalizedSelectedCity = formData.city.trim().toLowerCase();
 
-        if (sanitizedValue.length === 0) {
+        if (sanitizedValue.length < 2) {
+            setSuggestions([]);
+            setIsLoading(false);
+            setCitySearchError(null);
+            setActiveIndex(-1);
+            setShowSuggestions(false);
             updateFormData({ city: '' });
         } else if (normalizedTypedValue !== normalizedSelectedCity) {
             updateFormData({ city: '' });

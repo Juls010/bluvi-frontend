@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toTitleCase, sanitizeNameInput } from '../NameStep';
+import { toTitleCase, sanitizeNameInput } from '../nameStepUtils';
 
 describe('NameStep Logic Helpers', () => {
     describe('toTitleCase', () => {

@@ -33,6 +33,17 @@ Sigue estos pasos para configurar el proyecto en tu máquina local:
   * **framer-motion**: Animaciones y transiciones suaves.
   * **react-aria-components**: Componentes UI con accesibilidad de alto nivel.
   * **lucide-react**: Iconografía profesional.
+
+## Transcripción de audios
+
+Los audios del chat no se transcriben automáticamente. El flujo es manual para ahorrar coste y respetar la intención del usuario:
+
+1. El usuario graba y envía el audio con normalidad.
+2. El mensaje de audio muestra un botón **Transcribir**.
+3. Al pulsarlo, el frontend llama al backend y el servidor usa OpenAI Whisper para guardar y devolver el texto.
+4. La transcripción aparece debajo del reproductor de audio en el mismo mensaje.
+
+Para que funcione, el backend necesita `OPENAI_API_KEY` en su `.env`.
     
 
 ## Enfoque en Neurodiversidad

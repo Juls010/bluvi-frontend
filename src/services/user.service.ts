@@ -68,3 +68,11 @@ export const updateAccessibilityPreferences = async (
     const response = await api.patch<{ accessibility: AccessibilityPreferences }>('/users/accessibility', accessibility);
     return response.data.accessibility;
 };
+
+export const reportUser = async (userId: number, reason: string): Promise<void> => {
+    await api.post(`/chats/${userId}/report`, { reason });
+};
+
+export const blockUser = async (userId: number): Promise<void> => {
+    await api.post(`/chats/${userId}/block`);
+};

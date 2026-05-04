@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { isValidIsoDate, normalizeIsoDate, isAtLeastAge } from '../AgeStep';
+import { isValidIsoDate, normalizeIsoDate, isAtLeastAge } from '../ageStepUtils';
 
 describe('AgeStep Logic Helpers', () => {
     describe('isValidIsoDate', () => {

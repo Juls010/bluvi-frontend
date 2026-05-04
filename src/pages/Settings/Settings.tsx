@@ -399,7 +399,7 @@ export const Settings: React.FC = () => {
 
     return (
         <>
-            <article className="w-full max-w-3xl mx-auto p-4 md:p-0 pb-16 animate-fade-in motion-reduce:animate-none space-y-7">
+            <article className="w-full max-w-5xl mx-auto p-4 md:p-0 pb-16 animate-fade-in motion-reduce:animate-none space-y-7">
 
                 <div className="space-y-3 md:space-y-4">
                     <span className="inline-flex w-fit items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary bg-app-surface-soft border border-app-soft px-3 py-1 rounded-full">
@@ -438,7 +438,7 @@ export const Settings: React.FC = () => {
                     >
                         <SettingRow
                             icon={<Eye size={15} />}
-                            title="Aparecer en Explorar"
+                            title="Aparecer en Buscar"
                             description="Si lo desactivas, nadie nuevo podrá encontrar tu perfil. Puedes reactivarlo cuando quieras."
                             enabled={loadingPrivacy ? true : privacy.is_visible}
                             onChange={(val) => handlePrivacyChange('is_visible', val)}

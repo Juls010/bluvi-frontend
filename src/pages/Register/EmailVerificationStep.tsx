@@ -9,6 +9,26 @@ import { authService } from '../../services/auth.service';
 import { useRegister } from '../../context/RegisterContext';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
+const getApiErrorMessage = (error: unknown, fallback: string) => {
+    if (error && typeof error === 'object' && 'response' in error) {
+        const response = error.response;
+
+        if (
+            response &&
+            typeof response === 'object' &&
+            'data' in response &&
+            response.data &&
+            typeof response.data === 'object' &&
+            'message' in response.data &&
+            typeof response.data.message === 'string'
+        ) {
+            return response.data.message;
+        }
+    }
+
+    return fallback;
+};
+
 export const EmailVerificationStep = () => {
     const navigate = useNavigate();
     const [code, setCode] = useState(['', '', '', '','','']);
@@ -35,8 +55,8 @@ export const EmailVerificationStep = () => {
                 localStorage.removeItem('temp_email_verification');
                 navigate('/register/safety-tips'); 
             }
-        } catch (error: any) {
-            setErrorMessage(error.response?.data?.message || 'Codigo incorrecto. Revisa el codigo y vuelve a intentarlo.');
+        } catch (error: unknown) {
+            setErrorMessage(getApiErrorMessage(error, 'Codigo incorrecto. Revisa el codigo y vuelve a intentarlo.'));
         }
     };
 
