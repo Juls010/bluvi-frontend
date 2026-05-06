@@ -5,6 +5,7 @@ export interface ConversationItem {
     id_user: number;
     first_name: string;
     last_name: string;
+    is_face_verified?: boolean;
     main_photo: string | null;
     last_message_id: number | null;
     last_message: string | null;
@@ -20,6 +21,7 @@ export interface ChatCounterpart {
     id_user: number;
     first_name: string;
     last_name: string;
+    is_face_verified?: boolean;
     main_photo: string | null;
 }
 

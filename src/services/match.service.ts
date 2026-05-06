@@ -7,6 +7,7 @@ export interface IncomingMatchRequest {
     id_user: number;
     first_name: string;
     last_name: string;
+    is_face_verified?: boolean;
     main_photo: string | null;
 }
 
@@ -18,6 +19,7 @@ export interface MatchItem {
     id_user: number;
     first_name: string;
     last_name: string;
+    is_face_verified?: boolean;
     main_photo: string | null;
 }
 

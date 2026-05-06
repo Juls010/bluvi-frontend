@@ -9,6 +9,7 @@ import { getMyProfile, markFaceVerification, updateMyProfile, type UserProfileUp
 import { X, Camera, Pencil, MapPin, Cake, User as UserIcon, Heart, Sprout, Brain, Settings, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { type User, GENDER_LABELS,SEXUALITY_LABELS } from '../../types/User.types';
+import { VerifiedIdentityIcon } from '../../components/VerifiedIdentityIcon';
 
 type ProfileUser = User;
 
@@ -150,14 +151,7 @@ export const UserProfile: React.FC = () => {
                   {user.first_name} {user.last_name}
                   </h1>
                   {user.is_face_verified && (
-                    <span
-                      className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-400/10 dark:text-emerald-200"
-                      aria-label="Identidad verificada"
-                      title="Identidad verificada"
-                    >
-                      <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                      Verificado
-                    </span>
+                    <VerifiedIdentityIcon />
                   )}
                 </div>
                 <button

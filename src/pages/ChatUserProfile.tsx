@@ -8,6 +8,7 @@ import {
     SEXUALITY_LABELS 
 } from '../types/User.types';
 import api from '../services/api';
+import { VerifiedIdentityIcon } from '../components/VerifiedIdentityIcon';
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
   <div className={`bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm ${className}`}>
@@ -117,9 +118,14 @@ export const ChatUserProfile: React.FC = () => {
                     >
                         <ArrowLeft size={22} strokeWidth={3} />
                     </button>
-                    <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
-                        {user.first_name} {user.last_name}
-                    </h1>
+                    <div className="flex flex-wrap items-center gap-2.5">
+                        <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
+                            {user.first_name} {user.last_name}
+                        </h1>
+                        {user.is_face_verified && (
+                            <VerifiedIdentityIcon />
+                        )}
+                    </div>
                 </div>
 
                 <button

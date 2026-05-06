@@ -21,6 +21,7 @@ import { uploadAudioMessage } from '../services/audioService';
 import { AudioRecorder } from '../components/AudioRecorder';
 import { AudioMessage } from '../components/AudioMessage';
 import { DropdownMenu, DropdownMenuButton, DropdownMenuSeparator } from '../components/DropdownMenu';
+import { VerifiedIdentityIcon } from '../components/VerifiedIdentityIcon';
 
 interface RealtimeChatPayload {
     fromUserId: number;
@@ -603,10 +604,19 @@ export const ChatDetail: React.FC = () => {
                                 />
                                 <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ring-2 ring-app-surface transition-colors ${canShowOnlineStatus && isRemoteUserOnline && !isBlockedByMe && !isBlockedByOther ? 'bg-green-400' : 'bg-gray-400'}`} />
                             </div>
-                            <div className="text-left">
-                                <h2 className="text-[15px] font-semibold text-app-primary leading-tight">
-                                    {(isBlockedByMe || isBlockedByOther) ? 'Usuario' : (counterpart ? `${counterpart.first_name} ${counterpart.last_name}` : 'Chat')}
-                                </h2>
+                            <div className="min-w-0 text-left">
+                                <div className="flex items-center gap-1.5">
+                                    <h2 className="truncate text-[15px] font-semibold text-app-primary leading-tight">
+                                        {(isBlockedByMe || isBlockedByOther) ? 'Usuario' : (counterpart ? `${counterpart.first_name} ${counterpart.last_name}` : 'Chat')}
+                                    </h2>
+                                    {!isBlockedByMe && !isBlockedByOther && counterpart?.is_face_verified && (
+                                        <VerifiedIdentityIcon
+                                            variant="static"
+                                            className="flex-shrink-0"
+                                            iconClassName="h-4.5 w-4.5"
+                                        />
+                                    )}
+                                </div>
                                 <span className="text-[11px] font-medium" aria-live="polite" role="status">
                                     {isTypingRemote && !isBlockedByMe && !isBlockedByOther ? (
                                         <span className="text-app-secondary">escribiendo…</span>

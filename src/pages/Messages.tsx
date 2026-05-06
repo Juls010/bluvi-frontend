@@ -4,9 +4,6 @@ import {
     MessageCircle, 
     ArrowRight, 
     Check, 
-    ChevronDown, 
-    ChevronUp, 
-    Users, 
     Search, 
     X, 
     Contact,
@@ -23,6 +20,7 @@ import { getConversations, type ConversationItem } from '../services/chat.servic
 import { connectRealtime, disconnectRealtime } from '../services/realtime.service';
 import { useNotifications } from '../context/NotificationContext';
 import { Tooltip, TooltipTrigger, Button as AriaButton } from '../components/Tooltip';
+import { VerifiedIdentityIcon } from '../components/VerifiedIdentityIcon';
 
 const formatTime = (date: string | null) => {
     if (!date) return '';
@@ -78,9 +76,18 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
                             />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-[15px] font-bold text-app-primary truncate transition-colors duration-200 group-hover:text-app-accent">
-                                {request.first_name} {request.last_name}
-                            </p>
+                            <div className="flex items-center gap-1.5">
+                                <p className="text-[15px] font-bold text-app-primary truncate transition-colors duration-200 group-hover:text-app-accent">
+                                    {request.first_name} {request.last_name}
+                                </p>
+                                {request.is_face_verified && (
+                                    <VerifiedIdentityIcon
+                                        variant="static"
+                                        className="flex-shrink-0"
+                                        iconClassName="h-4.5 w-4.5"
+                                    />
+                                )}
+                            </div>
                             <p className="text-[11px] text-app-muted mt-0.5 font-medium uppercase tracking-wider">{formatTime(request.created_at)}</p>
                         </div>
                     </Link>
@@ -261,9 +268,18 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="font-bold text-app-primary truncate group-hover:text-app-accent transition-colors text-[16px]">
-                                            {match.first_name} {match.last_name}
-                                        </p>
+                                        <div className="flex items-center gap-1.5">
+                                            <p className="font-bold text-app-primary truncate group-hover:text-app-accent transition-colors text-[16px]">
+                                                {match.first_name} {match.last_name}
+                                            </p>
+                                            {match.is_face_verified && (
+                                                <VerifiedIdentityIcon
+                                                    variant="static"
+                                                    className="flex-shrink-0"
+                                                    iconClassName="h-4.5 w-4.5"
+                                                />
+                                            )}
+                                        </div>
                                         <p className="text-[11px] text-app-muted font-bold uppercase tracking-tight mt-0.5">Match desde {formatTime(match.created_at)}</p>
                                     </div>
                                     <div className="w-9 h-9 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 shadow-sm border border-app-soft/50" style={{ backgroundColor: 'var(--filter-icon-bg)' }}>
@@ -340,9 +356,18 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
 
                         <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-center gap-2 mb-1">
-                                <h3 className="text-[16px] font-bold text-app-primary truncate transition-colors duration-200 group-hover:text-app-accent">
-                                    {conversation.first_name} {conversation.last_name}
-                                </h3>
+                                <div className="flex min-w-0 items-center gap-1.5">
+                                    <h3 className="text-[16px] font-bold text-app-primary truncate transition-colors duration-200 group-hover:text-app-accent">
+                                        {conversation.first_name} {conversation.last_name}
+                                    </h3>
+                                    {conversation.is_face_verified && (
+                                        <VerifiedIdentityIcon
+                                            variant="static"
+                                            className="flex-shrink-0"
+                                            iconClassName="h-4.5 w-4.5"
+                                        />
+                                    )}
+                                </div>
                                 <span className="text-[11px] text-app-muted flex-shrink-0 font-bold uppercase tracking-tight">
                                     {formatTime(conversation.last_message_at)}
                                 </span>

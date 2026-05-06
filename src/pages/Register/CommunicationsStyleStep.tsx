@@ -10,10 +10,8 @@ export const CommunicationStyleStep: React.FC = () => {
     const navigate = useNavigate();
     const { formData, updateFormData } = useRegister();
     
-    // 1. Estado para los estilos que vienen de la DB
     const [styles, setStyles] = useState<{id: number, name: string}[]>([]);
 
-    // 2. Cargar los datos desde el servicio
     useEffect(() => {
         const fetchStyles = async () => {
             try {
@@ -31,7 +29,6 @@ export const CommunicationStyleStep: React.FC = () => {
     const toggleStyle = (id: number) => {
         const currentList = formData.communicationStyle || [];
         
-        // Ahora trabajamos con IDs numéricos
         if (currentList.includes(id)) {
             updateFormData({ 
                 communicationStyle: currentList.filter(s => s !== id) 
