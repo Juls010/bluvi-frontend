@@ -35,12 +35,10 @@ const HeaderIconButton: React.FC<HeaderIconButtonProps> = ({ onClick, ariaLabel,
     return (
         <div className="relative inline-flex group">
             <button
-                onClick={(e) => {
-                    e.currentTarget.blur();
-                    onClick();
-                }}
+                onClick={onClick}
                 className={`
-                    flex items-center justify-center text-[#3f4a9b]/70 transition-all duration-300 ease-out cursor-pointer focus-visible:outline-none 
+                    flex items-center justify-center text-[#3f4a9b]/70 transition-all duration-300 ease-out cursor-pointer 
+                    focus-visible:ring-2 focus-visible:ring-bluvi-purple/50 focus-visible:ring-offset-2 focus-visible:outline-none
                     w-9 h-9 rounded-full md:w-auto md:h-auto md:rounded-full md:px-5 md:py-2
                     hover:bg-white/20 md:hover:bg-[#e6eaff] md:shadow-none md:hover:shadow-md
                     group

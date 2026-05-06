@@ -255,14 +255,21 @@ export const LocationStep = () => {
                                                 id={`city-option-${city.id}`}
                                                 role="option"
                                                 aria-selected={formData.city === city.value}
-                                                tabIndex={-1}
+                                                tabIndex={0}
+                                                onFocus={() => setActiveIndex(index)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        handleCitySelect(city);
+                                                    }
+                                                }}
                                                 onMouseDown={(event) => {
                                                     event.preventDefault();
                                                     handleCitySelect(city);
                                                 }}
                                                 onClick={() => handleCitySelect(city)}
                                                 onMouseEnter={() => setActiveIndex(index)}
-                                                className={`w-full flex items-center justify-between px-6 py-4 text-left text-bluvi-purple font-medium transition-colors cursor-pointer ${index === activeIndex ? 'bg-bluvi-purple/10' : 'hover:bg-bluvi-purple/5'}`}
+                                                className={`w-full flex items-center justify-between px-6 py-4 text-left text-bluvi-purple font-medium transition-colors cursor-pointer outline-none focus:bg-bluvi-purple/15 ${index === activeIndex ? 'bg-bluvi-purple/10' : 'hover:bg-bluvi-purple/5'}`}
                                             >
                                                 <span>{city.label}</span>
                                                 {formData.city === city.value ? <CheckCircle2 size={18} /> : <ChevronRight size={18} className="opacity-30" />}
