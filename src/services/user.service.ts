@@ -1,6 +1,14 @@
 import api from './api';
 import type { User } from '../types/User.types';
 
+export type UserProfileUpdatePayload = Omit<Partial<User>, 'interests' | 'features' | 'communication_style' | 'photos'> & {
+    interests?: number[];
+    features?: number[];
+    neurodivergences?: number[];
+    communication_style?: number[];
+    photos?: string[];
+};
+
 export interface ExploreUsersResponse {
     success: boolean;
     count: number;
@@ -17,8 +25,13 @@ export const getMyProfile = async (): Promise<User> => {
     return response.data.user;
 };
 
-export const updateMyProfile = async (updated: Partial<User>): Promise<User> => {
+export const updateMyProfile = async (updated: UserProfileUpdatePayload): Promise<User> => {
     const response = await api.put<{ user: User }>('/users/profile', updated);
+    return response.data.user;
+};
+
+export const markFaceVerification = async (): Promise<User> => {
+    const response = await api.patch<{ user: User }>('/users/profile/face-verification');
     return response.data.user;
 };
 

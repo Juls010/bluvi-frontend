@@ -13,9 +13,16 @@ export interface User {
   sexuality: number[];      
   photos: (string | null)[];
   main_photo?: string;
+  is_face_verified?: boolean;
   interests: string[];      
   features: string[]; 
   communication_style: string[]; 
+  interest_names?: string[];
+  neurodivergence_names?: string[];
+  communication_names?: string[];
+  id_interests?: number[];
+  id_neurodivergences?: number[];
+  id_communication_style?: number[];
 }
 
 

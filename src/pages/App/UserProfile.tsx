@@ -4,10 +4,20 @@ import { EditInterestsModal } from '../../components/modals/EditInterestsModal';
 import { EditMindModal } from '../../components/modals/EditMindModal';
 import { EditPhotosModal } from '../../components/modals/EditPhotosModal';
 import { EditBasicInfoModal } from '../../components/modals/EditBasicInfoModal';
-import { getMyProfile, updateMyProfile } from '../../services/user.service';
-import { X, Camera, Pencil, MapPin, Cake, User as UserIcon, Heart, Sprout, Brain, Settings, LogOut } from 'lucide-react';
+import FaceVerification from '../../components/bioVerification';
+import { getMyProfile, markFaceVerification, updateMyProfile, type UserProfileUpdatePayload } from '../../services/user.service';
+import { X, Camera, Pencil, MapPin, Cake, User as UserIcon, Heart, Sprout, Brain, Settings, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { type User, GENDER_LABELS,SEXUALITY_LABELS } from '../../types/User.types';
+
+type ProfileUser = User;
+
+const buildProfileUpdate = (
+  base: ProfileUser,
+  overrides: UserProfileUpdatePayload | Partial<User>
+): UserProfileUpdatePayload => {
+  return { ...base, ...overrides } as UserProfileUpdatePayload;
+};
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
   <div className={`bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm ${className}`}>
@@ -40,7 +50,7 @@ const ProfileSkeleton = () => (
 
 export const UserProfile: React.FC = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<ProfileUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -48,6 +58,7 @@ export const UserProfile: React.FC = () => {
   const [showMindModal, setShowMindModal] = useState(false);
   const [showPhotosModal, setShowPhotosModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,16 +74,26 @@ export const UserProfile: React.FC = () => {
   }, []);
 
   const [isSaving, setIsSaving] = useState(false);
+  const handleFaceVerified = async () => {
+    setSaveError(null);
+    try {
+      const saved = await markFaceVerification();
+      setUser(saved);
+    } catch (err: unknown) {
+      setSaveError(err instanceof Error ? err.message : 'No se pudo guardar la verificación facial');
+      throw err;
+    }
+  };
 
-  const handleSave = async (updatedUser: User) => {
+  const handleSave = async (updatedUser: UserProfileUpdatePayload) => {
     setIsSaving(true);
     setSaveError(null);
     try {
       const saved = await updateMyProfile(updatedUser);
-      setUser(saved); 
+      setUser(saved);
       setShowInterestsModal(false);
-    } catch (err: any) {
-      setSaveError(err.message ?? 'Error al guardar los cambios');
+    } catch (err: unknown) {
+      setSaveError(err instanceof Error ? err.message : 'Error al guardar los cambios');
     } finally {
       setIsSaving(false);
     }
@@ -92,21 +113,21 @@ export const UserProfile: React.FC = () => {
   if (!user) return null;
 
   const carouselPhotos = (user.photos || []).filter(p => typeof p === 'string');
-  
-  const interestNames = (user as any).interest_names || [];
-  const interestIds = user.interests || (user as any).id_interests || [];
 
-  const features = (user as any).neurodivergence_names || [];
-  const featureIds = (user as any).features || (user as any).id_neurodivergences || [];
+  const interestNames = user.interest_names || [];
+  const interestIds = user.id_interests || [];
 
-  const communication = (user as any).communication_names || [];
-  const communicationIds = (user as any).communication_style || (user as any).id_communication_style || [];
-  
-  
+  const features = user.neurodivergence_names || [];
+  const featureIds = user.id_neurodivergences || [];
 
-  const age = user.birth_date 
-    ? Math.floor((Date.now() - new Date(user.birth_date).getTime()) / (1000 * 60 * 60 * 24 * 365.25)) 
-    : '—';
+  const communication = user.communication_names || [];
+  const communicationIds = user.id_communication_style || [];
+
+
+
+  const age = user.birth_date
+    ? Math.floor((Date.now() - new Date(user.birth_date).getTime()) / (1000 * 60 * 60 * 24 * 365.25))
+    : 'â€”';
 
   const completeness = Math.round(
     ([
@@ -121,22 +142,45 @@ export const UserProfile: React.FC = () => {
   return (
     <>
       <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none">
-        
+
         <div className="flex items-center justify-between mb-8 pl-2">
             <div className="flex items-center gap-3">
-                <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
-                {user.first_name} {user.last_name}
-                </h1>
-                <button 
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
+                  {user.first_name} {user.last_name}
+                  </h1>
+                  {user.is_face_verified && (
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-400/10 dark:text-emerald-200"
+                      aria-label="Identidad verificada"
+                      title="Identidad verificada"
+                    >
+                      <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                      Verificado
+                    </span>
+                  )}
+                </div>
+                <button
                     onClick={() => setShowInfoModal(true)}
                     className="p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple"
-                    title="Editar información básica"
+                    title="Editar informaciÃ³n bÃ¡sica"
                 >
-                    <Pencil className="w-5 h-5" /> 
+                    <Pencil className="w-5 h-5" />
                 </button>
             </div>
 
             <div className="flex items-center gap-2">
+              {!user.is_face_verified && (
+                <button
+                  onClick={() => setShowVerificationModal(true)}
+                  className="flex items-center gap-2 px-3.5 py-2 bg-bluvi-purple text-white rounded-2xl text-sm font-semibold hover:opacity-90 transition-all hover:scale-105 active:scale-95"
+                  title="Verificar identidad"
+                >
+                  <ShieldCheck className="w-4.5 h-4.5" aria-hidden="true" />
+                  <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Verificar</span>
+                </button>
+              )}
+
                 <button
                     onClick={() => navigate('/app/settings')}
                     className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95 group"
@@ -151,9 +195,9 @@ export const UserProfile: React.FC = () => {
         {saveError && (
           <div className="mb-4 px-4 py-3 bg-red-50/50 border border-red-200 rounded-2xl flex items-center justify-between gap-3 animate-fade-in">
             <p className="text-sm text-red-600 font-medium">{saveError}</p>
-            
-            <button 
-              onClick={() => setSaveError(null)} 
+
+            <button
+              onClick={() => setSaveError(null)}
               className="p-1.5 hover:bg-red-100 rounded-full transition-colors text-red-400 hover:text-red-600"
               title="Cerrar aviso"
             >
@@ -165,17 +209,17 @@ export const UserProfile: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
 
           <div className="md:col-span-4 flex flex-col gap-6">
-            
-            <div className="relative group rounded-3xl overflow-hidden shadow-sm"> 
-              
+
+            <div className="relative group rounded-3xl overflow-hidden shadow-sm">
+
               <SimpleCarousel photos={carouselPhotos} firstName={user.first_name} />
-              
-              <button 
+
+              <button
                 onClick={() => setShowPhotosModal(true)}
                 className="absolute bottom-4 right-4 p-3 bg-app-surface-strong backdrop-blur-md text-app-accent rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all border border-app-soft z-10"
                 title="Gestionar fotos"
               >
-                <Camera className="w-5 h-5" strokeWidth={2.5} /> 
+                <Camera className="w-5 h-5" strokeWidth={2.5} />
               </button>
             </div>
 
@@ -185,9 +229,9 @@ export const UserProfile: React.FC = () => {
                 <p className="text-xs font-bold text-app-accent-strong">{completeness}%</p>
               </div>
               <div className="w-full h-1.5 bg-app-surface-soft rounded-full overflow-hidden">
-                <div 
-                  className="h-full rounded-full transition-all duration-500" 
-                  style={{ width: `${completeness}%`, backgroundImage: 'var(--app-accent-gradient)' }} 
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{ width: `${completeness}%`, backgroundImage: 'var(--app-accent-gradient)' }}
                 />
               </div>
             </div>
@@ -200,15 +244,15 @@ export const UserProfile: React.FC = () => {
                   <Cake className="w-4 h-4 text-app-accent dark:text-app-orange" /> {age} años
                 </li>
                 <li className="flex items-center gap-2">
-                  <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" /> {GENDER_LABELS[user.id_gender] ?? '—'}
+                  <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" /> {GENDER_LABELS[user.id_gender] ?? 'â€”'}
                 </li>
                 <li className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-app-accent dark:text-app-orange" /> {user.city}
                 </li>
                 <li className="flex items-center gap-2">
-                  <Heart className="w-4 h-4 text-app-accent dark:text-app-orange" /> 
-                  {user.sexuality && user.sexuality.length > 0 
-                    ? (SEXUALITY_LABELS[user.sexuality[0]] ?? 'Sin especificar') 
+                  <Heart className="w-4 h-4 text-app-accent dark:text-app-orange" />
+                  {user.sexuality && user.sexuality.length > 0
+                    ? (SEXUALITY_LABELS[user.sexuality[0]] ?? 'Sin especificar')
                     : 'Sin especificar'}
                 </li>
               </ul>
@@ -218,8 +262,8 @@ export const UserProfile: React.FC = () => {
             <Card>
               <div className="flex justify-between items-center mb-6">
                 <SectionLabel icon={<Sprout className="w-4.5 h-4.5" />} label="Mis intereses" />
-                <button 
-                  onClick={() => setShowInterestsModal(true)} 
+                <button
+                  onClick={() => setShowInterestsModal(true)}
                   className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"
                 >
                   Editar
@@ -237,8 +281,8 @@ export const UserProfile: React.FC = () => {
             <Card>
               <div className="flex justify-between items-center mb-6">
                 <SectionLabel icon={<Brain className="w-4.5 h-4.5" />} label="Mente y Comunicación" />
-                <button 
-                  onClick={() => setShowMindModal(true)} 
+                <button
+                  onClick={() => setShowMindModal(true)}
                   className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 outline-none dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"
                 >
                   Editar
@@ -287,60 +331,58 @@ export const UserProfile: React.FC = () => {
       </article>
 
         {showInterestsModal && (
-          <EditInterestsModal 
-            currentInterests={interestIds as unknown as number[]} 
+          <EditInterestsModal
+            currentInterests={interestIds}
             isSaving={isSaving}
             onClose={() => setShowInterestsModal(false)}
             onSave={async (newIds: number[]) => {
-              const updatedData = { 
-                ...user, 
-                interests: newIds 
-              } as any; 
-
-              await handleSave(updatedData);
+              await handleSave(buildProfileUpdate(user, { interests: newIds }));
               setShowInterestsModal(false);
             }}
         />
       )}
 
       {showMindModal && (
-        <EditMindModal 
-          currentFeatures={featureIds as unknown as number[]} 
-          currentCommunication={communicationIds as unknown as number[]} 
+        <EditMindModal
+          currentFeatures={featureIds}
+          currentCommunication={communicationIds}
           isSaving={isSaving}
           onClose={() => setShowMindModal(false)}
-          onSave={async (newFeatures: number[], newComm: number[]) => { 
-            await handleSave({ 
-              ...user, 
-              neurodivergences: newFeatures, 
-              communication_style: newComm 
-            } as any);
+          onSave={async (newFeatures: number[], newComm: number[]) => {
+            await handleSave(buildProfileUpdate(user, { features: newFeatures, communication_style: newComm }));
             setShowMindModal(false);
           }}
         />
       )}
 
       {showPhotosModal && (
-        <EditPhotosModal 
-          currentPhotos={carouselPhotos} 
+        <EditPhotosModal
+          currentPhotos={carouselPhotos}
           isSaving={isSaving}
           onClose={() => setShowPhotosModal(false)}
-          onSave={async (newPhotos: string[]) => { 
-            await handleSave({ ...user, photos: newPhotos } as any);
+          onSave={async (newPhotos: string[]) => {
+            await handleSave(buildProfileUpdate(user, { photos: newPhotos }));
             setShowPhotosModal(false);
           }}
         />
       )}
 
       {showInfoModal && (
-        <EditBasicInfoModal 
+        <EditBasicInfoModal
           user={user}
           isSaving={isSaving}
           onClose={() => setShowInfoModal(false)}
           onSave={async (newData) => {
-            await handleSave({ ...user, ...newData });
+            await handleSave(buildProfileUpdate(user, newData));
             setShowInfoModal(false);
           }}
+        />
+      )}
+      {showVerificationModal && (
+        <FaceVerification
+          isOpen={showVerificationModal}
+          onClose={() => setShowVerificationModal(false)}
+          onVerified={handleFaceVerified}
         />
       )}
     </>
