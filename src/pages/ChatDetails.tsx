@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ShieldOff, Trash2, Flag, ArrowLeft, Send, Check, MoreVertical, Image, Smile, AlertTriangle } from 'lucide-react';
 import EmojiPicker, { type EmojiClickData, Theme } from 'emoji-picker-react';
@@ -100,16 +100,16 @@ export const ChatDetail: React.FC = () => {
         prevIsRecordingRef.current = isRecordingAudio;
     }, [isRecordingAudio]);
 
-    const sendTypingState = (isTyping: boolean) => {
+    const sendTypingState = useCallback((isTyping: boolean) => {
         const socket = connectRealtime();
         socket?.emit(isTyping ? 'chat:typing' : 'chat:typing:stop', {
             toUserId: chatUserId,
             chatUserId,
             isTyping,
         });
-    };
+    }, [chatUserId]);
 
-    const scheduleStopTyping = () => {
+    const scheduleStopTyping = useCallback(() => {
         if (typingStopTimerRef.current) {
             window.clearTimeout(typingStopTimerRef.current);
         }
@@ -117,7 +117,7 @@ export const ChatDetail: React.FC = () => {
         typingStopTimerRef.current = window.setTimeout(() => {
             sendTypingState(false);
         }, TYPING_STOP_DELAY);
-    };
+    }, [sendTypingState]);
 
     const handleEmojiClick = (emojiData: EmojiClickData): void => {
         setInputText((prev) => prev + emojiData.emoji);
@@ -127,7 +127,7 @@ export const ChatDetail: React.FC = () => {
         scheduleStopTyping();
     };
 
-    const loadInitialConversation = async () => {
+    const loadInitialConversation = useCallback(async () => {
         if (!Number.isInteger(chatUserId) || chatUserId <= 0) {
             setLoading(false);
             return;
@@ -153,7 +153,7 @@ export const ChatDetail: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [chatUserId]);
 
     const loadOlderMessages = async () => {
         if (!hasMore || loadingOlder || messages.length === 0) {
@@ -287,7 +287,7 @@ export const ChatDetail: React.FC = () => {
         }
     };
 
-    const closeOptionsMenu = (returnFocus = true) => {
+    const closeOptionsMenu = useCallback((returnFocus = true) => {
         if (!showOptions || isOptionsClosing) {
             return;
         }
@@ -307,7 +307,7 @@ export const ChatDetail: React.FC = () => {
                 optionsButtonRef.current?.focus();
             }
         }, 170);
-    };
+    }, [isOptionsClosing, showOptions]);
 
     const openOptionsMenu = () => {
         if (optionsCloseTimerRef.current) {
@@ -389,7 +389,7 @@ export const ChatDetail: React.FC = () => {
 
     useEffect(() => {
         void loadInitialConversation();
-    }, [chatUserId]);
+    }, [loadInitialConversation]);
 
     useEffect(() => {
         const socket = connectRealtime();
@@ -504,7 +504,7 @@ export const ChatDetail: React.FC = () => {
         if (messages.length > 0) {
             hasInitiallyScrolled.current = true;
         }
-    }, [messages, isTypingRemote, loading]);
+    }, [messages, isTypingRemote, loading, reduceMotion]);
 
     useEffect(() => {
         const handlePointerDownOutside = (e: PointerEvent) => {
@@ -569,7 +569,7 @@ export const ChatDetail: React.FC = () => {
             }
             sendTypingState(false);
         };
-    }, [showOptions]);
+    }, [showOptions, closeOptionsMenu, sendTypingState]);
 
     if (!Number.isInteger(chatUserId) || chatUserId <= 0) {
         return <div className="pt-20 text-center text-app-primary font-medium">Chat no válido.</div>;

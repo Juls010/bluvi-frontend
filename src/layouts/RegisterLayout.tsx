@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Home } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
@@ -68,7 +68,7 @@ export const RegisterLayout: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation(); 
 
-    const steps = [
+    const steps = useMemo(() => ([
     '/register/name',
     '/register/age',
     '/register/gender',
@@ -80,9 +80,9 @@ export const RegisterLayout: React.FC = () => {
     '/register/location',
     '/register/interests',
     '/register/description',
-    '/register/verificationemail', 
-    '/register/safety-tips'
-];
+    '/register/verificationemail',
+    '/register/safety-tips',
+]), []);
 
     const currentStepIndex = steps.indexOf(location.pathname);
     const progressLevel = currentStepIndex !== -1 ? currentStepIndex + 1 : 0;

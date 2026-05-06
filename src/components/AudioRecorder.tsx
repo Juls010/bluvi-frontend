@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Send, X, Play, Pause, Trash2 } from 'lucide-react';
+import { Mic, Send, Play, Pause, Trash2 } from 'lucide-react';
 
 interface AudioRecorderProps {
     onSendAudio: (audioBlob: Blob, duration: number) => Promise<void>;
@@ -48,12 +48,14 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
     }, [recordedAudio]);
 
     useEffect(() => {
+        const audioEl = audioElementRef.current;
+
         return () => {
             if (timerRef.current) window.clearInterval(timerRef.current);
             if (playbackTimerRef.current) window.clearInterval(playbackTimerRef.current);
             if (dotTimerRef.current) window.clearInterval(dotTimerRef.current);
             if (animationRef.current) window.cancelAnimationFrame(animationRef.current);
-            if (audioElementRef.current) audioElementRef.current.pause();
+            if (audioEl) audioEl.pause();
         };
     }, []);
 

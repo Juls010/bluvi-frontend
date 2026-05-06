@@ -68,9 +68,11 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
     }, []);
 
     useEffect(() => {
+        const audioEl = audioElementRef.current;
+
         return () => {
-            if (audioElementRef.current) {
-                audioElementRef.current.pause();
+            if (audioEl) {
+                audioEl.pause();
             }
             if (playbackTimerRef.current) {
                 window.clearInterval(playbackTimerRef.current);

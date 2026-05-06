@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getConversations, type ConversationItem } from '../../services/chat.service';
 import { useNotifications } from '../../context/NotificationContext';
 import { HOME_EVENTS } from '../../data/events';
 import { ArrowRight, Waves, MessagesSquare, User, ChevronLeft, ChevronRight, Bell, MessageSquareHeart } from 'lucide-react';
@@ -11,8 +10,7 @@ import { BluAssistant } from '../../components/BluAssistant';
 export const Home: React.FC = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
-    const [conversations, setConversations] = useState<ConversationItem[]>([]);
-    const { unreadMessages, pendingMatchRequests, hasNotifications, pendingRequestNames } = useNotifications();
+    const { unreadMessages, pendingMatchRequests, hasNotifications } = useNotifications();
     
     const [currentEventIndex, setCurrentEventIndex] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -53,19 +51,6 @@ export const Home: React.FC = () => {
         
         return `Tienes ${parts.join(' y ')} pendientes.`;
     }, [unreadMessages, pendingMatchRequests, hasNotifications]);
-
-    useEffect(() => {
-        const loadConversations = async () => {
-            try {
-                const result = await getConversations();
-                setConversations(result);
-            } catch (error) {
-                console.error('Error cargando notificaciones de mensajes:', error);
-            }
-        };
-
-        loadConversations();
-    }, []);
 
     const handleScroll = () => {
         if (scrollRef.current) {

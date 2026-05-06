@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 
 // ── ARIA id constants ──────────────────────────────────────────────────────────
 const DIALOG_TITLE_ID      = 'filter-dialog-title';
@@ -59,13 +59,13 @@ export const DiscoveryFilter: React.FC<Props> = ({
   const comboboxRef    = useRef<HTMLDivElement>(null);
 
   const CLOSE_DURATION_MS = 250;
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
       setIsClosing(false);
       onClose();
     }, CLOSE_DURATION_MS);
-  };
+  }, [onClose]);
 
   useEffect(() => {
     if (isOpen) {
@@ -149,7 +149,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
   // ── Close suggestions on outside pointer ────────────────────────────────────
   useEffect(() => {

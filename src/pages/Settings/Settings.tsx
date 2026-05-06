@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useState } from 'react';
+import React, { useCallback, useEffect, useId, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from 'next-themes';
 import { useAuth } from '../../context/AuthContext';
@@ -157,11 +157,11 @@ const useFontSize = () => {
 
     const [size, setSize] = useState<FontSize>(getStoredFont);
 
-    const apply = (s: FontSize) => {
+    const apply = useCallback((s: FontSize) => {
         setSize(s);
         localStorage.setItem('a11y_font', s);
         document.documentElement.style.fontSize = FONT_SIZE_MAP[s];
-    };
+    }, []);
 
     useEffect(() => {
         const saved = getStoredFont();
@@ -180,11 +180,11 @@ const useContrast = () => {
 
     const [contrast, setContrast] = useState<Contrast>(getStoredContrast);
 
-    const apply = (c: Contrast) => {
+    const apply = useCallback((c: Contrast) => {
         setContrast(c);
         localStorage.setItem('a11y_contrast', c);
         document.documentElement.classList.toggle('high-contrast', c === 'high');
-    };
+    }, []);
 
     useEffect(() => {
         const saved = getStoredContrast();
@@ -262,7 +262,7 @@ export const Settings: React.FC = () => {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [applyContrast, applyFont]);
 
     useEffect(() => {
         document.documentElement.classList.toggle('reduce-motion', reduceMotion);

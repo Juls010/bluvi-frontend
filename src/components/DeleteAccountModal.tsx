@@ -23,13 +23,9 @@ const EyeIcon = ({ open }: { open: boolean }) => open ? (
   </svg>
 );
 
-// ─── Props ────────────────────────────────────────────────────────────────────
-
 interface DeleteAccountModalProps {
   onClose: () => void;
 }
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose }) => {
   const { logout } = useAuth();
@@ -44,13 +40,11 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
   const passwordRef = useRef<HTMLInputElement>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
 
-  // Foco automático al cambiar de paso
   useEffect(() => {
     if (step === 2) passwordRef.current?.focus();
     else cancelRef.current?.focus();
   }, [step]);
 
-  // Cerrar con Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !isDeleting) onClose();
@@ -84,14 +78,12 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
 
   return (
     <>
-      {/* Overlay */}
       <div
         className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
         onClick={() => !isDeleting && onClose()}
         aria-hidden="true"
       />
 
-      {/* Modal */}
       <div
         role="dialog"
         aria-modal="true"
@@ -103,7 +95,6 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
           onClick={(e) => e.stopPropagation()}
         >
 
-          {/* Header */}
           <div className="flex items-center justify-between px-6 pt-6 pb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-xl">
@@ -125,7 +116,6 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
 
           <div className="h-px bg-gray-100 mx-6" />
 
-          {/* Paso 1 — Confirmación */}
           {step === 1 && (
             <div className="px-6 py-6 space-y-5">
               <div className="bg-red-50 border border-red-100 rounded-2xl p-4 space-y-2">
@@ -159,7 +149,6 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
             </div>
           )}
 
-          {/* Paso 2 — Contraseña */}
           {step === 2 && (
             <div className="px-6 py-6 space-y-5">
               <p className="text-sm text-gray-600">

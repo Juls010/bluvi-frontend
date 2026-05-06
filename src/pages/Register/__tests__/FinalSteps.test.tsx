@@ -68,7 +68,7 @@ describe('Final Registration Steps', () => {
             );
 
             const inputs = screen.getAllByLabelText(/Dígito \d del código/i);
-            inputs.forEach((input, i) => {
+            inputs.forEach((input) => {
                 fireEvent.change(input, { target: { value: '1' } });
             });
 

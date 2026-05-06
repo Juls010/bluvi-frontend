@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { 
     MessageCircle, 
@@ -129,13 +129,13 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
         m.last_name.toLowerCase().includes(search.toLowerCase())
     );
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         setIsClosing(true);
         setTimeout(() => {
             setIsClosing(false);
             onClose();
         }, 300);
-    };
+    }, [onClose]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -170,7 +170,7 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
         if (searchInput) searchInput.focus();
 
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen]);
+    }, [isOpen, handleClose]);
 
     useEffect(() => {
         if (isOpen) {

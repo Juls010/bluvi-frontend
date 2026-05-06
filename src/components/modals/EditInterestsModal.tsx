@@ -24,7 +24,7 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
     );
   };
 
-  const filtered = Object.entries(INTEREST_LABELS).filter(([_, label]) =>
+  const filtered = Object.entries(INTEREST_LABELS).filter(([, label]) =>
     label.toLowerCase().includes(search.toLowerCase())
   );
 

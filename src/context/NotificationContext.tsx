@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { getConversations } from '../services/chat.service';
 import { getIncomingMatchRequests } from '../services/match.service';
@@ -28,7 +28,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const [pendingMatchRequests, setPendingMatchRequests] = useState(0);
     const [pendingRequestNames, setPendingRequestNames] = useState<string[]>([]);
 
-    const refreshNotifications = async () => {
+    const refreshNotifications = useCallback(async () => {
         if (!isAuthenticated || !token) {
             setUnreadMessages(0);
             setPendingMatchRequests(0);
@@ -49,11 +49,11 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         } catch (error) {
             console.error('Error cargando notificaciones globales:', error);
         }
-    };
+    }, [isAuthenticated, token]);
 
     useEffect(() => {
         refreshNotifications();
-    }, [isAuthenticated, token]);
+    }, [refreshNotifications]);
 
     useEffect(() => {
         if (!isAuthenticated || !token) {
@@ -77,7 +77,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
             socket?.off('chat:message:new', handleRefresh);
             socket?.off('chat:messages:read', handleRefresh);
         };
-    }, [isAuthenticated, token]);
+    }, [isAuthenticated, token, refreshNotifications]);
 
     const value = useMemo(() => ({
         unreadMessages,
@@ -85,7 +85,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         pendingRequestNames,
         hasNotifications: unreadMessages > 0 || pendingMatchRequests > 0,
         refreshNotifications,
-    }), [unreadMessages, pendingMatchRequests, pendingRequestNames]);
+    }), [unreadMessages, pendingMatchRequests, pendingRequestNames, refreshNotifications]);
 
     return (
         <NotificationContext.Provider value={value}>
