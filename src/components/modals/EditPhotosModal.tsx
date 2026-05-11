@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Camera, Trash2, Plus, X } from 'lucide-react';
 
 import {
@@ -66,7 +66,7 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
       style={style}
       {...attributes} 
       {...listeners} 
-      className={`relative aspect-square group animate-fade-in cursor-grab active:cursor-grabbing ${
+      className={`relative aspect-square group animate-fade-in cursor-grab active:cursor-grabbing rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-app-accent ${
         index === 0 ? 'ring-4 ring-bluvi-purple rounded-2xl' : ''
       }`}
     >
@@ -81,17 +81,18 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
       <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none">
         </div>
 
-        <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
           {index !== 0 && (
             <button 
               onClick={(e) => {
                 e.stopPropagation(); 
                 onMakePrimary(url);
               }}
-              className="bg-white text-bluvi-purple p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform pointer-events-auto"
+              className="bg-white text-bluvi-purple p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform pointer-events-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-accent"
               title="Poner como primera"
+              aria-label="Poner como primera foto"
             >
-              <Camera className="w-3.5 h-3.5" />
+              <Camera className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
           )}
 
@@ -100,10 +101,11 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
               e.stopPropagation(); 
               onRemove();
             }}
-            className="bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform pointer-events-auto"
+            className="bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform pointer-events-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-accent"
             title="Eliminar foto"
+            aria-label={`Eliminar foto ${index + 1}`}
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -119,6 +121,68 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
   const [photos, setPhotos] = useState<string[]>(currentPhotos);
   const [activeUrl, setActiveUrl] = useState<string | null>(null); 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    previouslyFocusedElementRef.current = document.activeElement as HTMLElement | null;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    requestAnimationFrame(() => closeButtonRef.current?.focus());
+
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      previouslyFocusedElementRef.current?.focus?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    const getFocusableElements = () => {
+      const dialog = dialogRef.current;
+      if (!dialog) return [];
+
+      return Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((element) => !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        if (!isSaving) onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isSaving, onClose]);
+
   const makePrimary = (url: string) => {
     setPhotos((prev) => {
       const remaining = prev.filter(p => p !== url);
@@ -171,14 +235,27 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 dark:bg-black/60 backdrop-blur-sm">
     
-      <div className="bg-app-surface-strong text-app-primary w-full max-w-md rounded-[32px] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-app-soft">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-photos-modal-title"
+        tabIndex={-1}
+        className="bg-app-surface-strong text-app-primary w-full max-w-md rounded-[32px] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-app-soft"
+      >
         
         <div className="p-6 flex justify-between items-center bg-app-surface-strong z-10">
-          <h2 className="text-xl font-bold text-app-primary flex items-center gap-2">
+          <h2 id="edit-photos-modal-title" className="text-xl font-bold text-app-primary flex items-center gap-2">
             <Camera className="text-app-accent" /> Mis Fotos
           </h2>
-          <button onClick={onClose} className="p-2 hover:bg-app-surface-soft rounded-full transition-colors">
-            <X className="w-5 h-5 text-app-muted" />
+          <button
+            ref={closeButtonRef}
+            onClick={onClose}
+            disabled={isSaving}
+            aria-label="Cerrar editor de fotos"
+            className="p-2 hover:bg-app-surface-soft rounded-full transition-colors disabled:opacity-50"
+          >
+            <X className="w-5 h-5 text-app-muted" aria-hidden="true" />
           </button>
         </div>
 

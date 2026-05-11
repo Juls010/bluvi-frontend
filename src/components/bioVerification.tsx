@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+﻿import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dialog, Heading, Modal, ModalOverlay } from 'react-aria-components';
 import type { LucideIcon } from 'lucide-react';
 import {
@@ -22,25 +22,34 @@ interface FaceVerificationProps {
     onVerified?: () => void | Promise<void>;
 }
 
-const STEPS: Array<{
-    gesture: Exclude<GestoReconocido, 'BOCA_ABIERTA' | 'NINGUNO'>;
+type VerificationGesture = Exclude<GestoReconocido, 'NINGUNO'>;
+type SecondStepGesture = Exclude<VerificationGesture, 'SONRISA'>;
+
+const GESTURE_CONTENT: Record<VerificationGesture, {
     title: string;
     hint: string;
     Icon: LucideIcon;
-}> = [
-    {
-        gesture: 'SONRISA',
+}> = {
+    SONRISA: {
         title: 'Sonríe',
         hint: 'Mira a cámara y muestra una sonrisa natural.',
         Icon: Smile
     },
-    {
-        gesture: 'GUINO_DERECHO',
+    GUINO_DERECHO: {
         title: 'Guiña el ojo derecho',
         hint: 'Mantente dentro del círculo y haz un guiño claro.',
         Icon: Eye
+    },
+    BOCA_ABIERTA: {
+        title: 'Abre la boca',
+        hint: 'Mantente dentro del círculo y abre la boca de forma clara.',
+        Icon: Smile
     }
-];
+};
+
+const getAlternativeGesture = (gesture: SecondStepGesture): SecondStepGesture => (
+    gesture === 'GUINO_DERECHO' ? 'BOCA_ABIERTA' : 'GUINO_DERECHO'
+);
 
 const getCameraErrorMessage = (err: unknown) => {
     if (err instanceof DOMException) {
@@ -68,15 +77,20 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
     const predictWebcamRef = useRef<((time: number) => void) | null>(null);
     const verificationInProgressRef = useRef(false);
 
-    const [gestoSolicitado, setGestoSolicitado] = useState<GestoReconocido>('SONRISA');
+    const [gestoSolicitado, setGestoSolicitado] = useState<VerificationGesture>('SONRISA');
+    const [segundoGesto, setSegundoGesto] = useState<SecondStepGesture>('GUINO_DERECHO');
     const [pasoActual, setPasoActual] = useState(1);
     const [verificado, setVerificado] = useState(false);
     const [cargando, setCargando] = useState(false);
+    const [guardando, setGuardando] = useState(false);
     const [cameraError, setCameraError] = useState<string | null>(null);
     const [retryKey, setRetryKey] = useState(0);
 
-    const currentStep = STEPS[pasoActual - 1] ?? STEPS[0];
+    const currentStep = GESTURE_CONTENT[gestoSolicitado];
     const CurrentStepIcon = currentStep.Icon;
+    const alternativeGesture = getAlternativeGesture(segundoGesto);
+    const alternativeStep = GESTURE_CONTENT[alternativeGesture];
+    const stepIndicators = [GESTURE_CONTENT.SONRISA, GESTURE_CONTENT[segundoGesto]];
 
     const stopCamera = useCallback(() => {
         if (requestRef.current) {
@@ -94,8 +108,10 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
 
     const resetVerification = useCallback(() => {
         setGestoSolicitado('SONRISA');
+        setSegundoGesto('GUINO_DERECHO');
         setPasoActual(1);
         setVerificado(false);
+        setGuardando(false);
         setCameraError(null);
         verificationInProgressRef.current = false;
     }, []);
@@ -108,12 +124,13 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
         if (gestoDetectado !== gestoSolicitado) return;
 
         if (pasoActual === 1) {
-            setGestoSolicitado('GUINO_DERECHO');
+            setGestoSolicitado(segundoGesto);
             setPasoActual(2);
             return;
         }
 
         verificationInProgressRef.current = true;
+        setGuardando(true);
         stopCamera();
 
         try {
@@ -123,15 +140,17 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
             console.error('Error guardando verificación facial', err);
             setCameraError('Hemos detectado el gesto, pero no se pudo guardar la verificación. Inténtalo de nuevo.');
             verificationInProgressRef.current = false;
+        } finally {
+            setGuardando(false);
         }
-    }, [gestoSolicitado, onVerified, pasoActual, stopCamera]);
+    }, [gestoSolicitado, onVerified, pasoActual, segundoGesto, stopCamera]);
 
     const predictWebcam = useCallback((time: number) => {
         if (faceLandmarkerRef.current && videoRef.current) {
             const results = faceLandmarkerRef.current.detectForVideo(videoRef.current, time);
 
             if (results) {
-                procesarResultados(results);
+                void procesarResultados(results);
             }
         }
 
@@ -211,13 +230,21 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
         setRetryKey((value) => value + 1);
     };
 
+    const handleUseAlternativeGesture = () => {
+        if (pasoActual !== 2 || guardando) return;
+
+        const nextGesture = getAlternativeGesture(segundoGesto);
+        setSegundoGesto(nextGesture);
+        setGestoSolicitado(nextGesture);
+    };
+
     return (
         <ModalOverlay
             isOpen={isOpen}
             onOpenChange={(open) => {
-                if (!open) onClose();
+                if (!open && !guardando) onClose();
             }}
-            isDismissable
+            isDismissable={!guardando}
             className="fixed inset-0 z-[60] flex items-center justify-center bg-black/75 p-4 animate-fade-in motion-reduce:animate-none dark:bg-black/85"
         >
             <Modal className="w-full max-w-xl outline-none">
@@ -227,7 +254,8 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                 >
                     <button
                         onClick={onClose}
-                        className="absolute right-4 top-4 z-20 rounded-full p-2 text-app-muted transition-all hover:bg-app-surface-soft hover:text-app-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-app-accent motion-reduce:transition-none"
+                        disabled={guardando}
+                        className="absolute right-4 top-4 z-20 rounded-full p-2 text-app-muted transition-all hover:bg-app-surface-soft hover:text-app-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-app-accent disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
                         aria-label="Cerrar verificación facial"
                     >
                         <X className="h-5 w-5" />
@@ -245,7 +273,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                                     Verificación facial
                                 </Heading>
                                 <p id="face-verification-description" className="mt-1 text-sm leading-relaxed text-app-secondary">
-                                    Confirma que eres tú con dos gestos rápidos frente a la cámara.
+                                    Confirma que eres tú con dos gestos rápidos frente a la cámara. Puedes cambiar el segundo gesto si el guiño no te resulta cómodo.
                                 </p>
                             </div>
                         </div>
@@ -294,6 +322,13 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                                                 </div>
                                             )}
 
+                                            {guardando && (
+                                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-app-surface-solid/95" role="status" aria-live="polite" aria-atomic="true">
+                                                    <div className="mb-3 h-10 w-10 animate-spin rounded-full border-4 border-app-accent/20 border-t-app-accent motion-reduce:animate-none" />
+                                                    <p className="text-sm font-bold text-app-secondary">Guardando verificación</p>
+                                                </div>
+                                            )}
+
                                             {verificado && (
                                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-emerald-500/90 text-white">
                                                     <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
@@ -310,14 +345,14 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                                     {!verificado ? (
                                         <>
                                             <div className="mb-4 flex items-center gap-2" aria-hidden="true">
-                                                {STEPS.map((step, index) => {
+                                                {stepIndicators.map((step, index) => {
                                                     const StepIcon = step.Icon;
                                                     const isActive = pasoActual === index + 1;
-                                                    const isDone = pasoActual > index + 1;
+                                                    const isDone = pasoActual > index + 1 || guardando;
 
                                                     return (
                                                         <div
-                                                            key={step.gesture}
+                                                            key={`${step.title}-${index}`}
                                                             className={`flex h-10 flex-1 items-center justify-center rounded-2xl border transition-all motion-reduce:transition-none ${
                                                                 isDone
                                                                     ? 'border-emerald-400 bg-emerald-400 text-white'
@@ -333,17 +368,31 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                                             </div>
 
                                             <p className="text-xs font-black uppercase tracking-[0.14em] text-app-muted">
-                                                Paso {pasoActual} de {STEPS.length}
+                                                Paso {pasoActual} de 2
                                             </p>
                                             <div className="mt-3 flex items-start gap-3" role="status" aria-live="polite" aria-atomic="true">
                                                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-app-pill text-app-accent-strong dark:text-app-orange">
                                                     <CurrentStepIcon className="h-5 w-5" />
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-heading text-lg font-bold text-app-primary">{currentStep.title}</h3>
-                                                    <p className="mt-1 text-sm leading-relaxed text-app-secondary">{currentStep.hint}</p>
+                                                    <h3 className="font-heading text-lg font-bold text-app-primary">
+                                                        {guardando ? 'Guardando verificación' : currentStep.title}
+                                                    </h3>
+                                                    <p className="mt-1 text-sm leading-relaxed text-app-secondary">
+                                                        {guardando ? 'Hemos detectado el gesto. Espera un momento mientras guardamos el resultado.' : currentStep.hint}
+                                                    </p>
                                                 </div>
                                             </div>
+
+                                            {pasoActual === 2 && !guardando && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleUseAlternativeGesture}
+                                                    className="mt-4 w-full rounded-2xl border-2 border-app-soft bg-app-surface px-3 py-2.5 text-sm font-bold text-app-accent-strong transition-colors hover:bg-app-surface-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-app-accent motion-reduce:transition-none"
+                                                >
+                                                    Usar alternativa: {alternativeStep.title.toLowerCase()}
+                                                </button>
+                                            )}
 
                                             <div className="mt-5 flex items-center gap-2 rounded-2xl border border-app-soft bg-app-surface-solid px-3 py-3 text-sm font-semibold text-app-secondary">
                                                 <Video className="h-4 w-4 shrink-0 text-app-accent dark:text-app-orange" />

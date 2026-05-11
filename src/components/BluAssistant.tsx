@@ -19,6 +19,40 @@ const BLU_RESPONSES: Record<string, string> = {
     "¿Con quién hablo primero?": "Empieza con alguien con quien compartas al menos 2 intereses. La compatibilidad de hobbies predice mejor la conexión real 🎯",
 };
 
+const BLU_ANIMATION_URL = 'https://davvcdn.lon1.cdn.digitaloceanspaces.com/70ae84aa209da8b5d745696d86da9236/5203ea00a53efb1f23c6.html';
+
+const BluAssistantAnimation: React.FC<{ size?: 'sm' | 'md' }> = ({ size = 'md' }) => {
+    const [failed, setFailed] = useState(false);
+    const dimensions = size === 'sm' ? 'w-9 h-9' : 'w-14 h-14';
+    const iconSize = size === 'sm' ? 16 : 22;
+
+    if (failed) {
+        return (
+            <div
+                className={`${dimensions} rounded-full flex items-center justify-center shadow-md`}
+                style={{ background: 'linear-gradient(135deg, #9160e4, #3b2b97)' }}
+                aria-hidden="true"
+            >
+                <Sparkles size={iconSize} className="text-white" />
+            </div>
+        );
+    }
+
+    return (
+        <iframe
+            src={BLU_ANIMATION_URL}
+            title="Animación de Blu"
+            frameBorder="0"
+            allow="accelerometer; gyroscope; magnetometer"
+            sandbox="allow-scripts"
+            loading="lazy"
+            onError={() => setFailed(true)}
+            className={`${dimensions} block rounded-full border-0 pointer-events-none overflow-hidden bg-transparent`}
+            aria-hidden="true"
+        />
+    );
+};
+
 export const BluAssistant: React.FC = () => {
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState('');
@@ -73,11 +107,7 @@ export const BluAssistant: React.FC = () => {
                 >
                     <div className="flex items-center gap-2.5">
                         <div className="relative">
-                            <div className="w-9 h-9 rounded-full flex items-center justify-center shadow-md"
-                                style={{ background: 'linear-gradient(135deg, #9160e4, #3b2b97)' }}
-                            >
-                                <Sparkles size={16} className="text-white" />
-                            </div>
+                            <BluAssistantAnimation size="sm" />
                             <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full ring-2 ring-white" />
                         </div>
                         <div>
@@ -174,8 +204,8 @@ export const BluAssistant: React.FC = () => {
                 onClick={() => setOpen(o => !o)}
                 className="relative w-14 h-14 rounded-full shadow-xl flex items-center justify-center"
                 style={{
-                    background: 'linear-gradient(135deg, #9160e4, #3b2b97)',
-                    boxShadow: '0 6px 24px rgba(124, 58, 237, 0.3)',
+                    background: open ? 'linear-gradient(135deg, #9160e4, #3b2b97)' : 'rgba(255,255,255,0.01)',
+                    boxShadow: open ? '0 6px 24px rgba(124, 58, 237, 0.3)' : '0 6px 24px rgba(124, 58, 237, 0.18)',
                     // Transición suave solo de opacidad — sin escala, sin rebote
                     transition: 'opacity 0.3s ease, box-shadow 0.3s ease',
                 }}
@@ -184,7 +214,7 @@ export const BluAssistant: React.FC = () => {
             >
                 {/* Icono: fade cruzado en lugar de rotación */}
                 <div style={{ transition: 'opacity 0.3s ease', opacity: open ? 0 : 1, position: 'absolute' }}>
-                    <Sparkles size={22} className="text-white" />
+                    <BluAssistantAnimation />
                 </div>
                 <div style={{ transition: 'opacity 0.3s ease', opacity: open ? 1 : 0, position: 'absolute' }}>
                     <X size={22} className="text-white" />

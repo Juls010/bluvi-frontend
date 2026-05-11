@@ -18,9 +18,7 @@ interface ProfileDetailProps {
 }
 
 export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPass, onReportAndBlock }) => {
-    console.log("🔍 INVESTIGANDO USUARIO:", user);
 
-   
     const age = (user as any).birth_date 
     ? Math.floor((Date.now() - new Date((user as any).birth_date).getTime()) / (1000 * 60 * 60 * 24 * 365.25))
     : '—';
@@ -69,7 +67,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                         <AriaButton 
                             onPress={onPass}
                             aria-label={`Pasar perfil de ${user.first_name}`}
-                            className="w-16 h-16 rounded-[28px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 dark:hover:bg-red-500/10 dark:hover:border-red-500/30 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
+                            className="w-16 h-16 rounded-[22px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 dark:hover:bg-red-500/10 dark:hover:border-red-500/30 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
                         >
                             <X size={32} strokeWidth={2.5} className="transition-transform group-hover:scale-110" />
                         </AriaButton>
@@ -80,7 +78,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                         <AriaButton 
                             onPress={onLike}
                             aria-label={`Me gusta ${user.first_name}`}
-                            className="w-16 h-16 relative overflow-visible rounded-[28px] text-white shadow-xl shadow-red-500/20 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-400/30"
+                            className="w-16 h-16 relative overflow-visible rounded-[22px] text-white shadow-xl shadow-red-500/20 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-400/30"
                             style={{ backgroundColor: '#d3435dff' }}
                         >
                             <ClickSpark 
@@ -185,7 +183,6 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
             </div>
         </div>
 
-        {/* Barra de Acciones Flotante para Móvil */}
         <div className="md:hidden fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-sm z-50 pointer-events-none">
             <div className="bg-app-surface/85 backdrop-blur-2xl shadow-xl rounded-[40px] py-3 px-10 flex justify-between items-center pointer-events-auto">
                 <AriaButton 

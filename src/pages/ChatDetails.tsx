@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ShieldOff, Trash2, Flag, ArrowLeft, Send, Check, MoreVertical, Image, Smile, AlertTriangle } from 'lucide-react';
+import { ShieldOff, Trash2, Flag, ArrowLeft, Send, Check, MoreVertical, Image, Smile, AlertTriangle, X } from 'lucide-react';
 import EmojiPicker, { type EmojiClickData, Theme } from 'emoji-picker-react';
 import {
     getConversationMessages,
@@ -12,22 +13,29 @@ import {
     reportUser,
     blockUser,
     sendAudioMessage,
+    sendImageMessage,
+    deleteMessageForEveryone,
     transcribeAudioMessage,
     type ChatCounterpart,
     type ChatMessage,
 } from '../services/chat.service';
 import { connectRealtime, disconnectRealtime } from '../services/realtime.service';
 import { uploadAudioMessage } from '../services/audioService';
+import { uploadChatImage } from '../services/chatImageService';
 import { AudioRecorder } from '../components/AudioRecorder';
 import { AudioMessage } from '../components/AudioMessage';
 import { DropdownMenu, DropdownMenuButton, DropdownMenuSeparator } from '../components/DropdownMenu';
 import { VerifiedIdentityIcon } from '../components/VerifiedIdentityIcon';
+import { Tooltip, TooltipTrigger, Button as AriaButton } from '../components/Tooltip';
+import { getMyProfile } from '../services/user.service';
 
 interface RealtimeChatPayload {
     fromUserId: number;
     chatUserId?: number;
     isTyping?: boolean;
     message?: ChatMessage;
+    messageId?: number;
+    deletedAt?: string;
     lastReadMessageId?: number;
     lastDeliveredMessageId?: number;
     byUserId?: number;
@@ -44,6 +52,9 @@ type ConversationResponsePartial = {
 const PAGE_SIZE = 30;
 const TYPING_STOP_DELAY = 1200;
 const typingPickerId = 'chat-emoji-picker';
+const chatHistoryInstructionsId = 'chat-history-keyboard-instructions';
+const deleteMessageTitleId = 'delete-message-dialog-title';
+const deleteMessageDescriptionId = 'delete-message-dialog-description';
 
 const formatHour = (date: string) =>
     new Date(date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
@@ -70,13 +81,19 @@ export const ChatDetail: React.FC = () => {
     const [isBlockedByOther, setIsBlockedByOther] = useState(false);
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [showReportModal, setShowReportModal] = useState(false);
+    const [messageToDelete, setMessageToDelete] = useState<ChatMessage | null>(null);
     const [reportReason, setReportReason] = useState('');
     const [reportSuccess, setReportSuccess] = useState(false);
     const [isBlocking, setIsBlocking] = useState(false);
     const [isReporting, setIsReporting] = useState(false);
+    const [isDeletingMessage, setIsDeletingMessage] = useState(false);
+    const [deleteMessageError, setDeleteMessageError] = useState('');
     const [isRecordingAudio, setIsRecordingAudio] = useState(false);
     const [hasRecordedAudio, setHasRecordedAudio] = useState(false);
+    const [lightboxImageUrl, setLightboxImageUrl] = useState<string | null>(null);
     const [transcribingMessageIds, setTranscribingMessageIds] = useState<Set<number>>(new Set());
+    const [activeMessageId, setActiveMessageId] = useState<number | null>(null);
+    const [isHistoryFocused, setIsHistoryFocused] = useState(false);
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -86,12 +103,31 @@ export const ChatDetail: React.FC = () => {
     const optionsMenuRef = useRef<HTMLDivElement>(null);
     const optionsButtonRef = useRef<HTMLButtonElement>(null);
     const optionsCloseTimerRef = useRef<number | null>(null);
+    const imageInputRef = useRef<HTMLInputElement>(null);
+    const emojiPickerRef = useRef<HTMLDivElement>(null);
+    const emojiButtonRef = useRef<HTMLButtonElement>(null);
+    const deleteMessageDialogRef = useRef<HTMLDivElement>(null);
+    const deleteMessageCancelButtonRef = useRef<HTMLButtonElement>(null);
+    const previousFocusRef = useRef<HTMLElement | null>(null);
 
     const currentUserRaw = localStorage.getItem('user');
-    const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) as { id?: number } : null;
+    const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) as { id?: number; is_face_verified?: boolean } : null;
     const currentUserId = Number(currentUser?.id);
+    const [isCurrentUserFaceVerified, setIsCurrentUserFaceVerified] = useState(Boolean(currentUser?.is_face_verified));
     const reduceMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const prevIsRecordingRef = useRef(isRecordingAudio);
+
+    const getMessageElementId = useCallback((messageId: number) => `chat-message-${messageId}`, []);
+
+    const setActiveMessage = useCallback((messageId: number) => {
+        setActiveMessageId(messageId);
+        window.requestAnimationFrame(() => {
+            document.getElementById(getMessageElementId(messageId))?.scrollIntoView({
+                block: 'nearest',
+                behavior: reduceMotion ? 'auto' : 'smooth',
+            });
+        });
+    }, [getMessageElementId, reduceMotion]);
 
     useEffect(() => {
         if (prevIsRecordingRef.current && !isRecordingAudio) {
@@ -99,6 +135,58 @@ export const ChatDetail: React.FC = () => {
         }
         prevIsRecordingRef.current = isRecordingAudio;
     }, [isRecordingAudio]);
+
+    useEffect(() => {
+        if (messages.length === 0) {
+            setActiveMessageId(null);
+            return;
+        }
+
+        if (activeMessageId && messages.some((message) => message.id_message === activeMessageId)) {
+            return;
+        }
+
+        setActiveMessageId(messages[messages.length - 1].id_message);
+    }, [activeMessageId, messages]);
+
+    useEffect(() => {
+        if (!lightboxImageUrl) return;
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setLightboxImageUrl(null);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [lightboxImageUrl]);
+
+    useEffect(() => {
+        if (!messageToDelete) {
+            return;
+        }
+
+        deleteMessageCancelButtonRef.current?.focus();
+    }, [messageToDelete]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        getMyProfile()
+            .then((profile) => {
+                if (!cancelled) {
+                    setIsCurrentUserFaceVerified(Boolean(profile.is_face_verified));
+                }
+            })
+            .catch((error) => {
+                console.error('Error comprobando verificación facial para adjuntar imágenes:', error);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const sendTypingState = useCallback((isTyping: boolean) => {
         const socket = connectRealtime();
@@ -246,6 +334,36 @@ export const ChatDetail: React.FC = () => {
         }
     };
 
+    const handleImageSelected = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+
+        if (!file || sending || !Number.isInteger(chatUserId) || chatUserId <= 0) {
+            return;
+        }
+
+        if (!isCurrentUserFaceVerified) {
+            return;
+        }
+
+        try {
+            setSending(true);
+            const { url: imageUrl, error } = await uploadChatImage(file, currentUserId);
+
+            if (error || !imageUrl) {
+                throw new Error(error || 'No se pudo subir la imagen');
+            }
+
+            const sent = await sendImageMessage(chatUserId, imageUrl);
+            setMessages((prev) => [...prev, { ...sent, is_read: false, is_delivered: false }]);
+        } catch (error) {
+            console.error('Error enviando imagen:', error);
+            alert(error instanceof Error ? error.message : 'No se pudo enviar la imagen. Inténtalo de nuevo.');
+        } finally {
+            setSending(false);
+        }
+    };
+
     const handleTranscribeAudio = async (message: ChatMessage) => {
         if (!message.audio_url || transcribingMessageIds.has(message.id_message)) {
             return;
@@ -287,6 +405,93 @@ export const ChatDetail: React.FC = () => {
         }
     };
 
+    const openDeleteMessageModal = (message: ChatMessage) => {
+        if (message.sender_id !== currentUserId || message.deleted_at) {
+            return;
+        }
+
+        previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        setDeleteMessageError('');
+        setMessageToDelete(message);
+    };
+
+    const closeDeleteMessageModal = () => {
+        if (isDeletingMessage) {
+            return;
+        }
+
+        setMessageToDelete(null);
+        setDeleteMessageError('');
+        window.requestAnimationFrame(() => {
+            previousFocusRef.current?.focus();
+            previousFocusRef.current = null;
+        });
+    };
+
+    const confirmDeleteMessageForEveryone = async () => {
+        if (!messageToDelete) {
+            return;
+        }
+
+        try {
+            setIsDeletingMessage(true);
+            setDeleteMessageError('');
+            const deletedMessage = await deleteMessageForEveryone(messageToDelete.id_message);
+            setMessages((prev) => prev.map((item) => (
+                item.id_message === messageToDelete.id_message
+                    ? { ...item, ...deletedMessage, is_read: item.is_read, is_delivered: item.is_delivered }
+                    : item
+            )));
+            setMessageToDelete(null);
+            window.requestAnimationFrame(() => {
+                previousFocusRef.current?.focus();
+                previousFocusRef.current = null;
+            });
+        } catch (error) {
+            console.error('Error eliminando mensaje:', error);
+            setDeleteMessageError('No se pudo eliminar el mensaje. Intentalo de nuevo.');
+        } finally {
+            setIsDeletingMessage(false);
+        }
+    };
+
+    const handleDeleteMessageDialogKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeDeleteMessageModal();
+            return;
+        }
+
+        if (event.key !== 'Tab') {
+            return;
+        }
+
+        const focusable = Array.from(
+            deleteMessageDialogRef.current?.querySelectorAll<HTMLElement>(
+                'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            ) || []
+        );
+
+        if (focusable.length === 0) {
+            event.preventDefault();
+            return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+            return;
+        }
+
+        if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    };
+
     const closeOptionsMenu = useCallback((returnFocus = true) => {
         if (!showOptions || isOptionsClosing) {
             return;
@@ -323,6 +528,65 @@ export const ChatDetail: React.FC = () => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
             void handleSendMessage();
+        }
+    };
+
+    const handleMessagesKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+        if (event.target !== event.currentTarget) {
+            return;
+        }
+
+        if (messages.length === 0) {
+            return;
+        }
+
+        const currentIndex = Math.max(
+            0,
+            activeMessageId ? messages.findIndex((message) => message.id_message === activeMessageId) : messages.length - 1
+        );
+        const activeMessage = messages[currentIndex] || messages[messages.length - 1];
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+            event.preventDefault();
+            const next = messages[Math.min(currentIndex + 1, messages.length - 1)];
+            setActiveMessage(next.id_message);
+            return;
+        }
+
+        if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+            event.preventDefault();
+            const previous = messages[Math.max(currentIndex - 1, 0)];
+            setActiveMessage(previous.id_message);
+            return;
+        }
+
+        if (event.key === 'Home') {
+            event.preventDefault();
+            setActiveMessage(messages[0].id_message);
+            return;
+        }
+
+        if (event.key === 'End') {
+            event.preventDefault();
+            setActiveMessage(messages[messages.length - 1].id_message);
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            inputRef.current?.focus();
+            return;
+        }
+
+        if ((event.key === 'Enter' || event.key === ' ') && activeMessage?.message_type === 'image' && activeMessage.image_url && !activeMessage.deleted_at) {
+            event.preventDefault();
+            setLightboxImageUrl(activeMessage.image_url);
+            return;
+        }
+
+        if ((event.key === 'Delete' || event.key === 'Backspace') && activeMessage?.sender_id === currentUserId && !activeMessage.deleted_at) {
+            event.preventDefault();
+            openDeleteMessageModal(activeMessage);
         }
     };
 
@@ -453,10 +717,37 @@ export const ChatDetail: React.FC = () => {
             );
         };
 
+        const onDeleted = (payload: RealtimeChatPayload) => {
+            if (payload.fromUserId !== chatUserId && payload.message?.sender_id !== chatUserId) {
+                return;
+            }
+
+            const deletedMessageId = payload.message?.id_message || payload.messageId;
+            if (!deletedMessageId) {
+                return;
+            }
+
+            setMessages((prev) => prev.map((message) => (
+                message.id_message === deletedMessageId
+                    ? {
+                        ...message,
+                        ...payload.message,
+                        deleted_at: payload.message?.deleted_at || payload.deletedAt || new Date().toISOString(),
+                        content: '',
+                        audio_url: undefined,
+                        image_url: undefined,
+                        transcript: null,
+                        duration_seconds: undefined,
+                    }
+                    : message
+            )));
+        };
+
         socket?.on('chat:typing', onTyping);
         socket?.on('chat:message:new', onMessage);
         socket?.on('chat:messages:read', onRead);
         socket?.on('chat:messages:delivered', onDelivered);
+        socket?.on('chat:message:deleted', onDeleted);
 
         const onUserOnline = (payload: { userId: number }) => {
             if (!canShowOnlineStatus) {
@@ -486,6 +777,7 @@ export const ChatDetail: React.FC = () => {
             socket?.off('chat:message:new', onMessage);
             socket?.off('chat:messages:read', onRead);
             socket?.off('chat:messages:delivered', onDelivered);
+            socket?.off('chat:message:deleted', onDeleted);
             socket?.off('user:online', onUserOnline);
             socket?.off('user:offline', onUserOffline);
             disconnectRealtime();
@@ -561,15 +853,52 @@ export const ChatDetail: React.FC = () => {
         return () => {
             document.removeEventListener('pointerdown', handlePointerDownOutside, true);
             document.removeEventListener('keydown', handleKeyDown);
-            if (optionsCloseTimerRef.current) {
-                window.clearTimeout(optionsCloseTimerRef.current);
-            }
             if (typingStopTimerRef.current) {
                 window.clearTimeout(typingStopTimerRef.current);
             }
             sendTypingState(false);
         };
     }, [showOptions, closeOptionsMenu, sendTypingState]);
+
+    useEffect(() => {
+        return () => {
+            if (optionsCloseTimerRef.current) {
+                window.clearTimeout(optionsCloseTimerRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!showPicker) return;
+
+        const handlePointerDownOutside = (event: PointerEvent) => {
+            const target = event.target as Node;
+
+            if (
+                emojiPickerRef.current?.contains(target) ||
+                emojiButtonRef.current?.contains(target)
+            ) {
+                return;
+            }
+
+            setShowPicker(false);
+        };
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setShowPicker(false);
+                emojiButtonRef.current?.focus();
+            }
+        };
+
+        document.addEventListener('pointerdown', handlePointerDownOutside, true);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('pointerdown', handlePointerDownOutside, true);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [showPicker]);
 
     if (!Number.isInteger(chatUserId) || chatUserId <= 0) {
         return <div className="pt-20 text-center text-app-primary font-medium">Chat no válido.</div>;
@@ -580,29 +909,29 @@ export const ChatDetail: React.FC = () => {
     }
 
     return (
-        <div className="flex justify-center h-[100svh]">
-            <div className="flex flex-col w-full max-w-[95%]">
-                <header className="flex-none z-50 bg-app-surface-strong backdrop-blur-md border-b rounded-2xl border-app-soft px-5 py-3 flex items-center justify-between shadow-sm">
+        <div className="flex h-[100svh]">
+            <div className="flex flex-col w-full min-w-0 bg-app-surface/45">
+                <header className="flex-none z-50 bg-app-surface-strong/90 backdrop-blur-xl border-b border-app-soft px-4 md:px-5 py-3 flex items-center justify-between shadow-sm">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate(-1)}
                             aria-label="Volver a la lista de conversaciones"
-                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-app-surface-soft text-app-accent transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/50 focus-visible:ring-offset-2 focus-visible:shadow-lg"
+                            className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-app-surface-soft text-app-accent transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/50 focus-visible:ring-offset-2 focus-visible:shadow-lg"
                         >
                             <ArrowLeft size={22} strokeWidth={2} />
                         </button>
 
                         <Link 
                             to={`/app/user/${chatUserId}`}
-                            className="flex items-center gap-3 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-lg rounded-2xl px-1 py-1"
+                            className="flex items-center gap-3 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg rounded-2xl px-1 py-1"
                         >
                             <div className="relative">
                                 <img
                                     src={(isBlockedByMe || isBlockedByOther) ? 'https://via.placeholder.com/120?text=?' : (counterpart?.main_photo || 'https://via.placeholder.com/120')}
-                                    className="w-11 h-11 rounded-full object-cover ring-2 ring-app-soft"
+                                    className="w-11 h-11 rounded-2xl object-cover ring-2 ring-app-soft shadow-sm"
                                     alt={counterpart?.first_name || 'Usuario'}
                                 />
-                                <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ring-2 ring-app-surface transition-colors ${canShowOnlineStatus && isRemoteUserOnline && !isBlockedByMe && !isBlockedByOther ? 'bg-green-400' : 'bg-gray-400'}`} />
+                                <span className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full ring-2 ring-app-surface transition-colors ${canShowOnlineStatus && isRemoteUserOnline && !isBlockedByMe && !isBlockedByOther ? 'bg-green-400' : 'bg-gray-400'}`} />
                             </div>
                             <div className="min-w-0 text-left">
                                 <div className="flex items-center gap-1.5">
@@ -643,7 +972,7 @@ export const ChatDetail: React.FC = () => {
                                     openOptionsMenu();
                                 }
                             }}
-                            className="w-10 h-10 flex items-center justify-center rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
+                            className="w-10 h-10 flex items-center justify-center rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
                             aria-label="Más opciones del chat"
                             aria-expanded={showOptions}
                             aria-haspopup="menu"
@@ -693,15 +1022,41 @@ export const ChatDetail: React.FC = () => {
                     aria-live="polite"
                     aria-relevant="additions text"
                     aria-label={`Mensajes con ${counterpart ? `${counterpart.first_name} ${counterpart.last_name}` : 'usuario'}`}
+                    aria-describedby={chatHistoryInstructionsId}
+                    aria-activedescendant={activeMessageId ? getMessageElementId(activeMessageId) : undefined}
                     onScroll={(event) => {
                         const element = event.currentTarget;
                         if (element.scrollTop < 120 && hasMore && !loadingOlder) {
                             void loadOlderMessages();
                         }
                     }}
-                    className="flex-1 min-h-0 overflow-y-auto px-5 py-6 space-y-2 focus:outline-none scrollbar-hide"
+                    onFocus={(event) => {
+                        setIsHistoryFocused(true);
+                        if (event.target === event.currentTarget && messages.length > 0) {
+                            setActiveMessage(activeMessageId || messages[messages.length - 1].id_message);
+                        }
+                    }}
+                    onBlur={(event) => {
+                        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                            setIsHistoryFocused(false);
+                        }
+                    }}
+                    onKeyDown={handleMessagesKeyDown}
+                    className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-6 space-y-2 focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/15 scrollbar-hide"
                     tabIndex={0}
                 >
+                    <p id={chatHistoryInstructionsId} className="sr-only">
+                        Historial de mensajes. Usa las flechas arriba y abajo para recorrer mensajes, Enter para abrir una imagen, Suprimir para eliminar un mensaje enviado por ti, y Escape para volver al campo de texto.
+                    </p>
+                    {isHistoryFocused && (
+                        <div
+                            className="sticky top-2 z-10 mx-auto mb-3 w-fit max-w-[calc(100%-1rem)] rounded-full border border-app-soft bg-app-surface-strong/95 px-4 py-2 text-center text-xs font-semibold text-app-secondary shadow-lg backdrop-blur-md animate-in fade-in slide-in-from-top-1 duration-200"
+                            role="status"
+                            aria-live="polite"
+                        >
+                            Usa ↑ ↓ para recorrer mensajes. Enter abre imagen. Esc vuelve al campo.
+                        </div>
+                    )}
                     {loadingOlder && (
                         <div className="text-center text-xs text-app-muted py-2" aria-live="polite">Cargando mensajes anteriores...</div>
                     )}
@@ -717,11 +1072,27 @@ export const ChatDetail: React.FC = () => {
                         const prevMsg = messages[index - 1];
                         const isSameSender = prevMsg?.sender_id === msg.sender_id;
                         const isRead = Boolean(msg.is_read);
+                        const isDeleted = Boolean(msg.deleted_at);
+                        const isActive = activeMessageId === msg.id_message;
+                        const isKeyboardActive = isActive && isHistoryFocused;
+                        const senderLabel = isMe ? 'Tu mensaje' : `Mensaje de ${counterpart?.first_name || 'la otra persona'}`;
+                        const contentLabel = isDeleted
+                            ? 'eliminado'
+                            : msg.message_type === 'audio'
+                                ? 'nota de audio'
+                                : msg.message_type === 'image'
+                                    ? 'imagen'
+                                    : msg.content;
 
                         return (
                             <div
                                 key={msg.id_message}
-                                className={`flex items-end gap-2.5 ${isMe ? 'justify-end' : 'justify-start'} ${isSameSender ? 'mt-1' : 'mt-3'}`}
+                                id={getMessageElementId(msg.id_message)}
+                                role="article"
+                                aria-current={isKeyboardActive ? 'true' : undefined}
+                                aria-label={`${senderLabel}, ${contentLabel}, ${formatHour(msg.created_at)}`}
+                                onMouseDown={() => setActiveMessageId(msg.id_message)}
+                                className={`group/message flex items-end gap-2.5 rounded-3xl transition-shadow duration-200 ${isMe ? 'justify-end' : 'justify-start'} ${isSameSender ? 'mt-1' : 'mt-3'} ${isKeyboardActive ? 'ring-2 ring-app-accent/25 ring-offset-2 ring-offset-transparent' : ''}`}
                             >
                                 {!isMe && (
                                     <div className="w-7 flex-none self-end">
@@ -735,8 +1106,33 @@ export const ChatDetail: React.FC = () => {
                                     </div>
                                 )}
 
-                                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} ${msg.message_type === 'audio' ? 'w-full' : 'max-w-[75%]'}`}>
-                                    {msg.message_type === 'audio' && msg.audio_url ? (
+                                {isMe && !isDeleted && (
+                                    <button
+                                        type="button"
+                                        onClick={() => openDeleteMessageModal(msg)}
+                                        tabIndex={isKeyboardActive ? 0 : -1}
+                                        className={`mb-6 inline-flex h-8 w-8 translate-x-2 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-500 hover:shadow-md focus-visible:translate-x-0 focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-500/15 group-hover/message:translate-x-0 group-hover/message:scale-100 group-hover/message:opacity-100 ${isKeyboardActive ? 'translate-x-0 scale-100 opacity-100' : ''}`}
+                                        title="Eliminar para todos"
+                                        aria-label="Eliminar mensaje para todos"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                )}
+
+                                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} ${msg.message_type === 'audio' && !isDeleted ? 'max-w-[min(75%,24rem)] w-full' : 'max-w-[75%]'}`}>
+                                    {isDeleted ? (
+                                        <div
+                                            className={`
+                                                border border-app-soft bg-app-surface/80 px-4 py-2.5 text-[14px] italic leading-6 text-app-muted shadow-sm
+                                            ${isMe
+                                                    ? 'rounded-[22px] rounded-br-md'
+                                                    : 'rounded-[22px] rounded-bl-md'
+                                            }
+                                        `}
+                                        >
+                                            Mensaje eliminado
+                                        </div>
+                                    ) : msg.message_type === 'audio' && msg.audio_url ? (
                                         <div className="mb-1">
                                             <AudioMessage
                                                 audioUrl={msg.audio_url}
@@ -745,15 +1141,41 @@ export const ChatDetail: React.FC = () => {
                                                 transcript={msg.transcript}
                                                 isTranscribing={transcribingMessageIds.has(msg.id_message)}
                                                 onTranscribe={!msg.transcript ? () => void handleTranscribeAudio(msg) : undefined}
+                                                isInteractive={isKeyboardActive}
                                             />
                                         </div>
+                                    ) : msg.message_type === 'image' && msg.image_url ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => setLightboxImageUrl(msg.image_url || null)}
+                                            onContextMenu={(event) => event.preventDefault()}
+                                            tabIndex={isKeyboardActive ? 0 : -1}
+                                            className={`group/image relative block overflow-hidden rounded-[22px] shadow-sm border transition-all hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20 ${
+                                                isMe
+                                                    ? 'rounded-br-md border-app-accent/20'
+                                                    : 'rounded-bl-md border-app-soft bg-app-surface'
+                                            }`}
+                                            aria-label="Ver imagen en grande"
+                                        >
+                                            <img
+                                                src={msg.image_url}
+                                                alt="Imagen enviada en el chat"
+                                                className="max-h-72 w-full max-w-xs object-cover transition-transform duration-500 group-hover/image:scale-[1.03]"
+                                                loading="lazy"
+                                                draggable={false}
+                                            />
+                                            <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors group-hover/image:bg-black/10" />
+                                            <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-black/35 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.16em] text-white/75 backdrop-blur-sm">
+                                                Bluvi
+                                            </span>
+                                        </button>
                                     ) : (
                                         <div
                                             className={`
-                                                px-4 py-2.5 text-[15px] leading-7
+                                                px-4 py-2.5 text-[15px] leading-7 shadow-sm
                                             ${isMe
-                                                    ? 'text-app-on-accent rounded-2xl rounded-br-md shadow-md'
-                                                    : 'bg-app-surface text-app-primary rounded-2xl rounded-bl-md shadow-sm border border-app-soft'
+                                                    ? 'text-app-on-accent rounded-[22px] rounded-br-md shadow-md'
+                                                    : 'bg-app-surface text-app-primary rounded-[22px] rounded-bl-md border border-app-soft'
                                             }
                                         `}
                                             style={{
@@ -766,12 +1188,12 @@ export const ChatDetail: React.FC = () => {
                                     )}
 
                                     <div className="flex items-center gap-1 mt-1 px-1">
-                                        <span className="text-[11px] text-app-muted mr-1">{formatHour(msg.created_at)}</span>
+                                        <span className="text-[10.5px] text-app-muted mr-1 font-medium">{formatHour(msg.created_at)}</span>
                                         {isMe && (
                                             isRead ? (
                                                 <span className="flex" aria-label="Leído">
-                                                    <Check size={13} strokeWidth={3} style={{ color: '#34B7F1' }} />
-                                                    <Check size={13} strokeWidth={3} style={{ color: '#34B7F1', marginLeft: '-8px' }} />
+                                                    <Check size={13} strokeWidth={3} style={{ color: 'var(--app-message-read-check)' }} />
+                                                    <Check size={13} strokeWidth={3} style={{ color: 'var(--app-message-read-check)', marginLeft: '-8px' }} />
                                                 </span>
                                             ) : msg.is_delivered ? (
                                                 <span className="flex" aria-label="Entregado">
@@ -810,7 +1232,7 @@ export const ChatDetail: React.FC = () => {
                     <div ref={messagesEndRef} />
                 </main>
 
-                <div className="flex-none px-4 pb-6 pt-2 bg-app-surface-nav backdrop-blur-xl rounded-2xl border-t border-app-soft">
+                <div className="flex-none px-3 md:px-4 pb-4 pt-3 bg-app-surface-strong/90 backdrop-blur-xl border-t border-app-soft">
                     {(isBlockedByMe || isBlockedByOther) ? (
                         <div className="flex items-center justify-center py-4 px-6 bg-app-surface rounded-2xl border border-app-soft border-dashed">
                             <p className="text-sm text-app-muted font-medium italic">
@@ -818,25 +1240,50 @@ export const ChatDetail: React.FC = () => {
                             </p>
                         </div>
                     ) : (
-                        <div className="flex items-end gap-2">
+                        <div className="flex items-end gap-2 rounded-[24px] bg-app-surface/70 border border-app-soft px-2.5 py-2 shadow-sm">
                             {!isRecordingAudio && (
-                                <div className="flex gap-1 pb-2">
-                                    <button className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-lg" aria-label="Adjuntar imagen">
-                                        <Image size={20} strokeWidth={1.8} />
-                                    </button>
+                                <div className="flex gap-1 pb-1">
+                                    {isCurrentUserFaceVerified ? (
+                                        <button
+                                            onClick={() => imageInputRef.current?.click()}
+                                            disabled={sending}
+                                            className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                            aria-label="Adjuntar imagen"
+                                        >
+                                            <Image size={20} strokeWidth={1.8} />
+                                        </button>
+                                    ) : (
+                                        <TooltipTrigger delay={300}>
+                                            <AriaButton
+                                                className="w-10 h-10 flex items-center justify-center text-app-muted/60 rounded-2xl transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/40 focus-visible:ring-offset-2 cursor-not-allowed"
+                                                aria-label="Solo pueden enviar fotos los perfiles verificados"
+                                            >
+                                                <Image size={20} strokeWidth={1.8} />
+                                            </AriaButton>
+                                            <Tooltip>Solo pueden enviar fotos los perfiles verificados</Tooltip>
+                                        </TooltipTrigger>
+                                    )}
+                                    <input
+                                        ref={imageInputRef}
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp,image/gif"
+                                        className="sr-only"
+                                        onChange={(event) => void handleImageSelected(event)}
+                                    />
                                     <div className="relative">
                                         <button
+                                            ref={emojiButtonRef}
                                             onClick={() => setShowPicker((o) => !o)}
                                             aria-controls={typingPickerId}
                                             aria-expanded={showPicker}
                                             aria-label="Abrir selector de emoji"
-                                            className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-full transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
+                                            className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
                                         >
                                             <Smile size={20} strokeWidth={1.8} />
                                         </button>
 
                                         {showPicker && (
-                                            <div id={typingPickerId} className="absolute bottom-12 left-0 z-50">
+                                            <div ref={emojiPickerRef} id={typingPickerId} className="absolute bottom-12 left-0 z-50">
                                                 <EmojiPicker
                                                     onEmojiClick={handleEmojiClick}
                                                     theme={Theme.LIGHT}
@@ -849,7 +1296,7 @@ export const ChatDetail: React.FC = () => {
                             )}
 
                             {!isRecordingAudio && !hasRecordedAudio && (
-                                <div className="flex-1 bg-app-surface border border-app-soft rounded-2xl px-4 py-2.5 shadow-sm flex items-end gap-2">
+                                <div className="flex-1 bg-transparent px-2 py-2 flex items-end gap-2">
                                     <textarea
                                         rows={1}
                                         placeholder="Escribe un mensaje..."
@@ -872,7 +1319,7 @@ export const ChatDetail: React.FC = () => {
                                 <button
                                     onClick={() => void handleSendMessage()}
                                     aria-label="Enviar mensaje"
-                                    className="w-11 h-11 flex items-center justify-center rounded-full shadow-md transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/70 focus-visible:ring-offset-2 focus-visible:shadow-xl text-app-on-accent"
+                                    className="w-11 h-11 flex items-center justify-center rounded-2xl shadow-md transition-all hover:scale-105 active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-xl text-app-on-accent"
                                     style={{ backgroundColor: 'var(--app-accent)' }}
                                     disabled={sending}
                                 >
@@ -891,6 +1338,108 @@ export const ChatDetail: React.FC = () => {
                     )}
                 </div>
             </div>
+            {/* Lightbox de imagen */}
+            {lightboxImageUrl && createPortal(
+                <div
+                    className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-xl animate-fade-in"
+                    onClick={() => setLightboxImageUrl(null)}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Imagen del chat en pantalla completa"
+                >
+                    <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center text-white z-20">
+                        <div className="flex flex-col">
+                            <span className="text-xs font-black uppercase tracking-[0.2em] opacity-60">Visualizando</span>
+                            <span className="font-bold">Imagen del chat</span>
+                        </div>
+                        <button
+                            onClick={() => setLightboxImageUrl(null)}
+                            className="w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-90"
+                            aria-label="Cerrar imagen"
+                        >
+                            <X size={24} />
+                        </button>
+                    </div>
+
+                    <div className="relative w-full h-full flex items-center justify-center p-4 md:p-12 overflow-hidden">
+                        <div
+                            className="relative max-w-full max-h-full"
+                            onClick={(event) => event.stopPropagation()}
+                            onContextMenu={(event) => event.preventDefault()}
+                        >
+                            <img
+                                src={lightboxImageUrl}
+                                alt=""
+                                className="max-w-full max-h-[calc(100svh-7rem)] object-contain rounded-xl shadow-2xl animate-zoom-in"
+                                draggable={false}
+                            />
+                            <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-4">
+                                <span className="rounded-full bg-black/35 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-white/75 backdrop-blur-sm">
+                                    Bluvi
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* Modal de eliminar mensaje */}
+            {messageToDelete && (
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby={deleteMessageTitleId}
+                    aria-describedby={deleteMessageDescriptionId}
+                    onKeyDown={handleDeleteMessageDialogKeyDown}
+                    ref={deleteMessageDialogRef}
+                >
+                    <div
+                        className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                        onClick={closeDeleteMessageModal}
+                        aria-hidden="true"
+                    />
+                    <div className="relative bg-app-surface w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-app-soft">
+                        <div className="p-8 text-center">
+                            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500 shadow-sm border border-red-100">
+                                <Trash2 size={30} />
+                            </div>
+                            <h3 id={deleteMessageTitleId} className="text-xl font-bold text-app-primary mb-3">Eliminar mensaje?</h3>
+                            <p id={deleteMessageDescriptionId} className="text-sm text-app-muted leading-relaxed mb-6">
+                                Se eliminara del chat para ambos, aunque la otra persona podria haberlo visto antes. No podras deshacer esta accion.
+                            </p>
+                            {deleteMessageError && (
+                                <div className="mb-5 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                                    {deleteMessageError}
+                                </div>
+                            )}
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    ref={deleteMessageCancelButtonRef}
+                                    onClick={closeDeleteMessageModal}
+                                    disabled={isDeletingMessage}
+                                    className="px-6 py-3.5 text-sm font-semibold text-app-primary bg-app-surface-soft hover:bg-app-soft rounded-2xl transition-all active:scale-95 disabled:opacity-50"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={() => void confirmDeleteMessageForEveryone()}
+                                    disabled={isDeletingMessage}
+                                    className="px-6 py-3.5 text-sm font-bold text-white bg-red-500 hover:bg-red-600 rounded-2xl transition-all active:scale-95 shadow-md shadow-red-200 flex items-center justify-center gap-2 disabled:opacity-70"
+                                >
+                                    {isDeletingMessage ? (
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        'Eliminar'
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Modal de Bloqueo */}
             {showBlockModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
@@ -954,7 +1503,7 @@ export const ChatDetail: React.FC = () => {
                                         setShowReportModal(false);
                                         setReportSuccess(false);
                                     }}
-                                    className="w-full py-4 text-sm font-bold text-white bg-app-accent hover:opacity-90 rounded-2xl transition-all active:scale-95 shadow-lg shadow-app-accent/20"
+                                    className="w-full py-4 text-sm font-bold text-app-on-accent bg-app-accent hover:opacity-90 rounded-2xl transition-all active:scale-95 shadow-lg shadow-app-accent/20"
                                     style={{ backgroundColor: 'var(--app-accent)' }}
                                 >
                                     Entendido
@@ -975,7 +1524,7 @@ export const ChatDetail: React.FC = () => {
                                         value={reportReason}
                                         onChange={(e) => setReportReason(e.target.value)}
                                         placeholder="Escribe el motivo de la denuncia..."
-                                        className="w-full h-32 px-4 py-3 text-sm bg-app-surface-soft border border-app-soft rounded-2xl focus:ring-2 focus:ring-bluvi-purple/20 focus:border-bluvi-purple outline-none transition-all resize-none"
+                                        className="w-full h-32 px-4 py-3 text-sm bg-app-surface-soft border border-app-soft rounded-2xl focus:ring-2 focus:ring-app-accent/20 focus:border-app-accent outline-none transition-all resize-none"
                                     />
                                     <div className="flex flex-wrap gap-2">
                                         {['Spam', 'Acoso', 'Contenido inapropiado', 'Falso perfil'].map((reason) => (
@@ -1004,8 +1553,8 @@ export const ChatDetail: React.FC = () => {
                                     <button
                                         onClick={() => void confirmReport()}
                                         disabled={isReporting || !reportReason.trim()}
-                                        className="px-6 py-3.5 text-sm font-bold text-white bg-[#3f4292] hover:opacity-90 rounded-2xl transition-all active:scale-95 shadow-md shadow-[#3f4292]/20 flex items-center justify-center gap-2 disabled:opacity-70"
-                                        style={{ backgroundColor: '#3f4292' }}
+                                        className="px-6 py-3.5 text-sm font-bold text-app-on-accent bg-app-accent hover:opacity-90 rounded-2xl transition-all active:scale-95 shadow-md shadow-app-accent/20 flex items-center justify-center gap-2 disabled:opacity-70"
+                                        style={{ backgroundColor: 'var(--app-accent)' }}
                                     >
                                         {isReporting ? (
                                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

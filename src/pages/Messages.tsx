@@ -7,7 +7,8 @@ import {
     Search, 
     X, 
     Contact,
-    Ghost
+    Ghost,
+    Image
 } from 'lucide-react';
 import {
     getIncomingMatchRequests,
@@ -324,7 +325,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                         to={`/app/chat/${conversation.id_user}`}
                         aria-label={`
                             Chat con ${conversation.first_name} ${conversation.last_name}.
-                            Último mensaje: ${conversation.last_message_type === 'audio' ? 'Nota de audio' : conversation.last_message || 'Sin mensajes todavía'}
+                            Último mensaje: ${conversation.last_message_type === 'audio' ? 'Nota de audio' : conversation.last_message_type === 'image' ? 'Foto' : conversation.last_message || 'Sin mensajes todavía'}
                         `}
                         className="flex items-center gap-4 p-4 rounded-[22px] bg-app-surface/80 dark:bg-app-surface-strong/60 border border-white dark:border-white/10 transition-all duration-300 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
                     >
@@ -398,6 +399,11 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                                         <span className="flex items-center gap-1 text-app-secondary">
                                             <span>🎙️</span>
                                             <span>Nota de audio</span>
+                                        </span>
+                                    ) : conversation.last_message_type === 'image' ? (
+                                        <span className="flex items-center gap-1 text-app-secondary">
+                                            <Image size={14} strokeWidth={1.8} />
+                                            <span>Foto</span>
                                         </span>
                                     ) : (
                                         conversation.last_message || 'Empieza la conversación'
@@ -509,6 +515,7 @@ export const Messages: React.FC = () => {
         socket?.on('match:request:new', handleRealtimeUpdate);
         socket?.on('match:accepted', handleRealtimeUpdate);
         socket?.on('chat:message:new', handleNewMessage);
+        socket?.on('chat:message:deleted', handleRealtimeUpdate);
         socket?.on('chat:messages:read', handleRealtimeUpdate);
         socket?.on('chat:messages:delivered', handleRealtimeUpdate);
         socket?.on('chat:typing', handleTyping);
@@ -521,6 +528,7 @@ export const Messages: React.FC = () => {
             socket?.off('match:request:new', handleRealtimeUpdate);
             socket?.off('match:accepted', handleRealtimeUpdate);
             socket?.off('chat:message:new', handleNewMessage);
+            socket?.off('chat:message:deleted', handleRealtimeUpdate);
             socket?.off('chat:messages:read', handleRealtimeUpdate);
             socket?.off('chat:messages:delivered', handleRealtimeUpdate);
             socket?.off('chat:typing', handleTyping);

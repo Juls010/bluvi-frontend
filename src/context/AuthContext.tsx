@@ -5,7 +5,10 @@ import api from '../services/api';
 interface AuthUser {
     id: number;
     email: string;
-    first_name: string;
+    first_name?: string;
+    firstName?: string;
+    id_gender?: number | null;
+    is_face_verified?: boolean;
 }
 
 interface AuthContextType {

@@ -144,9 +144,8 @@ export const Discovery: React.FC = () => {
   const handleConfirmReport = async (reason: string) => {
     if (!currentUser) return;
     try {
-      // 1. Reportar
       await reportUser(currentUser.id_user, reason);
-      // 2. Bloquear
+      
       await blockUser(currentUser.id_user);
       
       toastQueue.add(

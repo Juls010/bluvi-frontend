@@ -61,7 +61,7 @@ const Toggle: React.FC<{
         style={{ backgroundColor: enabled ? 'var(--app-switch-on)' : 'var(--app-switch-off)' }}
         className={`
             relative w-12 h-6 rounded-full transition-colors duration-200 border border-app-soft
-            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bluvi-purple/50
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-app-accent/50
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         `}
     >
@@ -492,8 +492,8 @@ export const Settings: React.FC = () => {
                                             className={`
                                                 min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all inline-flex items-center justify-center gap-2
                                                 ${isActive
-                                                    ? 'bg-bluvi-purple text-white border-bluvi-purple shadow-sm'
-                                                    : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-bluvi-purple/40'
+                                                    ? 'bg-app-accent text-app-on-accent border-app-accent shadow-sm'
+                                                    : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-app-strong'
                                                 }
                                                 ${!mounted ? 'opacity-70 cursor-not-allowed' : ''}
                                             `}
@@ -545,8 +545,8 @@ export const Settings: React.FC = () => {
                                             className={`
                                                 min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all
                                                 ${isActive
-                                                    ? 'bg-bluvi-purple text-white border-bluvi-purple shadow-sm'
-                                                    : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-bluvi-purple/40'
+                                                    ? 'bg-app-accent text-app-on-accent border-app-accent shadow-sm'
+                                                    : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-app-strong'
                                                 }
                                                 ${savingAccessibility ? 'opacity-80 cursor-not-allowed' : ''}
                                             `}
@@ -594,7 +594,7 @@ export const Settings: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleResetAccessibility}
-                                className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-xs font-semibold text-app-primary hover:bg-app-surface-strong hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/40"
+                                className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-xs font-semibold text-app-primary hover:bg-app-surface-strong hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/35"
                             >
                                 <RotateCcw size={14} aria-hidden="true" />
                                 Restablecer accesibilidad
@@ -614,7 +614,7 @@ export const Settings: React.FC = () => {
                                 type="button"
                                 data-account-action="true"
                                 onClick={() => navigate('/app/settings/reports-blocks')}
-                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/35"
+                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/35"
                             >
                                 <span className="mt-0.5 inline-flex items-center gap-1 text-app-accent" aria-hidden="true">
                                     <Flag size={16} />
@@ -630,7 +630,7 @@ export const Settings: React.FC = () => {
                                 type="button"
                                 data-account-action="true"
                                 onClick={handleLogout}
-                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/35"
+                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/35"
                             >
                                 <LogOut size={18} aria-hidden="true" className="mt-0.5" />
                                 <div>

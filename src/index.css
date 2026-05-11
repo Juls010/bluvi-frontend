@@ -46,6 +46,11 @@
         --app-text-primary: #26215C;
         --app-text-secondary: rgba(38, 33, 92, 0.78);
         --app-text-muted: rgba(75, 69, 120, 0.68);
+        --app-control-neutral: #374151;
+        --app-control-neutral-muted: #9ca3af;
+        --app-control-surface: #ffffff;
+        --app-control-surface-hover: #f3f4f6;
+        --app-control-border: #d1d5db;
         --app-surface-nav: rgba(255, 255, 255, 0.38);
         --app-surface-card: rgba(255, 255, 255, 0.82);
         --app-surface-card-strong: rgba(255, 255, 255, 0.94);
@@ -68,6 +73,15 @@
         --app-messages-accent-bg: rgba(108, 99, 216, 0.10);
         /* Background used for messages sent by the current user (light theme) */
         --app-own-message-bg: rgba(127, 119, 221, 0.92);
+        --app-own-message-text: #ffffff;
+        --app-own-message-muted: rgba(255, 255, 255, 0.9);
+        --app-own-message-control-bg: rgba(255, 255, 255, 0.2);
+        --app-own-message-control-hover: rgba(255, 255, 255, 0.3);
+        --app-own-message-control-text: #ffffff;
+        --app-own-message-content-bg: rgba(255, 255, 255, 0.1);
+        --app-own-message-bar-filled: #ffffff;
+        --app-own-message-bar-empty: rgba(255, 255, 255, 0.35);
+        --app-message-read-check: #34B7F1;
         --scrollbar-thumb: rgba(128, 128, 128, 0.72);
         --scrollbar-thumb-hover: rgba(128, 128, 128, 0.72);
         --app-home-safe-dot: #3f4292;
@@ -106,6 +120,11 @@
         --app-text-primary: #ECEBFF;
         --app-text-secondary: rgba(236, 235, 255, 0.88);
         --app-text-muted: rgba(220, 218, 255, 0.78);
+        --app-control-neutral: #f3f4f6;
+        --app-control-neutral-muted: #9ca3af;
+        --app-control-surface: #111111;
+        --app-control-surface-hover: #1f1f1f;
+        --app-control-border: #d9d9d9;
         --app-surface-nav: rgba(20, 24, 60, 0.5);
         --app-surface-card: rgba(26, 30, 70, 0.6);
         --app-surface-card-strong: rgba(30, 34, 82, 0.82);
@@ -128,6 +147,15 @@
         --app-messages-accent-bg: rgba(255, 177, 106, 0.2);
         /* Muted background for outgoing messages in dark theme */
         --app-own-message-bg: rgba(127, 119, 221, 0.18);
+        --app-own-message-text: #ffffff;
+        --app-own-message-muted: rgba(255, 255, 255, 0.9);
+        --app-own-message-control-bg: rgba(255, 255, 255, 0.16);
+        --app-own-message-control-hover: rgba(255, 255, 255, 0.24);
+        --app-own-message-control-text: #ffffff;
+        --app-own-message-content-bg: rgba(255, 255, 255, 0.1);
+        --app-own-message-bar-filled: #ffffff;
+        --app-own-message-bar-empty: rgba(255, 255, 255, 0.35);
+        --app-message-read-check: #34B7F1;
         --app-home-safe-dot: #FFB16A;
         --app-home-pace-icon: #ffffff;
         --app-surface-solid: #151941;
@@ -154,6 +182,11 @@
         --app-text-primary: #111111;
         --app-text-secondary: #222222;
         --app-text-muted: #333333;
+        --app-control-neutral: #111111;
+        --app-control-neutral-muted: #333333;
+        --app-control-surface: #ffffff;
+        --app-control-surface-hover: #f2f2f2;
+        --app-control-border: #111111;
         --app-surface-nav: #ffffff;
         --app-surface-card: #ffffff;
         --app-surface-card-strong: #f2f2f2;
@@ -170,12 +203,31 @@
         --app-switch-thumb: #ffffff;
         --app-messages-accent: #111111;
         --app-messages-accent-bg: #ffffff;
+        --app-own-message-bg: #000000;
+        --app-own-message-text: #ffffff;
+        --app-own-message-muted: #ffffff;
+        --app-own-message-control-bg: #ffffff;
+        --app-own-message-control-hover: #f2f2f2;
+        --app-own-message-control-text: #000000;
+        --app-own-message-content-bg: #111111;
+        --app-own-message-bar-filled: #ffffff;
+        --app-own-message-bar-empty: #777777;
+        --app-message-read-check: #111111;
         --app-home-safe-dot: #111111;
         --app-home-pace-icon: #111111;
         --app-filter-trigger-bg: #ffffff;
         --app-filter-trigger-hover: #f3f3f3;
         --app-filter-icon-bg: #111111;
         --app-filter-icon-color: #111111;
+        --filter-selected-bg: #000000;
+        --filter-selected-text: #ffffff;
+        --filter-selected-border: #000000;
+        --filter-icon-bg: #000000;
+        --filter-icon-text: #ffffff;
+        --filter-slider-track: #777777;
+        --filter-slider-thumb: #000000;
+        --filter-unselected-bg: #ffffff;
+        --filter-unselected-border: #111111;
     }
 
     html.dark.high-contrast {
@@ -184,6 +236,11 @@
         --app-text-primary: #ffffff;
         --app-text-secondary: #ffffff;
         --app-text-muted: #f3f3f3;
+        --app-control-neutral: #ffffff;
+        --app-control-neutral-muted: #d9d9d9;
+        --app-control-surface: #000000;
+        --app-control-surface-hover: #111111;
+        --app-control-border: #ffffff;
         --app-surface-nav: #000000;
         --app-surface-card: #000000;
         --app-surface-card-strong: #111111;
@@ -200,12 +257,31 @@
         --app-switch-thumb: #ffffff;
         --app-messages-accent: #ffffff;
         --app-messages-accent-bg: #000000;
+        --app-own-message-bg: #ffffff;
+        --app-own-message-text: #000000;
+        --app-own-message-muted: #000000;
+        --app-own-message-control-bg: #000000;
+        --app-own-message-control-hover: #222222;
+        --app-own-message-control-text: #ffffff;
+        --app-own-message-content-bg: #f2f2f2;
+        --app-own-message-bar-filled: #000000;
+        --app-own-message-bar-empty: #777777;
+        --app-message-read-check: #ffffff;
         --app-home-safe-dot: #ffffff;
         --app-home-pace-icon: #ffffff;
         --app-filter-trigger-bg: #000000;
         --app-filter-trigger-hover: #111111;
         --app-filter-icon-bg: #ffffff;
         --app-filter-icon-color: #ffffff;
+        --filter-selected-bg: #ffffff;
+        --filter-selected-text: #000000;
+        --filter-selected-border: #ffffff;
+        --filter-icon-bg: #ffffff;
+        --filter-icon-text: #000000;
+        --filter-slider-track: #777777;
+        --filter-slider-thumb: #ffffff;
+        --filter-unselected-bg: #000000;
+        --filter-unselected-border: #ffffff;
     }
 
     html.high-contrast body,
@@ -293,6 +369,10 @@
     [data-navbar-menu-item="true"][data-navbar-menu-danger="true"]:hover {
         background-color: rgba(239, 68, 68, 0.15) !important;
         color: #ef4444 !important;
+    }
+
+    [data-own-audio-control="true"]:hover {
+        background-color: var(--app-own-message-control-hover) !important;
     }
 
     html.dark [data-navbar-menu-item="true"][data-navbar-menu-danger="true"]:hover {

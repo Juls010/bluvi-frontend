@@ -1,5 +1,6 @@
 import React from 'react';
-import { Mail, ArrowRight, PartyPopper } from 'lucide-react';
+import { Dialog, Heading, Modal, ModalOverlay } from 'react-aria-components';
+import { ArrowRight, Mail, PartyPopper } from 'lucide-react';
 import { Button } from './Button';
 
 interface SuccessModalProps {
@@ -8,49 +9,59 @@ interface SuccessModalProps {
 }
 
 export const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) => {
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-bluvi-purple/30 backdrop-blur-sm animate-fade-in">
-            
-            <div 
-                role="alertdialog" 
-                aria-labelledby="modal-title" 
-                aria-describedby="modal-desc"
-                className="bg-white/80 backdrop-blur-2xl border border-white p-8 md:p-12 rounded-[3rem] shadow-2xl max-w-md w-full text-center space-y-6 animate-scale-up"
-            >
-                <div className="mx-auto w-20 h-20 bg-bluvi-purple/10 rounded-full flex items-center justify-center text-bluvi-purple">
-                    <PartyPopper size={40} />
-                </div>
-
-                <div className="space-y-2">
-                    <h2 id="modal-title" className="text-3xl font-bold text-bluvi-purple">
-                        ¡Revisa tu bandeja!
-                    </h2>
-                    <p id="modal-desc" className="text-gray-600 font-medium leading-relaxed">
-                        Te hemos enviado un <strong>código de 6 dígitos</strong> a tu correo electrónico. Por seguridad, escríbelo en la pantalla para poder continuar.
-                    </p>
-                </div>
-
-                <div className="bg-white/40 rounded-2xl p-4 flex items-center justify-around border border-white/60">
-                    <div className="flex flex-col items-center gap-1">
-                        <Mail size={20} className="text-bluvi-purple" />
-                        <span className="text-[10px] uppercase font-bold text-gray-400">Verifica</span>
-                    </div>
-                    <ArrowRight size={16} className="text-gray-300" />
-                    <div className="flex flex-col items-center gap-1 opacity-50">
-                        <PartyPopper size={20} className="text-bluvi-purple" />
-                        <span className="text-[10px] uppercase font-bold text-gray-400">¡Bluvi!</span>
-                    </div>
-                </div>
-
-                <Button 
-                    onClick={onClose}
-                    className="w-full bg-bluvi-purple text-white py-4 rounded-full text-lg shadow-lg hover:scale-[1.02]"
+        <ModalOverlay
+            isOpen={isOpen}
+            onOpenChange={(open) => {
+                if (!open) onClose();
+            }}
+            isDismissable
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4 animate-fade-in motion-reduce:animate-none"
+        >
+            <Modal className="w-full max-w-md outline-none">
+                <Dialog
+                    role="alertdialog"
+                    aria-describedby="email-sent-modal-desc"
+                    className="w-full rounded-[2rem] border-2 border-app-strong bg-app-surface-solid p-6 text-center text-app-primary shadow-2xl outline-none sm:p-8"
                 >
-                    ¡Entendido!
-                </Button>
-            </div>
-        </div>
+                    <div
+                        className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-app-accent/10 text-app-accent-strong"
+                        aria-hidden="true"
+                    >
+                        <PartyPopper size={34} />
+                    </div>
+
+                    <Heading slot="title" className="font-heading text-2xl font-bold text-app-primary">
+                        ¡Revisa tu bandeja!
+                    </Heading>
+
+                    <p id="email-sent-modal-desc" className="mt-3 text-sm font-medium leading-relaxed text-app-secondary">
+                        Te hemos enviado un <strong>código de 6 dígitos</strong> a tu correo electrónico. Escríbelo en la siguiente pantalla para continuar.
+                    </p>
+
+                    <div className="my-6 rounded-2xl border border-app-soft bg-app-surface p-4" aria-hidden="true">
+                        <div className="flex items-center justify-around">
+                            <div className="flex flex-col items-center gap-1">
+                                <Mail size={20} className="text-app-accent-strong" />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-app-muted">Verifica</span>
+                            </div>
+                            <ArrowRight size={16} className="text-app-muted" />
+                            <div className="flex flex-col items-center gap-1 opacity-70">
+                                <PartyPopper size={20} className="text-app-accent-strong" />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-app-muted">Bluvi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Button
+                        autoFocus
+                        onClick={onClose}
+                        className="w-full bg-bluvi-purple py-4 text-base text-white shadow-lg motion-reduce:transition-none"
+                    >
+                        Entendido
+                    </Button>
+                </Dialog>
+            </Modal>
+        </ModalOverlay>
     );
 };

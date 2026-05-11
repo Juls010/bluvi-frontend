@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Play, Pause, AlertCircle, Sparkles } from 'lucide-react';
+import { Play, Pause, AlertCircle } from 'lucide-react';
 
 interface AudioMessageProps {
     audioUrl: string;
@@ -8,6 +8,7 @@ interface AudioMessageProps {
     transcript?: string | null;
     isTranscribing?: boolean;
     onTranscribe?: () => void;
+    isInteractive?: boolean;
 }
 
 const formatTime = (seconds: number): string => {
@@ -16,7 +17,7 @@ const formatTime = (seconds: number): string => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
 
-export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration = 0, isOwn = false, transcript, isTranscribing = false, onTranscribe }) => {
+export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration = 0, isOwn = false, transcript, isTranscribing = false, onTranscribe, isInteractive = true }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [totalDuration, setTotalDuration] = useState(duration);
@@ -176,16 +177,19 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                     disabled={isLoading}
                     aria-label={isPlaying ? 'Pausar reproducción de audio' : 'Reproducir mensaje de audio'}
                     aria-pressed={isPlaying}
+                    tabIndex={isInteractive ? 0 : -1}
+                    data-own-audio-control={isOwn ? 'true' : undefined}
                     className={`flex-shrink-0 w-10 h-10 rounded-full transition-all duration-300 flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-3 focus-visible:shadow-lg ${
                         isOwn
-                            ? 'bg-white/20 hover:bg-white/30 focus-visible:ring-white disabled:opacity-50'
+                            ? 'focus-visible:ring-app-accent disabled:opacity-50'
                             : 'bg-app-accent/15 hover:bg-app-accent/25 focus-visible:ring-app-accent disabled:opacity-50'
                     } disabled:opacity-50 active:scale-95`}
+                    style={isOwn ? { backgroundColor: 'var(--app-own-message-control-bg)' } : undefined}
                 >
                     {isPlaying ? (
-                        <Pause size={24} className={isOwn ? 'text-white' : 'text-app-accent'} aria-hidden="true" />
+                        <Pause size={24} className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
                     ) : (
-                        <Play size={24} className={isOwn ? 'text-white' : 'text-app-accent'} aria-hidden="true" />
+                        <Play size={24} className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
                     )}
                 </button>
 
@@ -199,7 +203,7 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                     aria-valuetext={`${formatTime(currentTime)} de ${formatTime(totalDuration)}`}
                     onClick={handleProgressClick}
                     onKeyDown={handleProgressKeyDown}
-                    tabIndex={0}
+                    tabIndex={isInteractive ? 0 : -1}
                     title="Haz clic para buscar en el audio"
                 >
                     {waveformBars.map((barHeight, index) => {
@@ -210,15 +214,16 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                             <span
                                 key={`${barHeight}-${index}`}
                                 className={`w-2.5 rounded-full transition-all duration-150 ${
-                                    isOwn
+                                    !isOwn
                                         ? isFilled
-                                            ? 'bg-white'
-                                            : 'bg-white/35'
-                                        : isFilled
                                             ? 'bg-app-accent'
                                             : 'bg-app-accent/30'
+                                        : ''
                                 }`}
-                                style={{ height: `${Math.max(8, Math.round((barHeight / 50) * 18))}px` }}
+                                style={{
+                                    height: `${Math.max(8, Math.round((barHeight / 50) * 18))}px`,
+                                    ...(isOwn ? { backgroundColor: isFilled ? 'var(--app-own-message-bar-filled)' : 'var(--app-own-message-bar-empty)' } : {}),
+                                }}
                                 aria-hidden="true"
                             />
                         );
@@ -226,7 +231,8 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                 </div>
 
                 <span
-                    className={`w-11 text-right text-[14px] font-mono font-semibold flex-shrink-0 ${isOwn ? 'text-white/90' : 'text-app-secondary'}`}
+                    className={`w-11 text-right text-[14px] font-mono font-semibold flex-shrink-0 ${isOwn ? '' : 'text-app-secondary'}`}
+                    style={isOwn ? { color: 'var(--app-own-message-muted)' } : undefined}
                     aria-label={`Duración total: ${isLoading ? 'cargando' : formatTime(totalDuration)}`}
                 >
                     {isLoading ? '--:--' : formatTime(totalDuration)}
@@ -235,12 +241,18 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
 
             {transcript ? (
                 transcriptionUnavailable ? (
-                    <div className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${isOwn ? 'bg-white/10 text-white/90' : 'bg-app-surface-soft text-app-muted'}`}>
-                        <AlertCircle size={14} className={isOwn ? 'text-white/80' : 'text-app-muted'} aria-hidden="true" />
+                    <div
+                        className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${isOwn ? '' : 'bg-app-surface-soft text-app-muted'}`}
+                        style={isOwn ? { backgroundColor: 'var(--app-own-message-content-bg)', color: 'var(--app-own-message-muted)' } : undefined}
+                    >
+                        <AlertCircle size={14} className={isOwn ? '' : 'text-app-muted'} style={isOwn ? { color: 'var(--app-own-message-muted)' } : undefined} aria-hidden="true" />
                         <span className="font-medium">No es posible transcribir</span>
                     </div>
                 ) : (
-                    <div className={`rounded-xl px-3 py-2 text-sm leading-6 whitespace-pre-wrap ${isOwn ? 'bg-white/10 text-white/95' : 'bg-app-surface-soft text-app-primary'}`}>
+                    <div
+                        className={`rounded-xl px-3 py-2 text-sm leading-6 whitespace-pre-wrap ${isOwn ? '' : 'bg-app-surface-soft text-app-primary'}`}
+                        style={isOwn ? { backgroundColor: 'var(--app-own-message-content-bg)', color: 'var(--app-own-message-text)' } : undefined}
+                    >
                         {transcript}
                     </div>
                 )
@@ -250,13 +262,15 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                         type="button"
                         onClick={onTranscribe}
                         disabled={isTranscribing || isLoading}
+                        tabIndex={isInteractive ? 0 : -1}
+                        data-own-audio-control={isOwn ? 'true' : undefined}
                         className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 disabled:opacity-50 ${
                             isOwn
-                                ? 'bg-white/12 text-white hover:bg-white/20 focus-visible:ring-white'
+                                ? 'focus-visible:ring-app-accent'
                                 : 'bg-app-accent/10 text-app-primary hover:bg-app-accent/15 focus-visible:ring-app-accent'
                         }`}
+                        style={isOwn ? { backgroundColor: 'var(--app-own-message-control-bg)', color: 'var(--app-own-message-control-text)' } : undefined}
                     >
-                        <Sparkles size={14} />
                         {isTranscribing ? 'Transcribiendo...' : 'Transcribir'}
                     </button>
                 </div>

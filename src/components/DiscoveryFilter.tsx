@@ -269,7 +269,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
               ref={closeButtonRef}
               onClick={handleClose}
               aria-label="Cerrar panel de filtros"
-              className="w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3f4292]/20 mt-0.5 md:mt-1"
+              className="w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20 mt-0.5 md:mt-1"
               style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
             >
               <X size={20} aria-hidden="true" />
@@ -294,12 +294,12 @@ export const DiscoveryFilter: React.FC<Props> = ({
               <div className="group relative" ref={comboboxRef}>
                 <label
                   htmlFor={CITY_INPUT_ID}
-                  className="text-[11px] font-bold text-app-muted uppercase tracking-wider mb-2 block transition-colors group-focus-within:text-[#3f4292]"
+                  className="text-[11px] font-bold text-app-muted uppercase tracking-wider mb-2 block transition-colors group-focus-within:text-app-accent"
                 >
                   Ciudad
                 </label>
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#3f4292] transition-colors" size={18} aria-hidden="true" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-app-muted group-focus-within:text-app-accent transition-colors" size={18} aria-hidden="true" />
                   <input
                     id={CITY_INPUT_ID}
                     type="text"
@@ -308,7 +308,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                     onKeyDown={handleCityKeyDown}
                     onFocus={() => { if (!isConfirmed) setShowSuggestions(true); }}
                     placeholder="Escribe una ciudad..."
-                    className="w-full px-5 py-4 pl-12 pr-10 rounded-2xl border text-app-primary text-sm placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-[#3f4292]/10 focus:border-[#3f4292]/40 transition-all font-medium"
+                    className="w-full px-5 py-4 pl-12 pr-10 rounded-2xl border text-app-primary text-sm placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-app-accent/10 focus:border-app-accent transition-all font-medium"
                     style={{ backgroundColor: 'var(--filter-unselected-bg)', borderColor: 'var(--filter-unselected-border)', borderWidth: '1px' }}
                     role="combobox"
                     aria-autocomplete="list"
@@ -321,14 +321,14 @@ export const DiscoveryFilter: React.FC<Props> = ({
                     <button
                       type="button"
                       onMouseDown={(e) => { e.preventDefault(); handleCityClear(); }}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3f4292]/40"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-app-muted hover:text-app-primary transition-colors p-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent/40"
                       aria-label="Limpiar ciudad"
                     >
                       <X size={16} aria-hidden="true" />
                     </button>
                   )}
                   {isLoadingCities && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin w-4 h-4 border-2 border-[#3f4292] border-t-transparent rounded-full" aria-hidden="true" />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin w-4 h-4 border-2 border-app-accent border-t-transparent rounded-full" aria-hidden="true" />
                   )}
                 </div>
                 {/* Live region for screen readers */}
@@ -353,18 +353,17 @@ export const DiscoveryFilter: React.FC<Props> = ({
                           aria-selected={city === suggestion.value}
                           onMouseDown={(e) => { e.preventDefault(); handleCitySelect(suggestion); }}
                           onMouseEnter={() => setActiveIndex(index)}
-                          className={`w-full flex items-center justify-between px-5 py-3.5 text-left text-app-primary text-sm transition-colors border-b border-gray-50 last:border-0 cursor-pointer ${
-                            index === activeIndex ? 'bg-[#3f4292]/10' : 'hover:bg-[#f3f4f6]'
-                          }`}
+                          className="w-full flex items-center justify-between px-5 py-3.5 text-left text-app-primary text-sm transition-colors border-b border-app-soft last:border-0 cursor-pointer"
+                          style={{ backgroundColor: index === activeIndex ? 'var(--app-surface-soft)' : 'transparent' }}
                         >
                           <span className="font-medium">{suggestion.label}</span>
                           {city === suggestion.value
-                            ? <CheckCircle2 size={16} className="text-[#3f4292]" aria-hidden="true" />
-                            : <ChevronRight size={16} className="text-gray-300" aria-hidden="true" />}
+                            ? <CheckCircle2 size={16} className="text-app-accent" aria-hidden="true" />
+                            : <ChevronRight size={16} className="text-app-muted" aria-hidden="true" />}
                         </li>
                       ))
                     ) : (
-                      <li role="presentation" className="px-5 py-3.5 text-sm text-gray-400 italic">No encontramos esa ciudad...</li>
+                      <li role="presentation" className="px-5 py-3.5 text-sm text-app-muted italic">No encontramos esa ciudad...</li>
                     )}
                   </ul>
                 )}
@@ -545,7 +544,11 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 setSensoryPref([]);
               }}
               aria-label="Resetear todos los filtros"
-              className="px-6 py-4 rounded-2xl bg-[#f3f4f6] border border-[#e5e7eb] text-app-secondary font-bold text-sm transition-all hover:bg-[#e5e7eb] hover:border-[#d1d5db] hover:-translate-y-0.5 active:scale-95 shadow-sm dark:bg-app-surface-soft dark:border-app-soft"
+              className="px-6 py-4 rounded-2xl border text-app-secondary font-bold text-sm transition-all hover:-translate-y-0.5 active:scale-95 shadow-sm"
+              style={{
+                backgroundColor: 'var(--filter-unselected-bg)',
+                borderColor: 'var(--filter-unselected-border)'
+              }}
             >
               Reset
             </button>
@@ -558,8 +561,12 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 communicationStyle,
                 sensoryPref
               })}
-              className="flex-1 py-4 text-white rounded-2xl font-bold text-base shadow-xl transition-all hover:brightness-110 hover:-translate-y-0.5 active:scale-[0.98]"
-              style={{ backgroundColor: '#3f4292', boxShadow: '0 20px 25px -5px rgba(63, 66, 146, 0.2)' }}
+              className="flex-1 py-4 rounded-2xl font-bold text-base shadow-xl transition-all hover:brightness-110 hover:-translate-y-0.5 active:scale-[0.98]"
+              style={{
+                backgroundColor: 'var(--app-accent)',
+                color: 'var(--app-on-accent)',
+                boxShadow: '0 20px 25px -5px color-mix(in srgb, var(--app-accent) 20%, transparent)'
+              }}
             >
               Aplicar filtros
             </button>
@@ -577,12 +584,15 @@ export const FilterTriggerButton: React.FC<{
   <button
     onClick={onClick}
     aria-label={activeCount > 0 ? `Abrir filtros, ${activeCount} activos` : 'Abrir filtros'}
-    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all shadow-sm hover:shadow bg-app-filter-trigger backdrop-blur-sm text-app-primary border-app-soft hover:bg-app-filter-trigger-hover hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/20 dark:focus-visible:ring-app-accent/30"
+    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all shadow-sm hover:shadow bg-app-filter-trigger backdrop-blur-sm text-app-primary border-app-soft hover:bg-app-filter-trigger-hover hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
   >
     <Filter size={16} className="text-app-filter-icon shrink-0" aria-hidden="true" />
     <span>Filtros</span>
     {activeCount > 0 && (
-      <span className="text-app-on-accent text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pop bg-[#3f4292] dark:bg-app-accent-strong">
+      <span
+        className="text-app-on-accent text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pop"
+        style={{ backgroundColor: 'var(--app-accent)' }}
+      >
         {activeCount}
       </span>
     )}

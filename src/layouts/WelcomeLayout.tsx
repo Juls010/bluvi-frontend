@@ -5,7 +5,7 @@ import { useScrollToTop } from '../hooks/useScrollToTop';
 export const WelcomeLayout = () => {
     useScrollToTop();
     return (
-        <main className="relative min-h-screen w-full flex flex-col">
+        <main className="relative min-h-screen w-full flex flex-col bg-app-gradient">
             <div className="flex-grow flex flex-col items-center w-full">
                 <AnimatePresence mode="wait">
                     <div 

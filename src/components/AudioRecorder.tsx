@@ -23,7 +23,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
     const [currentTime, setCurrentTime] = useState(0);
     const [isSending, setIsSending] = useState(false);
     const [audioLevel, setAudioLevel] = useState(0);
-    const [dotCount, setDotCount] = useState(0);
     const [justStoppedRecording, setJustStoppedRecording] = useState(false);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -34,7 +33,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
     const analyserRef = useRef<AnalyserNode | null>(null);
     const animationRef = useRef<number | null>(null);
     const streamRef = useRef<MediaStream | null>(null);
-    const dotTimerRef = useRef<number | null>(null);
 
     useEffect(() => {
         if (!audioElementRef.current || !recordedAudio) return;
@@ -53,7 +51,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
         return () => {
             if (timerRef.current) window.clearInterval(timerRef.current);
             if (playbackTimerRef.current) window.clearInterval(playbackTimerRef.current);
-            if (dotTimerRef.current) window.clearInterval(dotTimerRef.current);
             if (animationRef.current) window.cancelAnimationFrame(animationRef.current);
             if (audioEl) audioEl.pause();
         };
@@ -106,16 +103,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
             onRecordingStateChange?.(true);
             setDuration(0);
             setCurrentTime(0);
-            setDotCount(0);
 
             timerRef.current = window.setInterval(() => {
                 setDuration((prev) => prev + 1);
             }, 1000);
-
-            // Animación de puntos suspensivos
-            dotTimerRef.current = window.setInterval(() => {
-                setDotCount((prev) => (prev + 1) % 4);
-            }, 500);
 
             updateAudioLevel();
         } catch (error) {
@@ -134,11 +125,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
             if (timerRef.current) {
                 window.clearInterval(timerRef.current);
                 timerRef.current = null;
-            }
-
-            if (dotTimerRef.current) {
-                window.clearInterval(dotTimerRef.current);
-                dotTimerRef.current = null;
             }
 
             if (streamRef.current) {
@@ -212,7 +198,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
         onRecordingCancelled?.();
     };
 
-    // Modo grabando
     if (isRecording) {
         return (
             <div
@@ -228,7 +213,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                 />
 
                 <div className="flex items-center gap-2 flex-1">
-                    {/* Visualizador de audio */}
                     <div className="flex items-center gap-1 h-8" aria-hidden="true">
                         {[0, 1, 2, 3, 4].map((i) => (
                             <div
@@ -241,15 +225,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                         ))}
                     </div>
 
-                    {/* Indicador de grabación */}
-                    <div className="flex items-center gap-1 flex-shrink-0">
+                    <div className="flex items-center flex-shrink-0">
                         <span className="text-xs font-semibold text-app-accent uppercase tracking-wide">Grabando</span>
-                        <span className="text-xs text-app-accent" style={{ width: '12px' }} aria-hidden="true">
-                            {'•'.repeat(dotCount)}
-                        </span>
                     </div>
 
-                    {/* Tiempo */}
                     <span
                         className="text-sm font-mono font-semibold text-app-primary flex-shrink-0"
                         aria-live="off"
@@ -259,7 +238,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                     </span>
                 </div>
 
-                {/* Botón para detener */}
                 <button
                     type="button"
                     onClick={stopRecording}
@@ -273,7 +251,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
         );
     }
 
-    // Si no hay audio grabado y no acabamos de parar, mostrar botón de grabar
     if (!recordedAudio && !justStoppedRecording) {
         return (
             <button
@@ -288,7 +265,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
         );
     }
 
-    // Mostrar preview del audio grabado (después de parar de grabar)
     return (
         <div className={`flex items-center gap-2 bg-app-surface-soft rounded-2xl px-4 py-3 ${fullWidth ? 'flex-1' : 'flex-shrink-0'}`}>
             <audio

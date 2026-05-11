@@ -9,7 +9,7 @@ export interface ConversationItem {
     main_photo: string | null;
     last_message_id: number | null;
     last_message: string | null;
-    last_message_type?: 'text' | 'audio';
+    last_message_type?: 'text' | 'audio' | 'image';
     last_message_at: string | null;
     last_message_sender_id: number | null;
     last_message_read: boolean;
@@ -31,10 +31,13 @@ export interface ChatMessage {
     sender_id: number;
     receiver_id: number;
     content: string;
-    message_type?: 'text' | 'audio';
+    message_type?: 'text' | 'audio' | 'image';
     audio_url?: string;
+    image_url?: string;
     duration_seconds?: number;
     transcript?: string | null;
+    deleted_at?: string | null;
+    deleted_by?: number | null;
     created_at: string;
     read_at: string | null;
     is_read?: boolean;
@@ -149,6 +152,21 @@ export const sendAudioMessage = async (
         audioUrl,
         durationSeconds,
     });
+    return response.data.message;
+};
+
+export const sendImageMessage = async (
+    userId: number,
+    imageUrl: string,
+): Promise<ChatMessage> => {
+    const response = await api.post<SendMessageResponse>(`/chats/${userId}/messages/image`, {
+        imageUrl,
+    });
+    return response.data.message;
+};
+
+export const deleteMessageForEveryone = async (messageId: number): Promise<ChatMessage> => {
+    const response = await api.patch<SendMessageResponse>(`/chats/messages/${messageId}/delete`);
     return response.data.message;
 };
 
