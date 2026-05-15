@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Camera, Trash2, Plus, X } from 'lucide-react';
+import { CameraIcon, PlusIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
 
 import {
   DndContext, 
@@ -92,7 +92,7 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
               title="Poner como primera"
               aria-label="Poner como primera foto"
             >
-              <Camera className="w-3.5 h-3.5" aria-hidden="true" />
+              <CameraIcon className="w-3.5 h-3.5" weight="bold" aria-hidden="true" />
             </button>
           )}
 
@@ -105,7 +105,7 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
             title="Eliminar foto"
             aria-label={`Eliminar foto ${index + 1}`}
           >
-            <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+            <TrashIcon className="w-3.5 h-3.5" weight="bold" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -246,7 +246,7 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
         
         <div className="p-6 flex justify-between items-center bg-app-surface-strong z-10">
           <h2 id="edit-photos-modal-title" className="text-xl font-bold text-app-primary flex items-center gap-2">
-            <Camera className="text-app-accent" /> Mis Fotos
+            <CameraIcon className="text-app-accent" weight="bold" /> Mis Fotos
           </h2>
           <button
             ref={closeButtonRef}
@@ -255,7 +255,7 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
             aria-label="Cerrar editor de fotos"
             className="p-2 hover:bg-app-surface-soft rounded-full transition-colors disabled:opacity-50"
           >
-            <X className="w-5 h-5 text-app-muted" aria-hidden="true" />
+            <XIcon className="w-5 h-5 text-app-muted" weight="bold" aria-hidden="true" />
           </button>
         </div>
 
@@ -263,7 +263,7 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
           <div className="p-6 flex-1 overflow-y-auto space-y-4 bg-app-surface-strong">
             <div className="grid grid-cols-3 gap-3">
               <button onClick={() => fileInputRef.current?.click()} className="aspect-square rounded-2xl border-2 border-dashed border-app-strong flex flex-col items-center justify-center gap-2 hover:border-bluvi-purple hover:bg-app-surface-soft transition-all group bg-app-surface">
-                <Plus className="w-6 h-6 text-app-muted group-hover:text-bluvi-purple" />
+                <PlusIcon className="w-6 h-6 text-app-muted group-hover:text-bluvi-purple" weight="bold" />
                 <span className="text-[10px] font-bold text-app-secondary group-hover:text-bluvi-purple uppercase">Añadir</span>
               </button>
 

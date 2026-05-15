@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Ban, Flag, UserX, Loader2, MessageSquare } from 'lucide-react';
+import {
+    useNavigate } from 'react-router-dom';
+import { ArrowLeftIcon,
+    ChatTextIcon,
+    FlagIcon,
+    ProhibitIcon,
+    SpinnerGapIcon,
+    UserMinusIcon
+} from '@phosphor-icons/react';
 import { getBlockedUsers, unblockUser, getMyReports } from '../../services/chat.service';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { toastQueue } from '../../components/Toast/GlobalToast';
@@ -65,7 +72,7 @@ export const ReportsAndBlocks: React.FC = () => {
                     onClick={() => navigate('/app/settings')}
                     className="inline-flex items-center gap-2 rounded-xl bg-app-surface-soft px-3 py-2 text-sm font-semibold text-app-primary hover:bg-app-surface-strong focus-visible:outline-none"
                 >
-                    <ArrowLeft size={16} aria-hidden="true" />
+                    <ArrowLeftIcon size={16} weight="bold" aria-hidden="true" />
                     Volver a ajustes
                 </button>
             </div>
@@ -81,14 +88,14 @@ export const ReportsAndBlocks: React.FC = () => {
             <section className="bg-app-surface backdrop-blur-md rounded-[24px] border border-app-soft shadow-sm px-5 md:px-6 py-5">
                 <h2 className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary flex items-center gap-2 mb-4">
                     <span className="text-app-accent-strong" aria-hidden="true">
-                        <Ban size={14} />
+                        <ProhibitIcon size={14} weight="bold" />
                     </span>
                     Bloqueos
                 </h2>
                 
                 {loading ? (
                     <div className="flex items-center gap-3 py-4 text-app-muted text-sm italic">
-                        <Loader2 size={16} className="animate-spin" />
+                        <SpinnerGapIcon size={16} weight="bold" className="animate-spin" />
                         Cargando bloqueos...
                     </div>
                 ) : blockedUsers.length > 0 ? (
@@ -110,7 +117,7 @@ export const ReportsAndBlocks: React.FC = () => {
                                     onClick={() => handleUnblockClick(user.id)}
                                     className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-app-accent-strong hover:bg-app-accent-soft/20 rounded-xl transition-all active:scale-95"
                                 >
-                                    <UserX size={14} />
+                                    <UserMinusIcon size={14} weight="bold" />
                                     Desbloquear
                                 </button>
                             </div>
@@ -119,7 +126,7 @@ export const ReportsAndBlocks: React.FC = () => {
                 ) : (
                     <div className="py-6 text-center">
                         <div className="w-12 h-12 bg-app-surface-soft rounded-2xl flex items-center justify-center mx-auto mb-3 text-app-muted border border-app-soft">
-                           <UserX size={24} strokeWidth={1.5} />
+                           <UserMinusIcon size={24} weight="bold" />
                         </div>
                         <p className="text-sm text-app-muted">No tienes personas bloqueadas.</p>
                     </div>
@@ -130,14 +137,14 @@ export const ReportsAndBlocks: React.FC = () => {
             <section className="bg-app-surface backdrop-blur-md rounded-[24px] border border-app-soft shadow-sm px-5 md:px-6 py-5">
                 <h2 className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary flex items-center gap-2 mb-4">
                     <span className="text-app-accent-strong" aria-hidden="true">
-                        <Flag size={14} />
+                        <FlagIcon size={14} weight="bold" />
                     </span>
                     Reportes enviados
                 </h2>
                 
                 {loading ? (
                     <div className="flex items-center gap-3 py-4 text-app-muted text-sm italic">
-                        <Loader2 size={16} className="animate-spin" />
+                        <SpinnerGapIcon size={16} weight="bold" className="animate-spin" />
                         Cargando reportes...
                     </div>
                 ) : reports.length > 0 ? (
@@ -158,7 +165,7 @@ export const ReportsAndBlocks: React.FC = () => {
                                     </span>
                                 </div>
                                 <div className="flex items-start gap-2 mt-3 p-3 bg-app-surface rounded-xl border border-app-soft">
-                                    <MessageSquare size={14} className="text-app-muted mt-0.5" />
+                                    <ChatTextIcon size={14} weight="bold" className="text-app-muted mt-0.5" />
                                     <p className="text-xs text-app-secondary italic leading-relaxed">
                                         "{report.reason}"
                                     </p>
@@ -169,7 +176,7 @@ export const ReportsAndBlocks: React.FC = () => {
                 ) : (
                     <div className="py-6 text-center">
                         <div className="w-12 h-12 bg-app-surface-soft rounded-2xl flex items-center justify-center mx-auto mb-3 text-app-muted border border-app-soft">
-                           <Flag size={24} strokeWidth={1.5} />
+                           <FlagIcon size={24} weight="bold" />
                         </div>
                         <p className="text-sm text-app-muted">Aún no has enviado reportes.</p>
                     </div>

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Play, Pause, AlertCircle } from 'lucide-react';
+import { PauseIcon, PlayIcon, WarningCircleIcon } from '@phosphor-icons/react';
 
 interface AudioMessageProps {
     audioUrl: string;
@@ -119,10 +119,10 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
         let newTime = currentTime;
         const step = totalDuration * 0.05;
 
-        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+        if (e.key === 'ArrowRightIcon' || e.key === 'ArrowUp') {
             newTime = Math.min(currentTime + step, totalDuration);
             e.preventDefault();
-        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+        } else if (e.key === 'ArrowLeftIcon' || e.key === 'ArrowDown') {
             newTime = Math.max(currentTime - step, 0);
             e.preventDefault();
         } else if (e.key === 'Home') {
@@ -152,7 +152,7 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                 role="alert"
                 aria-live="polite"
             >
-                <AlertCircle size={20} className="text-red-500 flex-shrink-0" aria-hidden="true" />
+                <WarningCircleIcon size={20} weight="bold" className="text-red-500 flex-shrink-0" aria-hidden="true" />
                 <span className="text-xs font-medium text-red-600 dark:text-red-400">{error}</span>
             </div>
         );
@@ -187,9 +187,9 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                     style={isOwn ? { backgroundColor: 'var(--app-own-message-control-bg)' } : undefined}
                 >
                     {isPlaying ? (
-                        <Pause size={24} className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
+                        <PauseIcon size={24} weight="bold" className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
                     ) : (
-                        <Play size={24} className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
+                        <PlayIcon size={24} weight="bold" className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
                     )}
                 </button>
 
@@ -245,7 +245,7 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                         className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${isOwn ? '' : 'bg-app-surface-soft text-app-muted'}`}
                         style={isOwn ? { backgroundColor: 'var(--app-own-message-content-bg)', color: 'var(--app-own-message-muted)' } : undefined}
                     >
-                        <AlertCircle size={14} className={isOwn ? '' : 'text-app-muted'} style={isOwn ? { color: 'var(--app-own-message-muted)' } : undefined} aria-hidden="true" />
+                        <WarningCircleIcon size={14} weight="bold" className={isOwn ? '' : 'text-app-muted'} style={isOwn ? { color: 'var(--app-own-message-muted)' } : undefined} aria-hidden="true" />
                         <span className="font-medium">No es posible transcribir</span>
                     </div>
                 ) : (

@@ -1,5 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+    Link,
+    useLocation,
+    useNavigate } from 'react-router-dom';
+import { ChatCircleIcon,
+    HouseIcon,
+    MagnifyingGlassIcon,
+    UserIcon
+} from '@phosphor-icons/react';
 import logo from '../assets/icon.svg';
 import { DropdownMenu, DropdownMenuButton, DropdownMenuLink } from './DropdownMenu';
 import { useNotifications } from '../context/NotificationContext';
@@ -12,47 +20,28 @@ const NAV_ITEMS = [
         key: 'home',
         label: 'Inicio',
         isActive: (pathname: string) => pathname.startsWith('/app/home'),
-        icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-        </svg>
-        ),
+        icon: <HouseIcon className="h-full w-full" weight="bold" aria-hidden="true" />,
     },
     {
         path: '/app/discovery',
         key: 'discovery',
         label: 'Buscar',
         isActive: (pathname: string) => pathname.startsWith('/app/discovery'),
-        icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        ),
+        icon: <MagnifyingGlassIcon className="h-full w-full" weight="bold" aria-hidden="true" />,
     },
     {
         path: '/app/messages',
         key: 'messages',
         label: 'Mensajes',
         isActive: (pathname: string) => pathname.startsWith('/app/messages') || pathname.startsWith('/app/chat/'),
-        icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
-        ),
+        icon: <ChatCircleIcon className="h-full w-full" weight="bold" aria-hidden="true" />,
     },
     {
         path: '/app/profile',
         key: 'profile',
         label: 'Perfil',
         isActive: (pathname: string) => pathname.startsWith('/app/profile') || pathname.startsWith('/app/user/'),
-        icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-        </svg>
-        ),
+        icon: <UserIcon className="h-full w-full" weight="bold" aria-hidden="true" />,
     },
 ];
 

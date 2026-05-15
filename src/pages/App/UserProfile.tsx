@@ -1,12 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { SimpleCarousel } from '../../components/SimpleCarousel';
+import {
+    SimpleCarousel } from '../../components/SimpleCarousel';
 import { EditInterestsModal } from '../../components/modals/EditInterestsModal';
 import { EditMindModal } from '../../components/modals/EditMindModal';
 import { EditPhotosModal } from '../../components/modals/EditPhotosModal';
 import { EditBasicInfoModal } from '../../components/modals/EditBasicInfoModal';
 import FaceVerification from '../../components/bioVerification';
-import { getMyProfile, markFaceVerification, updateMyProfile, type UserProfileUpdatePayload } from '../../services/user.service';
-import { X, Camera, Pencil, MapPin, Cake, User as UserIcon, Heart, Sprout, Brain, Settings, ShieldCheck } from 'lucide-react';
+import { getMyProfile,
+    markFaceVerification,
+    updateMyProfile,
+    type UserProfileUpdatePayload } from '../../services/user.service';
+import { XIcon,
+    CameraIcon,
+    PencilSimpleIcon,
+    MapPinIcon,
+    CakeIcon,
+    UserIcon,
+    HeartIcon,
+    PlantIcon,
+    BrainIcon,
+    GearIcon,
+    ShieldCheckIcon
+} from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
 import { type User, GENDER_LABELS,SEXUALITY_LABELS } from '../../types/User.types';
 import { VerifiedIdentityIcon } from '../../components/VerifiedIdentityIcon';
@@ -159,7 +174,7 @@ export const UserProfile: React.FC = () => {
                     className="p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple"
                     title="Editar informaciÃ³n bÃ¡sica"
                 >
-                    <Pencil className="w-5 h-5" />
+                    <PencilSimpleIcon className="w-5 h-5" weight="bold" />
                 </button>
             </div>
 
@@ -170,7 +185,7 @@ export const UserProfile: React.FC = () => {
                   className="flex items-center gap-2 px-3.5 py-2 bg-bluvi-purple text-white rounded-2xl text-sm font-semibold hover:opacity-90 transition-all hover:scale-105 active:scale-95"
                   title="Verificar identidad"
                 >
-                  <ShieldCheck className="w-4.5 h-4.5" aria-hidden="true" />
+                  <ShieldCheckIcon className="w-4.5 h-4.5" weight="bold" aria-hidden="true" />
                   <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Verificar</span>
                 </button>
               )}
@@ -180,7 +195,7 @@ export const UserProfile: React.FC = () => {
                     className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95 group"
                     title="Ajustes de cuenta"
                 >
-                    <Settings className="w-4.5 h-4.5 group-hover:rotate-45 transition-transform duration-500" />
+                    <GearIcon className="w-4.5 h-4.5 group-hover:rotate-45 transition-transform duration-500" weight="bold" />
                     <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Ajustes</span>
                 </button>
             </div>
@@ -195,7 +210,7 @@ export const UserProfile: React.FC = () => {
               className="p-1.5 hover:bg-red-100 rounded-full transition-colors text-red-400 hover:text-red-600"
               title="Cerrar aviso"
             >
-              <X className="w-4 h-4" strokeWidth={2.5} />
+              <XIcon className="w-4 h-4" weight="bold" />
             </button>
           </div>
         )}
@@ -213,7 +228,7 @@ export const UserProfile: React.FC = () => {
                 className="absolute bottom-4 right-4 p-3 bg-app-surface-strong backdrop-blur-md text-app-accent rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all border border-app-soft z-10"
                 title="Gestionar fotos"
               >
-                <Camera className="w-5 h-5" strokeWidth={2.5} />
+                <CameraIcon className="w-5 h-5" weight="bold" />
               </button>
             </div>
 
@@ -235,16 +250,16 @@ export const UserProfile: React.FC = () => {
             <Card>
               <ul className="flex flex-wrap gap-4 sm:gap-6 text-app-primary font-semibold mb-4 text-sm border-b border-app-soft pb-4">
                 <li className="flex items-center gap-2">
-                  <Cake className="w-4 h-4 text-app-accent dark:text-app-orange" /> {age} años
+                  <CakeIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {age} años
                 </li>
                 <li className="flex items-center gap-2">
-                  <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" /> {GENDER_LABELS[user.id_gender] ?? 'â€”'}
+                  <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {GENDER_LABELS[user.id_gender] ?? 'â€”'}
                 </li>
                 <li className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-app-accent dark:text-app-orange" /> {user.city}
+                  <MapPinIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {user.city}
                 </li>
                 <li className="flex items-center gap-2">
-                  <Heart className="w-4 h-4 text-app-accent dark:text-app-orange" />
+                  <HeartIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" />
                   {user.sexuality && user.sexuality.length > 0
                     ? (SEXUALITY_LABELS[user.sexuality[0]] ?? 'Sin especificar')
                     : 'Sin especificar'}
@@ -255,7 +270,7 @@ export const UserProfile: React.FC = () => {
 
             <Card>
               <div className="flex justify-between items-center mb-6">
-                <SectionLabel icon={<Sprout className="w-4.5 h-4.5" />} label="Mis intereses" />
+                <SectionLabel icon={<PlantIcon className="w-4.5 h-4.5" weight="bold" />} label="Mis intereses" />
                 <button
                   onClick={() => setShowInterestsModal(true)}
                   className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"
@@ -274,7 +289,7 @@ export const UserProfile: React.FC = () => {
 
             <Card>
               <div className="flex justify-between items-center mb-6">
-                <SectionLabel icon={<Brain className="w-4.5 h-4.5" />} label="Mente y Comunicación" />
+                <SectionLabel icon={<BrainIcon className="w-4.5 h-4.5" weight="bold" />} label="Mente y Comunicación" />
                 <button
                   onClick={() => setShowMindModal(true)}
                   className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 outline-none dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"

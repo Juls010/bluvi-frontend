@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.5% </span>
+                <span class="strong">90.47% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>37/40</span>
+                <span class='fraction'>38/42</span>
             </div>
         
             
@@ -187,7 +187,15 @@
 <a name='L122'></a><a href='#L122'>122</a>
 <a name='L123'></a><a href='#L123'>123</a>
 <a name='L124'></a><a href='#L124'>124</a>
-<a name='L125'></a><a href='#L125'>125</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -206,7 +214,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -279,6 +298,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -304,14 +327,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState } from 'react';
+import { EyeIcon, EyeSlashIcon, XIcon } from '@phosphor-icons/react';
 &nbsp;
 interface InputFieldProps {
     label: string;
@@ -328,6 +345,11 @@ interface InputFieldProps {
     inputRef?: React.Ref&lt;HTMLInputElement&gt;;
     ['aria-invalid']?: boolean;
     ['aria-describedby']?: string;
+    required?: boolean;
+    maxLength?: number;
+    name?: string;
+    autoComplete?: string;
+    disabled?: boolean;
 }
 &nbsp;
     export const InputField: React.FC&lt;InputFieldProps&gt; = ({
@@ -344,7 +366,12 @@ interface InputFieldProps {
         clearLabel = 'Limpiar campo',
         inputRef,
         ['aria-invalid']: ariaInvalid,
-        ['aria-describedby']: ariaDescribedby
+        ['aria-describedby']: ariaDescribedby,
+        required,
+        maxLength,
+        name,
+        autoComplete,
+        disabled
     }) =&gt; {
     
     const [showPassword, setShowPassword] = useState(false);
@@ -381,22 +408,26 @@ interface InputFieldProps {
                     w-full px-4 py-3 rounded-xl bg-white/50 text-bluvi-purple placeholder:text-bluvi-purple/40 font-sans text-lg
                     border-2 transition-all duration-300 focus:outline-none focus:ring-4
                     ${getBorderColor()}
-                    ${isPasswordType || shouldShowClearButton ? 'pr-12' : ''} /* Dejamos hueco a la derecha para acciones */
+                    ${isPasswordType || shouldShowClearButton ? 'pr-12' : ''}
+                    ${disabled ? <span class="branch-0 cbranch-no" title="branch not covered" >'opacity-50 cursor-not-allowed select-none bg-gray-100/30' : '</span>'}
                 `}
                 aria-invalid={finalAriaInvalid}
                 aria-describedby={finalAriaDescribedBy}
+                required={required}
+                maxLength={maxLength}
+                name={name}
+                autoComplete={autoComplete}
+                disabled={disabled}
             /&gt;
 &nbsp;
             {shouldShowClearButton &amp;&amp; (
             &lt;button
                 type="button"
                 onClick={onClear}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-bluvi-purple/45 hover:text-bluvi-purple transition-colors rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/30"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-bluvi-purple/45 hover:text-bluvi-purple transition-all duration-300 rounded-full p-1.5 hover:bg-bluvi-purple/5 active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/30"
                 aria-label={clearLabel}
             &gt;
-                &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4.5 h-4.5"&gt;
-                    &lt;path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /&gt;
-                &lt;/svg&gt;
+                &lt;XIcon size={18} weight="bold" /&gt;
             &lt;/button&gt;
             )}
 &nbsp;
@@ -404,20 +435,13 @@ interface InputFieldProps {
             &lt;button
                 type="button" 
                 onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etShowPassword(!showPassword)}</span>
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-bluvi-purple/60 hover:text-bluvi-purple transition-colors p-1"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-bluvi-purple/60 hover:text-bluvi-purple transition-all duration-300 p-1.5 rounded-full hover:bg-bluvi-purple/5 active:scale-90"
                 aria-label={showPassword ? <span class="branch-0 cbranch-no" title="branch not covered" >"Ocultar contraseña" : "</span>Mostrar contraseña"} 
             &gt;
                 {<span class="branch-0 cbranch-no" title="branch not covered" >showPassword ? (</span>
-                
-                &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"&gt;
-                    &lt;path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /&gt;
-                    &lt;path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /&gt;
-                &lt;/svg&gt;
+                    &lt;EyeSlashIcon size={20} weight="bold" /&gt;
                 ) : (
-                
-                &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"&gt;
-                    &lt;path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /&gt;
-                &lt;/svg&gt;
+                    &lt;EyeIcon size={20} weight="bold" /&gt;
                 )}
             &lt;/button&gt;
             )}
@@ -442,7 +466,7 @@ interface InputFieldProps {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-20T10:29:07.762Z
+                at 2026-05-14T15:21:09.184Z
             </div>
         <script src="../prettify.js"></script>
         <script>

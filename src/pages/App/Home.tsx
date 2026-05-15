@@ -1,17 +1,17 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-    ArrowRight,
-    Bell,
-    CalendarDays,
-    ChevronLeft,
-    ChevronRight,
-    MapPin,
-    MessageSquareHeart,
-    MessagesSquare,
-    User,
-    Waves,
-} from 'lucide-react';
+    useNavigate } from 'react-router-dom';
+import {
+    ArrowRightIcon,
+    BellIcon,
+    CalendarBlankIcon,
+    CaretLeftIcon,
+    CaretRightIcon,
+    MapPinIcon,
+    ChatCircleIcon,
+    ChatsIcon,
+    UserIcon,
+} from '@phosphor-icons/react';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
 import { HOME_EVENTS } from '../../data/events';
@@ -111,10 +111,8 @@ export const Home: React.FC = () => {
             <header className="pt-1 pb-6 animate-fade-in motion-reduce:animate-none">
                 <span
                     aria-hidden="true"
-                    className="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-app-secondary bg-app-pill px-4 py-2 rounded-full mb-6 select-none shadow-sm"
+                    className="px-4 py-2 mb-6"
                 >
-                    <Waves size={16} className="text-app-accent animate-pulse" />
-                    Tu espacio de calma
                 </span>
 
                 <h1 className="text-3xl md:text-5xl font-bold text-app-primary leading-[1.1] tracking-tight">
@@ -131,7 +129,7 @@ export const Home: React.FC = () => {
                     className="mt-6 flex items-center gap-3 px-5 py-3 rounded-2xl bg-app-surface-soft/40 backdrop-blur-md border border-app-soft/60 dark:border-app-accent/20 hover:bg-app-surface-soft/60 hover:border-app-accent/30 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
                 >
                     <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-app-pill/50 group-hover:bg-app-pill transition-colors" aria-hidden="true">
-                        <Bell size={22} className={`${hasNotifications || pendingMatchRequests > 0 ? 'text-app-accent' : 'text-app-muted'} transition-transform group-hover:scale-110`} />
+                        <BellIcon size={22} weight="bold" className={`${hasNotifications || pendingMatchRequests > 0 ? 'text-app-accent' : 'text-app-muted'} transition-transform group-hover:scale-110`} />
                         {(hasNotifications || pendingMatchRequests > 0) && (
                             <span className="absolute top-1.5 right-1.5 w-3 h-3 bg-green-500 rounded-full ring-2 ring-app-surface-solid animate-pulse" />
                         )}
@@ -140,7 +138,7 @@ export const Home: React.FC = () => {
                         {activityMessage}
                     </span>
                     {(hasNotifications || pendingMatchRequests > 0) && (
-                        <ArrowRight size={16} className="text-app-accent opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0" aria-hidden="true" />
+                        <ArrowRightIcon size={16} weight="bold" className="text-app-accent opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0" aria-hidden="true" />
                     )}
                 </button>
             </header>
@@ -166,7 +164,7 @@ export const Home: React.FC = () => {
                         >
                             <div className="flex items-center gap-6">
                                 <div className="w-16 h-16 rounded-[22px] bg-app-accent flex items-center justify-center shrink-0 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-app-accent/20" aria-hidden="true">
-                                    <MessageSquareHeart size={32} className="text-app-on-accent" />
+                                    <ChatCircleIcon size={32} weight="bold" className="text-app-on-accent" />
                                 </div>
                                 <div>
                                     <p className="text-[12px] font-extrabold uppercase tracking-[0.13em] text-app-accent mb-1.5">
@@ -180,7 +178,7 @@ export const Home: React.FC = () => {
                                     </p>
                                 </div>
                             </div>
-                            <ArrowRight size={20} className="text-app-accent opacity-60" aria-hidden="true" />
+                            <ArrowRightIcon size={20} weight="bold" className="text-app-accent opacity-60" aria-hidden="true" />
                         </button>
 
                         <div className="grid grid-cols-2 gap-4" role="group" aria-label="Otras acciones">
@@ -191,7 +189,7 @@ export const Home: React.FC = () => {
                                 className="bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-[20px] px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/40"
                             >
                                 <div className="w-14 h-14 rounded-2xl bg-app-pill flex items-center justify-center text-app-accent mb-5 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-app-accent group-hover:text-app-on-accent" aria-hidden="true">
-                                    <MessagesSquare size={26} />
+                                    <ChatsIcon size={26} weight="bold" />
                                 </div>
                                 <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-app-muted mb-2">
                                     Mensajes
@@ -208,7 +206,7 @@ export const Home: React.FC = () => {
                                 className="bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-[20px] px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/40"
                             >
                                 <div className="w-14 h-14 rounded-2xl bg-app-pill flex items-center justify-center text-app-accent mb-5 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-app-accent group-hover:text-app-on-accent" aria-hidden="true">
-                                    <User size={26} />
+                                    <UserIcon size={26} weight="bold" />
                                 </div>
                                 <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-app-muted mb-2">
                                     Perfil
@@ -256,7 +254,7 @@ export const Home: React.FC = () => {
                                         event.currentTarget.style.backgroundColor = 'var(--app-control-surface)';
                                     }}
                                 >
-                                    <ChevronLeft size={18} aria-hidden="true" />
+                                    <CaretLeftIcon size={18} weight="bold" aria-hidden="true" />
                                 </button>
                                 <div className="flex gap-2" aria-label="Diapositiva actual">
                                     {HOME_EVENTS.map((_, index) => (
@@ -290,7 +288,7 @@ export const Home: React.FC = () => {
                                         event.currentTarget.style.backgroundColor = 'var(--app-control-surface)';
                                     }}
                                 >
-                                    <ChevronRight size={18} aria-hidden="true" />
+                                    <CaretRightIcon size={18} weight="bold" aria-hidden="true" />
                                 </button>
                             </div>
                             <span className="sr-only" aria-live="polite">
@@ -338,14 +336,14 @@ export const Home: React.FC = () => {
 
                                                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                                                     <div className="flex items-start gap-3 rounded-2xl bg-app-surface-soft px-4 py-3 text-[13.5px] text-app-secondary">
-                                                        <CalendarDays size={18} className="mt-0.5 shrink-0 text-app-accent" aria-hidden="true" />
+                                                        <CalendarBlankIcon size={18} weight="bold" className="mt-0.5 shrink-0 text-app-accent" aria-hidden="true" />
                                                         <span>
                                                             <span className="block text-[11px] font-black uppercase tracking-[0.12em] text-app-muted">Fecha</span>
                                                             <span className="font-bold text-app-primary">{item.dateLabel}</span>
                                                         </span>
                                                     </div>
                                                     <div className="flex items-start gap-3 rounded-2xl bg-app-surface-soft px-4 py-3 text-[13.5px] text-app-secondary">
-                                                        <MapPin size={18} className="mt-0.5 shrink-0 text-app-accent" aria-hidden="true" />
+                                                        <MapPinIcon size={18} weight="bold" className="mt-0.5 shrink-0 text-app-accent" aria-hidden="true" />
                                                         <span>
                                                             <span className="block text-[11px] font-black uppercase tracking-[0.12em] text-app-muted">Lugar</span>
                                                             <span className="font-bold text-app-primary">{item.place}</span>

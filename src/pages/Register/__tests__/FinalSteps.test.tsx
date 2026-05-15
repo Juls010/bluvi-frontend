@@ -29,6 +29,10 @@ describe('Final Registration Steps', () => {
         });
     });
 
+    const closeInfoModal = () => {
+        fireEvent.click(screen.getByRole('button', { name: /entendido/i }));
+    };
+
     describe('EmailVerificationStep', () => {
         it('should allow entering code and calling verifyEmail', async () => {
             (authService.verifyEmail as any).mockResolvedValue({ success: true });
@@ -38,17 +42,16 @@ describe('Final Registration Steps', () => {
                     <EmailVerificationStep />
                 </MemoryRouter>
             );
+            closeInfoModal();
 
-            const inputs = screen.getAllByLabelText(/Dígito \d del código/i);
+            const inputs = screen.getAllByLabelText(/d.gito \d del c.digo/i);
             expect(inputs.length).toBe(6);
 
-            // Fill the code
             inputs.forEach((input, i) => {
                 fireEvent.change(input, { target: { value: i.toString() } });
             });
 
-            const verifyButton = screen.getByRole('button', { name: /verificar y continuar/i });
-            fireEvent.click(verifyButton);
+            fireEvent.click(screen.getByRole('button', { name: /verificar y continuar/i }));
 
             await waitFor(() => {
                 expect(authService.verifyEmail).toHaveBeenCalledWith('012345', 'test@example.com');
@@ -58,7 +61,7 @@ describe('Final Registration Steps', () => {
 
         it('should show error if verification fails', async () => {
             (authService.verifyEmail as any).mockRejectedValue({
-                response: { data: { message: 'Código inválido' } }
+                response: { data: { message: 'Codigo invalido' } },
             });
 
             render(
@@ -66,17 +69,17 @@ describe('Final Registration Steps', () => {
                     <EmailVerificationStep />
                 </MemoryRouter>
             );
+            closeInfoModal();
 
-            const inputs = screen.getAllByLabelText(/Dígito \d del código/i);
+            const inputs = screen.getAllByLabelText(/d.gito \d del c.digo/i);
             inputs.forEach((input) => {
                 fireEvent.change(input, { target: { value: '1' } });
             });
 
-            const verifyButton = screen.getByRole('button', { name: /verificar y continuar/i });
-            fireEvent.click(verifyButton);
+            fireEvent.click(screen.getByRole('button', { name: /verificar y continuar/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Código inválido/i)).toBeDefined();
+                expect(screen.getByText(/codigo invalido/i)).toBeInTheDocument();
             });
         });
 
@@ -86,31 +89,29 @@ describe('Final Registration Steps', () => {
                     <EmailVerificationStep />
                 </MemoryRouter>
             );
+            closeInfoModal();
 
-            const inputs = screen.getAllByLabelText(/Dígito \d del código/i) as HTMLInputElement[];
-            
-            // Initial focus check (it might not be focused automatically by default, let's see implementation)
-            // The implementation doesn't auto-focus the first one on mount, but let's test the change logic.
-            
+            const inputs = screen.getAllByLabelText(/d.gito \d del c.digo/i) as HTMLInputElement[];
+
             fireEvent.change(inputs[0], { target: { value: '1' } });
             expect(inputs[1]).toBe(document.activeElement);
 
             fireEvent.change(inputs[1], { target: { value: '2' } });
             expect(inputs[2]).toBe(document.activeElement);
 
-            // Backspace on empty input 2 should move to input 1
             fireEvent.keyDown(inputs[2], { key: 'Backspace' });
             expect(inputs[1]).toBe(document.activeElement);
         });
 
         it('should ignore non-numeric characters', () => {
-             render(
+            render(
                 <MemoryRouter>
                     <EmailVerificationStep />
                 </MemoryRouter>
             );
+            closeInfoModal();
 
-            const inputs = screen.getAllByLabelText(/Dígito \d del código/i) as HTMLInputElement[];
+            const inputs = screen.getAllByLabelText(/d.gito \d del c.digo/i) as HTMLInputElement[];
             fireEvent.change(inputs[0], { target: { value: 'a' } });
             expect(inputs[0].value).toBe('');
         });
@@ -124,8 +125,7 @@ describe('Final Registration Steps', () => {
                 </MemoryRouter>
             );
 
-            const finishButton = screen.getByRole('button', { name: /entendido/i });
-            fireEvent.click(finishButton);
+            fireEvent.click(screen.getByRole('button', { name: /entendido/i }));
             expect(mockNavigate).toHaveBeenCalledWith('/app/home');
         });
     });

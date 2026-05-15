@@ -9,7 +9,7 @@ const SEC_LOCATION_ID      = 'filter-sec-location';
 const SEC_INTERESTS_ID     = 'filter-sec-interests';
 const SEC_COMMUNICATION_ID = 'filter-sec-communication';
 const SEC_SENSORY_ID       = 'filter-sec-sensory';
-import { Filter, X, MapPin, Sparkles, MessageCircle, Search, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { CaretRightIcon, ChatCircleIcon, CheckCircleIcon, FunnelIcon, MagnifyingGlassIcon, MapPinIcon, SparkleIcon, XIcon } from '@phosphor-icons/react';
 import { searchCities, type CitySuggestion } from '../services/cities.service';
 
 export interface FilterData {
@@ -272,7 +272,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
               className="w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20 mt-0.5 md:mt-1"
               style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
             >
-              <X size={20} aria-hidden="true" />
+              <XIcon size={20} weight="bold" aria-hidden="true" />
             </button>
           </header>
         </div>
@@ -285,7 +285,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                 aria-hidden="true"
               >
-                <MapPin size={20} />
+                <MapPinIcon size={20} weight="bold" />
               </div>
               <h3 id={SEC_LOCATION_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Cerca de ti</h3>
             </div>
@@ -299,7 +299,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                   Ciudad
                 </label>
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-app-muted group-focus-within:text-app-accent transition-colors" size={18} aria-hidden="true" />
+                  <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-app-muted group-focus-within:text-app-accent transition-colors" size={18} weight="bold" aria-hidden="true" />
                   <input
                     id={CITY_INPUT_ID}
                     type="text"
@@ -324,7 +324,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-app-muted hover:text-app-primary transition-colors p-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent/40"
                       aria-label="Limpiar ciudad"
                     >
-                      <X size={16} aria-hidden="true" />
+                      <XIcon size={16} weight="bold" aria-hidden="true" />
                     </button>
                   )}
                   {isLoadingCities && (
@@ -358,8 +358,8 @@ export const DiscoveryFilter: React.FC<Props> = ({
                         >
                           <span className="font-medium">{suggestion.label}</span>
                           {city === suggestion.value
-                            ? <CheckCircle2 size={16} className="text-app-accent" aria-hidden="true" />
-                            : <ChevronRight size={16} className="text-app-muted" aria-hidden="true" />}
+                            ? <CheckCircleIcon size={16} weight="bold" className="text-app-accent" aria-hidden="true" />
+                            : <CaretRightIcon size={16} weight="bold" className="text-app-muted" aria-hidden="true" />}
                         </li>
                       ))
                     ) : (
@@ -400,7 +400,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                     aria-valuetext={distance === 0 ? 'Sin límite, toda España' : `${distance} kilómetros`}
                   />
                   <div className="flex justify-between mt-3 text-[10px] text-app-muted font-bold tracking-widest opacity-50" aria-hidden="true">
-                    <span>MÁX. CERCANÍA</span>
+                    <span>MÁXIcon. CERCANÍA</span>
                     <span>+200 KM</span>
                   </div>
                 </div>
@@ -415,7 +415,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                 aria-hidden="true"
               >
-                <Filter size={20} />
+                <FunnelIcon size={20} weight="bold" />
               </div>
               <h3 id={SEC_INTERESTS_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Intereses y Hyperfocus</h3>
             </div>
@@ -453,7 +453,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                 aria-hidden="true"
               >
-                <MessageCircle size={20} />
+                <ChatCircleIcon size={20} weight="bold" />
               </div>
               <h3 id={SEC_COMMUNICATION_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Comunicación</h3>
             </div>
@@ -491,7 +491,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                 aria-hidden="true"
               >
-                <Sparkles size={20} />
+                <SparkleIcon size={20} weight="bold" />
               </div>
               <h3 id={SEC_SENSORY_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Sensibilidad y Entorno</h3>
             </div>
@@ -586,7 +586,7 @@ export const FilterTriggerButton: React.FC<{
     aria-label={activeCount > 0 ? `Abrir filtros, ${activeCount} activos` : 'Abrir filtros'}
     className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all shadow-sm hover:shadow bg-app-filter-trigger backdrop-blur-sm text-app-primary border-app-soft hover:bg-app-filter-trigger-hover hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
   >
-    <Filter size={16} className="text-app-filter-icon shrink-0" aria-hidden="true" />
+    <FunnelIcon size={16} weight="bold" className="text-app-filter-icon shrink-0" aria-hidden="true" />
     <span>Filtros</span>
     {activeCount > 0 && (
       <span

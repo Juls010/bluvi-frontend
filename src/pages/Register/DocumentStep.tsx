@@ -1,8 +1,12 @@
 import React from 'react';
-import { Button } from '../../components/Button';
+import {
+    Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
+import { CheckCircleIcon,
+    UploadSimpleIcon
+} from '@phosphor-icons/react';
 
 export const DocumentStep: React.FC = () => {
     const navigate = useNavigate();
@@ -70,13 +74,13 @@ export const DocumentStep: React.FC = () => {
                             <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
                                 {fileName ? (
                                     <>
-                                        <svg className="w-10 h-10 text-bluvi-purple mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <CheckCircleIcon className="mb-3 h-10 w-10 text-bluvi-purple" weight="bold" aria-hidden="true" />
                                         <p className="text-lg font-semibold text-bluvi-purple break-all">{fileName}</p>
                                         <p className="text-sm text-bluvi-purple/70 mt-1 uppercase font-bold tracking-wider">Click para cambiar</p>
                                     </>
                                 ) : (
                                     <>
-                                        <svg className="w-10 h-10 text-bluvi-purple/50 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                        <UploadSimpleIcon className="mb-3 h-10 w-10 text-bluvi-purple/50" weight="bold" aria-hidden="true" />
                                         <p className="mb-2 text-lg text-bluvi-purple font-medium">Sube tu certificado (PDF)</p>
                                         <p className="text-sm text-bluvi-purple/60">Pulsa aquí para buscar el archivo</p>
                                     </>

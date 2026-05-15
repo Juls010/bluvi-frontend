@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { deleteMyAccount } from '../services/user.service';
+import {
+    deleteMyAccount } from '../services/user.service';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { X, Eye, EyeOff, Trash2, Loader2 } from 'lucide-react';
+import { EyeIcon,
+    EyeSlashIcon,
+    SpinnerGapIcon,
+    TrashIcon,
+    XIcon
+} from '@phosphor-icons/react';
 
 interface DeleteAccountModalProps {
   onClose: () => void;
@@ -79,7 +85,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
           <div className="flex items-center justify-between px-6 pt-6 pb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                <Trash2 size={20} />
+                <TrashIcon size={20} weight="bold" />
               </div>
               <h2 id="delete-modal-title" className="text-lg font-bold text-gray-800">
                 Eliminar cuenta
@@ -91,7 +97,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
               aria-label="Cerrar"
               className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors disabled:opacity-50"
             >
-              <X size={16} />
+              <XIcon size={16} weight="bold" />
             </button>
           </div>
 
@@ -155,7 +161,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
                   aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeSlashIcon size={18} weight="bold" /> : <EyeIcon size={18} weight="bold" />}
                 </button>
               </div>
 
@@ -180,7 +186,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
                 >
                   {isDeleting ? (
                     <>
-                      <Loader2 className="animate-spin" size={16} />
+                      <SpinnerGapIcon className="animate-spin" size={16} weight="bold" />
                       Eliminando...
                     </>
                   ) : 'Eliminar mi cuenta'}

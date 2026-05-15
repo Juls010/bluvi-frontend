@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTheme } from 'next-themes';
 import { ArrowLeft, Loader2, Check } from 'lucide-react';
 import { Button } from '../../components/Button';
 import logo from '../../assets/logo.svg';
@@ -10,6 +11,7 @@ import { InputField } from '../../components/InputField';
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
+    const { setTheme } = useTheme();
     const auth = useAuth(); 
     const authLogin = auth.login; 
 
@@ -26,6 +28,10 @@ export const Login: React.FC = () => {
             setRememberMe(true);
         }
     }, []);
+
+    useEffect(() => {
+        setTheme('system');
+    }, [setTheme]);
 
     const handleSubmit = async (e: React.FormEvent) => {
             e.preventDefault();
@@ -62,7 +68,7 @@ export const Login: React.FC = () => {
                     <nav className="flex justify-start relative z-20" aria-label="Navegación de acceso">
                         <button 
                             onClick={() => navigate('/welcome')}
-                            className="flex items-center gap-2 text-bluvi-purple/60 hover:text-bluvi-purple font-bold text-sm transition-all active:scale-95 cursor-pointer py-1"
+                            className="inline-flex items-center gap-2 rounded-full bg-white/95 px-5 py-2.5 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 active:scale-95 dark:bg-[#D8D1FF] dark:text-[#221B5F] dark:hover:bg-white cursor-pointer"
                             aria-label="Volver al inicio"
                         >
                             <ArrowLeft size={18} strokeWidth={3} />
@@ -83,7 +89,7 @@ export const Login: React.FC = () => {
                 <div className="flex-1 flex flex-col justify-center items-center w-full px-4 sm:px-0 my-4 overflow-y-auto no-scrollbar">
                     <div className="w-full max-w-[26rem] sm:max-w-md">
                         <h1 className="sr-only">Acceder a Bluvi - Inicia sesión en tu cuenta</h1>
-                        <div className="w-full space-y-5 sm:space-y-6 bg-white/20 backdrop-blur-md p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] shadow-xl border border-white/30">
+                        <div className="w-full space-y-5 rounded-[2rem] border border-white/30 bg-white/20 p-6 shadow-xl backdrop-blur-md dark:border-white/12 dark:bg-white/[0.08] dark:[&_h2]:text-white dark:[&_input]:border-white/25 dark:[&_input]:bg-white/10 dark:[&_input]:text-white dark:[&_input]:placeholder:text-white/45 dark:[&_label]:text-white sm:space-y-6 sm:rounded-[2.5rem] sm:p-8">
                             <div className="flex flex-col items-center">
                                 <h2 className="text-xl sm:text-2xl font-bold text-bluvi-purple">¡Hola de nuevo!</h2>
                             </div>
@@ -132,13 +138,13 @@ export const Login: React.FC = () => {
                                             <div 
                                                 className={`
                                                     w-4 h-4 rounded border transition-all duration-300 flex items-center justify-center
-                                                    ${rememberMe ? 'bg-bluvi-purple border-bluvi-purple shadow-sm' : 'border-bluvi-purple/30 group-hover:border-bluvi-purple/50 bg-white/50'}
+                                                    ${rememberMe ? 'bg-bluvi-purple border-bluvi-purple shadow-sm dark:bg-[#D8D1FF] dark:border-[#D8D1FF]' : 'border-bluvi-purple/30 group-hover:border-bluvi-purple/50 bg-white/50 dark:border-white/35 dark:bg-white/10 dark:group-hover:border-white/60'}
                                                     group-focus-visible:ring-2 group-focus-visible:ring-bluvi-purple/40
                                                 `}
                                             >
-                                                {rememberMe && <Check size={10} strokeWidth={4} className="text-white" />}
+                                                {rememberMe && <Check size={10} strokeWidth={4} className="text-white dark:text-[#221B5F]" />}
                                             </div>
-                                            <span className="text-xs font-medium text-bluvi-purple/70 group-hover:text-bluvi-purple transition-colors">
+                                            <span className="text-xs font-medium text-bluvi-purple/70 group-hover:text-bluvi-purple transition-colors dark:text-white/75 dark:group-hover:text-white">
                                                 Recordarme
                                             </span>
                                         </div>
@@ -146,7 +152,7 @@ export const Login: React.FC = () => {
                                         <button 
                                             type="button" 
                                             //onClick={() => navigate('/forgot-password')}
-                                            className="text-xs font-semibold text-bluvi-purple/70 hover:text-bluvi-purple transition-colors cursor-pointer"
+                                            className="text-xs font-semibold text-bluvi-purple/70 hover:text-bluvi-purple transition-colors dark:text-white/75 dark:hover:text-white cursor-pointer"
                                         >
                                             No recuerdo mi contraseña
                                         </button>
@@ -163,7 +169,7 @@ export const Login: React.FC = () => {
 
                             <Button 
                                 type="submit" 
-                                className="w-full py-4 shadow-lg flex justify-center items-center gap-2"
+                                className="flex w-full items-center justify-center gap-2 py-4 !text-white shadow-lg dark:!bg-[#D8D1FF] dark:!text-[#221B5F] dark:shadow-[#D8D1FF]/15"
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
@@ -177,11 +183,11 @@ export const Login: React.FC = () => {
                             </Button>
                         </form>
 
-                        <p className="text-center text-gray-600 text-sm">
+                        <p className="text-center text-gray-600 text-sm dark:text-white/78">
                             ¿No tienes cuenta?{' '}
                             <Link 
                                 to="/register/name"
-                                className="text-bluvi-purple font-bold cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/50 rounded px-1 transition-all"
+                                className="text-bluvi-purple font-bold cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/50 rounded px-1 transition-all dark:text-[#D8D1FF]"
                             >
                                 Regístrate
                             </Link>
@@ -189,7 +195,7 @@ export const Login: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <footer className="w-full text-[10px] text-bluvi-purple/60 mt-auto mb-4 text-center font-medium tracking-tight shrink-0 relative z-10">
+            <footer className="w-full text-[10px] text-bluvi-purple/60 mt-auto mb-4 text-center font-medium tracking-tight shrink-0 relative z-10 dark:text-white/60">
                 &copy; {new Date().getFullYear()} Bluvi. Proyecto académico sin ánimo de lucro.
             </footer>
         </AnimatedStep>

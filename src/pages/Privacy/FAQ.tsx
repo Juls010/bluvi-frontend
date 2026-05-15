@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { useScrollToTop } from '../../hooks/useScrollToTop';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import {
+    useScrollToTop } from '../../hooks/useScrollToTop';
+import { CaretDownIcon,
+    CaretUpIcon
+} from '@phosphor-icons/react';
 
 interface FAQItemProps {
   question: string;
@@ -55,9 +58,9 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
         >
           <span className="text-lg font-semibold text-bluvi-purple pr-8 group-hover:text-bluvi-purple/80 transition-colors">{question}</span>
           {isOpen ? (
-            <ChevronUp className="text-bluvi-purple shrink-0" size={20} />
+            <CaretUpIcon className="text-bluvi-purple shrink-0" size={20} weight="bold" />
           ) : (
-            <ChevronDown className="text-slate-400 shrink-0" size={20} />
+            <CaretDownIcon className="text-slate-400 shrink-0" size={20} weight="bold" />
           )}
         </button>
       </h3>
@@ -85,7 +88,7 @@ const FAQ = () => {
       question: "Soy nuevo en Bluvi. ¿Para que sirve cada botón?",
       answer: (
         <p>
-          El botón <strong>«Corazón»</strong> que aparece junto a cada sección del perfil de un usuario te permiten expresar tu interés y enviar una solicitud de emparejamiento a ese usuario. El botón <strong>«X»</strong> sirve para saltarse o descartar a un usuario. Si le das a «X» a un usuario, volverá a aparecer en tu lista de parejas compatibles en unos días. Si pulsas «X» por error, el botón <strong>«Retroceder»</strong> te permite volver atrás y volver a ver inmediatamente el perfil anterior.
+          El botón <strong>«Corazón»</strong> que aparece junto a cada sección del perfil de un usuario te permiten expresar tu interés y enviar una solicitud de emparejamiento a ese usuario. El botón <strong>«XIcon»</strong> sirve para saltarse o descartar a un usuario. Si le das a «XIcon» a un usuario, volverá a aparecer en tu lista de parejas compatibles en unos días. Si pulsas «XIcon» por error, el botón <strong>«Retroceder»</strong> te permite volver atrás y volver a ver inmediatamente el perfil anterior.
         </p>
       )
     },

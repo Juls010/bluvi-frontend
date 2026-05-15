@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import {
+    useState } from 'react';
 import { Button } from '../../components/Button';
 import { InputField } from '../../components/InputField';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate,
+    Link } from 'react-router-dom';
 import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 import { authService } from '../../services/auth.service';
-import { Check } from 'lucide-react';
+import { CheckIcon
+} from '@phosphor-icons/react';
 
 export const EmailStep: React.FC = () => {
     const navigate = useNavigate();
@@ -150,7 +153,7 @@ export const EmailStep: React.FC = () => {
                                 `}
                             >
                                 {formData.privacyAccepted && (
-                                    <Check size={12} strokeWidth={3} className="text-white" aria-hidden="true" />
+                                    <CheckIcon size={12} weight="bold" className="text-white" aria-hidden="true" />
                                 )}
                             </button>
                             <span className={`text-xs leading-relaxed transition-colors duration-700 ${showConsentError ? 'text-red-400' : 'text-gray-600'}`}>

@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+    useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { Button } from '../../components/Button';
 import { DatePicker } from '../../components/DatePicker';
 import { useRegister } from '../../context/RegisterContext';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
-import { Info } from 'lucide-react';
+import { InfoIcon
+} from '@phosphor-icons/react';
 import { CalendarDate, parseDate } from '@internationalized/date';
 import { isValidIsoDate, normalizeIsoDate, isAtLeastAge } from './ageStepUtils';
 
@@ -102,7 +104,7 @@ export const AgeStep: React.FC = () => {
                             />
 
                             <div className="mt-4 bg-white/20 backdrop-blur-sm border border-white/40 p-4 rounded-2xl flex items-start gap-3 max-w-sm mx-auto shadow-sm">
-                                <Info className="text-bluvi-purple shrink-0 mt-0.5" size={18} />
+                                <InfoIcon className="text-bluvi-purple shrink-0 mt-0.5" size={18} weight="bold" />
                                 <p className="text-sm text-gray-700 italic leading-relaxed" id={errorId}>
                                     Tu fecha de nacimiento no será pública en tu perfil.
                                 </p>

@@ -1,6 +1,13 @@
 import React from 'react';
-import { Dialog, Heading, Modal, ModalOverlay } from 'react-aria-components';
-import { ArrowRight, Mail, PartyPopper } from 'lucide-react';
+import {
+    Dialog,
+    Heading,
+    Modal,
+    ModalOverlay } from 'react-aria-components';
+import { ArrowRightIcon,
+    ConfettiIcon,
+    EnvelopeSimpleIcon
+} from '@phosphor-icons/react';
 import { Button } from './Button';
 
 interface SuccessModalProps {
@@ -28,7 +35,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) =
                         className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-app-accent/10 text-app-accent-strong"
                         aria-hidden="true"
                     >
-                        <PartyPopper size={34} />
+                        <ConfettiIcon size={34} weight="bold" />
                     </div>
 
                     <Heading slot="title" className="font-heading text-2xl font-bold text-app-primary">
@@ -42,12 +49,12 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) =
                     <div className="my-6 rounded-2xl border border-app-soft bg-app-surface p-4" aria-hidden="true">
                         <div className="flex items-center justify-around">
                             <div className="flex flex-col items-center gap-1">
-                                <Mail size={20} className="text-app-accent-strong" />
+                                <EnvelopeSimpleIcon size={20} weight="bold" className="text-app-accent-strong" />
                                 <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-app-muted">Verifica</span>
                             </div>
-                            <ArrowRight size={16} className="text-app-muted" />
+                            <ArrowRightIcon size={16} weight="bold" className="text-app-muted" />
                             <div className="flex flex-col items-center gap-1 opacity-70">
-                                <PartyPopper size={20} className="text-app-accent-strong" />
+                                <ConfettiIcon size={20} weight="bold" className="text-app-accent-strong" />
                                 <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-app-muted">Bluvi</span>
                             </div>
                         </div>

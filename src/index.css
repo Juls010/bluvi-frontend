@@ -42,7 +42,7 @@
     }
 
     :root {
-        --app-bg-gradient: linear-gradient(to bottom right, #A5C9FF, #D8D1FF, #FFD5A1);
+        --app-bg-gradient: linear-gradient(to bottom right, #A5C9FF, #D8D1FF 48%, #B8B2FF 100%);
         --app-text-primary: #26215C;
         --app-text-secondary: rgba(38, 33, 92, 0.78);
         --app-text-muted: rgba(75, 69, 120, 0.68);
@@ -116,7 +116,7 @@
     }
 
     html.dark {
-        --app-bg-gradient: linear-gradient(to bottom right, #1d214f, #2b2961 52%, #4c3850 78%, #614347 100%);
+        --app-bg-gradient: linear-gradient(to bottom right, #1d214f, #2b2961 52%, #4c3850 78%, #8A4F38 100%);
         --app-text-primary: #ECEBFF;
         --app-text-secondary: rgba(236, 235, 255, 0.88);
         --app-text-muted: rgba(220, 218, 255, 0.78);
@@ -190,6 +190,7 @@
         --app-surface-nav: #ffffff;
         --app-surface-card: #ffffff;
         --app-surface-card-strong: #f2f2f2;
+        --app-surface-solid: #ffffff;
         --app-surface-soft: #f7f7f7;
         --app-border-soft: #111111;
         --app-border-strong: #000000;
@@ -244,6 +245,7 @@
         --app-surface-nav: #000000;
         --app-surface-card: #000000;
         --app-surface-card-strong: #111111;
+        --app-surface-solid: #000000;
         --app-surface-soft: #0a0a0a;
         --app-border-soft: #d9d9d9;
         --app-border-strong: #ffffff;
@@ -512,6 +514,22 @@
         background-image: var(--app-bg-gradient);
     }
 
+    @keyframes welcome-page-enter {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .welcome-page-enter {
+        animation: welcome-page-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
     .bg-app-surface-nav {
         background-color: var(--app-surface-nav);
     }
@@ -685,7 +703,98 @@ body.welcome-scroll-hidden::-webkit-scrollbar {
     display: none;
 }
 
-/* Force cursor pointer on interactive elements */
+@keyframes welcome-care-arrow-line-reveal {
+    0% {
+        opacity: 0;
+        clip-path: inset(0 100% 0 0);
+    }
+
+    100% {
+        opacity: 1;
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+@keyframes welcome-care-arrow-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes welcome-care-arrow-head-pop {
+    0% {
+        opacity: 0;
+        transform: translate(-3px, -2px) scale(0.9);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translate(0.5px, 0.5px) scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+.welcome-care-arrow {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.welcome-care-arrow-visible {
+    opacity: 1;
+    animation: welcome-care-arrow-float 3.2s ease-in-out 1.45s infinite;
+}
+
+.welcome-care-arrow-line {
+    stroke-dasharray: 4 7;
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    transform-box: fill-box;
+}
+
+.welcome-care-arrow-visible .welcome-care-arrow-line {
+    animation: welcome-care-arrow-line-reveal 0.95s ease-out 0.12s forwards;
+}
+
+.welcome-care-arrow-head {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: 70px 66px;
+}
+
+.welcome-care-arrow-visible .welcome-care-arrow-head {
+    animation: welcome-care-arrow-head-pop 0.58s cubic-bezier(0.22, 1, 0.36, 1) 0.92s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .welcome-care-arrow,
+    .welcome-care-arrow-line,
+    .welcome-care-arrow-head {
+        animation: none;
+    }
+
+    .welcome-care-arrow {
+        opacity: 1;
+        transform: none;
+    }
+
+    .welcome-care-arrow-line,
+    .welcome-care-arrow-head {
+        opacity: 1;
+        clip-path: none;
+        transform: none;
+    }
+}
+
 button,
 [role="button"],
 [role="tab"],

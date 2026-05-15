@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">11.76% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>2/17</span>
+                <span class='fraction'>17/17</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">11.76% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>2/17</span>
+                <span class='fraction'>17/17</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -128,7 +128,9 @@
 <a name='L63'></a><a href='#L63'>63</a>
 <a name='L64'></a><a href='#L64'>64</a>
 <a name='L65'></a><a href='#L65'>65</a>
-<a name='L66'></a><a href='#L66'>66</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -156,40 +158,42 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -203,13 +207,15 @@ export interface RegisterPayload {
     first_name: string;
     last_name: string;
     birth_date: string;
-    city: string;
-    description: string;
     id_gender: number | null;
     id_preference: number | null;
+    city: string;
+    city_lat?: number | null;
+    city_lng?: number | null;
+    description: string;
+    interests: number[];
     neurodivergences: number[];
     communication_style: number[];
-    interests: number[];
     photos: string[];
     privacy_accepted_at: string;
     privacy_version: string;
@@ -222,39 +228,39 @@ interface ApiResponse {
 }
 &nbsp;
 export const authService = {
-    checkEmail: <span class="fstat-no" title="function not covered" >async (e</span>mail: string): Promise&lt;ApiResponse&gt; =&gt; {
-        const response = <span class="cstat-no" title="statement not covered" >await api.post&lt;ApiResponse&gt;(`${API_URL}/check-email`, { email });</span>
-<span class="cstat-no" title="statement not covered" >        return response.data;</span>
+    checkEmail: async (email: string): Promise&lt;ApiResponse&gt; =&gt; {
+        const response = await api.post&lt;ApiResponse&gt;(`${API_URL}/check-email`, { email });
+        return response.data;
     },
 &nbsp;
-    getMetadata: <span class="fstat-no" title="function not covered" >async () =&gt; {</span>
-        const response = <span class="cstat-no" title="statement not covered" >await api.get(`${API_URL}/metadata`);</span>
-<span class="cstat-no" title="statement not covered" >        return response.data;</span>
+    getMetadata: async () =&gt; {
+        const response = await api.get(`${API_URL}/metadata`);
+        return response.data;
     },
 &nbsp;
-    register: <span class="fstat-no" title="function not covered" >async (u</span>serData: RegisterPayload): Promise&lt;ApiResponse&gt; =&gt; {
-        const response = <span class="cstat-no" title="statement not covered" >await api.post&lt;ApiResponse&gt;(`${API_URL}/register`, userData);</span>
-<span class="cstat-no" title="statement not covered" >        return response.data;</span>
+    register: async (userData: RegisterPayload): Promise&lt;ApiResponse&gt; =&gt; {
+        const response = await api.post&lt;ApiResponse&gt;(`${API_URL}/register`, userData);
+        return response.data;
     },
 &nbsp;
-    login: <span class="fstat-no" title="function not covered" >async (c</span>redentials: { email: string; password: string }) =&gt; {
-        const response = <span class="cstat-no" title="statement not covered" >await api.post(`${API_URL}/login`, credentials);</span>
-<span class="cstat-no" title="statement not covered" >        return response.data;</span>
+    login: async (credentials: { email: string; password: string }) =&gt; {
+        const response = await api.post(`${API_URL}/login`, credentials);
+        return response.data;
     },
 &nbsp;
-    verifyEmail: <span class="fstat-no" title="function not covered" >async (c</span>ode: string, email: string): Promise&lt;ApiResponse&gt; =&gt; {
-        const response = <span class="cstat-no" title="statement not covered" >await api.post&lt;ApiResponse&gt;(`${API_URL}/verify-email`, { code, email });</span>
-<span class="cstat-no" title="statement not covered" >        return response.data;</span>
+    verifyEmail: async (code: string, email: string): Promise&lt;ApiResponse&gt; =&gt; {
+        const response = await api.post&lt;ApiResponse&gt;(`${API_URL}/verify-email`, { code, email });
+        return response.data;
     },
 &nbsp;
-    logout: <span class="fstat-no" title="function not covered" >async () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        try {</span>
-<span class="cstat-no" title="statement not covered" >            await api.post(`${API_URL}/logout`);</span>
+    logout: async () =&gt; {
+        try {
+            await api.post(`${API_URL}/logout`);
         } catch (error) {
-<span class="cstat-no" title="statement not covered" >            console.error("Error avisando al servidor del logout:", error);</span>
+            console.error("Error avisando al servidor del logout:", error);
         } finally {
-<span class="cstat-no" title="statement not covered" >            localStorage.removeItem('accessToken');</span>
-<span class="cstat-no" title="statement not covered" >            localStorage.removeItem('user');</span>
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
         }
     }
 };
@@ -265,7 +271,7 @@ export const authService = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-20T10:29:07.762Z
+                at 2026-05-14T15:21:09.184Z
             </div>
         <script src="../prettify.js"></script>
         <script>

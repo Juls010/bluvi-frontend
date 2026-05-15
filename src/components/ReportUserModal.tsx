@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import type { User } from '../types/User.types';
-import { Button } from './Button'; 
-import { AlertTriangle } from 'lucide-react';
+import {
+    Button } from './Button'; 
+import { WarningIcon
+} from '@phosphor-icons/react';
 import { ModalOverlay, Modal, Dialog, Heading } from 'react-aria-components';
 
 interface ReportUserModalProps {
@@ -54,7 +56,7 @@ export const ReportUserModal: React.FC<ReportUserModalProps> = ({ user, onConfir
                         />
                     </div>
                     <div className="absolute -bottom-2 -right-2 bg-red-500 rounded-full p-1.5 shadow-md">
-                        <AlertTriangle size={18} className="text-white" />
+                        <WarningIcon size={18} weight="bold" className="text-white" />
                     </div>
                 </div>
 

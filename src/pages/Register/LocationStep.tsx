@@ -1,5 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { Search, MapPin, CheckCircle2, ChevronRight, X, ShieldCheck } from 'lucide-react';
+import {
+    useEffect,
+    useRef,
+    useState } from 'react';
+import { CaretRightIcon,
+    CheckCircleIcon,
+    MagnifyingGlassIcon,
+    MapPinIcon,
+    ShieldCheckIcon,
+    XIcon
+} from '@phosphor-icons/react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
@@ -192,7 +201,7 @@ export const LocationStep = () => {
                         />
                         <div className="w-full flex justify-center mb-6 md:mb-8 md:[@media(max-height:1000px)]:mb-6">
                             <div className="bg-white/40 p-4 rounded-full backdrop-blur-sm border border-white/20 shadow-sm shrink-0">
-                                <MapPin className="text-bluvi-purple" size={32} />
+                                <MapPinIcon className="text-bluvi-purple" size={32} weight="bold" />
                             </div>
                         </div>
                     </div>
@@ -200,7 +209,7 @@ export const LocationStep = () => {
                     <div className="flex-grow min-h-0 overflow-visible no-scrollbar py-6 md:py-12 md:[@media(max-height:1000px)]:py-8 px-5 flex flex-col items-center w-full">
                         <div className="relative w-full max-w-xl" ref={comboboxContainerRef}>
                             <div className="relative group">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-bluvi-purple/40 group-focus-within:text-bluvi-purple transition-colors" size={20} />
+                                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-bluvi-purple/40 group-focus-within:text-bluvi-purple transition-colors" size={20} weight="bold" />
                                 <input 
                                     ref={inputRef}
                                     type="text"
@@ -229,7 +238,7 @@ export const LocationStep = () => {
                                         className="absolute right-4 top-1/2 -translate-y-1/2 text-bluvi-purple/45 hover:text-bluvi-purple transition-colors rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/30"
                                         aria-label="Limpiar ciudad seleccionada"
                                     >
-                                        <X size={18} aria-hidden="true" />
+                                        <XIcon size={18} weight="bold" aria-hidden="true" />
                                     </button>
                                 )}
                                 <p id="city-combobox-help" className="sr-only">
@@ -272,7 +281,7 @@ export const LocationStep = () => {
                                                 className={`w-full flex items-center justify-between px-6 py-4 text-left text-bluvi-purple font-medium transition-colors cursor-pointer outline-none focus:bg-bluvi-purple/15 ${index === activeIndex ? 'bg-bluvi-purple/10' : 'hover:bg-bluvi-purple/5'}`}
                                             >
                                                 <span>{city.label}</span>
-                                                {formData.city === city.value ? <CheckCircle2 size={18} /> : <ChevronRight size={18} className="opacity-30" />}
+                                                {formData.city === city.value ? <CheckCircleIcon size={18} weight="bold" /> : <CaretRightIcon size={18} weight="bold" className="opacity-30" />}
                                             </li>
                                         ))
                                     ) : (
@@ -283,7 +292,7 @@ export const LocationStep = () => {
                         </div>
 
                         <div className="mt-8 flex items-start gap-3 p-3 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/40 max-w-xl mx-auto shadow-sm animate-fade-in">
-                            <ShieldCheck className="text-bluvi-purple shrink-0 mt-0.5" size={18} />
+                            <ShieldCheckIcon className="text-bluvi-purple shrink-0 mt-0.5" size={18} weight="bold" />
                             <p className="text-sm text-gray-700 leading-relaxed">
                                 <strong className="block mb-0.5 text-bluvi-purple">Tu privacidad es prioritaria</strong>
                                 Tu ubicación exacta nunca se comparte ni se guarda. Solo utilizamos un punto aproximado para mostrarte personas en tu zona.

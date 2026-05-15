@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Sparkles } from 'lucide-react';
+import { PaperPlaneRightIcon, SparkleIcon, XIcon } from '@phosphor-icons/react';
 
 type Message = {
     id: number;
@@ -33,7 +33,7 @@ const BluAssistantAnimation: React.FC<{ size?: 'sm' | 'md' }> = ({ size = 'md' }
                 style={{ background: 'linear-gradient(135deg, #9160e4, #3b2b97)' }}
                 aria-hidden="true"
             >
-                <Sparkles size={iconSize} className="text-white" />
+                <SparkleIcon size={iconSize} weight="bold" className="text-white" />
             </div>
         );
     }
@@ -119,7 +119,7 @@ export const BluAssistant: React.FC = () => {
                         onClick={() => setOpen(false)}
                         className="w-7 h-7 flex items-center justify-center rounded-full text-bluvi-purple/40 hover:text-bluvi-purple hover:bg-purple-100 transition-all"
                     >
-                        <X size={15} />
+                        <XIcon size={15} weight="bold" />
                     </button>
                 </div>
 
@@ -193,7 +193,7 @@ export const BluAssistant: React.FC = () => {
                             className={`w-7 h-7 flex items-center justify-center rounded-full transition-all ${input.trim() ? 'text-white shadow-sm' : 'text-bluvi-purple/20'}`}
                             style={input.trim() ? { background: 'linear-gradient(135deg, #7c3aed, #9333ea)' } : {}}
                         >
-                            <Send size={13} strokeWidth={2.5} />
+                            <PaperPlaneRightIcon size={13} weight="bold" />
                         </button>
                     </div>
                 </div>
@@ -217,7 +217,7 @@ export const BluAssistant: React.FC = () => {
                     <BluAssistantAnimation />
                 </div>
                 <div style={{ transition: 'opacity 0.3s ease', opacity: open ? 1 : 0, position: 'absolute' }}>
-                    <X size={22} className="text-white" />
+                    <XIcon size={22} weight="bold" className="text-white" />
                 </div>
 
             </button>

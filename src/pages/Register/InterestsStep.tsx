@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react'; 
+import {
+    useState,
+    useEffect } from 'react'; 
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
@@ -6,13 +8,13 @@ import { useRegister } from '../../context/RegisterContext';
 import { authService } from '../../services/auth.service';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 import { 
-    Sparkles, 
-    Palette, 
-    Compass,  
-    Book, 
-    Heart, 
-    HelpCircle 
-} from 'lucide-react';
+    BookOpenIcon,
+    CompassIcon,
+    HeartIcon,
+    PaletteIcon,
+    QuestionIcon,
+    SparkleIcon
+} from '@phosphor-icons/react';
 
 interface Interest {
     id: number;
@@ -35,12 +37,12 @@ export const InterestsStep = () => {
     };
 
     const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-        'Cultura y Ocio': <Sparkles size={16} />,
-        'Creatividad': <Palette size={16} />,
-        'Naturaleza y Viajes': <Compass size={16} />,
-        'Conocimiento': <Book size={16} />,
-        'Comunidad y Valores': <Heart size={16} />,
-        'Otros': <HelpCircle size={16} />
+        'Cultura y Ocio': <SparkleIcon size={16} weight="bold" />,
+        'Creatividad': <PaletteIcon size={16} weight="bold" />,
+        'Naturaleza y Viajes': <CompassIcon size={16} weight="bold" />,
+        'Conocimiento': <BookOpenIcon size={16} weight="bold" />,
+        'Comunidad y Valores': <HeartIcon size={16} weight="bold" />,
+        'Otros': <QuestionIcon size={16} weight="bold" />
     };
 
     useEffect(() => {
@@ -112,7 +114,7 @@ export const InterestsStep = () => {
                                 <div key={catName} className="flex flex-col gap-3 md:gap-5">
                                     <h3 className="text-bluvi-purple/60 text-xs font-bold uppercase tracking-widest pl-1 flex items-center gap-2">
                                         <span className="text-bluvi-purple/40">
-                                            {CATEGORY_ICONS[catName] || <HelpCircle size={16} />}
+                                            {CATEGORY_ICONS[catName] || <QuestionIcon size={16} weight="bold" />}
                                         </span>
                                         {catName}
                                     </h3>

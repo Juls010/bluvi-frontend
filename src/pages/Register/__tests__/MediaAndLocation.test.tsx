@@ -115,7 +115,7 @@ describe('Media and Location Registration Steps', () => {
             });
 
             fireEvent.click(screen.getByText('Madrid, España'));
-            expect(mockUpdateFormData).toHaveBeenCalledWith({ city: 'Madrid' });
+            expect(mockUpdateFormData).toHaveBeenLastCalledWith({ city: 'Madrid', cityLat: null, cityLng: null });
         });
 
         it('should allow keyboard navigation for city selection', async () => {
@@ -142,7 +142,7 @@ describe('Media and Location Registration Steps', () => {
             fireEvent.keyDown(input, { key: 'ArrowDown' });
             fireEvent.keyDown(input, { key: 'Enter' });
 
-            expect(mockUpdateFormData).toHaveBeenCalledWith({ city: 'Barcelona' });
+            expect(mockUpdateFormData).toHaveBeenLastCalledWith({ city: 'Barcelona', cityLat: null, cityLng: null });
         });
     });
 

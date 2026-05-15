@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Cake, User as UserIcon, MapPin, Heart, Sprout, Brain, MessageCircle } from 'lucide-react';
+import {
+    useNavigate,
+    useParams } from 'react-router-dom';
+import { ArrowLeftIcon,
+    CakeIcon,
+    UserIcon,
+    MapPinIcon,
+    HeartIcon,
+    PlantIcon,
+    BrainIcon,
+    ChatCircleIcon
+} from '@phosphor-icons/react';
 import type { User } from '../types/User.types';
 import { SimpleCarousel } from '../components/SimpleCarousel';
 import { 
@@ -76,7 +86,7 @@ export const ChatUserProfile: React.FC = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
                 <div className="w-20 h-20 bg-app-surface-soft rounded-full flex items-center justify-center mb-4">
-                    <UserIcon size={32} className="text-app-muted" />
+                    <UserIcon size={32} weight="bold" className="text-app-muted" />
                 </div>
                 <h2 className="text-xl font-bold text-app-primary mb-2">Usuario no encontrado</h2>
                 <p className="text-app-secondary mb-6 max-w-xs">El perfil que buscas no existe o no tienes los permisos necesarios para verlo.</p>
@@ -116,7 +126,7 @@ export const ChatUserProfile: React.FC = () => {
                         className="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
                         style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                     >
-                        <ArrowLeft size={22} strokeWidth={3} />
+                        <ArrowLeftIcon size={22} weight="bold" />
                     </button>
                     <div className="flex flex-wrap items-center gap-2.5">
                         <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
@@ -130,9 +140,9 @@ export const ChatUserProfile: React.FC = () => {
 
                 <button
                     onClick={() => navigate(`/app/chat/${user.id_user}`)}
-                    className="flex items-center gap-2 px-6 py-3 bg-[#3f4292] text-white rounded-2xl font-bold text-sm shadow-xl shadow-[#3f4292]/20 hover:scale-105 active:scale-95 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3f4292]/30"
+                    className="flex items-center gap-2 px-6 py-3 bg-app-accent text-app-on-accent rounded-2xl font-bold text-sm shadow-xl hover:opacity-90 hover:scale-105 active:scale-95 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
                 >
-                    <MessageCircle size={18} className="transition-transform group-hover:rotate-12" />
+                    <ChatCircleIcon size={18} weight="bold" className="transition-transform group-hover:rotate-12" />
                     <span>Ir al chat</span>
                 </button>
             </div>
@@ -145,21 +155,21 @@ export const ChatUserProfile: React.FC = () => {
                     </div>
                 </aside>
 
-                {/* Info Column */}
+                {/* InfoIcon Column */}
                 <div className="md:col-span-8 lg:col-span-8 flex flex-col gap-6">
                     <Card>
                         <ul className="flex flex-wrap gap-4 sm:gap-6 text-app-primary font-semibold mb-4 text-sm border-b border-app-soft pb-4">
                             <li className="flex items-center gap-2">
-                                <Cake className="w-4 h-4 text-app-accent dark:text-app-orange" /> {age} años
+                                <CakeIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {age} años
                             </li>
                             <li className="flex items-center gap-2">
-                                <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" /> {genderLabel}
+                                <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {genderLabel}
                             </li>
                             <li className="flex items-center gap-2">
-                                <MapPin className="w-4 h-4 text-app-accent dark:text-app-orange" /> {user.city}
+                                <MapPinIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {user.city}
                             </li>
                             <li className="flex items-center gap-2">
-                                <Heart className="w-4 h-4 text-app-accent dark:text-app-orange" /> {sexualityLabel}
+                                <HeartIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {sexualityLabel}
                             </li>
                         </ul>
                         <p className="text-app-secondary leading-relaxed text-lg">{user.description || 'Sin descripción'}</p>
@@ -168,7 +178,7 @@ export const ChatUserProfile: React.FC = () => {
                     {interestNames.length > 0 && (
                         <Card>
                             <div className="mb-6">
-                                <SectionLabel icon={<Sprout className="w-4.5 h-4.5" />} label="Intereses" />
+                                <SectionLabel icon={<PlantIcon className="w-4.5 h-4.5" weight="bold" />} label="Intereses" />
                             </div>
                             <ul className="flex flex-wrap gap-2">
                                 {interestNames.map((name: string) => (
@@ -183,7 +193,7 @@ export const ChatUserProfile: React.FC = () => {
                     {(features.length > 0 || communicationStyle.length > 0) && (
                         <Card>
                             <div className="mb-6">
-                                <SectionLabel icon={<Brain className="w-4.5 h-4.5" />} label="Mente y Comunicación" />
+                                <SectionLabel icon={<BrainIcon className="w-4.5 h-4.5" weight="bold" />} label="Mente y Comunicación" />
                             </div>
 
                             <div className="space-y-6">

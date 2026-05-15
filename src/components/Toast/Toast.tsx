@@ -1,10 +1,12 @@
 import {
-  UNSTABLE_Toast as AriaToast,
-  UNSTABLE_ToastContent as ToastContent,
-} from 'react-aria-components';
+    UNSTABLE_Toast as AriaToast,
+    UNSTABLE_ToastContent as ToastContent,
+    } from 'react-aria-components';
 import { Button } from '../Button';
-import { X, CheckCircle2, AlertCircle } from 'lucide-react';
-import React from 'react';
+import { CheckCircleIcon,
+    WarningCircleIcon,
+    XIcon
+} from '@phosphor-icons/react';
 import type { ToastContentProps } from './GlobalToast';
 
 // @ts-ignore
@@ -21,9 +23,9 @@ export function Toast({ toast }: { toast: { content: ToastContentProps } }) {
     >
       <ToastContent className="flex-1 flex items-center gap-2.5 text-sm font-medium tracking-wide">
         {isError ? (
-          <AlertCircle size={18} className="text-white shrink-0" />
+          <WarningCircleIcon size={18} weight="bold" className="text-white shrink-0" />
         ) : (
-          <CheckCircle2 size={18} className="text-white shrink-0" />
+          <CheckCircleIcon size={18} weight="bold" className="text-white shrink-0" />
         )}
         {toast.content.message}
       </ToastContent>
@@ -31,7 +33,7 @@ export function Toast({ toast }: { toast: { content: ToastContentProps } }) {
         slot="close" 
         className="p-1 rounded-md hover:bg-white/20 transition-colors bg-transparent border-none focus:ring-2 focus:ring-white/50 h-auto"
       >
-        <X size={16} />
+        <XIcon size={16} weight="bold" />
       </Button>
     </AriaToast>
   );

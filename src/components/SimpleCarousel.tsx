@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { UserCircle2, ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react';
+import { ArrowsOutIcon, CaretLeftIcon, CaretRightIcon, UserCircleIcon, XIcon } from '@phosphor-icons/react';
 import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
 
@@ -40,8 +40,8 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
 
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') setShowLightbox(false);
-            if (e.key === 'ArrowRight') setCurrentIndex(prev => (prev < photos.length - 1 ? prev + 1 : 0));
-            if (e.key === 'ArrowLeft') setCurrentIndex(prev => (prev > 0 ? prev - 1 : photos.length - 1));
+            if (e.key === 'ArrowRightIcon') setCurrentIndex(prev => (prev < photos.length - 1 ? prev + 1 : 0));
+            if (e.key === 'ArrowLeftIcon') setCurrentIndex(prev => (prev > 0 ? prev - 1 : photos.length - 1));
         };
 
         window.addEventListener('keydown', handleKeyDown);
@@ -50,11 +50,11 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
 
     // Keyboard support for main carousel (when focused)
     const handleKeyDownMain = (e: React.KeyboardEvent) => {
-        if (e.key === 'ArrowRight') {
+        if (e.key === 'ArrowRightIcon') {
             e.preventDefault();
             if (currentIndex < photos.length - 1) scrollTo(currentIndex + 1);
         }
-        if (e.key === 'ArrowLeft') {
+        if (e.key === 'ArrowLeftIcon') {
             e.preventDefault();
             if (currentIndex > 0) scrollTo(currentIndex - 1);
         }
@@ -63,7 +63,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
     if (!photos || photos.length === 0) {
         return (
             <div className="w-full aspect-[4/5] rounded-3xl bg-app-surface-soft border border-app-soft flex items-center justify-center">
-                <UserCircle2 className="w-14 h-14 text-app-muted" aria-hidden="true" />
+                <UserCircleIcon className="w-14 h-14 text-app-muted" weight="bold" aria-hidden="true" />
             </div>
         );
     }
@@ -101,7 +101,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                             className="absolute top-4 right-4 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 transition-all active:scale-90"
                             aria-label="Ver en grande"
                         >
-                            <Maximize2 size={16} />
+                            <ArrowsOutIcon size={16} weight="bold" />
                         </button>
                     </div>
                 ))}
@@ -129,7 +129,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                                 className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
                                 aria-label="Foto anterior"
                             >
-                                <ChevronLeft size={20} strokeWidth={2.5} />
+                                <CaretLeftIcon size={20} weight="bold" />
                             </button>
                         )}
                     </div>
@@ -140,7 +140,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                                 className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
                                 aria-label="Siguiente foto"
                             >
-                                <ChevronRight size={20} strokeWidth={2.5} />
+                                <CaretRightIcon size={20} weight="bold" />
                             </button>
                         )}
                     </div>
@@ -164,7 +164,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                             onClick={() => setShowLightbox(false)}
                             className="w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-90"
                         >
-                            <X size={24} />
+                            <XIcon size={24} weight="bold" />
                         </button>
                     </div>
 
@@ -183,14 +183,14 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                                     className="absolute left-6 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-all hover:scale-110 active:scale-90 hidden md:flex"
                                     aria-label="Anterior"
                                 >
-                                    <ChevronLeft size={32} />
+                                    <CaretLeftIcon size={32} weight="bold" />
                                 </button>
                                 <button 
                                     onClick={(e) => { e.stopPropagation(); setCurrentIndex(prev => (prev < photos.length - 1 ? prev + 1 : 0)); }}
                                     className="absolute right-6 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-all hover:scale-110 active:scale-90 hidden md:flex"
                                     aria-label="Siguiente"
                                 >
-                                    <ChevronRight size={32} />
+                                    <CaretRightIcon size={32} weight="bold" />
                                 </button>
                             </>
                         )}

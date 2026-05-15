@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
-import  { type User, GENDER_LABELS, SEXUALITY_LABELS } from '../../types/User.types';
-import { User as UserIcon, MapPin, AlignLeft, Info, X, Heart } from 'lucide-react';
+import {
+    type User,
+    GENDER_LABELS,
+    SEXUALITY_LABELS } from '../../types/User.types';
+import { UserIcon,
+    MapPinIcon,
+    AlignLeftIcon,
+    InfoIcon,
+    XIcon,
+    HeartIcon
+} from '@phosphor-icons/react';
 
 interface EditBasicInfoModalProps {
   user: User;
@@ -39,10 +48,10 @@ export const EditBasicInfoModal: React.FC<EditBasicInfoModalProps> = ({
         {/* Cabecera */}
         <div className="p-6 flex justify-between items-center bg-app-surface-strong">
           <h2 className="text-xl font-bold text-app-primary flex items-center gap-2">
-            <Info className="text-app-accent w-5 h-5" /> Información Básica
+            <InfoIcon className="text-app-accent w-5 h-5" weight="bold" /> Información Básica
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-app-surface-soft rounded-full transition-colors text-app-muted">
-            <X className="w-5 h-5" />
+            <XIcon className="w-5 h-5" weight="bold" />
           </button>
         </div>
 
@@ -53,7 +62,7 @@ export const EditBasicInfoModal: React.FC<EditBasicInfoModalProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-[10px] font-bold text-app-secondary uppercase ml-1 flex items-center gap-1">
-                <UserIcon className="w-3 h-3" /> Nombre
+                <UserIcon className="w-3 h-3" weight="bold" /> Nombre
               </label>
               <input 
                 name="first_name"
@@ -76,7 +85,7 @@ export const EditBasicInfoModal: React.FC<EditBasicInfoModalProps> = ({
           {/* Biografía */}
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-app-secondary uppercase ml-1 flex items-center gap-1">
-              <AlignLeft className="w-3 h-3" /> Sobre mí
+              <AlignLeftIcon className="w-3 h-3" weight="bold" /> Sobre mí
             </label>
             <textarea 
               name="description"
@@ -91,7 +100,7 @@ export const EditBasicInfoModal: React.FC<EditBasicInfoModalProps> = ({
           {/* Ciudad */}
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-app-secondary uppercase ml-1 flex items-center gap-1">
-              <MapPin className="w-3 h-3" /> Ubicación
+              <MapPinIcon className="w-3 h-3" weight="bold" /> Ubicación
             </label>
             <input 
               name="city"
@@ -121,7 +130,7 @@ export const EditBasicInfoModal: React.FC<EditBasicInfoModalProps> = ({
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] font-bold text-app-secondary uppercase ml-1 flex items-center gap-1">
-                <Heart className="w-3 h-3" /> Orientación
+                <HeartIcon className="w-3 h-3" weight="bold" /> Orientación
               </label>
               <select 
                 name="sexuality"

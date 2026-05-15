@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import {
+    Link } from 'react-router-dom';
 import { 
-    MessageCircle, 
-    ArrowRight, 
-    Check, 
-    Search, 
-    X, 
-    Contact,
-    Ghost,
-    Image
-} from 'lucide-react';
+    ChatCircleIcon,
+    ArrowRightIcon,
+    CheckIcon,
+    MagnifyingGlassIcon,
+    XIcon,
+    AddressBookIcon,
+    GhostIcon,
+    ImageIcon
+} from '@phosphor-icons/react';
 import {
     getIncomingMatchRequests,
     respondToMatchRequest,
@@ -57,7 +58,7 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
         >
             {requests.length === 0 && (
                 <div className="flex flex-col items-center justify-center w-full py-8 text-center bg-app-surface/30 rounded-3xl border border-dashed border-app-soft">
-                    <Ghost size={32} className="text-app-muted mb-2 opacity-90" />
+                    <GhostIcon size={32} weight="bold" className="text-app-muted mb-2 opacity-90" />
                     <p className="text-xs font-bold text-app-muted uppercase tracking-widest">No hay peticiones nuevas</p>
                 </div>
             )}
@@ -197,7 +198,7 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="contacts-drawer-title"
-                className={`relative z-10 w-full md:w-[420px] bg-app-surface-solid text-app-primary shadow-2xl overflow-hidden border-r border-app-soft/50 flex flex-col ${isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'} rounded-t-[40px] md:rounded-t-none md:rounded-r-[48px]`}
+                className={`relative z-10 w-full md:w-[420px] bg-app-surface-solid text-app-primary shadow-2xl overflow-hidden border-r border-app-soft flex flex-col ${isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'} rounded-t-[40px] md:rounded-t-none md:rounded-r-[48px]`}
             >
                 <div className="flex justify-center pt-3 pb-1 md:hidden" aria-hidden="true">
                     <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-white/20" />
@@ -215,19 +216,19 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                             className="w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 mt-0.5 md:mt-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
                             style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                         >
-                            <X size={20} />
+                            <XIcon size={20} weight="bold" />
                         </button>
                     </header>
 
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-app-muted group-focus-within:text-app-accent transition-colors" size={18} />
-                        <input 
+                        <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-app-muted group-focus-within:text-app-accent transition-colors" size={18} weight="bold" />
+                        <input
                             type="text"
                             placeholder="Buscar por nombre..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             aria-label="Buscar contactos"
-                            className="w-full bg-app-surface-soft border border-app-soft/50 rounded-2xl py-3.5 pl-12 pr-4 text-sm text-app-primary placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-app-accent/10 focus:border-app-accent/30 transition-all font-medium"
+                            className="w-full bg-app-surface-soft border border-app-soft rounded-2xl py-3.5 pl-12 pr-4 text-sm text-app-primary placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-app-accent/10 focus:border-app-accent/30 transition-all font-medium"
                         />
                     </div>
                 </div>
@@ -236,7 +237,7 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                     {filteredMatches.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 text-center px-8">
                             <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--filter-icon-bg)' }}>
-                                <Ghost size={40} style={{ color: 'var(--filter-icon-text)' }} className="opacity-40" />
+                                <GhostIcon size={40} weight="bold" style={{ color: 'var(--filter-icon-text)' }} className="opacity-40" />
                             </div>
                             <p className="text-sm text-app-secondary font-medium leading-relaxed">
                                 {search ? `No hemos encontrado a ningún "${search}".` : 'Aún no tienes conexiones confirmadas. ¡Sigue explorando perfiles!'}
@@ -250,8 +251,7 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                                     to={`/app/user/${match.id_user}`}
                                     onClick={handleClose}
                                     aria-label={`Ver perfil de ${match.first_name} ${match.last_name}`}
-                                    className="flex items-center gap-4 p-4 rounded-[22px] transition-all duration-300 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
-                                    style={{ backgroundColor: 'var(--filter-icon-bg)' }}
+                                    className="flex items-center gap-4 p-4 rounded-[22px] bg-app-surface-soft border border-app-soft transition-all duration-300 shadow-sm hover:shadow-md hover:bg-app-surface group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
                                 >
                                     <div className="relative flex-shrink-0">
                                         <div className="w-14 h-14 rounded-[18px] overflow-hidden shadow-inner group-hover:scale-105 transition-transform duration-500">
@@ -283,8 +283,8 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                                         </div>
                                         <p className="text-[11px] text-app-muted font-bold uppercase tracking-tight mt-0.5">Match desde {formatTime(match.created_at)}</p>
                                     </div>
-                                    <div className="w-9 h-9 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 shadow-sm border border-app-soft/50" style={{ backgroundColor: 'var(--filter-icon-bg)' }}>
-                                        <ArrowRight size={16} style={{ color: 'var(--filter-icon-text)' }} />
+                                    <div className="w-9 h-9 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 shadow-sm bg-app-accent text-app-on-accent border border-app-accent">
+                                        <ArrowRightIcon size={16} weight="bold" />
                                     </div>
                                 </Link>
                             ))}
@@ -300,7 +300,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
     <section aria-labelledby="chats-heading">
         <div className="flex items-center justify-between mb-5 px-1">
             <div className="flex items-center gap-2.5">
-                <MessageCircle size={16} className="text-app-accent dark:text-app-orange" aria-hidden="true" />
+                <ChatCircleIcon size={16} weight="bold" className="text-app-accent dark:text-app-orange" aria-hidden="true" />
                 <h2
                     id="chats-heading"
                     className="text-[12px] font-black text-app-secondary/80 uppercase tracking-[0.15em]"
@@ -380,16 +380,16 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                                 {conversation.last_message_sender_id === Number(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).id : null) && (
                                     conversation.last_message_read ? (
                                         <span className="flex flex-shrink-0" aria-label="Leído">
-                                            <Check size={14} strokeWidth={3} style={{ color: '#34B7F1' }} />
-                                            <Check size={14} strokeWidth={3} style={{ color: '#34B7F1', marginLeft: '-9px' }} />
+                                            <CheckIcon size={14} weight="bold" style={{ color: '#34B7F1' }} />
+                                            <CheckIcon size={14} weight="bold" style={{ color: '#34B7F1', marginLeft: '-9px' }} />
                                         </span>
                                     ) : conversation.last_message_delivered ? (
                                         <span className="flex flex-shrink-0" aria-label="Entregado">
-                                            <Check size={14} strokeWidth={3} className="text-app-muted" />
-                                            <Check size={14} strokeWidth={3} className="text-app-muted" style={{ marginLeft: '-9px' }} />
+                                            <CheckIcon size={14} weight="bold" className="text-app-muted" />
+                                            <CheckIcon size={14} weight="bold" className="text-app-muted" style={{ marginLeft: '-9px' }} />
                                         </span>
                                     ) : (
-                                        <Check size={14} strokeWidth={3} className="text-app-muted flex-shrink-0" aria-label="Enviado" />
+                                        <CheckIcon size={14} weight="bold" className="text-app-muted flex-shrink-0" aria-label="Enviado" />
                                     )
                                 )}
                                 <span className="truncate">
@@ -402,7 +402,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                                         </span>
                                     ) : conversation.last_message_type === 'image' ? (
                                         <span className="flex items-center gap-1 text-app-secondary">
-                                            <Image size={14} strokeWidth={1.8} />
+                                            <ImageIcon size={14} weight="bold" />
                                             <span>Foto</span>
                                         </span>
                                     ) : (
@@ -413,7 +413,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                         </div>
 
                         <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                            <ArrowRight size={18} className="text-app-accent/40" />
+                            <ArrowRightIcon size={18} weight="bold" className="text-app-accent/40" />
                         </div>
                     </Link>
                 </li>
@@ -576,11 +576,11 @@ export const Messages: React.FC = () => {
                 <TooltipTrigger delay={600}>
                     <AriaButton 
                         onPress={() => setShowContacts(true)}
-                        className="w-12 h-12 rounded-2xl bg-app-surface border border-app-soft shadow-sm flex items-center justify-center text-app-accent hover:bg-[#5d60ba] hover:border-[#5d60ba] hover:text-white transition-all duration-500 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#5d60ba]/20"
+                        className="w-12 h-12 rounded-2xl bg-app-surface border border-app-soft shadow-sm flex items-center justify-center text-app-accent hover:bg-app-surface-soft hover:border-app-strong hover:text-app-primary transition-all duration-500 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
                         style={{ transitionProperty: 'all' }}
                         aria-label="Ver contactos"
                     >
-                        <Contact size={24} className="transition-transform group-hover:scale-110" />
+                        <AddressBookIcon size={24} weight="bold" className="transition-transform group-hover:scale-110" />
                     </AriaButton>
                     <Tooltip>
                         Ver contactos

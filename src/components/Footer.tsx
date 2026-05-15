@@ -1,20 +1,13 @@
 import React from 'react';
-import { Mail } from 'lucide-react';
+import { EnvelopeSimpleIcon } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.svg';
 
 const NAV_SECTIONS = [
   {
-    title: 'Recursos',
-    links: [
-      { label: 'Blog', to: '/blog' },
-      { label: 'Guías', to: '/guias' },
-      { label: 'FAQ', to: '/faq' },
-    ],
-  },
-  {
     title: 'Comunidad',
     links: [
+      { label: 'FAQ', to: '/faq' },
       { label: 'Instagram', to: '/instagram' },
     ],
   },
@@ -35,78 +28,79 @@ export const Footer: React.FC = () => {
 
   return (
     <footer
-      className="w-full bg-[#26215C]"
+      className="w-full bg-[#221B5F]"
       role="contentinfo"
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-14 pb-8">
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-10 pb-10 border-b border-white/[0.08]">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 pb-10 border-b border-white/[0.08]">
 
-          <div className="col-span-2 sm:col-span-1 flex flex-col gap-4">
-            <img src={logo} alt="Bluvi" className="w-28 h-auto brightness-0 invert" />
-            <p className="text-[13px] text-white/70 leading-relaxed max-w-[210px]">
-              Una comunidad para mentes únicas. Conecta siendo exactamente tú.
+          <div className="flex flex-col gap-5">
+            <img
+              src={logo}
+              alt="Bluvi"
+              className="w-28 h-auto brightness-0 invert"
+            />
+
+            
+
+            <p className="text-[14px] font-medium text-white/62 leading-7 max-w-[560px]">
+              Bluvi nace como un Trabajo de Fin de Grado creado con muchas horas de diseño, desarrollo y cuidado, con la intención de imaginar una app de citas más tranquila, accesible y humana para personas neurodivergentes.
             </p>
+
             <a
               href="mailto:hola@bluvi.com"
               className="
                 inline-flex items-center gap-2 self-start
-                text-[13px] font-semibold text-white/70
-                border border-white/25 rounded-full px-3.5 py-1.5
-                hover:text-white hover:border-white/50
-                transition-colors duration-150
+                text-[13px] font-bold text-white/78
+                border border-white/20 bg-white/[0.04]
+                rounded-full px-4 py-2
+                hover:text-white hover:border-white/40 hover:bg-white/[0.08]
+                transition-all duration-150
                 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50
-                rounded-full
               "
             >
-              <Mail size={13} aria-hidden="true" />
+              <EnvelopeSimpleIcon size={14} weight="bold" aria-hidden="true" />
               hola@bluvi.com
             </a>
           </div>
 
-          {NAV_SECTIONS.map((section) => (
-            <nav key={section.title} aria-label={section.title}>
-              <p className="text-[9.5px] uppercase tracking-[0.15em] font-black text-white/50 mb-4">
-                {section.title}
-              </p>
-              <ul className="flex flex-col gap-2.5 list-none">
-                {section.links.map((link) => (
-                  <li key={link.label}>
-                    <button
-                      type="button"
-                      onClick={() => navigate(link.to)}
-                      className="
-                        text-[13px] text-white/70
-                        hover:text-white
-                        transition-colors duration-150
-                        focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50
-                        rounded
-                      "
-                    >
-                      {link.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+          <div className="grid grid-cols-2 gap-10 sm:max-w-sm lg:justify-self-end">
+            {NAV_SECTIONS.map((section) => (
+              <nav key={section.title} aria-label={section.title}>
+                <p className="mb-4 text-[10px] uppercase tracking-[0.18em] font-black text-white/45">
+                  {section.title}
+                </p>
+
+                <ul className="flex flex-col gap-3 list-none">
+                  {section.links.map((link) => (
+                    <li key={link.label}>
+                      <button
+                        type="button"
+                        onClick={() => navigate(link.to)}
+                        className="
+                          text-[14px] font-semibold text-white/72
+                          hover:text-white
+                          transition-colors duration-150
+                          focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+                          rounded
+                        "
+                      >
+                        {link.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-6">
-          <p className="text-[12px] text-white/50">
+          <p className="text-[12px] text-white/45">
             © {currentYear} Bluvi. Todos los derechos reservados.
           </p>
 
-          <p
-            className="flex items-center gap-2 text-[12px] text-white/50"
-            aria-label="Estado: comunidad activa con más de 2400 personas"
-          >
-            <span
-              className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"
-              aria-hidden="true"
-            />
-            Comunidad activa · 2.4k+
-          </p>
         </div>
 
       </div>

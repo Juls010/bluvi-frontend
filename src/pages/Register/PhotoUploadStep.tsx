@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Plus, X, CheckCircle2, Info, Loader2 } from 'lucide-react';
+import { CameraIcon, CheckCircleIcon, InfoIcon, PlusIcon, SpinnerGapIcon, XIcon } from '@phosphor-icons/react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
@@ -96,14 +96,14 @@ export const PhotoUploadStep = () => {
                                     
                                     {loadingIndices.has(0) ? (
                                         <div className="flex flex-col items-center justify-center animate-pulse">
-                                            <Loader2 size={42} className="text-bluvi-purple animate-spin mb-1.5" />
+                                            <SpinnerGapIcon size={42} weight="bold" className="text-bluvi-purple animate-spin mb-1.5" />
                                             <span className="text-xs font-bold uppercase tracking-widest text-bluvi-purple/60">Subiendo...</span>
                                         </div>
                                     ) : photos[0] ? (
                                         <img src={photos[0]} className="w-full h-full object-cover" alt="Tu foto principal de perfil" />
                                     ) : (
                                         <div className="text-center">
-                                            <Camera size={42} className="text-bluvi-purple/50 mx-auto mb-1.5" aria-hidden="true" />
+                                            <CameraIcon size={42} weight="bold" className="text-bluvi-purple/50 mx-auto mb-1.5" aria-hidden="true" />
                                             <span className="text-xs font-bold uppercase tracking-widest text-bluvi-purple/60">Foto Principal</span>
                                         </div>
                                     )}
@@ -112,7 +112,7 @@ export const PhotoUploadStep = () => {
                                 {photos[0] && (
                                     <>
                                         <div className="absolute bottom-3 left-3 bg-bluvi-purple text-white px-3 py-1.5 rounded-full text-[11px] flex items-center gap-1.5 shadow-lg backdrop-blur-md pointer-events-none">
-                                            <CheckCircle2 size={14} aria-hidden="true" /> Tu carta de presentación
+                                            <CheckCircleIcon size={14} weight="bold" aria-hidden="true" /> Tu carta de presentación
                                         </div>
                                         <button 
                                             type="button"
@@ -120,7 +120,7 @@ export const PhotoUploadStep = () => {
                                             aria-label="Eliminar foto principal"
                                             className="absolute top-4 right-4 bg-white/90 text-red-500 p-2 rounded-full shadow-md hover:bg-red-50 transition-colors z-10 focus:outline-none focus-visible:ring-4 focus-visible:ring-red-500/50"
                                         >
-                                            <X size={18} aria-hidden="true" />
+                                            <XIcon size={18} weight="bold" aria-hidden="true" />
                                         </button>
                                     </>
                                 )}
@@ -141,11 +141,11 @@ export const PhotoUploadStep = () => {
                                                 ${photo ? 'border-white shadow-lg' : 'border-bluvi-light-purple/40 bg-white/10 hover:bg-white/30'}`}
                                         >
                                             {loadingIndices.has(actualIndex) ? (
-                                                <Loader2 size={24} className="text-bluvi-purple animate-spin" />
+                                                <SpinnerGapIcon size={24} weight="bold" className="text-bluvi-purple animate-spin" />
                                             ) : photo ? (
                                                 <img src={photo} className="w-full h-full object-cover" alt={`Foto secundaria ${actualIndex +actualIndex}`} />
                                             ) : (
-                                                <Plus size={24} className="text-bluvi-purple/30" aria-hidden="true" />
+                                                <PlusIcon size={24} weight="bold" className="text-bluvi-purple/30" aria-hidden="true" />
                                             )}
                                         </button>
 
@@ -156,7 +156,7 @@ export const PhotoUploadStep = () => {
                                                 aria-label={`Eliminar foto ${actualIndex + 1}`}
                                                 className="absolute top-2 right-2 bg-white/90 text-red-500 p-1.5 rounded-full shadow-sm hover:bg-red-50 z-10 focus:outline-none focus-visible:ring-4 focus-visible:ring-red-500/50"
                                             >
-                                                <X size={14} aria-hidden="true" />
+                                                <XIcon size={14} weight="bold" aria-hidden="true" />
                                             </button>
                                         )}
                                     </div>
@@ -166,7 +166,7 @@ export const PhotoUploadStep = () => {
                         </div>
 
                         <div className="hidden md:flex mt-8 md:[@media(max-height:1000px)]:mt-4 bg-white/20 backdrop-blur-sm border border-white/40 p-3 md:[@media(max-height:1000px)]:p-2 rounded-2xl items-start gap-2.5 max-w-2xl mx-auto shadow-sm">
-                            <Info className="text-bluvi-purple shrink-0 mt-0.5" size={18} />
+                            <InfoIcon className="text-bluvi-purple shrink-0 mt-0.5" size={18} weight="bold" />
                             <p className="text-sm text-gray-700 italic leading-relaxed">
                                 Consejo: Las fotos con buena iluminación y donde se vea tu sonrisa suelen tener mejores conexiones.
                             </p>

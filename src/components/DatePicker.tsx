@@ -1,21 +1,24 @@
-import { 
-    DatePicker as AriaDatePicker, 
-    type DatePickerProps as AriaDatePickerProps, 
-    type DateValue, 
-    Button, 
-    Calendar, 
-    CalendarCell, 
-    CalendarGrid, 
-    DateInput, 
-    DateSegment, 
-    Dialog, 
-    Group, 
-    Heading, 
-    Label, 
+import {
+    DatePicker as AriaDatePicker,
+    type DatePickerProps as AriaDatePickerProps,
+    type DateValue,
+    Button,
+    Calendar,
+    CalendarCell,
+    CalendarGrid,
+    DateInput,
+    DateSegment,
+    Dialog,
+    Group,
+    Heading,
+    Label,
     Popover,
     Text
 } from 'react-aria-components';
-import { CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarBlankIcon,
+    CaretLeftIcon,
+    CaretRightIcon
+} from '@phosphor-icons/react';
 import { useMemo, useState } from 'react';
 import { getLocalTimeZone, today } from '@internationalized/date';
 
@@ -54,7 +57,7 @@ export function DatePicker<T extends DateValue>({ label, description, errorMessa
             </DateInput>
 
             <Button className="p-2 rounded-xl bg-[#3f4a9b]/10 text-[#3f4a9b] hover:bg-[#3f4a9b]/20 transition-colors outline-none cursor-pointer">
-            <CalendarIcon size={20} />
+            <CalendarBlankIcon size={20} weight="bold" />
             </Button>
         </Group>
 
@@ -79,13 +82,13 @@ export function DatePicker<T extends DateValue>({ label, description, errorMessa
                         {'<<'}
                     </button>
                     <Button slot="previous" className="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Ir al mes anterior">
-                        <ChevronLeft size={20}/>
+                        <CaretLeftIcon size={20} weight="bold" />
                     </Button>
                 </div>
                 <Heading className="font-bold" />
                 <div className="flex items-center gap-1">
                     <Button slot="next" className="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Ir al mes siguiente">
-                        <ChevronRight size={20}/>
+                        <CaretRightIcon size={20} weight="bold" />
                     </Button>
                     <button
                         type="button"

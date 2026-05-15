@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { INTEREST_LABELS } from '../../types/User.types';
-import { X } from 'lucide-react';
+import {
+    INTEREST_LABELS } from '../../types/User.types';
+import { XIcon
+} from '@phosphor-icons/react';
 
 interface EditInterestsModalProps {
   currentInterests: number[]; // Recibimos IDs
@@ -35,7 +37,7 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
         <div className="p-6 flex justify-between items-center">
           <h2 className="text-xl font-bold text-app-primary">Editar Intereses</h2>
           <button onClick={onClose} className="p-2 rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary">
-            <X size={18} aria-hidden="true" />
+            <XIcon size={18} weight="bold" aria-hidden="true" />
           </button>
         </div>
 

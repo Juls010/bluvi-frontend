@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Send, Play, Pause, Trash2 } from 'lucide-react';
+import { MicrophoneIcon, PaperPlaneRightIcon, PauseIcon, PlayIcon, TrashIcon } from '@phosphor-icons/react';
 
 interface AudioRecorderProps {
     onSendAudio: (audioBlob: Blob, duration: number) => Promise<void>;
@@ -245,7 +245,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                     aria-label={`Detener grabación de ${formatTime(duration)}`}
                     className="p-2.5 rounded-full transition-all flex-shrink-0 bg-red-500 hover:bg-red-600 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
                 >
-                    <Mic size={20} aria-hidden="true" />
+                    <MicrophoneIcon size={20} weight="bold" aria-hidden="true" />
                 </button>
             </div>
         );
@@ -260,7 +260,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                 aria-label="Grabar mensaje de audio"
                 className="p-2.5 rounded-xl transition-all flex-shrink-0 bg-app-surface-soft hover:bg-app-surface-strong text-app-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent cursor-pointer"
             >
-                <Mic size={20} aria-hidden="true" />
+                <MicrophoneIcon size={20} weight="bold" aria-hidden="true" />
             </button>
         );
     }
@@ -282,9 +282,9 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                 className="p-2 rounded-lg hover:bg-app-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent"
             >
                 {isPlaying ? (
-                    <Pause size={18} className="text-app-accent" aria-hidden="true" />
+                    <PauseIcon size={18} weight="bold" className="text-app-accent" aria-hidden="true" />
                 ) : (
-                    <Play size={18} className="text-app-accent" aria-hidden="true" />
+                    <PlayIcon size={18} weight="bold" className="text-app-accent" aria-hidden="true" />
                 )}
             </button>
 
@@ -312,7 +312,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                 aria-label={`Enviar audio de ${formatTime(duration)}`}
                 className="p-2 rounded-lg bg-app-accent hover:opacity-90 text-white transition-all disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent/50"
             >
-                <Send size={18} aria-hidden="true" />
+                <PaperPlaneRightIcon size={18} weight="bold" aria-hidden="true" />
             </button>
 
             <button
@@ -322,7 +322,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                 aria-label="Cancelar grabación y descartar audio"
                 className="p-2 rounded-lg hover:bg-app-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
             >
-                <Trash2 size={18} className="text-app-secondary" aria-hidden="true" />
+                <TrashIcon size={18} weight="bold" className="text-app-secondary" aria-hidden="true" />
             </button>
         </div>
     );

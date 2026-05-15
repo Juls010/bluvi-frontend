@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { NEURODIVERGENCE_LABELS, COMMUNICATION_LABELS } from '../../types/User.types';
-import { X } from 'lucide-react';
+import {
+    NEURODIVERGENCE_LABELS,
+    COMMUNICATION_LABELS } from '../../types/User.types';
+import { XIcon
+} from '@phosphor-icons/react';
 
 interface EditMindModalProps {
   currentFeatures: number[];
@@ -35,7 +38,7 @@ export const EditMindModal: React.FC<EditMindModalProps> = ({
         <div className="p-6 flex justify-between items-center">
           <h2 className="text-xl font-bold text-app-primary">Mente y Comunicación</h2>
           <button onClick={onClose} className="p-2 rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary">
-            <X size={18} aria-hidden="true" />
+            <XIcon size={18} weight="bold" aria-hidden="true" />
           </button>
         </div>
 

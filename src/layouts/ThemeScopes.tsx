@@ -41,7 +41,7 @@ export const PublicThemeScope: React.FC<ThemeScopeProps> = ({ children }) => {
   }, []);
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="bluvi_theme">
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="bluvi_theme">
       {children}
     </ThemeProvider>
   );

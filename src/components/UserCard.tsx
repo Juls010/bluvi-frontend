@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Cake } from 'lucide-react';
+import { CakeIcon, MagnifyingGlassIcon, MapPinIcon } from '@phosphor-icons/react';
 import { type User } from '../data/mockUsers';
 
 interface UserCardProps {
@@ -25,7 +25,7 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
                     <h3 className="text-3xl font-bold font-heading">{user.name}</h3>
                     <div className="flex items-center gap-3 text-sm opacity-80 mt-1">
                         <span className="flex items-center gap-1">
-                            <Cake className="w-4 h-4" aria-hidden="true" />
+                            <CakeIcon className="w-4 h-4" weight="bold" aria-hidden="true" />
                             {user.age}
                         </span>
                     </div>
@@ -33,7 +33,7 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
             </div>
             
             <p className="text-sm opacity-70 mb-4 flex items-center gap-1">
-                <MapPin className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                <MapPinIcon className="w-4 h-4 flex-shrink-0" weight="bold" aria-hidden="true" />
                 {user.location}
             </p>
 
@@ -51,9 +51,7 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
         </div>
 
         <div className="absolute bottom-6 right-6 w-12 h-12 bg-white text-bluvi-purple rounded-full flex items-center justify-center shadow-lg transform translate-y-20 group-hover:translate-y-0 transition-transform duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <MagnifyingGlassIcon className="h-6 w-6" weight="bold" aria-hidden="true" />
         </div>
 
         </div>

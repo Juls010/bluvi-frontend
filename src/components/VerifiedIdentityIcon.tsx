@@ -1,5 +1,5 @@
 import type React from 'react';
-import { ShieldUser } from 'lucide-react';
+import { ShieldStarIcon } from '@phosphor-icons/react';
 import { Tooltip, TooltipTrigger, Button as AriaButton } from './Tooltip';
 
 const tooltipText = 'Perfil real con verificación de identidad';
@@ -22,7 +22,7 @@ export const VerifiedIdentityIcon: React.FC<VerifiedIdentityIconProps> = ({
                 aria-label={tooltipText}
                 title={tooltipText}
             >
-                <ShieldUser className={iconClassName} aria-hidden="true" strokeWidth={2.5} />
+                <ShieldStarIcon className={iconClassName} aria-hidden="true" weight="bold" />
             </span>
         );
     }
@@ -33,7 +33,7 @@ export const VerifiedIdentityIcon: React.FC<VerifiedIdentityIconProps> = ({
                 className={`inline-flex items-center justify-center text-app-accent-strong transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20 dark:text-app-orange ${className}`}
                 aria-label={tooltipText}
             >
-                <ShieldUser className={iconClassName} aria-hidden="true" strokeWidth={2.5} />
+                <ShieldStarIcon className={iconClassName} aria-hidden="true" weight="bold" />
             </AriaButton>
             <Tooltip>{tooltipText}</Tooltip>
         </TooltipTrigger>

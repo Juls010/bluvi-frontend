@@ -169,9 +169,12 @@ describe('Full Registration Integration Flow', () => {
         await expectRoute('/register/verificationemail');
 
         // 12. Verification
+        await user.click(screen.getByRole('button', { name: /entendido/i }));
         const codeInputs = screen.getAllByLabelText(/Dígito \d del código/i);
-        for(let i=0; i<6; i++) await user.type(codeInputs[i], i.toString());
-        await user.click(screen.getByRole('button', { name: /verificar y continuar/i }));
+        codeInputs.forEach((input, index) => {
+            fireEvent.change(input, { target: { value: index.toString() } });
+        });
+        fireEvent.click(screen.getByRole('button', { name: /verificar y continuar/i }));
         await expectRoute('/register/safety-tips');
 
         // 13. Safety

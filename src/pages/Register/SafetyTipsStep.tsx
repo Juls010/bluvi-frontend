@@ -1,4 +1,4 @@
-import { Heart, MessageCircleWarning, ShieldCheck, UserCheck } from 'lucide-react';
+import { HeartIcon, ShieldCheckIcon, UserCheckIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { Button } from '../../components/Button';
@@ -7,22 +7,22 @@ import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 
 const TIPS = [
     {
-        icon: <ShieldCheck size={24} aria-hidden="true" />,
+        icon: <ShieldCheckIcon size={24} weight="bold" aria-hidden="true" />,
         title: 'Ir despacio está bien.',
         text: 'No tienes que compartir tu número ni datos personales al principio. Puedes conocer a alguien poco a poco.',
     },
     {
-        icon: <UserCheck size={24} aria-hidden="true" />,
+        icon: <UserCheckIcon size={24} weight="bold" aria-hidden="true" />,
         title: 'Tu comodidad importa.',
         text: 'Si una conversación te incomoda, te presiona o no te da buena sensación, puedes parar y avisarnos.',
     },
     {
-        icon: <Heart size={24} aria-hidden="true" />,
+        icon: <HeartIcon size={24} weight="bold" aria-hidden="true" />,
         title: 'Queremos trato amable.',
         text: 'Detrás de cada perfil hay una persona. Hablar con respeto ayuda a que Bluvi sea un lugar más cómodo.',
     },
     {
-        icon: <MessageCircleWarning size={24} aria-hidden="true" />,
+        icon: <WarningCircleIcon size={24} weight="bold" aria-hidden="true" />,
         title: 'Pedir ayuda es lo correcto',
         text: 'No envíes dinero a nadie. Si ves algo extraño, bloquear o reportar nos ayuda a proteger la comunidad.',
     },

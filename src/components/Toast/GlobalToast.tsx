@@ -1,6 +1,5 @@
 import { UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion } from 'react-aria-components';
 import { Toast } from './Toast';
-import React from 'react';
 
 export interface ToastContentProps {
   message: string;

@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, Home } from 'lucide-react';
+import {
+    Outlet,
+    useNavigate,
+    useLocation } from 'react-router-dom';
+import { CaretLeftIcon,
+    HouseIcon
+} from '@phosphor-icons/react';
 import { AnimatePresence } from 'framer-motion';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
@@ -142,11 +147,11 @@ export const RegisterLayout: React.FC = () => {
                         align="left"
                     >
                             <span className="hidden md:inline-flex items-center gap-2">
-                                <ChevronLeft size={24} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
+                                <CaretLeftIcon size={24} weight="bold" className="group-hover:scale-110 transition-transform" />
                                 <span>Atrás</span>
                             </span>
                         <span className="md:hidden">
-                            <ChevronLeft size={24} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
+                            <CaretLeftIcon size={24} weight="bold" className="group-hover:scale-110 transition-transform" />
                         </span>
                     </HeaderIconButton>
                 </div>
@@ -167,10 +172,10 @@ export const RegisterLayout: React.FC = () => {
                     >
                             <span className="hidden md:inline-flex items-center gap-2">
                                 <span>Inicio</span>
-                                <Home size={21} strokeWidth={2} className="group-hover:scale-110 transition-transform" />
+                                <HouseIcon size={21} weight="bold" className="group-hover:scale-110 transition-transform" />
                             </span>
                         <span className="md:hidden">
-                            <Home size={21} strokeWidth={2} className="group-hover:scale-110 transition-transform" />
+                            <HouseIcon size={21} weight="bold" className="group-hover:scale-110 transition-transform" />
                         </span>
                     </HeaderIconButton>
                 </div>

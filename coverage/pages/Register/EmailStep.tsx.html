@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.67% </span>
+                <span class="strong">84% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>41/49</span>
+                <span class='fraction'>42/50</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">86.66% </span>
+                <span class="strong">87.09% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>52/60</span>
+                <span class='fraction'>54/62</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.18% </span>
+                <span class="strong">93.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>41/44</span>
+                <span class='fraction'>42/45</span>
             </div>
         
             
@@ -263,7 +263,14 @@
 <a name='L198'></a><a href='#L198'>198</a>
 <a name='L199'></a><a href='#L199'>199</a>
 <a name='L200'></a><a href='#L200'>200</a>
-<a name='L201'></a><a href='#L201'>201</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -315,6 +322,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -463,15 +471,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useState } from 'react';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+    useState } from 'react';
 import { Button } from '../../components/Button';
 import { InputField } from '../../components/InputField';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate,
+    Link } from 'react-router-dom';
 import { useRegister } from '../../context/RegisterContext';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { RegisterStepHeader } from '../../components/RegisterStepHeader';
 import { authService } from '../../services/auth.service';
-import { Check } from 'lucide-react';
+import { CheckIcon
+} from '@phosphor-icons/react';
 &nbsp;
 export const EmailStep: React.FC = () =&gt; {
     const navigate = useNavigate();
@@ -515,8 +526,9 @@ export const EmailStep: React.FC = () =&gt; {
                 navigate('/register/photos');
             }
         } catch (error: any) {
-            console.error("Error comprobando email:", error);
-            setServerError('Error al verificar el correo. Inténtalo de nuevo.');
+            console.error('Error comprobando email:', error);
+            const backendMessage = error.response?.data?.message || 'Error al verificar el correo. Inténtalo de nuevo.';
+            setServerError(backendMessage);
         } finally {
             setIsLoading(false);
         }
@@ -614,7 +626,7 @@ export const EmailStep: React.FC = () =&gt; {
                                 `}
                             &gt;
                                 {formData.privacyAccepted &amp;&amp; (
-                                    &lt;Check size={12} strokeWidth={3} className="text-white" aria-hidden="true" /&gt;
+                                    &lt;CheckIcon size={12} weight="bold" className="text-white" aria-hidden="true" /&gt;
                                 )}
                             &lt;/button&gt;
                             &lt;span className={`text-xs leading-relaxed transition-colors duration-700 ${showConsentError ? 'text-red-400' : 'text-gray-600'}`}&gt;
@@ -670,7 +682,7 @@ export const EmailStep: React.FC = () =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-20T10:29:07.762Z
+                at 2026-05-14T15:21:09.184Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -1,8 +1,16 @@
 import React from 'react';
 import type { User } from '../types/User.types';
-import { SimpleCarousel } from './SimpleCarousel';
+import {
+    SimpleCarousel } from './SimpleCarousel';
 import ClickSpark from './ClickSpark';
-import { Cake, User as UserIcon, MapPin, Heart, Sprout, Brain, X } from 'lucide-react';
+import { CakeIcon,
+    UserIcon,
+    MapPinIcon,
+    HeartIcon,
+    PlantIcon,
+    BrainIcon,
+    XIcon
+} from '@phosphor-icons/react';
 import { 
     GENDER_LABELS,
     SEXUALITY_LABELS 
@@ -69,7 +77,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                             aria-label={`Pasar perfil de ${user.first_name}`}
                             className="w-16 h-16 rounded-[22px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 dark:hover:bg-red-500/10 dark:hover:border-red-500/30 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
                         >
-                            <X size={32} strokeWidth={2.5} className="transition-transform group-hover:scale-110" />
+                            <XIcon size={32} weight="bold" className="transition-transform group-hover:scale-110" />
                         </AriaButton>
                         <Tooltip>Pasar</Tooltip>
                     </TooltipTrigger>
@@ -90,7 +98,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                                 extraScale={1.5} 
                                 className="w-full h-full flex items-center justify-center"
                             >
-                                <Heart size={32} fill="currentColor" className="transition-transform group-hover:scale-110" />
+                                <HeartIcon size={32} weight="fill" className="transition-transform group-hover:scale-110" />
                             </ClickSpark>
                         </AriaButton>
                         <Tooltip>Me gusta</Tooltip>
@@ -102,22 +110,22 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                 <div className="bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm">
                     <ul className="flex flex-wrap gap-4 sm:gap-6 text-app-primary font-semibold mb-4 text-sm md:text-base border-b border-app-strong pb-4">
                         <li className="flex items-center gap-1.5">
-                            <Cake className="w-4 h-4 text-app-accent" aria-hidden="true" />
+                            <CakeIcon className="w-4 h-4 text-app-accent" weight="bold" aria-hidden="true" />
                             <span>{age} <span className="sr-only">años</span></span>
                         </li>
 
                         <li className="flex items-center gap-1.5">
-                            <UserIcon className="w-4 h-4 text-app-accent" aria-hidden="true" />
+                            <UserIcon className="w-4 h-4 text-app-accent" weight="bold" aria-hidden="true" />
                             <span className="sr-only">Género:</span>
                             {genderLabel}
                         </li>
                         <li className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4 text-app-accent" aria-hidden="true" />
+                            <MapPinIcon className="w-4 h-4 text-app-accent" weight="bold" aria-hidden="true" />
                             <span className="sr-only">Ubicación:</span>
                             {user.city}
                         </li>
                         <li className="flex items-center gap-1.5">
-                            <Heart className="w-4 h-4 text-app-accent" aria-hidden="true" />
+                            <HeartIcon className="w-4 h-4 text-app-accent" weight="bold" aria-hidden="true" />
                             <span className="sr-only">Orientación sexual:</span>
                             {sexualityLabel}
                         </li>
@@ -129,7 +137,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
 
                 <section className="bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm">
                     <h2 className="text-sm font-bold text-app-secondary mb-3 uppercase tracking-wider flex items-center gap-2">
-                        <Sprout className="w-4 h-4 text-app-accent" aria-hidden="true" /> Mis intereses
+                        <PlantIcon className="w-4 h-4 text-app-accent" weight="bold" aria-hidden="true" /> Mis intereses
                     </h2>
                     <ul className="flex flex-wrap gap-2">
                         {interestLabels.map((label) => (
@@ -142,7 +150,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
 
                 <section className="bg-app-surface-strong backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm">
                     <h2 className="text-sm font-bold text-app-secondary mb-4 uppercase tracking-wider flex items-center gap-2">
-                        <Brain className="w-4 h-4 text-app-accent" aria-hidden="true" /> Mente y Comunicación
+                        <BrainIcon className="w-4 h-4 text-app-accent" weight="bold" aria-hidden="true" /> Mente y Comunicación
                     </h2>
                     <div className="mb-5">
                         <h3 className="text-xs font-bold text-app-muted uppercase block mb-2">Rasgos</h3>
@@ -190,7 +198,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                     aria-label={`Pasar perfil de ${user.first_name}`}
                     className="w-16 h-16 rounded-[28px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
                 >
-                    <X size={32} strokeWidth={2.5} className="transition-transform group-hover:scale-110" />
+                    <XIcon size={32} weight="bold" className="transition-transform group-hover:scale-110" />
                 </AriaButton>
 
                 <AriaButton 
@@ -208,7 +216,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                         extraScale={1.5} 
                         className="w-full h-full flex items-center justify-center"
                     >
-                        <Heart size={32} fill="currentColor" className="transition-transform group-hover:scale-110" />
+                        <HeartIcon size={32} weight="fill" className="transition-transform group-hover:scale-110" />
                     </ClickSpark>
                 </AriaButton>
             </div>

@@ -1,6 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Mail, RefreshCw } from 'lucide-react';
+import {
+    useNavigate } from 'react-router-dom';
+import { ArrowClockwiseIcon,
+    EnvelopeSimpleIcon
+} from '@phosphor-icons/react';
 import { Button } from '../../components/Button';
 import { AnimatedStep } from '../../components/AnimatedStep';
 import { AccessibleErrorTooltip } from '../../components/AccessibleErrorTooltip';
@@ -96,7 +99,7 @@ export const EmailVerificationStep = () => {
                         />
                         <div className="w-full flex justify-center mb-4">
                             <div className="bg-white/40 p-5 rounded-full backdrop-blur-sm border border-white/20 shadow-sm shrink-0">
-                                <Mail className="text-[#3f4a9b]" size={36} />
+                                <EnvelopeSimpleIcon className="text-[#3f4a9b]" size={36} weight="bold" />
                             </div>
                         </div>
                     </div>
@@ -122,7 +125,7 @@ export const EmailVerificationStep = () => {
                         </div>
 
                         <button className="flex items-center gap-2 text-bluvi-purple/70 hover:text-bluvi-purple text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/40 rounded px-2 py-1">
-                            <RefreshCw size={16} />
+                            <ArrowClockwiseIcon size={16} weight="bold" />
                             Reenviar código
                         </button>
 

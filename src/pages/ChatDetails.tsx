@@ -1,7 +1,21 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ShieldOff, Trash2, Flag, ArrowLeft, Send, Check, MoreVertical, Image, Smile, AlertTriangle, X } from 'lucide-react';
+import {
+    createPortal } from 'react-dom';
+import { useNavigate,
+    useParams,
+    Link } from 'react-router-dom';
+import { ShieldSlashIcon,
+    TrashIcon,
+    FlagIcon,
+    ArrowLeftIcon,
+    PaperPlaneRightIcon,
+    CheckIcon,
+    DotsThreeVerticalIcon,
+    ImageIcon,
+    SmileyIcon,
+    WarningIcon,
+    XIcon
+} from '@phosphor-icons/react';
 import EmojiPicker, { type EmojiClickData, Theme } from 'emoji-picker-react';
 import {
     getConversationMessages,
@@ -546,14 +560,14 @@ export const ChatDetail: React.FC = () => {
         );
         const activeMessage = messages[currentIndex] || messages[messages.length - 1];
 
-        if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+        if (event.key === 'ArrowDown' || event.key === 'ArrowRightIcon') {
             event.preventDefault();
             const next = messages[Math.min(currentIndex + 1, messages.length - 1)];
             setActiveMessage(next.id_message);
             return;
         }
 
-        if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+        if (event.key === 'ArrowUp' || event.key === 'ArrowLeftIcon') {
             event.preventDefault();
             const previous = messages[Math.max(currentIndex - 1, 0)];
             setActiveMessage(previous.id_message);
@@ -918,7 +932,7 @@ export const ChatDetail: React.FC = () => {
                             aria-label="Volver a la lista de conversaciones"
                             className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-app-surface-soft text-app-accent transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/50 focus-visible:ring-offset-2 focus-visible:shadow-lg"
                         >
-                            <ArrowLeft size={22} strokeWidth={2} />
+                            <ArrowLeftIcon size={22} weight="bold" />
                         </button>
 
                         <Link 
@@ -977,7 +991,7 @@ export const ChatDetail: React.FC = () => {
                             aria-expanded={showOptions}
                             aria-haspopup="menu"
                         >
-                            <MoreVertical size={20} strokeWidth={1.8} />
+                            <DotsThreeVerticalIcon size={20} weight="bold" />
                         </button>
 
                         {showOptions && (
@@ -990,14 +1004,14 @@ export const ChatDetail: React.FC = () => {
                             >
                                 <DropdownMenuButton onClick={() => { closeOptionsMenu(false); void handleReportUser(); }}>
                                     <div className="flex items-center gap-3">
-                                        <Flag size={16} className="text-app-muted flex-shrink-0" />
+                                        <FlagIcon size={16} weight="bold" className="text-app-muted flex-shrink-0" />
                                         <span>Denunciar usuario</span>
                                     </div>
                                 </DropdownMenuButton>
                                 {!isBlockedByMe && (
                                     <DropdownMenuButton onClick={() => { closeOptionsMenu(false); void handleBlockUser(); }}>
                                         <div className="flex items-center gap-3">
-                                            <ShieldOff size={16} className="text-app-muted flex-shrink-0" />
+                                            <ShieldSlashIcon size={16} weight="bold" className="text-app-muted flex-shrink-0" />
                                             <span>Bloquear usuario</span>
                                         </div>
                                     </DropdownMenuButton>
@@ -1005,7 +1019,7 @@ export const ChatDetail: React.FC = () => {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuButton onClick={() => { closeOptionsMenu(false); void handleDeleteConversation(); }} danger>
                                     <div className="flex items-center gap-3">
-                                        <Trash2 size={16} className="flex-shrink-0" />
+                                        <TrashIcon size={16} weight="bold" className="flex-shrink-0" />
                                         <span>Borrar conversación</span>
                                     </div>
                                 </DropdownMenuButton>
@@ -1115,7 +1129,7 @@ export const ChatDetail: React.FC = () => {
                                         title="Eliminar para todos"
                                         aria-label="Eliminar mensaje para todos"
                                     >
-                                        <Trash2 size={14} />
+                                        <TrashIcon size={14} weight="bold" />
                                     </button>
                                 )}
 
@@ -1192,16 +1206,16 @@ export const ChatDetail: React.FC = () => {
                                         {isMe && (
                                             isRead ? (
                                                 <span className="flex" aria-label="Leído">
-                                                    <Check size={13} strokeWidth={3} style={{ color: 'var(--app-message-read-check)' }} />
-                                                    <Check size={13} strokeWidth={3} style={{ color: 'var(--app-message-read-check)', marginLeft: '-8px' }} />
+                                                    <CheckIcon size={13} weight="bold" style={{ color: 'var(--app-message-read-check)' }} />
+                                                    <CheckIcon size={13} weight="bold" style={{ color: 'var(--app-message-read-check)', marginLeft: '-8px' }} />
                                                 </span>
                                             ) : msg.is_delivered ? (
                                                 <span className="flex" aria-label="Entregado">
-                                                    <Check size={13} strokeWidth={3} className="text-app-muted" />
-                                                    <Check size={13} strokeWidth={3} className="text-app-muted" style={{ marginLeft: '-8px' }} />
+                                                    <CheckIcon size={13} weight="bold" className="text-app-muted" />
+                                                    <CheckIcon size={13} weight="bold" className="text-app-muted" style={{ marginLeft: '-8px' }} />
                                                 </span>
                                             ) : (
-                                                <Check size={13} strokeWidth={3} className="text-app-muted" aria-label="Enviado" />
+                                                <CheckIcon size={13} weight="bold" className="text-app-muted" aria-label="Enviado" />
                                             )
                                         )}
                                     </div>
@@ -1250,7 +1264,7 @@ export const ChatDetail: React.FC = () => {
                                             className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                                             aria-label="Adjuntar imagen"
                                         >
-                                            <Image size={20} strokeWidth={1.8} />
+                                            <ImageIcon size={20} weight="bold" />
                                         </button>
                                     ) : (
                                         <TooltipTrigger delay={300}>
@@ -1258,7 +1272,7 @@ export const ChatDetail: React.FC = () => {
                                                 className="w-10 h-10 flex items-center justify-center text-app-muted/60 rounded-2xl transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/40 focus-visible:ring-offset-2 cursor-not-allowed"
                                                 aria-label="Solo pueden enviar fotos los perfiles verificados"
                                             >
-                                                <Image size={20} strokeWidth={1.8} />
+                                                <ImageIcon size={20} weight="bold" />
                                             </AriaButton>
                                             <Tooltip>Solo pueden enviar fotos los perfiles verificados</Tooltip>
                                         </TooltipTrigger>
@@ -1279,7 +1293,7 @@ export const ChatDetail: React.FC = () => {
                                             aria-label="Abrir selector de emoji"
                                             className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
                                         >
-                                            <Smile size={20} strokeWidth={1.8} />
+                                            <SmileyIcon size={20} weight="bold" />
                                         </button>
 
                                         {showPicker && (
@@ -1323,7 +1337,7 @@ export const ChatDetail: React.FC = () => {
                                     style={{ backgroundColor: 'var(--app-accent)' }}
                                     disabled={sending}
                                 >
-                                    <Send size={18} strokeWidth={2} className="translate-x-0.5 -translate-y-0.5" />
+                                    <PaperPlaneRightIcon size={18} weight="bold" className="translate-x-0.5 -translate-y-0.5" />
                                 </button>
                             ) : (
                                 <AudioRecorder
@@ -1357,7 +1371,7 @@ export const ChatDetail: React.FC = () => {
                             className="w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-90"
                             aria-label="Cerrar imagen"
                         >
-                            <X size={24} />
+                            <XIcon size={24} weight="bold" />
                         </button>
                     </div>
 
@@ -1403,7 +1417,7 @@ export const ChatDetail: React.FC = () => {
                     <div className="relative bg-app-surface w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-app-soft">
                         <div className="p-8 text-center">
                             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500 shadow-sm border border-red-100">
-                                <Trash2 size={30} />
+                                <TrashIcon size={30} weight="bold" />
                             </div>
                             <h3 id={deleteMessageTitleId} className="text-xl font-bold text-app-primary mb-3">Eliminar mensaje?</h3>
                             <p id={deleteMessageDescriptionId} className="text-sm text-app-muted leading-relaxed mb-6">
@@ -1450,7 +1464,7 @@ export const ChatDetail: React.FC = () => {
                     <div className="relative bg-app-surface w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-app-soft">
                         <div className="p-8 text-center">
                             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500 shadow-sm border border-red-100">
-                                <AlertTriangle size={32} />
+                                <WarningIcon size={32} weight="bold" />
                             </div>
                             <h3 className="text-xl font-bold text-app-primary mb-3">¿Bloquear a {counterpart?.first_name}?</h3>
                             <p className="text-sm text-app-muted leading-relaxed mb-8">
@@ -1492,7 +1506,7 @@ export const ChatDetail: React.FC = () => {
                         {reportSuccess ? (
                             <div className="p-8 text-center animate-in fade-in zoom-in duration-300">
                                 <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 text-green-500 border border-green-100 shadow-sm">
-                                    <Check size={40} strokeWidth={3} />
+                                    <CheckIcon size={40} weight="bold" />
                                 </div>
                                 <h3 className="text-2xl font-bold text-app-primary mb-3">¡Reporte enviado!</h3>
                                 <p className="text-sm text-app-muted leading-relaxed mb-8">
@@ -1512,7 +1526,7 @@ export const ChatDetail: React.FC = () => {
                         ) : (
                             <div className="p-8">
                                 <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-orange-500 shadow-sm border border-orange-100">
-                                    <Flag size={32} />
+                                    <FlagIcon size={32} weight="bold" />
                                 </div>
                                 <h3 className="text-xl font-bold text-app-primary mb-3 text-center">Denunciar a {counterpart?.first_name}</h3>
                                 <p className="text-sm text-app-muted leading-relaxed mb-6 text-center">

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Loader2, Pause, Play, RotateCcw } from 'lucide-react';
+import { ArrowClockwiseIcon, PauseIcon, PlayIcon, SpinnerGapIcon } from '@phosphor-icons/react';
 import { getNarrationAudio } from '../services/narration.service';
 
 interface NarrationButtonProps {
@@ -173,7 +173,7 @@ export const NarrationButton: React.FC<NarrationButtonProps> = ({
         void startAudioNarration();
     };
 
-    const Icon = state === 'loading' ? Loader2 : state === 'playing' ? Pause : Play;
+    const Icon = state === 'loading' ? SpinnerGapIcon : state === 'playing' ? PauseIcon : PlayIcon;
     const buttonLabel = state === 'loading'
         ? 'Preparando narracion'
         : state === 'playing'
@@ -205,7 +205,7 @@ export const NarrationButton: React.FC<NarrationButtonProps> = ({
                     event.currentTarget.style.backgroundColor = 'var(--app-control-surface)';
                 }}
             >
-                <Icon className={`h-4 w-4 ${state === 'loading' ? 'animate-spin motion-reduce:animate-none' : ''}`} aria-hidden="true" />
+                <Icon className={`h-4 w-4 ${state === 'loading' ? 'animate-spin motion-reduce:animate-none' : ''}`} weight="bold" aria-hidden="true" />
                 {buttonLabel}
             </button>
 
@@ -227,7 +227,7 @@ export const NarrationButton: React.FC<NarrationButtonProps> = ({
                         event.currentTarget.style.backgroundColor = 'var(--app-control-surface)';
                     }}
                 >
-                    <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                    <ArrowClockwiseIcon className="h-4 w-4" weight="bold" aria-hidden="true" />
                 </button>
             )}
 
