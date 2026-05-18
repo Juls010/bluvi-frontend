@@ -179,8 +179,8 @@ const ConnectionMuralSection: React.FC = () => {
             aria-describedby="conexiones-desc"
             className={`relative scroll-mt-24 overflow-hidden pb-16 pt-14 sm:scroll-mt-28 sm:pb-28 sm:pt-20 ${SECTION_FOCUS_CLASS}`}
         >
-            <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 sm:gap-12 sm:px-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
-                <div className="mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
+            <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 sm:gap-12 sm:px-8 xl:grid-cols-[0.88fr_1.12fr] xl:items-center">
+                <div className="mx-auto max-w-xl text-center xl:mx-0 xl:text-left">
                     <h2
                         id="conexiones-title"
                         className="overflow-visible text-balance text-[2.45rem] font-black leading-[1.04] tracking-[-0.055em] text-[#221B5F] dark:text-white sm:text-5xl xl:text-6xl"
@@ -198,13 +198,13 @@ const ConnectionMuralSection: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="relative mx-auto w-full max-w-[18rem] sm:max-w-none lg:mx-0">
-                    <div className="columns-3 gap-2 sm:columns-3 sm:gap-4 xl:columns-4">
+                <div className="relative mx-auto w-full max-w-[18rem] sm:max-w-[34rem] xl:mx-0 xl:max-w-none">
+                    <div className="columns-3 gap-2 sm:columns-3 sm:gap-3 2xl:columns-4 2xl:gap-4">
                         {COUPLE_CARDS.map((card, index) => (
                             <article
                                 key={card.id}
-                                className={`relative mb-2 break-inside-avoid overflow-hidden rounded-[0.9rem] bg-transparent p-0 shadow-lg shadow-[#7F77DD]/10 [content-visibility:auto] [contain-intrinsic-size:160px] sm:mb-4 sm:rounded-[1.7rem] sm:[contain-intrinsic-size:360px] ${
-                                    index > 8 ? 'hidden sm:block' : ''
+                                className={`relative mb-2 break-inside-avoid overflow-hidden rounded-[0.9rem] bg-transparent p-0 shadow-lg shadow-[#7F77DD]/10 [content-visibility:auto] [contain-intrinsic-size:160px] sm:mb-3 sm:rounded-[1.35rem] sm:[contain-intrinsic-size:300px] 2xl:mb-4 2xl:rounded-[1.7rem] 2xl:[contain-intrinsic-size:360px] ${
+                                    index > 5 ? 'hidden xl:block' : ''
                                 } ${index % 5 === 0 ? 'sm:mt-8' : ''} ${
                                     index % 7 === 0
                                         ? 'sm:rotate-[-1deg]'
@@ -213,7 +213,7 @@ const ConnectionMuralSection: React.FC = () => {
                                             : ''
                                 }`}
                             >
-                                <div className="relative overflow-hidden rounded-[0.8rem] sm:rounded-[1.45rem]">
+                                <div className="relative overflow-hidden rounded-[0.8rem] sm:rounded-[1.15rem] 2xl:rounded-[1.45rem]">
                                     <img
                                         src={getOptimizedImageSrc(card.src)}
                                         alt={card.alt}
@@ -339,11 +339,11 @@ export const Welcome: React.FC = () => {
 
                 <header className="absolute inset-x-0 top-0 z-50">
                     <nav
-                    className="relative grid w-full grid-cols-[1fr_auto_1fr] items-center px-4 py-4 sm:px-8 sm:py-5 lg:px-10"
+                    className="relative grid w-full grid-cols-[1fr_auto_1fr] items-center px-4 py-4 sm:px-8 sm:py-5 xl:px-10"
                     aria-label="Navegación principal"
                 >
                     <div
-                        className="hidden items-center justify-start gap-7 md:flex lg:gap-9"
+                        className="hidden items-center justify-start gap-7 xl:flex 2xl:gap-9"
                         aria-label="Secciones de la página"
                     >
                         {NAV_LINKS.map((link) => (
@@ -361,14 +361,14 @@ export const Welcome: React.FC = () => {
                         <img
                             src={logo}
                             alt="Bluvi"
-                            className="h-auto w-56 lg:w-64"
+                            className="h-auto w-44 sm:w-52 xl:w-60 2xl:w-64"
                         />
                     </div>
                     <div className="col-start-3 flex items-center justify-end gap-3">
                         <button
                             type="button"
                             onClick={handleThemeToggle}
-                            className="hidden items-center gap-2 rounded-full bg-white/90 px-3 py-2 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-white/15 dark:text-white dark:hover:bg-white/22 md:flex sm:px-4"
+                            className="hidden items-center gap-2 rounded-full bg-white/90 px-3 py-2 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-white/15 dark:text-white dark:hover:bg-white/22 xl:flex sm:px-4"
                             aria-label={isDarkTheme ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
                         >
                             <span
@@ -390,7 +390,7 @@ export const Welcome: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => navigate('/login')}
-                            className="hidden rounded-full bg-white/95 px-6 py-3 text-base font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-white dark:text-[#221B5F] md:inline-flex"
+                            className="hidden rounded-full bg-white/95 px-6 py-3 text-base font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-white dark:text-[#221B5F] xl:inline-flex"
                         >
                             Iniciar sesión
                         </button>
@@ -398,7 +398,7 @@ export const Welcome: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-                            className="inline-flex h-11 items-center justify-center rounded-full bg-white/95 px-4 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-white dark:text-[#221B5F] md:hidden"
+                            className="inline-flex h-11 items-center justify-center rounded-full bg-white/95 px-4 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-white dark:text-[#221B5F] xl:hidden"
                             aria-expanded={isMobileMenuOpen}
                             aria-controls="mobile-menu"
                         >
@@ -408,7 +408,7 @@ export const Welcome: React.FC = () => {
 
                     <div
                         id="mobile-menu"
-                        className={`absolute right-4 top-[5.3rem] z-50 w-[min(320px,calc(100vw-2rem))] overflow-hidden rounded-[1.6rem] border border-white/40 bg-white/95 shadow-2xl shadow-[#383296]/18 backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/10 dark:bg-[#221B5F]/95 md:hidden ${
+                        className={`absolute right-4 top-[5.3rem] z-50 w-[min(320px,calc(100vw-2rem))] overflow-hidden rounded-[1.6rem] border border-white/40 bg-white/95 shadow-2xl shadow-[#383296]/18 backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/10 dark:bg-[#221B5F]/95 xl:hidden ${
                             isMobileMenuOpen
                                 ? 'translate-y-0 opacity-100'
                                 : 'pointer-events-none -translate-y-2 opacity-0'
@@ -465,7 +465,7 @@ export const Welcome: React.FC = () => {
                         tabIndex={0}
                         aria-labelledby="welcome-title"
                         aria-describedby="welcome-desc"
-                        className={`mx-auto flex min-h-[92vh] w-full max-w-7xl scroll-mt-24 items-center justify-center px-5 pb-14 pt-36 sm:min-h-[calc(100vh-80px)] sm:scroll-mt-28 sm:px-8 sm:pt-40 lg:pb-24 lg:pt-36 ${SECTION_FOCUS_CLASS}`}
+                        className={`mx-auto flex min-h-[clamp(36rem,88vh,48rem)] w-full max-w-7xl scroll-mt-24 items-center justify-center px-5 pb-14 pt-32 sm:scroll-mt-28 sm:px-8 sm:pt-36 lg:pb-20 xl:pt-36 ${SECTION_FOCUS_CLASS}`}
                     >
                         <div className="mx-auto max-w-3xl text-center">
                             <p className="mb-7 text-xs font-black uppercase tracking-[0.18em] text-[#221B5F] dark:text-[#D8D1FF] sm:mb-8 sm:tracking-[0.22em] sm:text-sm">
@@ -474,7 +474,7 @@ export const Welcome: React.FC = () => {
 
                             <h1
                                 id="welcome-title"
-                                className="text-balance text-[clamp(2.15rem,12vw,4.6rem)] font-black leading-[1.03] tracking-[-0.055em] text-[#221B5F] dark:text-white"
+                                className="text-balance text-[clamp(2.15rem,9vw,4.6rem)] font-black leading-[1.03] tracking-[-0.055em] text-[#221B5F] dark:text-white"
                             >
                                 Conoce gente a tu ritmo,
                                 <span className="block pb-2 text-[#221B5F] dark:bg-gradient-to-r dark:from-[#D8D1FF] dark:via-[#ECEBFF] dark:to-[#D8D1FF] dark:bg-clip-text dark:text-transparent">
@@ -493,6 +493,63 @@ export const Welcome: React.FC = () => {
                     </section>
 
                     <ConnectionMuralSection />
+
+                    <section
+                        id="compatibilidad"
+                        className="px-5 py-24 sm:px-8 sm:py-36"
+                    >
+                        <div className="mx-auto flex max-w-6xl flex-col items-center gap-16 text-center sm:gap-20">
+
+                            <div className="mx-auto max-w-4xl">
+                                <h2 className="text-balance text-3xl font-black leading-[1.05] tracking-[-0.04em] text-[#221B5F] dark:text-white sm:text-5xl">
+                                    Conecta con personas
+                                    <span className="mt-2 block text-[#5146C6] dark:text-[#D8D1FF]">
+                                        que viven el mundo de forma parecida.
+                                    </span>
+                                </h2>
+
+                                <p className="mx-auto mt-12 max-w-2xl text-base font-bold leading-7 text-[#221B5F] dark:text-[#ECEBFF] sm:mt-16 sm:text-lg sm:leading-8">
+                                    Durante el registro puedes elegir entre más de{' '}
+                                    <span
+                                        className="inline border-b-[3px] pb-0.5"
+                                        style={{
+                                            borderColor: isDarkTheme ? '#ECEBFF' : '#221B5F',
+                                            color: isDarkTheme ? '#ECEBFF' : '#221B5F',
+                                        }}
+                                    >
+                                        15 rasgos neurodivergentes
+                                    </span>{' '}
+                                    para encontrar personas compatibles con tu forma de sentir, comunicarte y relacionarte.
+                                </p>
+                            </div>
+
+                            <div className="flex max-w-4xl flex-wrap justify-center gap-x-4 gap-y-8">
+                                {[
+                                    'Autismo',
+                                    'TDAH',
+                                    'Dislexia',
+                                    'Discalculia',
+                                    'Tartamudez',
+                                    'Altas capacidades',
+                                    'Síndrome de Down',
+                                    'TEA',
+                                    'Disfasia',
+                                    'Ansiedad social',
+                                ].map((tag) => (
+                                    <div
+                                        key={tag}
+                                        className={`mb-2 rounded-full border-2 border-[#C4C0F0] px-5 py-3 text-sm font-black shadow-lg shadow-[#7F77DD]/10 sm:px-6 sm:py-3.5 sm:text-base ${
+                                            isDarkTheme
+                                                ? 'bg-white/[0.07] text-[#ECEBFF]'
+                                                : 'bg-white/80 text-[#221B5F]'
+                                        }`}
+                                    >
+                                        {tag}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
 
                     <section
                         id="cuidado"
@@ -524,7 +581,7 @@ export const Welcome: React.FC = () => {
                                     <svg
                                         className={`welcome-care-arrow ${
                                             isCareArrowVisible ? 'welcome-care-arrow-visible' : ''
-                                        }`}
+                                        } h-16 w-16 xl:h-24 xl:w-24`}
                                         width="96"
                                         height="96"
                                         viewBox="0 0 96 96"
@@ -599,14 +656,14 @@ export const Welcome: React.FC = () => {
                                 </p>
                             </div>
 
-                            <ul className="mx-auto mt-14 grid gap-5 text-left sm:mt-20 sm:grid-cols-3 sm:gap-7">
+                            <ul className="mx-auto mt-14 grid gap-5 text-left sm:mt-16 sm:grid-cols-2 sm:gap-6 lg:mt-20 lg:grid-cols-3 lg:gap-7">
                                 {ACCESSIBILITY_POINTS.map((item) => {
                                     const Icon = item.icon;
 
                                     return (
                                         <li
                                             key={item.title}
-                                            className="welcome-accessibility-card group min-h-[14.5rem] rounded-3xl border border-white/12 bg-[#221B5F] px-8 py-9 text-center text-white backdrop-blur-sm dark:border-white/10 dark:bg-[#221B5F] sm:px-10 sm:py-11 sm:text-left"
+                                            className="welcome-accessibility-card group min-h-[14rem] rounded-3xl border border-white/12 bg-[#221B5F] px-8 py-9 text-center text-white backdrop-blur-sm dark:border-white/10 dark:bg-[#221B5F] sm:px-8 sm:py-9 sm:text-left lg:min-h-[14.5rem] lg:px-10 lg:py-11"
                                         >
                                             <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-4">
                                                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#D8D1FF] ">
