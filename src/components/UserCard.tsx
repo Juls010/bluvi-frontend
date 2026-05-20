@@ -1,0 +1,59 @@
+import React from 'react';
+import { CakeIcon, MagnifyingGlassIcon, MapPinIcon } from '@phosphor-icons/react';
+import { type User } from '../data/mockUsers';
+
+interface UserCardProps {
+    user: User;
+}
+
+export const UserCard: React.FC<UserCardProps> = ({ user }) => {
+    return (
+        <div className="group relative w-full h-96 rounded-3xl overflow-hidden shadow-lg transition-transform hover:scale-[1.02] cursor-pointer bg-app-surface border border-app-soft">
+
+        <img 
+            src={user.image} 
+            alt={user.name} 
+            className="w-full h-full object-cover"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90"></div>
+
+        <div className="absolute bottom-0 left-0 w-full p-6 text-white">
+            
+            <div className="flex items-end gap-3 mb-3">
+                <div>
+                    <h3 className="text-3xl font-bold font-heading">{user.name}</h3>
+                    <div className="flex items-center gap-3 text-sm opacity-80 mt-1">
+                        <span className="flex items-center gap-1">
+                            <CakeIcon className="w-4 h-4" weight="bold" aria-hidden="true" />
+                            {user.age}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <p className="text-sm opacity-70 mb-4 flex items-center gap-1">
+                <MapPinIcon className="w-4 h-4 flex-shrink-0" weight="bold" aria-hidden="true" />
+                {user.location}
+            </p>
+
+            <div className="flex flex-wrap gap-2">
+                {user.interests.slice(0, 3).map((interest, index) => (
+                    <span key={index} className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-medium border border-white/30">
+                        {interest}
+                    </span>
+                ))}
+                {user.interests.length > 3 && (
+                    <span className="px-2 py-1 text-xs opacity-70">+{user.interests.length - 3}</span>
+                )}
+            </div>
+
+        </div>
+
+        <div className="absolute bottom-6 right-6 w-12 h-12 bg-white text-bluvi-purple rounded-full flex items-center justify-center shadow-lg transform translate-y-20 group-hover:translate-y-0 transition-transform duration-300">
+            <MagnifyingGlassIcon className="h-6 w-6" weight="bold" aria-hidden="true" />
+        </div>
+
+        </div>
+    );
+};

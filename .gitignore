@@ -1,24 +1,29 @@
-# Logs
-logs
-*.log
+# Dependencias (NUNCA subir esto, es pesadísimo)
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Archivos de entorno (Aquí irán tus claves secretas en el futuro)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+.vscode/
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+coverage/
+*.lcov
+.vitest-result.json
