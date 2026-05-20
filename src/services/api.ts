@@ -1,6 +1,8 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '');
+const BACKEND_URL = import.meta.env.PROD
+    ? import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '')
+    : '';
 const API_URL = BACKEND_URL ? `${BACKEND_URL}/api` : '/api';
 
 interface FailedRequest {
@@ -42,7 +44,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
-    if (token) {
+    if (token && !isAuthEndpoint(config.url)) {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
