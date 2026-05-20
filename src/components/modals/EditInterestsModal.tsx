@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import {
-    INTEREST_LABELS } from '../../types/User.types';
-import { XIcon
-} from '@phosphor-icons/react';
+import { INTEREST_LABELS } from '../../types/User.types';
+import { HeartIcon } from '@phosphor-icons/react';
+import { ProfileEditModalShell } from './ProfileEditModalShell';
 
 interface EditInterestsModalProps {
-  currentInterests: number[]; // Recibimos IDs
+  currentInterests: number[];
   onSave: (newInterests: number[]) => Promise<void>;
   onClose: () => void;
   isSaving: boolean;
@@ -15,15 +14,15 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
   currentInterests,
   onSave,
   onClose,
-  isSaving
+  isSaving,
 }) => {
   const [selected, setSelected] = useState<number[]>(currentInterests);
   const [search, setSearch] = useState('');
 
   const toggleInterest = (id: number) => {
-    setSelected(prev => 
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
+    setSelected((current) => (
+      current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
+    ));
   };
 
   const filtered = Object.entries(INTEREST_LABELS).filter(([, label]) =>
@@ -31,62 +30,61 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 dark:bg-black/60 backdrop-blur-sm">
-      <div className="bg-app-surface-strong text-app-primary w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-app-soft">
-        
-        <div className="p-6 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-app-primary">Editar Intereses</h2>
-          <button onClick={onClose} className="p-2 rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary">
-            <XIcon size={18} weight="bold" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="p-6 overflow-y-auto space-y-4 bg-app-surface-strong">
-          <input 
-            type="text"
-            placeholder="Buscar intereses..."
-            className="w-full px-4 py-2 rounded-xl border border-app-strong bg-app-surface text-app-primary placeholder:text-app-muted focus:ring-2 focus:ring-bluvi-purple/20 focus:border-bluvi-purple/45 outline-none"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-
-          <div className="flex flex-wrap gap-2">
-            {filtered.map(([id, label]) => {
-              const isSelected = selected.includes(Number(id));
-              return (
-                <button
-                  key={id}
-                  onClick={() => toggleInterest(Number(id))}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                    isSelected 
-                      ? 'bg-bluvi-purple text-white shadow-md' 
-                      : 'bg-app-surface text-app-secondary hover:bg-app-surface-soft border border-app-soft'
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="p-6 bg-app-surface-soft flex gap-3">
-          <button 
+    <ProfileEditModalShell
+      title="Editar Intereses"
+      icon={<HeartIcon className="h-5 w-5 text-app-accent" weight="bold" aria-hidden="true" />}
+      onClose={onClose}
+      isSaving={isSaving}
+      footer={(
+        <>
+          <button
+            type="button"
             onClick={onClose}
-            className="flex-1 py-2.5 px-6 rounded-full border border-app-soft border-b-2 border-black/10 bg-app-surface font-semibold text-app-secondary shadow-sm hover:text-app-primary hover:bg-app-surface-strong hover:-translate-y-0.5 active:translate-y-0 transition-all"
             disabled={isSaving}
+            className="flex-1 rounded-full border border-app-soft bg-app-surface px-6 py-2.5 font-semibold text-app-secondary shadow-sm transition-all hover:-translate-y-0.5 hover:bg-app-surface-strong hover:text-app-primary active:translate-y-0 disabled:opacity-50"
           >
             Cancelar
           </button>
-          <button 
+          <button
+            type="button"
             onClick={() => onSave(selected)}
             disabled={isSaving}
-            className="flex-1 py-2.5 px-6 bg-bluvi-purple text-white rounded-full font-semibold shadow-md shadow-bluvi-purple/20 border-b-2 border-black/10 disabled:opacity-50 hover:brightness-105 hover:-translate-y-0.5 active:scale-95 transition-all"
+            className="flex-1 rounded-full border-b-2 border-black/10 bg-bluvi-purple px-6 py-2.5 font-semibold text-white shadow-md shadow-bluvi-purple/20 transition-all hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-50"
           >
             {isSaving ? 'Guardando...' : 'Guardar'}
           </button>
+        </>
+      )}
+    >
+      <div className="space-y-4">
+        <input
+          type="text"
+          placeholder="Buscar intereses..."
+          className="w-full rounded-2xl border border-app-strong bg-app-surface px-4 py-3 text-sm font-medium text-app-primary outline-none transition-all placeholder:text-app-muted focus:border-bluvi-purple/45 focus:ring-2 focus:ring-bluvi-purple/20"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+
+        <div className="flex flex-wrap gap-2">
+          {filtered.map(([id, label]) => {
+            const isSelected = selected.includes(Number(id));
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => toggleInterest(Number(id))}
+                className={`rounded-full px-3 py-1.5 text-sm font-medium transition-all ${
+                  isSelected
+                    ? 'bg-bluvi-purple text-white shadow-md'
+                    : 'border border-app-soft bg-app-surface-soft text-app-secondary shadow-sm hover:bg-app-surface-strong hover:text-app-primary'
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
       </div>
-    </div>
+    </ProfileEditModalShell>
   );
 };

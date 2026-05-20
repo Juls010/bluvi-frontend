@@ -200,20 +200,21 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                 aria-labelledby="contacts-drawer-title"
                 className={`relative z-10 w-full md:w-[420px] bg-app-surface-solid text-app-primary shadow-2xl overflow-hidden border-r border-app-soft flex flex-col ${isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'} rounded-t-[40px] md:rounded-t-none md:rounded-r-[48px]`}
             >
+                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-1 bg-app-accent/70" aria-hidden="true" />
                 <div className="flex justify-center pt-3 pb-1 md:hidden" aria-hidden="true">
                     <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-white/20" />
                 </div>
 
-                <div className="px-6 pt-4 pb-4 md:px-8 md:pt-10 md:pb-6">
-                    <header className="flex justify-between items-start gap-4 mb-6">
-                        <div>
+                <div className="px-6 pt-4 pb-4 md:px-8 md:pt-8 md:pb-6">
+                    <header className="mb-6 flex items-start justify-between gap-4">
+                        <div className="min-w-0">
                             <h2 id="contacts-drawer-title" className="text-2xl md:text-3xl font-heading font-bold text-app-primary tracking-tight">Contactos</h2>
                             <p className="text-xs md:text-sm text-app-secondary mt-1 font-medium">Tus conexiones confirmadas</p>
                         </div>
                         <button 
                             onClick={handleClose}
                             aria-label="Cerrar contactos"
-                            className="w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 mt-0.5 md:mt-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
+                            className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 mt-0.5 md:mt-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
                             style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                         >
                             <XIcon size={20} weight="bold" />
@@ -228,7 +229,7 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             aria-label="Buscar contactos"
-                            className="w-full bg-app-surface-soft border border-app-soft rounded-2xl py-3.5 pl-12 pr-4 text-sm text-app-primary placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-app-accent/10 focus:border-app-accent/30 transition-all font-medium"
+                            className="w-full bg-app-surface-soft border-2 border-app-strong rounded-2xl py-3.5 pl-12 pr-4 text-sm text-app-primary placeholder:text-app-muted shadow-sm focus:outline-none focus:ring-4 focus:ring-app-focus/35 focus:border-app-focus transition-all font-medium"
                         />
                     </div>
                 </div>
@@ -576,7 +577,7 @@ export const Messages: React.FC = () => {
                 <TooltipTrigger delay={600}>
                     <AriaButton 
                         onPress={() => setShowContacts(true)}
-                        className="w-12 h-12 rounded-2xl bg-app-surface border border-app-soft shadow-sm flex items-center justify-center text-app-accent hover:bg-app-surface-soft hover:border-app-strong hover:text-app-primary transition-all duration-500 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
+                        className="w-12 h-12 rounded-2xl bg-app-surface border-2 border-app-strong shadow-sm flex items-center justify-center text-app-accent hover:bg-app-surface-soft hover:border-app-strong hover:text-app-primary transition-all duration-500 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
                         style={{ transitionProperty: 'all' }}
                         aria-label="Ver contactos"
                     >

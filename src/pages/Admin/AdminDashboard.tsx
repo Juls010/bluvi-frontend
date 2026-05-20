@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { toastQueue } from '../../components/Toast/GlobalToast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Tooltip, TooltipTrigger, Button as AriaButton } from '../../components/Tooltip';
+import { ModalOverlay, Modal, Dialog, Heading } from 'react-aria-components';
 
 type AdminTab = 'users' | 'reports' | 'metrics' | 'create-admin';
 type ReportAction = 'dismiss' | 'warn' | 'remove-content';
@@ -833,77 +834,91 @@ export const AdminDashboard: React.FC = () => {
                 </section>
             </div>
             {editingUser && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/35 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-labelledby="edit-user-title">
-                    <form onSubmit={submitEditUser} className="w-full max-w-lg rounded-lg border border-white/60 bg-white p-5 text-app-primary shadow-2xl dark:border-white/10 dark:bg-[#231F54] sm:p-6">
-                        <div className="flex items-start justify-between gap-4">
-                            <div>
-                                <h2 id="edit-user-title" className="text-xl font-black">Editar perfil</h2>
-                                <p className="mt-1 text-sm font-semibold text-app-muted">{editingUser.email}</p>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={closeEditUser}
-                                disabled={isEditingUser}
-                                className="grid h-9 w-9 place-items-center rounded-lg bg-app-surface text-app-muted transition hover:bg-app-surface-soft disabled:opacity-60 dark:bg-white/10 dark:hover:bg-white/15"
-                                aria-label="Cerrar"
-                            >
-                                <X size={18} />
-                            </button>
-                        </div>
+                <ModalOverlay
+                    isOpen={Boolean(editingUser)}
+                    onOpenChange={(open) => !open && closeEditUser()}
+                    isDismissable={!isEditingUser}
+                    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/35 p-4 backdrop-blur-md animate-fade-in dark:bg-black/55"
+                >
+                    <Modal className="w-full max-w-lg outline-none">
+                        <Dialog
+                            className="w-full overflow-hidden rounded-[2rem] border border-app-soft bg-app-surface-strong text-app-primary shadow-2xl outline-none animate-scale-in"
+                            aria-labelledby="edit-user-title"
+                        >
+                            <form onSubmit={submitEditUser}>
+                                <div className="flex items-center justify-between gap-4 bg-app-surface-strong px-6 pb-4 pt-6">
+                                    <div>
+                                        <Heading id="edit-user-title" slot="title" className="font-heading text-xl font-bold text-app-primary">
+                                            Editar perfil
+                                        </Heading>
+                                        <p className="mt-1 text-sm font-semibold text-app-muted">{editingUser.email}</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={closeEditUser}
+                                        disabled={isEditingUser}
+                                        className="grid h-9 w-9 place-items-center rounded-full text-app-muted transition-colors hover:bg-app-surface-soft disabled:opacity-60"
+                                        aria-label="Cerrar"
+                                    >
+                                        <X size={18} />
+                                    </button>
+                                </div>
 
-                        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                            <label className="space-y-1.5">
-                                <span className="text-sm font-bold">Nombre</span>
-                                <input
-                                    required
-                                    maxLength={80}
-                                    value={editForm.first_name}
-                                    onChange={(event) => setEditForm({ ...editForm, first_name: event.target.value })}
-                                    className="h-11 w-full rounded-lg border border-app-border bg-app-surface px-3 text-sm font-semibold outline-none focus:border-bluvi-purple dark:border-white/15 dark:bg-white/10"
-                                />
-                            </label>
-                            <label className="space-y-1.5">
-                                <span className="text-sm font-bold">Apellido</span>
-                                <input
-                                    maxLength={80}
-                                    value={editForm.last_name}
-                                    onChange={(event) => setEditForm({ ...editForm, last_name: event.target.value })}
-                                    className="h-11 w-full rounded-lg border border-app-border bg-app-surface px-3 text-sm font-semibold outline-none focus:border-bluvi-purple dark:border-white/15 dark:bg-white/10"
-                                />
-                            </label>
-                            <label className="space-y-1.5 sm:col-span-2">
-                                <span className="text-sm font-bold">Descripcion</span>
-                                <textarea
-                                    maxLength={1200}
-                                    rows={5}
-                                    value={editForm.description}
-                                    onChange={(event) => setEditForm({ ...editForm, description: event.target.value })}
-                                    className="w-full resize-none rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm font-semibold outline-none focus:border-bluvi-purple dark:border-white/15 dark:bg-white/10"
-                                />
-                                <span className="block text-right text-xs font-bold text-app-muted">{editForm.description.length}/1200</span>
-                            </label>
-                        </div>
+                                <div className="grid max-h-[65vh] gap-5 overflow-y-auto bg-app-surface-strong px-6 py-5 sm:grid-cols-2">
+                                    <label className="space-y-1.5">
+                                        <span className="ml-1 text-[10px] font-bold uppercase text-app-secondary">Nombre</span>
+                                        <input
+                                            required
+                                            maxLength={80}
+                                            value={editForm.first_name}
+                                            onChange={(event) => setEditForm({ ...editForm, first_name: event.target.value })}
+                                            className="w-full rounded-2xl border border-app-strong bg-app-surface px-4 py-3 text-sm font-medium text-app-primary outline-none transition-all focus:border-bluvi-purple/45 focus:ring-2 focus:ring-bluvi-purple/20"
+                                        />
+                                    </label>
+                                    <label className="space-y-1.5">
+                                        <span className="ml-1 text-[10px] font-bold uppercase text-app-secondary">Apellido</span>
+                                        <input
+                                            maxLength={80}
+                                            value={editForm.last_name}
+                                            onChange={(event) => setEditForm({ ...editForm, last_name: event.target.value })}
+                                            className="w-full rounded-2xl border border-app-strong bg-app-surface px-4 py-3 text-sm font-medium text-app-primary outline-none transition-all focus:border-bluvi-purple/45 focus:ring-2 focus:ring-bluvi-purple/20"
+                                        />
+                                    </label>
+                                    <label className="space-y-1.5 sm:col-span-2">
+                                        <span className="ml-1 text-[10px] font-bold uppercase text-app-secondary">Descripcion</span>
+                                        <textarea
+                                            maxLength={1200}
+                                            rows={5}
+                                            value={editForm.description}
+                                            onChange={(event) => setEditForm({ ...editForm, description: event.target.value })}
+                                            className="w-full resize-none rounded-2xl border border-app-strong bg-app-surface px-4 py-3 text-sm font-medium leading-relaxed text-app-primary outline-none transition-all placeholder:text-app-muted focus:border-bluvi-purple/45 focus:ring-2 focus:ring-bluvi-purple/20"
+                                        />
+                                        <span className="block text-right text-xs font-bold text-app-muted">{editForm.description.length}/1200</span>
+                                    </label>
+                                </div>
 
-                        <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                            <button
-                                type="button"
-                                onClick={closeEditUser}
-                                disabled={isEditingUser}
-                                className="rounded-lg bg-app-surface px-4 py-2.5 text-sm font-black text-app-primary transition hover:bg-app-surface-soft disabled:opacity-60 dark:bg-white/10 dark:hover:bg-white/15"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={isEditingUser}
-                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-bluvi-purple px-4 py-2.5 text-sm font-black text-white shadow-md shadow-bluvi-purple/20 disabled:opacity-60"
-                            >
-                                {isEditingUser && <Loader2 className="animate-spin" size={16} />}
-                                Guardar cambios
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                                <div className="flex flex-col-reverse gap-3 bg-app-surface-soft p-6 sm:flex-row">
+                                    <button
+                                        type="button"
+                                        onClick={closeEditUser}
+                                        disabled={isEditingUser}
+                                        className="flex-1 rounded-full border border-app-soft border-b-2 border-black/10 bg-app-surface px-6 py-2.5 font-semibold text-app-secondary shadow-sm transition-all hover:-translate-y-0.5 hover:bg-app-surface-strong hover:text-app-primary active:translate-y-0 disabled:opacity-60"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={isEditingUser}
+                                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border-b-2 border-black/10 bg-bluvi-purple px-6 py-2.5 font-semibold text-white shadow-md shadow-bluvi-purple/20 transition-all hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-60"
+                                    >
+                                        {isEditingUser && <Loader2 className="animate-spin" size={16} />}
+                                        {isEditingUser ? 'Guardando...' : 'Guardar Cambios'}
+                                    </button>
+                                </div>
+                            </form>
+                        </Dialog>
+                    </Modal>
+                </ModalOverlay>
             )}
             <ConfirmModal
                 isOpen={Boolean(pendingConfirm)}

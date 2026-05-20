@@ -18,7 +18,6 @@ import {
     EyeIcon,
     SignOutIcon,
     ArrowClockwiseIcon,
-    ShieldCheckIcon,
     TrashIcon,
     TextTIcon,
     ChatTextIcon,
@@ -62,7 +61,7 @@ const Toggle: React.FC<{
         style={{ backgroundColor: enabled ? 'var(--app-switch-on)' : 'var(--app-switch-off)' }}
         className={`
             relative w-12 h-6 rounded-full transition-colors duration-200 border border-app-soft
-            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-app-accent/50
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-app-focus
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         `}
     >
@@ -402,11 +401,7 @@ export const Settings: React.FC = () => {
         <>
             <article className="w-full max-w-5xl mx-auto p-4 md:p-0 pb-16 animate-fade-in motion-reduce:animate-none space-y-7">
 
-                <div className="space-y-3 md:space-y-4">
-                    <span className="inline-flex w-fit items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary bg-app-surface-soft border border-app-soft px-3 py-1 rounded-full">
-                        <ShieldCheckIcon size={12} weight="bold" aria-hidden="true" />
-                        Preferencias
-                    </span>
+                <div className="space-y-3 md:space-y-5">
                     <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">Ajustes</h1>
                     <p className="max-w-2xl text-sm text-app-secondary/90">Personaliza tu experiencia en Bluvi sin perder claridad.</p>
                 </div>
@@ -491,7 +486,7 @@ export const Settings: React.FC = () => {
                                             }
                                             disabled={!mounted}
                                             className={`
-                                                min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all inline-flex items-center justify-center gap-2
+                                                min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55
                                                 ${isActive
                                                     ? 'bg-app-accent text-app-on-accent border-app-accent shadow-sm'
                                                     : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-app-strong'
@@ -544,7 +539,7 @@ export const Settings: React.FC = () => {
                                             }
                                             disabled={savingAccessibility}
                                             className={`
-                                                min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all
+                                                min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55
                                                 ${isActive
                                                     ? 'bg-app-accent text-app-on-accent border-app-accent shadow-sm'
                                                     : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-app-strong'
@@ -595,7 +590,7 @@ export const Settings: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleResetAccessibility}
-                                className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-xs font-semibold text-app-primary hover:bg-app-surface-strong hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/35"
+                                className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-xs font-semibold text-app-primary hover:bg-app-surface-strong hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
                             >
                                 <ArrowClockwiseIcon size={14} weight="bold" aria-hidden="true" />
                                 Restablecer accesibilidad
@@ -615,7 +610,7 @@ export const Settings: React.FC = () => {
                                 type="button"
                                 data-account-action="true"
                                 onClick={() => navigate('/app/settings/reports-blocks')}
-                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/35"
+                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
                             >
                                 <span className="mt-0.5 inline-flex items-center gap-1 text-app-accent" aria-hidden="true">
                                     <FlagIcon size={16} weight="bold" />
@@ -631,7 +626,7 @@ export const Settings: React.FC = () => {
                                 type="button"
                                 data-account-action="true"
                                 onClick={handleLogout}
-                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/35"
+                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
                             >
                                 <SignOutIcon size={18} weight="bold" aria-hidden="true" className="mt-0.5" />
                                 <div>

@@ -8,6 +8,7 @@
     --color-app-surface-strong: var(--app-surface-card-strong);
     --color-app-orange: var(--app-accent-orange);
     --color-app-accent: var(--app-accent);
+    --color-app-focus: var(--app-focus-ring);
     --color-app-secondary: var(--app-text-secondary);
     --color-app-muted: var(--app-text-muted);
     --color-app-surface-soft: var(--app-surface-soft);
@@ -59,6 +60,7 @@
         --app-border-strong: rgba(127, 119, 221, 0.26);
         --app-accent: #7F77DD;
         --app-accent-strong: #534AB7;
+        --app-focus-ring: #3f4292;
         --app-accent-gradient: linear-gradient(135deg, #7F77DD 0%, #F2A65A 100%);
         --app-on-accent: #ffffff;
         --app-pill-bg: rgba(229, 232, 255, 0.44);
@@ -97,6 +99,12 @@
         --filter-slider-thumb: #3f4292;
         --filter-unselected-bg: #f3f4f6;
         --filter-unselected-border: #e5e7eb;
+        --home-events-control-surface: rgba(255, 255, 255, 0.72);
+        --home-events-control-surface-hover: rgba(255, 255, 255, 0.9);
+        --home-events-control-border: rgba(127, 119, 221, 0.22);
+        --home-events-control-neutral: #3f4292;
+        --home-events-control-neutral-muted: rgba(63, 66, 146, 0.24);
+        --navbar-active-ring: #3f4292;
     }
 
     * {
@@ -133,6 +141,7 @@
         --app-border-strong: rgba(171, 176, 255, 0.38);
         --app-accent: #B8B2FF;
         --app-accent-strong: #D0CCFF;
+        --app-focus-ring: #D8D1FF;
         --app-accent-gradient: linear-gradient(135deg, #B8B2FF 0%, #FFB16A 100%);
         --app-on-accent: #ffffff;
         --app-pill-bg: rgba(86, 92, 172, 0.45);
@@ -169,6 +178,20 @@
         --filter-slider-thumb: #FFB16A;
         --filter-unselected-bg: rgba(32, 36, 84, 0.52);
         --filter-unselected-border: rgba(171, 176, 255, 0.26);
+        --home-events-control-surface: rgba(255, 255, 255, 0.1);
+        --home-events-control-surface-hover: rgba(255, 255, 255, 0.16);
+        --home-events-control-border: rgba(255, 255, 255, 0.34);
+        --home-events-control-neutral: #ffffff;
+        --home-events-control-neutral-muted: rgba(255, 255, 255, 0.58);
+        --navbar-active-ring: #D8D1FF;
+    }
+
+    .home-events-carousel {
+        --app-control-surface: var(--home-events-control-surface);
+        --app-control-surface-hover: var(--home-events-control-surface-hover);
+        --app-control-border: var(--home-events-control-border);
+        --app-control-neutral: var(--home-events-control-neutral);
+        --app-control-neutral-muted: var(--home-events-control-neutral-muted);
     }
 
     html.dark body,
@@ -196,6 +219,7 @@
         --app-border-strong: #000000;
         --app-accent: #111111;
         --app-accent-strong: #000000;
+        --app-focus-ring: #000000;
         --app-accent-gradient: linear-gradient(135deg, #111111 0%, #111111 100%);
         --app-on-accent: #ffffff;
         --app-pill-bg: #ffffff;
@@ -229,6 +253,12 @@
         --filter-slider-thumb: #000000;
         --filter-unselected-bg: #ffffff;
         --filter-unselected-border: #111111;
+        --home-events-control-surface: #ffffff;
+        --home-events-control-surface-hover: #f2f2f2;
+        --home-events-control-border: #111111;
+        --home-events-control-neutral: #111111;
+        --home-events-control-neutral-muted: #777777;
+        --navbar-active-ring: #000000;
     }
 
     html.dark.high-contrast {
@@ -241,16 +271,17 @@
         --app-control-neutral-muted: #d9d9d9;
         --app-control-surface: #000000;
         --app-control-surface-hover: #111111;
-        --app-control-border: #ffffff;
+        --app-control-border: #d9d9d9;
         --app-surface-nav: #000000;
         --app-surface-card: #000000;
         --app-surface-card-strong: #111111;
         --app-surface-solid: #000000;
         --app-surface-soft: #0a0a0a;
-        --app-border-soft: #d9d9d9;
-        --app-border-strong: #ffffff;
+        --app-border-soft: #a3a3a3;
+        --app-border-strong: #d9d9d9;
         --app-accent: #ffffff;
         --app-accent-strong: #ffffff;
+        --app-focus-ring: #ffffff;
         --app-accent-gradient: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
         --app-on-accent: #000000;
         --app-pill-bg: #000000;
@@ -283,7 +314,13 @@
         --filter-slider-track: #777777;
         --filter-slider-thumb: #ffffff;
         --filter-unselected-bg: #000000;
-        --filter-unselected-border: #ffffff;
+        --filter-unselected-border: #d9d9d9;
+        --home-events-control-surface: #000000;
+        --home-events-control-surface-hover: #111111;
+        --home-events-control-border: #d9d9d9;
+        --home-events-control-neutral: #ffffff;
+        --home-events-control-neutral-muted: #d9d9d9;
+        --navbar-active-ring: #ffffff;
     }
 
     html.high-contrast body,
@@ -366,6 +403,16 @@
     html.dark [data-navbar-menu-item="true"]:hover {
         background-color: rgba(255, 255, 255, 0.1) !important;
         color: white !important;
+    }
+
+    html.high-contrast [data-navbar-menu-item="true"]:hover {
+        background-color: #e5e5e5 !important;
+        color: #111111 !important;
+    }
+
+    html.dark.high-contrast [data-navbar-menu-item="true"]:hover {
+        background-color: #262626 !important;
+        color: #ffffff !important;
     }
 
     [data-navbar-menu-item="true"][data-navbar-menu-danger="true"]:hover {

@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MicrophoneIcon, PaperPlaneRightIcon, PauseIcon, PlayIcon, TrashIcon } from '@phosphor-icons/react';
+import { Dialog, Heading, Modal, ModalOverlay } from 'react-aria-components';
+import { MicrophoneIcon, PaperPlaneRightIcon, PauseIcon, PlayIcon, TrashIcon, WarningIcon } from '@phosphor-icons/react';
+import { Button as AppButton } from './Button';
+import { Tooltip, TooltipTrigger } from './Tooltip';
 
 interface AudioRecorderProps {
     onSendAudio: (audioBlob: Blob, duration: number) => Promise<void>;
@@ -24,6 +27,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
     const [isSending, setIsSending] = useState(false);
     const [audioLevel, setAudioLevel] = useState(0);
     const [justStoppedRecording, setJustStoppedRecording] = useState(false);
+    const [audioError, setAudioError] = useState<string | null>(null);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
@@ -111,7 +115,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
             updateAudioLevel();
         } catch (error) {
             console.error('Error accessing microphone:', error);
-            alert('No se pudo acceder al micrófono. Verifica los permisos.');
+            setAudioError('No se pudo acceder al micrófono. Revisa los permisos del navegador y vuelve a intentarlo.');
         }
     };
 
@@ -179,7 +183,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
             }
         } catch (error) {
             console.error('Error sending audio:', error);
-            alert('Error al enviar el audio. Intenta de nuevo.');
+            setAudioError('No se pudo enviar el audio. Inténtalo de nuevo.');
         } finally {
             setIsSending(false);
         }
@@ -197,6 +201,48 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
         }
         onRecordingCancelled?.();
     };
+
+    const audioErrorModal = (
+        <ModalOverlay
+            isOpen={Boolean(audioError)}
+            onOpenChange={(open) => {
+                if (!open) setAudioError(null);
+            }}
+            isDismissable
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/35 p-4 backdrop-blur-md animate-fade-in"
+        >
+            <Modal className="w-full max-w-sm outline-none">
+                <Dialog
+                    role="alertdialog"
+                    aria-describedby="audio-error-modal-desc"
+                    className="w-full rounded-[2rem] border-2 border-app-strong bg-app-surface-solid p-6 text-center text-app-primary shadow-2xl outline-none"
+                >
+                    <div
+                        className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-app-accent/10 text-app-accent-strong"
+                        aria-hidden="true"
+                    >
+                        <WarningIcon size={30} weight="bold" />
+                    </div>
+
+                    <Heading slot="title" className="font-heading text-xl font-bold text-app-primary">
+                        Audio no disponible
+                    </Heading>
+
+                    <p id="audio-error-modal-desc" className="mt-3 text-sm font-medium leading-relaxed text-app-secondary">
+                        {audioError}
+                    </p>
+
+                    <AppButton
+                        autoFocus
+                        onClick={() => setAudioError(null)}
+                        className="mt-6 w-full bg-bluvi-purple py-3.5 text-sm text-white shadow-md"
+                    >
+                        Entendido
+                    </AppButton>
+                </Dialog>
+            </Modal>
+        </ModalOverlay>
+    );
 
     if (isRecording) {
         return (
@@ -253,20 +299,28 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
 
     if (!recordedAudio && !justStoppedRecording) {
         return (
-            <button
-                type="button"
-                onClick={startRecording}
-                disabled={disabled}
-                aria-label="Grabar mensaje de audio"
-                className="p-2.5 rounded-xl transition-all flex-shrink-0 bg-app-surface-soft hover:bg-app-surface-strong text-app-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent cursor-pointer"
-            >
-                <MicrophoneIcon size={20} weight="bold" aria-hidden="true" />
-            </button>
+            <>
+                <TooltipTrigger delay={300}>
+                    <button
+                        type="button"
+                        onClick={() => void startRecording()}
+                        disabled={disabled}
+                        aria-label="Grabar mensaje de audio"
+                        className="p-2.5 rounded-xl transition-all flex-shrink-0 bg-app-surface-soft hover:bg-app-surface-strong text-app-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <MicrophoneIcon size={20} weight="bold" aria-hidden="true" />
+                    </button>
+                    <Tooltip>Grabar audio</Tooltip>
+                </TooltipTrigger>
+                {audioErrorModal}
+            </>
         );
     }
 
     return (
-        <div className={`flex items-center gap-2 bg-app-surface-soft rounded-2xl px-4 py-3 ${fullWidth ? 'flex-1' : 'flex-shrink-0'}`}>
+        <>
+        <div className={`flex items-center gap-2 ${fullWidth ? 'w-full flex-1' : 'flex-shrink-0'}`}>
+        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-2xl border-2 border-app-soft bg-app-surface px-3 py-2 shadow-sm">
             <audio
                 ref={audioElementRef}
                 onEnded={handleAudioEnded}
@@ -295,7 +349,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                 {isPlaying ? formatTime(currentTime) : formatTime(duration)}
             </span>
 
-            <div className="flex-1 h-1 bg-app-surface rounded-full overflow-hidden">
+            <div className="h-1 min-w-20 flex-1 rounded-full bg-app-surface-soft overflow-hidden">
                 <div
                     className="h-full bg-app-accent transition-all"
                     style={{
@@ -304,6 +358,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                     aria-hidden="true"
                 />
             </div>
+        </div>
 
             <button
                 type="button"
@@ -325,6 +380,8 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                 <TrashIcon size={18} weight="bold" className="text-app-secondary" aria-hidden="true" />
             </button>
         </div>
+        {audioErrorModal}
+        </>
     );
 };
 

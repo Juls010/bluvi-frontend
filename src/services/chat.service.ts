@@ -70,6 +70,14 @@ interface TranscriptionResponse {
     message?: string;
 }
 
+const fileToBase64 = (file: Blob): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+        reader.onerror = () => reject(reader.error || new Error('No se pudo leer el archivo'));
+        reader.readAsDataURL(file);
+    });
+
 export const getConversations = async (): Promise<ConversationItem[]> => {
     const response = await api.get<ConversationsResponse>('/chats');
     return response.data.conversations || [];
@@ -145,11 +153,13 @@ export const getMyReports = async (): Promise<any[]> => {
 
 export const sendAudioMessage = async (
     userId: number,
-    audioUrl: string,
+    audioBlob: Blob,
     durationSeconds: number,
 ): Promise<ChatMessage> => {
+    const audioBase64 = await fileToBase64(audioBlob);
     const response = await api.post<SendMessageResponse>(`/chats/${userId}/messages/audio`, {
-        audioUrl,
+        audioBase64,
+        contentType: audioBlob.type || 'audio/webm',
         durationSeconds,
     });
     return response.data.message;
@@ -157,10 +167,12 @@ export const sendAudioMessage = async (
 
 export const sendImageMessage = async (
     userId: number,
-    imageUrl: string,
+    imageFile: File,
 ): Promise<ChatMessage> => {
+    const imageBase64 = await fileToBase64(imageFile);
     const response = await api.post<SendMessageResponse>(`/chats/${userId}/messages/image`, {
-        imageUrl,
+        imageBase64,
+        contentType: imageFile.type,
     });
     return response.data.message;
 };

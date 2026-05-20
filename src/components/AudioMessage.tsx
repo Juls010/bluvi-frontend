@@ -160,8 +160,8 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
 
     return (
         <div
-            className={`w-full min-w-[280px] flex flex-col gap-2 px-4 py-3 rounded-2xl backdrop-blur-sm transition-all duration-300 ${
-                isOwn ? 'shadow-md' : 'bg-gradient-to-br from-app-surface to-app-surface/80 shadow-md border border-app-surface-soft/50'
+            className={`w-full min-w-[280px] flex flex-col gap-2 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                isOwn ? 'shadow-md backdrop-blur-sm' : 'bg-app-surface shadow-sm border-2 border-app-strong'
             }`}
             style={isOwn ? { background: 'var(--app-own-message-bg)' } : undefined}
             role="region"

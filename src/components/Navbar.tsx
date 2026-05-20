@@ -62,7 +62,7 @@ const NavItem: React.FC<{
         flex items-center transition-all duration-200
         ${mobile
             ? 'flex-1 gap-1.5 py-2.5'
-            : `gap-2 px-3.5 py-2 rounded-xl ${active ? 'bg-app-surface-soft ring-1 ring-app-strong' : 'hover:bg-app-surface-soft'}`
+            : `gap-2 px-3.5 py-2 rounded-xl ${active ? 'bg-app-surface-soft ring-2 ring-[var(--navbar-active-ring)]' : 'hover:bg-app-surface-soft'}`
         }
         `}
     >
@@ -72,8 +72,8 @@ const NavItem: React.FC<{
             transition-all duration-300
             ${mobile ? 'w-6 h-6' : 'w-4.5 h-4.5'}
             ${active
-            ? 'text-app-accent scale-110 [&>svg]:stroke-[2.3px]'
-            : 'text-app-secondary/60 [&>svg]:stroke-[1.8px] hover:text-app-secondary'
+            ? 'text-app-accent scale-110 [&>svg]:stroke-[2.5px]'
+            : 'text-app-secondary/60 [&>svg]:stroke-[2.05px] hover:text-app-secondary'
             }
         `}
         >
@@ -89,7 +89,7 @@ const NavItem: React.FC<{
 
         <span
         className={`
-            font-semibold leading-none tracking-wide transition-all duration-300 overflow-hidden
+            font-bold leading-none tracking-wide transition-all duration-300 overflow-hidden
             ${mobile
             ? `text-[10px] mt-0.5 ${active ? 'text-app-accent opacity-100' : 'text-app-muted opacity-60'}`
             : `text-[13px] ${active ? 'text-app-accent opacity-100' : 'text-app-secondary opacity-70'}`
@@ -342,7 +342,7 @@ export const Navbar: React.FC = () => {
 
     return (
         <>
-        <nav className="hidden md:grid w-full max-w-5xl mx-auto px-4 py-2.5 bg-app-surface-nav backdrop-blur-xl rounded-3xl items-center shadow-lg border border-app-soft grid-cols-[minmax(7rem,1fr)_auto_minmax(7rem,1fr)] gap-3">
+        <nav className="hidden md:grid w-full max-w-5xl mx-auto px-4 py-2.5 bg-app-surface-nav backdrop-blur-xl rounded-3xl items-center shadow-lg border-2 border-app-soft grid-cols-[minmax(7rem,1fr)_auto_minmax(7rem,1fr)] gap-3">
             <div className="justify-self-start">
                 <Link to="/app/home" className="inline-flex items-center gap-2.5 hover:opacity-85 transition-opacity" aria-label="Ir a inicio">
                     <img src={logo} alt="bluvi" className="w-8 h-8 object-contain" />
@@ -433,7 +433,7 @@ export const Navbar: React.FC = () => {
         </nav>
 
         <nav
-            className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex px-4 bg-app-surface-nav backdrop-blur-xl border-t border-app-soft shadow-[0_-4px_24px_rgba(0,0,0,0.07)] pointer-events-auto"
+            className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex px-4 bg-app-surface-nav backdrop-blur-xl border-t-2 border-app-soft shadow-[0_-4px_24px_rgba(0,0,0,0.07)] pointer-events-auto"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
             {NAV_ITEMS.map(({ path, key, label, icon, isActive }) => (

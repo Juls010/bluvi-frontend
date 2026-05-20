@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
-    NEURODIVERGENCE_LABELS,
-    COMMUNICATION_LABELS } from '../../types/User.types';
-import { XIcon
-} from '@phosphor-icons/react';
+  COMMUNICATION_LABELS,
+  NEURODIVERGENCE_LABELS,
+} from '../../types/User.types';
+import { BrainIcon } from '@phosphor-icons/react';
+import { ProfileEditModalShell } from './ProfileEditModalShell';
 
 interface EditMindModalProps {
   currentFeatures: number[];
@@ -18,79 +19,86 @@ export const EditMindModal: React.FC<EditMindModalProps> = ({
   currentCommunication,
   onSave,
   onClose,
-  isSaving
+  isSaving,
 }) => {
   const [features, setFeatures] = useState<number[]>(currentFeatures);
   const [communication, setCommunication] = useState<number[]>(currentCommunication);
 
   const toggle = (id: number, type: 'f' | 'c') => {
     if (type === 'f') {
-      setFeatures(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
-    } else {
-      setCommunication(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+      setFeatures((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+      return;
     }
+
+    setCommunication((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
 
+  const optionClass = (isSelected: boolean) => `rounded-xl px-3 py-1.5 text-sm transition-all ${
+    isSelected
+      ? 'bg-bluvi-purple text-white shadow-md'
+      : 'border border-app-soft bg-app-surface-soft text-app-secondary shadow-sm hover:bg-app-surface-strong hover:text-app-primary'
+  }`;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 dark:bg-black/60 backdrop-blur-sm">
-      <div className="bg-app-surface-strong text-app-primary w-full max-w-md rounded-3xl shadow-2xl flex flex-col max-h-[90vh] border border-app-soft">
-        
-        <div className="p-6 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-app-primary">Mente y Comunicación</h2>
-          <button onClick={onClose} className="p-2 rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary">
-            <XIcon size={18} weight="bold" aria-hidden="true" />
+    <ProfileEditModalShell
+      title="Mente y Comunicacion"
+      icon={<BrainIcon className="h-5 w-5 text-app-accent" weight="bold" aria-hidden="true" />}
+      onClose={onClose}
+      isSaving={isSaving}
+      footer={(
+        <>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSaving}
+            className="flex-1 rounded-full border border-app-soft bg-app-surface px-6 py-2.5 font-semibold text-app-secondary shadow-sm transition-all hover:-translate-y-0.5 hover:bg-app-surface-strong hover:text-app-primary active:translate-y-0 disabled:opacity-50"
+          >
+            Cancelar
           </button>
-        </div>
-
-        <div className="p-6 overflow-y-auto space-y-6 bg-app-surface-strong">
-          {/* SECCIÓN RASGOS */}
-          <div>
-            <h3 className="text-sm font-bold text-app-secondary uppercase mb-3">Mis Rasgos</h3>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(NEURODIVERGENCE_LABELS).map(([id, label]) => (
-                <button
-                  key={id}
-                  onClick={() => toggle(Number(id), 'f')}
-                  className={`px-3 py-1.5 rounded-xl text-sm transition-all ${
-                    features.includes(Number(id)) ? 'bg-bluvi-purple text-white' : 'bg-app-surface text-app-secondary hover:bg-app-surface-soft border border-app-soft'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* SECCIÓN COMUNICACIÓN */}
-          <div>
-            <h3 className="text-sm font-bold text-app-secondary uppercase mb-3">Cómo me comunico</h3>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(COMMUNICATION_LABELS).map(([id, label]) => (
-                <button
-                  key={id}
-                  onClick={() => toggle(Number(id), 'c')}
-                  className={`px-3 py-1.5 rounded-xl text-sm transition-all ${
-                    communication.includes(Number(id)) ? 'bg-bluvi-purple text-white' : 'bg-app-surface text-app-secondary hover:bg-app-surface-soft border border-app-soft'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="p-6 bg-app-surface-soft flex gap-3">
-          <button onClick={onClose} className="flex-1 py-2.5 px-6 rounded-full border border-app-soft border-b-2 border-black/10 bg-app-surface text-app-secondary font-semibold shadow-sm hover:text-app-primary hover:bg-app-surface-strong hover:-translate-y-0.5 active:translate-y-0 transition-all">Cancelar</button>
-          <button 
+          <button
+            type="button"
             onClick={() => onSave(features, communication)}
             disabled={isSaving}
-            className="flex-1 py-2.5 px-6 bg-bluvi-purple text-white rounded-full font-semibold shadow-md shadow-bluvi-purple/20 border-b-2 border-black/10 disabled:opacity-50 hover:brightness-105 hover:-translate-y-0.5 active:scale-95 transition-all"
+            className="flex-1 rounded-full border-b-2 border-black/10 bg-bluvi-purple px-6 py-2.5 font-semibold text-white shadow-md shadow-bluvi-purple/20 transition-all hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-50"
           >
             {isSaving ? 'Guardando...' : 'Guardar'}
           </button>
+        </>
+      )}
+    >
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm font-bold uppercase text-app-secondary">Mis Rasgos</h3>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(NEURODIVERGENCE_LABELS).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => toggle(Number(id), 'f')}
+                className={optionClass(features.includes(Number(id)))}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-bold uppercase text-app-secondary">Como me comunico</h3>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(COMMUNICATION_LABELS).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => toggle(Number(id), 'c')}
+                className={optionClass(communication.includes(Number(id)))}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </ProfileEditModalShell>
   );
 };

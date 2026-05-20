@@ -10,7 +10,7 @@ import { ShieldSlashIcon,
     ArrowLeftIcon,
     PaperPlaneRightIcon,
     CheckIcon,
-    DotsThreeVerticalIcon,
+    DotsThreeOutlineVerticalIcon,
     ImageIcon,
     SmileyIcon,
     WarningIcon,
@@ -34,8 +34,6 @@ import {
     type ChatMessage,
 } from '../services/chat.service';
 import { connectRealtime, disconnectRealtime } from '../services/realtime.service';
-import { uploadAudioMessage } from '../services/audioService';
-import { uploadChatImage } from '../services/chatImageService';
 import { AudioRecorder } from '../components/AudioRecorder';
 import { AudioMessage } from '../components/AudioMessage';
 import { DropdownMenu, DropdownMenuButton, DropdownMenuSeparator } from '../components/DropdownMenu';
@@ -69,6 +67,7 @@ const typingPickerId = 'chat-emoji-picker';
 const chatHistoryInstructionsId = 'chat-history-keyboard-instructions';
 const deleteMessageTitleId = 'delete-message-dialog-title';
 const deleteMessageDescriptionId = 'delete-message-dialog-description';
+const maxChatMessageLength = 1000;
 
 const formatHour = (date: string) =>
     new Date(date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
@@ -170,6 +169,10 @@ export const ChatDetail: React.FC = () => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 setLightboxImageUrl(null);
+            }
+
+            if ((event.ctrlKey || event.metaKey) && ['s', 'S', 'p', 'P'].includes(event.key)) {
+                event.preventDefault();
             }
         };
 
@@ -333,13 +336,7 @@ export const ChatDetail: React.FC = () => {
 
         try {
             setSending(true);
-            const { url: audioUrl, error } = await uploadAudioMessage(audioBlob, currentUserId);
-
-            if (error || !audioUrl) {
-                throw new Error(error || 'No se pudo subir el audio');
-            }
-
-            const sent = await sendAudioMessage(chatUserId, audioUrl, duration);
+            const sent = await sendAudioMessage(chatUserId, audioBlob, duration);
             setMessages((prev) => [...prev, { ...sent, is_read: false, is_delivered: false }]);
         } catch (error) {
             console.error('Error enviando audio:', error);
@@ -363,13 +360,7 @@ export const ChatDetail: React.FC = () => {
 
         try {
             setSending(true);
-            const { url: imageUrl, error } = await uploadChatImage(file, currentUserId);
-
-            if (error || !imageUrl) {
-                throw new Error(error || 'No se pudo subir la imagen');
-            }
-
-            const sent = await sendImageMessage(chatUserId, imageUrl);
+            const sent = await sendImageMessage(chatUserId, file);
             setMessages((prev) => [...prev, { ...sent, is_read: false, is_delivered: false }]);
         } catch (error) {
             console.error('Error enviando imagen:', error);
@@ -938,7 +929,7 @@ export const ChatDetail: React.FC = () => {
     return (
         <div className="flex h-[100svh]">
             <div className="flex flex-col w-full min-w-0 bg-app-surface/45">
-                <header className="flex-none z-50 bg-app-surface-strong/90 backdrop-blur-xl border-b border-app-soft px-4 md:px-5 py-3 flex items-center justify-between shadow-sm">
+                <header className="flex-none z-50 bg-app-surface-soft border-b-2 border-app-soft px-4 md:px-5 py-3 flex items-center justify-between shadow-sm">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate(-1)}
@@ -999,12 +990,14 @@ export const ChatDetail: React.FC = () => {
                                     openOptionsMenu();
                                 }
                             }}
-                            className="w-10 h-10 flex items-center justify-center rounded-full text-app-muted hover:bg-app-surface-soft hover:text-app-primary transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
+                            className="inline-flex h-10 items-center justify-center gap-1 rounded-full px-2.5 text-sm font-bold text-app-muted hover:text-app-primary transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
                             aria-label="Más opciones del chat"
                             aria-expanded={showOptions}
                             aria-haspopup="menu"
                         >
-                            <DotsThreeVerticalIcon size={20} weight="bold" />
+                            <span>Más</span>
+                            <DotsThreeOutlineVerticalIcon size={24} aria-hidden="true" />
+                            
                         </button>
 
                         {showOptions && (
@@ -1134,36 +1127,38 @@ export const ChatDetail: React.FC = () => {
                                 )}
 
                                 {isMe && !isDeleted && (
-                                    <button
-                                        type="button"
-                                        onClick={() => openDeleteMessageModal(msg)}
-                                        tabIndex={isKeyboardActive ? 0 : -1}
-                                        className={`mb-6 inline-flex h-8 w-8 translate-x-2 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-500 hover:shadow-md focus-visible:translate-x-0 focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-500/15 group-hover/message:translate-x-0 group-hover/message:scale-100 group-hover/message:opacity-100 ${isKeyboardActive ? 'translate-x-0 scale-100 opacity-100' : ''}`}
-                                        title="Eliminar para todos"
-                                        aria-label="Eliminar mensaje para todos"
-                                    >
-                                        <TrashIcon size={14} weight="bold" />
-                                    </button>
+                                    <TooltipTrigger delay={300}>
+                                        <AriaButton
+                                            onPress={() => openDeleteMessageModal(msg)}
+                                            excludeFromTabOrder={!isKeyboardActive}
+                                            className={`mb-6 inline-flex h-8 w-8 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-500 hover:shadow-md focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-500/15 group-hover/message:scale-100 group-hover/message:opacity-100 ${isKeyboardActive ? 'scale-100 opacity-100' : ''}`}
+                                            aria-label="Eliminar mensaje para todos"
+                                        >
+                                            <TrashIcon size={14} weight="bold" />
+                                        </AriaButton>
+                                        <Tooltip>Eliminar para todos</Tooltip>
+                                    </TooltipTrigger>
                                 )}
 
                                 {!isMe && !isDeleted && (
-                                    <button
-                                        type="button"
-                                        onClick={() => handleReportMessage(msg)}
-                                        tabIndex={isKeyboardActive ? 0 : -1}
-                                        className={`mb-6 inline-flex h-8 w-8 -translate-x-2 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-500 hover:shadow-md focus-visible:translate-x-0 focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-500/15 group-hover/message:translate-x-0 group-hover/message:scale-100 group-hover/message:opacity-100 ${isKeyboardActive ? 'translate-x-0 scale-100 opacity-100' : ''}`}
-                                        title="Reportar mensaje"
-                                        aria-label="Reportar mensaje"
-                                    >
-                                        <FlagIcon size={14} weight="bold" />
-                                    </button>
+                                    <TooltipTrigger delay={300}>
+                                        <AriaButton
+                                            onPress={() => handleReportMessage(msg)}
+                                            excludeFromTabOrder={!isKeyboardActive}
+                                            className={`mb-6 inline-flex h-8 w-8 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-500 hover:shadow-md focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-500/15 group-hover/message:scale-100 group-hover/message:opacity-100 ${isKeyboardActive ? 'scale-100 opacity-100' : ''}`}
+                                            aria-label="Reportar mensaje"
+                                        >
+                                            <FlagIcon size={14} weight="bold" />
+                                        </AriaButton>
+                                        <Tooltip>Reportar mensaje</Tooltip>
+                                    </TooltipTrigger>
                                 )}
 
-                                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} ${msg.message_type === 'audio' && !isDeleted ? 'max-w-[min(75%,24rem)] w-full' : 'max-w-[75%]'}`}>
+                                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} ${msg.message_type === 'audio' && !isDeleted ? (isMe ? 'max-w-[24rem]' : 'w-full max-w-[24rem]') : 'max-w-[75%]'}`}>
                                     {isDeleted ? (
                                         <div
                                             className={`
-                                                border border-app-soft bg-app-surface/80 px-4 py-2.5 text-[14px] italic leading-6 text-app-muted shadow-sm
+                                                border-2 border-app-strong bg-app-surface/80 px-4 py-2.5 text-[14px] italic leading-6 text-app-muted shadow-sm
                                             ${isMe
                                                     ? 'rounded-[22px] rounded-br-md'
                                                     : 'rounded-[22px] rounded-bl-md'
@@ -1189,20 +1184,24 @@ export const ChatDetail: React.FC = () => {
                                             type="button"
                                             onClick={() => setLightboxImageUrl(msg.image_url || null)}
                                             onContextMenu={(event) => event.preventDefault()}
+                                            onAuxClick={(event) => event.preventDefault()}
+                                            onDragStart={(event) => event.preventDefault()}
                                             tabIndex={isKeyboardActive ? 0 : -1}
-                                            className={`group/image relative block overflow-hidden rounded-[22px] shadow-sm border transition-all hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20 ${
+                                            className={`group/image relative block select-none overflow-hidden rounded-[22px] shadow-sm border transition-all hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20 ${
                                                 isMe
                                                     ? 'rounded-br-md border-app-accent/20'
-                                                    : 'rounded-bl-md border-app-soft bg-app-surface'
+                                                    : 'rounded-bl-md border-2 border-app-strong bg-app-surface'
                                             }`}
                                             aria-label="Ver imagen en grande"
                                         >
                                             <img
                                                 src={msg.image_url}
                                                 alt="Imagen enviada en el chat"
-                                                className="max-h-72 w-full max-w-xs object-cover transition-transform duration-500 group-hover/image:scale-[1.03]"
+                                                className="max-h-72 w-full max-w-xs select-none object-cover transition-transform duration-500 group-hover/image:scale-[1.03]"
                                                 loading="lazy"
                                                 draggable={false}
+                                                onContextMenu={(event) => event.preventDefault()}
+                                                onDragStart={(event) => event.preventDefault()}
                                             />
                                             <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors group-hover/image:bg-black/10" />
                                             <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-black/35 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.16em] text-white/75 backdrop-blur-sm">
@@ -1215,7 +1214,7 @@ export const ChatDetail: React.FC = () => {
                                                 px-4 py-2.5 text-[15px] leading-7 shadow-sm
                                             ${isMe
                                                     ? 'text-app-on-accent rounded-[22px] rounded-br-md shadow-md'
-                                                    : 'bg-app-surface text-app-primary rounded-[22px] rounded-bl-md border border-app-soft'
+                                                    : 'bg-app-surface text-app-primary rounded-[22px] rounded-bl-md border-2 border-app-strong'
                                             }
                                         `}
                                             style={{
@@ -1272,7 +1271,7 @@ export const ChatDetail: React.FC = () => {
                     <div ref={messagesEndRef} />
                 </main>
 
-                <div className="flex-none px-3 md:px-4 pb-4 pt-3 bg-app-surface-strong/90 backdrop-blur-xl border-t border-app-soft">
+                <div className="flex-none px-3 md:px-4 pb-4 pt-3 bg-app-surface-soft border-t-2 border-app-soft">
                     {(isBlockedByMe || isBlockedByOther) ? (
                         <div className="flex items-center justify-center py-4 px-6 bg-app-surface rounded-2xl border border-app-soft border-dashed">
                             <p className="text-sm text-app-muted font-medium italic">
@@ -1280,18 +1279,21 @@ export const ChatDetail: React.FC = () => {
                             </p>
                         </div>
                     ) : (
-                        <div className="flex items-end gap-2 rounded-[24px] bg-app-surface/70 border border-app-soft px-2.5 py-2 shadow-sm">
+                        <div className="flex items-end gap-2 rounded-[24px] bg-app-surface-strong border-2 border-app-soft px-2.5 py-2 shadow-md">
                             {!isRecordingAudio && (
                                 <div className="flex gap-1 pb-1">
                                     {isCurrentUserFaceVerified ? (
-                                        <button
-                                            onClick={() => imageInputRef.current?.click()}
-                                            disabled={sending}
-                                            className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                                            aria-label="Adjuntar imagen"
-                                        >
-                                            <ImageIcon size={20} weight="bold" />
-                                        </button>
+                                        <TooltipTrigger delay={300}>
+                                            <AriaButton
+                                                onPress={() => imageInputRef.current?.click()}
+                                                isDisabled={sending}
+                                                className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                                aria-label="Adjuntar imagen"
+                                            >
+                                                <ImageIcon size={20} weight="bold" />
+                                            </AriaButton>
+                                            <Tooltip>Adjuntar imagen</Tooltip>
+                                        </TooltipTrigger>
                                     ) : (
                                         <TooltipTrigger delay={300}>
                                             <AriaButton
@@ -1311,16 +1313,19 @@ export const ChatDetail: React.FC = () => {
                                         onChange={(event) => void handleImageSelected(event)}
                                     />
                                     <div className="relative">
-                                        <button
-                                            ref={emojiButtonRef}
-                                            onClick={() => setShowPicker((o) => !o)}
-                                            aria-controls={typingPickerId}
-                                            aria-expanded={showPicker}
-                                            aria-label="Abrir selector de emoji"
-                                            className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
-                                        >
-                                            <SmileyIcon size={20} weight="bold" />
-                                        </button>
+                                        <TooltipTrigger delay={300}>
+                                            <AriaButton
+                                                ref={emojiButtonRef}
+                                                onPress={() => setShowPicker((o) => !o)}
+                                                aria-controls={typingPickerId}
+                                                aria-expanded={showPicker}
+                                                aria-label="Abrir selector de emoji"
+                                                className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
+                                            >
+                                                <SmileyIcon size={20} weight="bold" />
+                                            </AriaButton>
+                                            <Tooltip>Abrir emojis</Tooltip>
+                                        </TooltipTrigger>
 
                                         {showPicker && (
                                             <div ref={emojiPickerRef} id={typingPickerId} className="absolute bottom-12 left-0 z-50">
@@ -1341,6 +1346,7 @@ export const ChatDetail: React.FC = () => {
                                         rows={1}
                                         placeholder="Escribe un mensaje..."
                                         aria-label="Escribe un mensaje"
+                                        maxLength={maxChatMessageLength}
                                         value={inputText}
                                         ref={inputRef}
                                         onChange={(event) => {
@@ -1403,15 +1409,19 @@ export const ChatDetail: React.FC = () => {
 
                     <div className="relative w-full h-full flex items-center justify-center p-4 md:p-12 overflow-hidden">
                         <div
-                            className="relative max-w-full max-h-full"
+                            className="relative max-w-full max-h-full select-none"
                             onClick={(event) => event.stopPropagation()}
                             onContextMenu={(event) => event.preventDefault()}
+                            onAuxClick={(event) => event.preventDefault()}
+                            onDragStart={(event) => event.preventDefault()}
                         >
                             <img
                                 src={lightboxImageUrl}
                                 alt=""
-                                className="max-w-full max-h-[calc(100svh-7rem)] object-contain rounded-xl shadow-2xl animate-zoom-in"
+                                className="max-w-full max-h-[calc(100svh-7rem)] select-none object-contain rounded-xl shadow-2xl animate-zoom-in"
                                 draggable={false}
+                                onContextMenu={(event) => event.preventDefault()}
+                                onDragStart={(event) => event.preventDefault()}
                             />
                             <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-4">
                                 <span className="rounded-full bg-black/35 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-white/75 backdrop-blur-sm">

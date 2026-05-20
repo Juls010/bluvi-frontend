@@ -26,7 +26,7 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(functi
             ref={ref}
             role="menu"
             aria-label={label}
-            className={`absolute right-0 mt-2 w-56 rounded-2xl border border-app-soft bg-app-surface-strong/95 backdrop-blur-md shadow-xl p-1.5 origin-top-right motion-reduce:animate-none ${isClosing ? 'animate-navbar-menu-out' : 'animate-navbar-menu'} ${className}`}
+            className={`absolute right-0 mt-2 w-56 rounded-2xl border border-app-soft bg-app-surface-solid shadow-xl p-1.5 origin-top-right motion-reduce:animate-none ${isClosing ? 'animate-navbar-menu-out' : 'animate-navbar-menu'} ${className}`}
             {...props}
         >
             {children}

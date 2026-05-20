@@ -219,7 +219,7 @@ export const Home: React.FC = () => {
                     </section>
 
                     <section
-                        className="relative rounded-[28px] border border-app-soft bg-app-surface-soft backdrop-blur-md overflow-hidden group"
+                        className="home-events-carousel relative rounded-[28px] border border-app-soft bg-app-surface-soft backdrop-blur-md overflow-hidden group"
                         aria-roledescription="carrusel"
                         aria-label="Novedades de Bluvi"
                     >
