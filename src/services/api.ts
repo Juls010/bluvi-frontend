@@ -1,8 +1,8 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
-const API_URL = '/api';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '');
+const API_URL = BACKEND_URL ? `${BACKEND_URL}/api` : '/api';
 
-// 1. Definimos la interfaz para las promesas en cola
 interface FailedRequest {
     resolve: (token: string) => void;
     reject: (error: any) => void;
@@ -13,9 +13,8 @@ const api = axios.create({
     withCredentials: true 
 });
 
-// 2. Tipamos la cola correctamente
 let isRefreshing = false;
-let failedQueue: FailedRequest[] = []; // <--- Aquí estaba el fallo
+let failedQueue: FailedRequest[] = []; 
 
 const isAuthEndpoint = (url?: string) => {
     if (!url) return false;
@@ -51,7 +50,7 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
     (response) => response,
-    async (error: AxiosError) => { // Tipamos el error de Axios
+    async (error: AxiosError) => { 
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         if (
@@ -83,7 +82,6 @@ api.interceptors.response.use(
 
                 if (accessToken) {
                     localStorage.setItem('accessToken', accessToken);
-                    // Actualizamos el header por defecto para futuras peticiones
                     api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
                     
                     if (originalRequest.headers) {

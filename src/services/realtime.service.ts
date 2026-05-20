@@ -1,13 +1,14 @@
 import { io, type Socket } from 'socket.io-client';
 
 let socket: Socket | null = null;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '') || 'http://localhost:3000';
 
 export const connectRealtime = () => {
     const token = localStorage.getItem('accessToken');
     if (!token) return null;
 
     if (!socket) {
-        socket = io('http://localhost:3000', {
+        socket = io(BACKEND_URL, {
             transports: ['websocket', 'polling'],
             withCredentials: true,
             autoConnect: false,
