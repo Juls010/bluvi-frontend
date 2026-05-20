@@ -13,6 +13,7 @@ import LegalLayout from '../layouts/LegalLayout';
 import { RegisterProvider } from '../context/RegisterContext';
 
 import PrivateRoute from '../components/PrivateRoute';
+import AdminRoute from '../components/AdminRoute';
 
 const WelcomePage = lazy(() => import('../pages/Welcome/Welcome').then((m) => ({ default: m.Welcome })));
 const LoginPage = lazy(() => import('../pages/Auth/Login').then((m) => ({ default: m.Login })));
@@ -37,6 +38,7 @@ const ChatDetailPage = lazy(() => import('../pages/ChatDetails').then((m) => ({ 
 const ChatUserProfilePage = lazy(() => import('../pages/ChatUserProfile').then((m) => ({ default: m.ChatUserProfile })));
 const UserProfilePage = lazy(() => import('../pages/App/UserProfile').then((m) => ({ default: m.UserProfile })));
 const SettingsPage = lazy(() => import('../pages/Settings/Settings').then((m) => ({ default: m.Settings })));
+const AdminDashboardPage = lazy(() => import('../pages/Admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard })));
 
 const ReportsAndBlocksPage = lazy(() => import('../pages/Settings/ReportsAndBlocks').then(m => ({ default: m.ReportsAndBlocks })));
 const PrivacyPolicy = lazy(() => import('../pages/Privacy/PrivacyPolicy'));
@@ -180,6 +182,16 @@ export const router = createBrowserRouter([
                 element: withSuspense(<ChatDetailPage />)
             }
         ]
+    },
+    {
+        path: "/admin",
+        element: (
+            <PrivateThemeScope>
+                <AdminRoute>
+                    {withSuspense(<AdminDashboardPage />)}
+                </AdminRoute>
+            </PrivateThemeScope>
+        )
     },
     {
         path: "*",

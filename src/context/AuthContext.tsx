@@ -7,6 +7,7 @@ interface AuthUser {
     email: string;
     first_name?: string;
     firstName?: string;
+    role?: 'user' | 'admin' | string;
     id_gender?: number | null;
     is_face_verified?: boolean;
 }

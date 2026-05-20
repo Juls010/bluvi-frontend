@@ -96,6 +96,7 @@ export const ChatDetail: React.FC = () => {
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [showReportModal, setShowReportModal] = useState(false);
     const [messageToDelete, setMessageToDelete] = useState<ChatMessage | null>(null);
+    const [messageToReport, setMessageToReport] = useState<ChatMessage | null>(null);
     const [reportReason, setReportReason] = useState('');
     const [reportSuccess, setReportSuccess] = useState(false);
     const [isBlocking, setIsBlocking] = useState(false);
@@ -640,6 +641,18 @@ export const ChatDetail: React.FC = () => {
 
     const handleReportUser = () => {
         setShowOptions(false);
+        setMessageToReport(null);
+        setShowReportModal(true);
+    };
+
+    const handleReportMessage = (message: ChatMessage) => {
+        if (message.sender_id === currentUserId || message.deleted_at) {
+            return;
+        }
+
+        setMessageToReport(message);
+        setReportReason('');
+        setReportSuccess(false);
         setShowReportModal(true);
     };
 
@@ -648,7 +661,7 @@ export const ChatDetail: React.FC = () => {
         
         setIsReporting(true);
         try {
-            await reportUser(chatUserId, reportReason);
+            await reportUser(chatUserId, reportReason, messageToReport?.id_message);
             setReportSuccess(true);
             setReportReason('');
         } catch (error) {
@@ -1133,6 +1146,19 @@ export const ChatDetail: React.FC = () => {
                                     </button>
                                 )}
 
+                                {!isMe && !isDeleted && (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleReportMessage(msg)}
+                                        tabIndex={isKeyboardActive ? 0 : -1}
+                                        className={`mb-6 inline-flex h-8 w-8 -translate-x-2 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-500 hover:shadow-md focus-visible:translate-x-0 focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-500/15 group-hover/message:translate-x-0 group-hover/message:scale-100 group-hover/message:opacity-100 ${isKeyboardActive ? 'translate-x-0 scale-100 opacity-100' : ''}`}
+                                        title="Reportar mensaje"
+                                        aria-label="Reportar mensaje"
+                                    >
+                                        <FlagIcon size={14} weight="bold" />
+                                    </button>
+                                )}
+
                                 <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} ${msg.message_type === 'audio' && !isDeleted ? 'max-w-[min(75%,24rem)] w-full' : 'max-w-[75%]'}`}>
                                     {isDeleted ? (
                                         <div
@@ -1500,7 +1526,12 @@ export const ChatDetail: React.FC = () => {
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
                     <div 
                         className="absolute inset-0 bg-black/60 backdrop-blur-md"
-                        onClick={() => !isReporting && setShowReportModal(false)}
+                        onClick={() => {
+                            if (!isReporting) {
+                                setShowReportModal(false);
+                                setMessageToReport(null);
+                            }
+                        }}
                     />
                     <div className="relative bg-app-surface w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-app-soft">
                         {reportSuccess ? (
@@ -1516,6 +1547,7 @@ export const ChatDetail: React.FC = () => {
                                     onClick={() => {
                                         setShowReportModal(false);
                                         setReportSuccess(false);
+                                        setMessageToReport(null);
                                     }}
                                     className="w-full py-4 text-sm font-bold text-app-on-accent bg-app-accent hover:opacity-90 rounded-2xl transition-all active:scale-95 shadow-lg shadow-app-accent/20"
                                     style={{ backgroundColor: 'var(--app-accent)' }}
@@ -1528,10 +1560,26 @@ export const ChatDetail: React.FC = () => {
                                 <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-orange-500 shadow-sm border border-orange-100">
                                     <FlagIcon size={32} weight="bold" />
                                 </div>
-                                <h3 className="text-xl font-bold text-app-primary mb-3 text-center">Denunciar a {counterpart?.first_name}</h3>
+                                <h3 className="text-xl font-bold text-app-primary mb-3 text-center">
+                                    {messageToReport ? 'Denunciar mensaje' : `Denunciar a ${counterpart?.first_name}`}
+                                </h3>
                                 <p className="text-sm text-app-muted leading-relaxed mb-6 text-center">
-                                    Cuéntanos qué ha pasado. Revisaremos tu reporte para mantener la comunidad segura.
+                                    {messageToReport
+                                        ? 'Revisaremos este mensaje concreto para mantener la comunidad segura.'
+                                        : 'Cuéntanos qué ha pasado. Revisaremos tu reporte para mantener la comunidad segura.'}
                                 </p>
+                                {messageToReport && (
+                                    <div className="mb-5 rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-3 text-sm text-app-primary">
+                                        <p className="mb-1 text-xs font-black uppercase text-app-muted">Mensaje reportado</p>
+                                        <p className="font-medium">
+                                            {messageToReport.message_type === 'image'
+                                                ? 'Imagen enviada en el chat'
+                                                : messageToReport.message_type === 'audio'
+                                                    ? 'Nota de audio enviada en el chat'
+                                                    : messageToReport.content}
+                                        </p>
+                                    </div>
+                                )}
                                 
                                 <div className="space-y-4 mb-8">
                                     <textarea
@@ -1558,6 +1606,7 @@ export const ChatDetail: React.FC = () => {
                                         onClick={() => {
                                             setShowReportModal(false);
                                             setReportSuccess(false);
+                                            setMessageToReport(null);
                                         }}
                                         disabled={isReporting}
                                         className="px-6 py-3.5 text-sm font-semibold text-app-primary bg-app-surface-soft hover:bg-app-soft rounded-2xl transition-all active:scale-95 disabled:opacity-50"

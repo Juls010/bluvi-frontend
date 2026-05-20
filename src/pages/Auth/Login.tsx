@@ -50,7 +50,15 @@ export const Login: React.FC = () => {
                     } else {
                         localStorage.removeItem('rememberedEmail');
                     }
-                    navigate('/app/home');
+                    let targetPath = '/app/home';
+                    try {
+                        const storedUser = localStorage.getItem('user');
+                        const loggedUser = storedUser ? JSON.parse(storedUser) : null;
+                        targetPath = loggedUser?.role === 'admin' ? '/admin' : '/app/home';
+                    } catch {
+                        targetPath = '/app/home';
+                    }
+                    navigate(targetPath);
                 } else {
                     setError('Credenciales incorrectas');
                 }

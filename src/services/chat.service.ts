@@ -134,8 +134,8 @@ export const getBlockedUsers = async (): Promise<any[]> => {
     return response.data.blockedUsers;
 };
 
-export const reportUser = async (userId: number, reason?: string): Promise<void> => {
-    await api.post(`/chats/${userId}/report`, { reason });
+export const reportUser = async (userId: number, reason?: string, messageId?: number): Promise<void> => {
+    await api.post(`/chats/${userId}/report`, { reason, messageId });
 };
 
 export const getMyReports = async (): Promise<any[]> => {
