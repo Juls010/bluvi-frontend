@@ -67,10 +67,10 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
                 <div
                     key={request.id_match}
                     role="listitem"
-                    className="flex-none w-[280px] sm:w-[320px] snap-center bg-app-surface/80 dark:bg-app-surface-strong/60 border border-white dark:border-white/10 rounded-2xl p-6 hover:shadow-md transition-all duration-300"
+                    className="flex-none w-[280px] sm:w-[320px] snap-center rounded-3xl border border-app-soft bg-app-surface p-5 shadow-sm"
                 >
-                    <Link to={`/app/user/${request.id_user}`} className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/50 rounded-2xl">
-                        <div className="relative overflow-hidden rounded-2xl flex-shrink-0 shadow-inner">
+                    <Link to={`/app/user/${request.id_user}`} className="group flex items-center gap-3 rounded-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/70 focus-visible:ring-offset-2">
+                        <div className="relative flex-shrink-0 overflow-hidden rounded-2xl border border-app-soft shadow-sm">
                             <img
                                 src={request.main_photo || 'https://via.placeholder.com/120'}
                                 alt={request.first_name}
@@ -90,28 +90,27 @@ const MatchesSection: React.FC<{ requests: IncomingMatchRequest[]; onRespond: (i
                                     />
                                 )}
                             </div>
-                            <p className="text-[11px] text-app-muted mt-0.5 font-medium uppercase tracking-wider">{formatTime(request.created_at)}</p>
+                            <p className="mt-0.5 text-[11px] font-bold uppercase tracking-wider text-app-muted">{formatTime(request.created_at)}</p>
                         </div>
                     </Link>
 
-                    <div
-                        style={{ backgroundColor: 'white' }}
-                        className="mt-4 p-4 dark:!bg-app-pill/80 rounded-2xl italic text-[13.5px] text-app-secondary line-clamp-2 min-h-[3.5rem] flex items-center justify-center text-center leading-relaxed shadow-md border border-app-soft/30"
-                    >
+                    <div className="mt-4 flex min-h-[4rem] items-center justify-center rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-3 text-center text-[13.5px] font-medium italic leading-relaxed text-app-secondary">
                         "{request.message}"
                     </div>
 
-                    <div className="flex gap-2.5 mt-5">
+                    <div className="mt-5 flex gap-2.5">
                         <button
                             onClick={() => onRespond(request.id_match, 'reject')}
-                            className="flex-1 rounded-2xl border border-app-soft bg-app-surface-soft/80 py-2.5 text-xs font-bold text-app-secondary hover:bg-app-surface-strong transition-all active:scale-95"
+                            className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl border border-app-soft bg-app-surface-soft py-2.5 text-xs font-bold text-app-secondary transition-all duration-300 ease-out hover:border-red-300 hover:bg-red-400 hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200/50"
                         >
+                            <XIcon size={14} weight="bold" />
                             Pasar
                         </button>
                         <button
                             onClick={() => onRespond(request.id_match, 'accept')}
-                            className="flex-1 rounded-2xl bg-app-accent py-2.5 text-xs font-bold text-white hover:opacity-90 shadow-lg shadow-app-accent/20 transition-all active:scale-95"
+                            className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-app-accent py-2.5 text-xs font-bold text-app-on-accent shadow-md transition-all duration-300 ease-out hover:bg-emerald-500 hover:text-white hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/50"
                         >
+                            <CheckIcon size={14} weight="bold" />
                             Aceptar
                         </button>
                     </div>
@@ -149,7 +148,7 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                 if (!drawer) return;
                 const focusable = Array.from(
                     drawer.querySelectorAll<HTMLElement>(
-                        'button:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])'
+                        'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
                     )
                 ).filter(el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length));
                 
@@ -198,7 +197,8 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="contacts-drawer-title"
-                className={`relative z-10 w-full md:w-[420px] bg-app-surface-solid text-app-primary shadow-2xl overflow-hidden border-r border-app-soft flex flex-col ${isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'} rounded-t-[40px] md:rounded-t-none md:rounded-r-[48px]`}
+                className={`relative z-10 w-full md:w-[420px] text-app-primary shadow-2xl overflow-hidden border-r border-app-soft flex flex-col ${isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'} rounded-t-[40px] md:rounded-t-none md:rounded-r-[48px]`}
+                style={{ backgroundColor: 'var(--app-surface-card)' }}
             >
                 <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-1 bg-app-accent/70" aria-hidden="true" />
                 <div className="flex justify-center pt-3 pb-1 md:hidden" aria-hidden="true">
@@ -214,7 +214,7 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                         <button 
                             onClick={handleClose}
                             aria-label="Cerrar contactos"
-                            className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 mt-0.5 md:mt-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
+                            className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 mt-0.5 md:mt-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                             style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                         >
                             <XIcon size={20} weight="bold" />
@@ -229,12 +229,12 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             aria-label="Buscar contactos"
-                            className="w-full bg-app-surface-soft border-2 border-app-strong rounded-2xl py-3.5 pl-12 pr-4 text-sm text-app-primary placeholder:text-app-muted shadow-sm focus:outline-none focus:ring-4 focus:ring-app-focus/35 focus:border-app-focus transition-all font-medium"
+                            className="w-full bg-app-surface-soft border-2 border-app-strong rounded-2xl py-3.5 pl-12 pr-4 text-sm text-app-primary placeholder:text-app-muted shadow-sm focus:outline-none focus:ring-4 focus:ring-app-focus/60 focus:border-app-focus transition-all font-medium"
                         />
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto overscroll-contain px-6 md:px-8 pb-10 space-y-3 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto overscroll-contain px-6 md:px-8 pt-2 pb-10 space-y-3 custom-scrollbar">
                     {filteredMatches.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 text-center px-8">
                             <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--filter-icon-bg)' }}>
@@ -252,7 +252,7 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                                     to={`/app/user/${match.id_user}`}
                                     onClick={handleClose}
                                     aria-label={`Ver perfil de ${match.first_name} ${match.last_name}`}
-                                    className="flex items-center gap-4 p-4 rounded-[22px] bg-app-surface-soft border border-app-soft transition-all duration-300 shadow-sm hover:shadow-md hover:bg-app-surface group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
+                                    className="flex items-center gap-4 p-4 rounded-[22px] bg-app-surface-soft border border-app-soft transition-all duration-300 shadow-sm hover:shadow-md hover:bg-app-surface group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/70 focus-visible:ring-offset-2"
                                 >
                                     <div className="relative flex-shrink-0">
                                         <div className="w-14 h-14 rounded-[18px] overflow-hidden shadow-inner group-hover:scale-105 transition-transform duration-500">
@@ -328,7 +328,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                             Chat con ${conversation.first_name} ${conversation.last_name}.
                             Último mensaje: ${conversation.last_message_type === 'audio' ? 'Nota de audio' : conversation.last_message_type === 'image' ? 'Foto' : conversation.last_message || 'Sin mensajes todavía'}
                         `}
-                        className="flex items-center gap-4 p-4 rounded-[22px] bg-app-surface/80 dark:bg-app-surface-strong/60 border border-white dark:border-white/10 transition-all duration-300 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
+                        className="flex items-center gap-4 p-4 rounded-[22px] bg-app-surface/80 dark:bg-app-surface-strong/60 border border-white dark:border-white/10 transition-all duration-300 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/70 focus-visible:ring-offset-2"
                     >
                         <div className="relative flex-shrink-0">
                             <div className="relative overflow-hidden rounded-[18px] shadow-inner">
@@ -394,11 +394,10 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                                     )
                                 )}
                                 <span className="truncate">
-                                    {typingUsers[conversation.id_user] ? (
+                                    {typingUsers[conversation.id_user] && conversation.atmosphere !== 'bajo' ? (
                                         <span className="text-app-accent font-bold animate-pulse">escribiendo…</span>
                                     ) : conversation.last_message_type === 'audio' ? (
                                         <span className="flex items-center gap-1 text-app-secondary">
-                                            <span>🎙️</span>
                                             <span>Nota de audio</span>
                                         </span>
                                     ) : conversation.last_message_type === 'image' ? (
@@ -577,7 +576,7 @@ export const Messages: React.FC = () => {
                 <TooltipTrigger delay={600}>
                     <AriaButton 
                         onPress={() => setShowContacts(true)}
-                        className="w-12 h-12 rounded-2xl bg-app-surface border-2 border-app-strong shadow-sm flex items-center justify-center text-app-accent hover:bg-app-surface-soft hover:border-app-strong hover:text-app-primary transition-all duration-500 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
+                        className="w-12 h-12 rounded-2xl bg-app-surface border-2 border-app-strong shadow-sm flex items-center justify-center text-app-accent hover:bg-app-surface-soft hover:border-app-strong hover:text-app-primary transition-all duration-500 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                         style={{ transitionProperty: 'all' }}
                         aria-label="Ver contactos"
                     >

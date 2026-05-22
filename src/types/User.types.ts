@@ -6,6 +6,7 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
+  atmosphere?: 'normal' | 'tranquilo' | 'bajo';
   birth_date: string;       
   city: string;
   description: string;
@@ -14,6 +15,8 @@ export interface User {
   photos: (string | null)[];
   main_photo?: string;
   is_face_verified?: boolean;
+  match_status?: 'pending' | 'accepted';
+  can_chat?: boolean;
   interests: string[];      
   features: string[]; 
   communication_style: string[]; 

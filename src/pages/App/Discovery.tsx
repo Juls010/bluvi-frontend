@@ -123,6 +123,23 @@ export const Discovery: React.FC = () => {
     }
   };
 
+  const handleResetDiscovery = async () => {
+    const resetFilters: FilterData = {
+      selectedTags: [],
+      city: '',
+      distance: 0,
+      communicationStyle: [],
+      sensoryPref: [],
+    };
+
+    setCurrentIndex(0);
+    setIncludeSeenProfiles(true);
+    setActiveFilters(resetFilters);
+
+    await queryClient.invalidateQueries({ queryKey: ['explore-users'] });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleSendIcebreaker = async (message: string) => {
     if (!currentUser || sendingLike) return;
 
@@ -172,7 +189,12 @@ export const Discovery: React.FC = () => {
       <div className="w-full max-w-2xl mx-auto px-6 pt-20 text-center">
         <h2 className="text-3xl font-heading font-bold text-app-primary mb-4">No hay perfiles nuevos ahora</h2>
         <p className="text-app-secondary mb-6">Puedes volver a explorar perfiles ya vistos mientras llegan personas nuevas.</p>
-        <Button onClick={() => { setIncludeSeenProfiles(true); setCurrentIndex(0); }}>Mostrar perfiles vistos</Button>
+        <Button
+          onClick={() => { setIncludeSeenProfiles(true); setCurrentIndex(0); }}
+          className="discovery-empty-action border border-bluvi-purple !bg-bluvi-purple !text-white px-6 py-2 rounded-full text-sm font-semibold !shadow-none hover:brightness-105"
+        >
+          Mostrar perfiles vistos
+        </Button>
       </div>
     );
   }
@@ -190,10 +212,7 @@ export const Discovery: React.FC = () => {
     return (
       <div className="w-full max-w-2xl mx-auto px-6 pt-20 text-center">
         <h2 className="text-3xl font-heading font-bold text-app-primary mb-4">¡No hay más perfiles!</h2>
-        <Button onClick={() => {
-          setIncludeSeenProfiles(false);
-          setActiveFilters({ selectedTags: [], city: '', distance: 0, communicationStyle: [], sensoryPref: [] });
-        }}>Reiniciar filtros</Button>
+        <Button onClick={() => { void handleResetDiscovery(); }}>Reiniciar filtros</Button>
       </div>
     );
   }

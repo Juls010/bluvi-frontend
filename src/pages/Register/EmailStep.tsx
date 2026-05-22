@@ -114,6 +114,7 @@ export const EmailStep: React.FC = () => {
                                 type="password"
                                 value={formData.password}
                                 onChange={handlePasswordChange}
+                                passwordToggleClassName="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-bluvi-purple/75 transition-all duration-300 hover:bg-bluvi-purple/5 hover:text-bluvi-purple active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/30"
                                 state={
                                     formData.password.length === 0 ? 'default' : 
                                     isPasswordValid ? 'success' : 'default'

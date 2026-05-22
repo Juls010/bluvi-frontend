@@ -1,8 +1,9 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { getConversations } from '../services/chat.service';
 import { getIncomingMatchRequests } from '../services/match.service';
 import { connectRealtime, disconnectRealtime } from '../services/realtime.service';
+import bluviFaviconUrl from '../assets/icon.svg';
 
 interface NotificationContextType {
     unreadMessages: number;
@@ -27,6 +28,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const [unreadMessages, setUnreadMessages] = useState(0);
     const [pendingMatchRequests, setPendingMatchRequests] = useState(0);
     const [pendingRequestNames, setPendingRequestNames] = useState<string[]>([]);
+    const notificationFaviconRef = useRef<string | null>(null);
 
     const refreshNotifications = useCallback(async () => {
         if (!isAuthenticated || !token) {
@@ -79,13 +81,75 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         };
     }, [isAuthenticated, token, refreshNotifications]);
 
+    const hasNotifications = unreadMessages > 0 || pendingMatchRequests > 0;
+
+    useEffect(() => {
+        const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+        if (!favicon) return;
+
+        if (!hasNotifications) {
+            notificationFaviconRef.current = null;
+            favicon.href = bluviFaviconUrl;
+            favicon.setAttribute('type', 'image/svg+xml');
+            return;
+        }
+
+        if (notificationFaviconRef.current) {
+            favicon.href = notificationFaviconRef.current;
+            favicon.setAttribute('type', 'image/png');
+            return;
+        }
+
+        let cancelled = false;
+        const size = 64;
+        const image = new Image();
+
+        image.onload = () => {
+            if (cancelled) return;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+
+            const context = canvas.getContext('2d');
+            if (!context) return;
+
+            context.clearRect(0, 0, size, size);
+            context.drawImage(image, 0, 0, size, size);
+
+            context.fillStyle = '#22c55e';
+            context.beginPath();
+            context.arc(50, 14, 11, 0, Math.PI * 2);
+            context.fill();
+            context.strokeStyle = '#ffffff';
+            context.lineWidth = 4;
+            context.stroke();
+
+            const notificationFavicon = canvas.toDataURL('image/png');
+            notificationFaviconRef.current = notificationFavicon;
+            favicon.href = notificationFavicon;
+            favicon.setAttribute('type', 'image/png');
+        };
+
+        image.onerror = () => {
+            favicon.href = bluviFaviconUrl;
+            favicon.setAttribute('type', 'image/svg+xml');
+        };
+
+        image.src = bluviFaviconUrl;
+
+        return () => {
+            cancelled = true;
+        };
+    }, [hasNotifications]);
+
     const value = useMemo(() => ({
         unreadMessages,
         pendingMatchRequests,
         pendingRequestNames,
-        hasNotifications: unreadMessages > 0 || pendingMatchRequests > 0,
+        hasNotifications,
         refreshNotifications,
-    }), [unreadMessages, pendingMatchRequests, pendingRequestNames, refreshNotifications]);
+    }), [unreadMessages, pendingMatchRequests, pendingRequestNames, hasNotifications, refreshNotifications]);
 
     return (
         <NotificationContext.Provider value={value}>

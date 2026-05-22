@@ -40,8 +40,8 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
 
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') setShowLightbox(false);
-            if (e.key === 'ArrowRightIcon') setCurrentIndex(prev => (prev < photos.length - 1 ? prev + 1 : 0));
-            if (e.key === 'ArrowLeftIcon') setCurrentIndex(prev => (prev > 0 ? prev - 1 : photos.length - 1));
+            if (e.key === 'ArrowRight') setCurrentIndex(prev => (prev < photos.length - 1 ? prev + 1 : 0));
+            if (e.key === 'ArrowLeft') setCurrentIndex(prev => (prev > 0 ? prev - 1 : photos.length - 1));
         };
 
         window.addEventListener('keydown', handleKeyDown);
@@ -50,11 +50,11 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
 
     // Keyboard support for main carousel (when focused)
     const handleKeyDownMain = (e: React.KeyboardEvent) => {
-        if (e.key === 'ArrowRightIcon') {
+        if (e.key === 'ArrowRight') {
             e.preventDefault();
             if (currentIndex < photos.length - 1) scrollTo(currentIndex + 1);
         }
-        if (e.key === 'ArrowLeftIcon') {
+        if (e.key === 'ArrowLeft') {
             e.preventDefault();
             if (currentIndex > 0) scrollTo(currentIndex - 1);
         }
@@ -70,7 +70,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
 
     return (
         <div 
-            className="relative w-full h-full max-h-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden shadow-lg bg-app-surface-soft border border-app-soft group focus-visible:ring-4 focus-visible:ring-app-accent/20 outline-none"
+            className="relative w-full h-full max-h-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden shadow-lg bg-app-surface-soft border border-app-soft group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
             role="region"
             aria-roledescription="carrusel"
             aria-label={`Galería de fotos de ${firstName}`}
@@ -98,7 +98,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                         />
                         <button 
                             onClick={(e) => { e.stopPropagation(); setShowLightbox(true); }}
-                            className="absolute top-4 right-4 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 transition-all active:scale-90"
+                            className="absolute top-4 right-4 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                             aria-label="Ver en grande"
                         >
                             <ArrowsOutIcon size={16} weight="bold" />
@@ -114,9 +114,10 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                             <button
                                 key={index}
                                 onClick={() => scrollTo(index)} 
+                                onFocus={() => scrollTo(index)}
                                 aria-label={`Ir a la foto ${index + 1}`}
                                 aria-current={currentIndex === index}
-                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 shadow-sm
+                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2
                                     ${currentIndex === index ? 'bg-white w-5' : 'bg-white/40'}`}
                             />
                         ))}
@@ -126,7 +127,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                         {currentIndex > 0 && (
                             <button 
                                 onClick={() => scrollTo(currentIndex - 1)} 
-                                className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
+                                className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                                 aria-label="Foto anterior"
                             >
                                 <CaretLeftIcon size={20} weight="bold" />
@@ -137,7 +138,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                         {currentIndex < photos.length - 1 && (
                             <button 
                                 onClick={() => scrollTo(currentIndex + 1)} 
-                                className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
+                                className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                                 aria-label="Siguiente foto"
                             >
                                 <CaretRightIcon size={20} weight="bold" />

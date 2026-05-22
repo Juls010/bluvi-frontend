@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-    useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon,
+    ArrowLeftIcon,
     ChatTextIcon,
     FlagIcon,
     ProhibitIcon,
@@ -12,32 +12,52 @@ import { getBlockedUsers, unblockUser, getMyReports } from '../../services/chat.
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { toastQueue } from '../../components/Toast/GlobalToast';
 
+type BlockedUser = {
+    id: number;
+    first_name: string;
+    last_name: string;
+    main_photo?: string | null;
+    blocked_at: string;
+};
+
+type UserReport = {
+    id: number;
+    first_name: string;
+    last_name: string;
+    reason: string;
+    created_at: string;
+};
+
+const formatDate = (value: string) => new Date(value).toLocaleDateString('es-ES');
+
 export const ReportsAndBlocks: React.FC = () => {
     const navigate = useNavigate();
-    const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
-    const [reports, setReports] = useState<any[]>([]);
+    const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([]);
+    const [reports, setReports] = useState<UserReport[]>([]);
     const [loading, setLoading] = useState(true);
     const [unblockId, setUnblockId] = useState<number | null>(null);
 
-    useEffect(() => {
-        loadData();
-    }, []);
+    const userToUnblock = blockedUsers.find(user => user.id === unblockId);
 
-    const loadData = async () => {
-        try {
-            setLoading(true);
-            const [blockedData, reportsData] = await Promise.all([
-                getBlockedUsers(),
-                getMyReports()
-            ]);
-            setBlockedUsers(blockedData);
-            setReports(reportsData);
-        } catch (error) {
-            console.error('Error loading reports and blocks:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                setLoading(true);
+                const [blockedData, reportsData] = await Promise.all([
+                    getBlockedUsers(),
+                    getMyReports()
+                ]);
+                setBlockedUsers(blockedData);
+                setReports(reportsData);
+            } catch (error) {
+                console.error('Error loading reports and blocks:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        void loadData();
+    }, []);
 
     const handleUnblockClick = (userId: number) => {
         setUnblockId(userId);
@@ -45,10 +65,10 @@ export const ReportsAndBlocks: React.FC = () => {
 
     const confirmUnblock = async () => {
         if (unblockId === null) return;
-        
+
         try {
             await unblockUser(unblockId);
-            setBlockedUsers(prev => prev.filter(u => u.id !== unblockId));
+            setBlockedUsers(prev => prev.filter(user => user.id !== unblockId));
             toastQueue.add(
                 { message: 'Usuario desbloqueado correctamente', type: 'success' },
                 { timeout: 4000 }
@@ -70,7 +90,7 @@ export const ReportsAndBlocks: React.FC = () => {
                 <button
                     type="button"
                     onClick={() => navigate('/app/settings')}
-                    className="inline-flex items-center gap-2 rounded-xl bg-app-surface-soft px-3 py-2 text-sm font-semibold text-app-primary hover:bg-app-surface-strong focus-visible:outline-none"
+                    className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-sm font-semibold text-app-primary transition-colors hover:border-app-strong hover:bg-app-surface-strong focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/70 focus-visible:ring-offset-2"
                 >
                     <ArrowLeftIcon size={16} weight="bold" aria-hidden="true" />
                     Volver a ajustes
@@ -84,109 +104,109 @@ export const ReportsAndBlocks: React.FC = () => {
                 </p>
             </header>
 
-            {/* Bloqueos */}
-            <section className="bg-app-surface backdrop-blur-md rounded-[24px] border border-app-soft shadow-sm px-5 md:px-6 py-5">
-                <h2 className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary flex items-center gap-2 mb-4">
+            <section className="bg-app-surface backdrop-blur-md rounded-[24px] border border-app-soft shadow-sm px-5 md:px-6 py-5" aria-labelledby="blocked-users-heading">
+                <h2 id="blocked-users-heading" className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary flex items-center gap-2 mb-4">
                     <span className="text-app-accent-strong" aria-hidden="true">
                         <ProhibitIcon size={14} weight="bold" />
                     </span>
                     Bloqueos
                 </h2>
-                
+
                 {loading ? (
-                    <div className="flex items-center gap-3 py-4 text-app-muted text-sm italic">
-                        <SpinnerGapIcon size={16} weight="bold" className="animate-spin" />
+                    <div className="flex items-center gap-3 py-4 text-app-muted text-sm italic" role="status" aria-live="polite">
+                        <SpinnerGapIcon size={16} weight="bold" className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
                         Cargando bloqueos...
                     </div>
                 ) : blockedUsers.length > 0 ? (
-                    <div className="space-y-3">
+                    <ul className="space-y-3" aria-label="Personas bloqueadas">
                         {blockedUsers.map(user => (
-                            <div key={user.id} className="flex items-center justify-between p-3 bg-app-surface-soft/50 rounded-2xl border border-app-soft hover:border-app-accent-soft transition-colors group">
-                                <div className="flex items-center gap-3">
-                                    <img 
-                                        src={user.main_photo || 'https://via.placeholder.com/120'} 
-                                        alt="" 
+                            <li key={user.id} className="flex items-center justify-between gap-3 p-3 bg-app-surface-soft/50 rounded-2xl border border-app-soft hover:border-app-accent transition-colors">
+                                <div className="flex min-w-0 items-center gap-3">
+                                    <img
+                                        src={user.main_photo || 'https://via.placeholder.com/120'}
+                                        alt={`Foto de ${user.first_name} ${user.last_name}`}
                                         className="w-10 h-10 rounded-full object-cover ring-2 ring-app-soft"
                                     />
-                                    <div>
-                                        <p className="text-sm font-bold text-app-primary">{user.first_name} {user.last_name}</p>
-                                        <p className="text-[10px] text-app-muted">Bloqueado el {new Date(user.blocked_at).toLocaleDateString()}</p>
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-bold text-app-primary truncate">{user.first_name} {user.last_name}</p>
+                                        <p className="text-[10px] text-app-muted">Bloqueado el {formatDate(user.blocked_at)}</p>
                                     </div>
                                 </div>
                                 <button
+                                    type="button"
                                     onClick={() => handleUnblockClick(user.id)}
-                                    className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-app-accent-strong hover:bg-app-accent-soft/20 rounded-xl transition-all active:scale-95"
+                                    aria-label={`Desbloquear a ${user.first_name} ${user.last_name}`}
+                                    className="flex shrink-0 items-center gap-2 px-4 py-2 text-xs font-bold text-app-accent-strong hover:bg-app-surface-strong rounded-xl border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/70 focus-visible:ring-offset-2"
                                 >
-                                    <UserMinusIcon size={14} weight="bold" />
+                                    <UserMinusIcon size={14} weight="bold" aria-hidden="true" />
                                     Desbloquear
                                 </button>
-                            </div>
+                            </li>
                         ))}
-                    </div>
+                    </ul>
                 ) : (
                     <div className="py-6 text-center">
-                        <div className="w-12 h-12 bg-app-surface-soft rounded-2xl flex items-center justify-center mx-auto mb-3 text-app-muted border border-app-soft">
-                           <UserMinusIcon size={24} weight="bold" />
+                        <div className="w-12 h-12 bg-app-surface-soft rounded-2xl flex items-center justify-center mx-auto mb-3 text-app-muted border border-app-soft" aria-hidden="true">
+                            <UserMinusIcon size={24} weight="bold" />
                         </div>
                         <p className="text-sm text-app-muted">No tienes personas bloqueadas.</p>
                     </div>
                 )}
             </section>
 
-            {/* Reportes */}
-            <section className="bg-app-surface backdrop-blur-md rounded-[24px] border border-app-soft shadow-sm px-5 md:px-6 py-5">
-                <h2 className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary flex items-center gap-2 mb-4">
+            <section className="bg-app-surface backdrop-blur-md rounded-[24px] border border-app-soft shadow-sm px-5 md:px-6 py-5" aria-labelledby="reports-heading">
+                <h2 id="reports-heading" className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-app-secondary flex items-center gap-2 mb-4">
                     <span className="text-app-accent-strong" aria-hidden="true">
                         <FlagIcon size={14} weight="bold" />
                     </span>
                     Reportes enviados
                 </h2>
-                
+
                 {loading ? (
-                    <div className="flex items-center gap-3 py-4 text-app-muted text-sm italic">
-                        <SpinnerGapIcon size={16} weight="bold" className="animate-spin" />
+                    <div className="flex items-center gap-3 py-4 text-app-muted text-sm italic" role="status" aria-live="polite">
+                        <SpinnerGapIcon size={16} weight="bold" className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
                         Cargando reportes...
                     </div>
                 ) : reports.length > 0 ? (
-                    <div className="space-y-3">
+                    <ul className="space-y-3" aria-label="Reportes enviados">
                         {reports.map(report => (
-                            <div key={report.id} className="p-4 bg-app-surface-soft/50 rounded-2xl border border-app-soft hover:border-orange-200 transition-colors">
-                                <div className="flex items-start justify-between mb-2">
+                            <li key={report.id} className="p-4 bg-app-surface-soft/50 rounded-2xl border border-app-soft hover:border-orange-200 transition-colors">
+                                <div className="flex items-start justify-between gap-3 mb-2">
                                     <div>
                                         <p className="text-sm font-bold text-app-primary">
                                             Denuncia a {report.first_name} {report.last_name}
                                         </p>
                                         <p className="text-[10px] text-app-muted">
-                                            Enviado el {new Date(report.created_at).toLocaleDateString()}
+                                            Enviado el {formatDate(report.created_at)}
                                         </p>
                                     </div>
-                                    <span className="px-2 py-1 bg-orange-100 text-orange-600 text-[10px] font-bold rounded-lg uppercase tracking-wider">
+                                    <span className="shrink-0 px-2 py-1 bg-orange-100 text-orange-600 text-[10px] font-bold rounded-lg uppercase tracking-wider">
                                         En revisión
                                     </span>
                                 </div>
                                 <div className="flex items-start gap-2 mt-3 p-3 bg-app-surface rounded-xl border border-app-soft">
-                                    <ChatTextIcon size={14} weight="bold" className="text-app-muted mt-0.5" />
+                                    <ChatTextIcon size={14} weight="bold" className="text-app-muted mt-0.5" aria-hidden="true" />
                                     <p className="text-xs text-app-secondary italic leading-relaxed">
                                         "{report.reason}"
                                     </p>
                                 </div>
-                            </div>
+                            </li>
                         ))}
-                    </div>
+                    </ul>
                 ) : (
                     <div className="py-6 text-center">
-                        <div className="w-12 h-12 bg-app-surface-soft rounded-2xl flex items-center justify-center mx-auto mb-3 text-app-muted border border-app-soft">
-                           <FlagIcon size={24} weight="bold" />
+                        <div className="w-12 h-12 bg-app-surface-soft rounded-2xl flex items-center justify-center mx-auto mb-3 text-app-muted border border-app-soft" aria-hidden="true">
+                            <FlagIcon size={24} weight="bold" />
                         </div>
                         <p className="text-sm text-app-muted">Aún no has enviado reportes.</p>
                     </div>
                 )}
             </section>
 
-            <ConfirmModal 
+            <ConfirmModal
                 isOpen={unblockId !== null}
                 title="Desbloquear usuario"
-                description="¿Estás seguro de que deseas desbloquear a este usuario? Volveréis a poder interactuar si coincidís."
+                description={`¿Estás seguro de que deseas desbloquear${userToUnblock ? ` a ${userToUnblock.first_name} ${userToUnblock.last_name}` : ' a este usuario'}? Volveréis a poder interactuar si coincidís.`}
                 confirmText="Desbloquear"
                 onConfirm={confirmUnblock}
                 onCancel={() => setUnblockId(null)}

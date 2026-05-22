@@ -66,7 +66,7 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
       style={style}
       {...attributes} 
       {...listeners} 
-      className={`relative aspect-square group animate-fade-in cursor-grab active:cursor-grabbing rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-app-accent ${
+      className={`relative aspect-square group animate-fade-in cursor-grab active:cursor-grabbing rounded-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 ${
         index === 0 ? 'ring-4 ring-bluvi-purple rounded-2xl' : ''
       }`}
     >
@@ -88,7 +88,7 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
                 e.stopPropagation(); 
                 onMakePrimary(url);
               }}
-              className="bg-white text-bluvi-purple p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform pointer-events-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-accent"
+              className="bg-white text-bluvi-purple p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform pointer-events-auto focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
               title="Poner como primera"
               aria-label="Poner como primera foto"
             >
@@ -101,7 +101,7 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
               e.stopPropagation(); 
               onRemove();
             }}
-            className="bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform pointer-events-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-accent"
+            className="bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform pointer-events-auto focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
             title="Eliminar foto"
             aria-label={`Eliminar foto ${index + 1}`}
           >
@@ -253,7 +253,7 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
             onClick={onClose}
             disabled={isSaving}
             aria-label="Cerrar editor de fotos"
-            className="p-2 hover:bg-app-surface-soft rounded-full transition-colors disabled:opacity-50"
+            className="p-2 hover:bg-app-surface-soft rounded-full transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
           >
             <XIcon className="w-5 h-5 text-app-muted" weight="bold" aria-hidden="true" />
           </button>
@@ -262,7 +262,7 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
           <div className="p-6 flex-1 overflow-y-auto space-y-4 bg-app-surface-strong">
             <div className="grid grid-cols-3 gap-3">
-              <button onClick={() => fileInputRef.current?.click()} className="aspect-square rounded-2xl border-2 border-dashed border-app-strong flex flex-col items-center justify-center gap-2 hover:border-bluvi-purple hover:bg-app-surface-soft transition-all group bg-app-surface">
+              <button onClick={() => fileInputRef.current?.click()} className="aspect-square rounded-2xl border-2 border-dashed border-app-strong flex flex-col items-center justify-center gap-2 hover:border-bluvi-purple hover:bg-app-surface-soft transition-all group bg-app-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2">
                 <PlusIcon className="w-6 h-6 text-app-muted group-hover:text-bluvi-purple" weight="bold" />
                 <span className="text-[10px] font-bold text-app-secondary group-hover:text-bluvi-purple uppercase">Añadir</span>
               </button>
@@ -293,13 +293,13 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
         </DndContext>
 
         <div className="p-6 bg-app-surface-soft flex gap-3">
-          <button onClick={onClose} className="flex-1 py-2.5 px-6 rounded-full border border-app-soft border-b-2 border-black/10 bg-app-surface text-app-secondary font-semibold shadow-sm hover:text-app-primary hover:bg-app-surface-strong hover:-translate-y-0.5 active:translate-y-0 transition-all">
+          <button onClick={onClose} className="flex-1 py-2.5 px-6 rounded-full border border-app-soft border-b-2 border-black/10 bg-app-surface text-app-secondary font-semibold shadow-sm hover:text-app-primary hover:bg-app-surface-strong hover:-translate-y-0.5 active:translate-y-0 transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2">
             Cancelar
           </button>
           <button 
             onClick={() => onSave(photos)}
             disabled={isSaving || photos.length === 0}
-            className="flex-1 py-2.5 px-6 bg-bluvi-purple text-white rounded-full font-semibold shadow-md shadow-bluvi-purple/20 border-b-2 border-black/10 disabled:opacity-50 transition-all hover:brightness-105 hover:-translate-y-0.5 active:scale-95"
+            className="flex-1 py-2.5 px-6 bg-bluvi-purple text-white rounded-full font-semibold shadow-md shadow-bluvi-purple/20 border-b-2 border-black/10 disabled:opacity-50 transition-all hover:brightness-105 hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
           >
             {isSaving ? 'Subiendo...' : 'Guardar Cambios'}
           </button>

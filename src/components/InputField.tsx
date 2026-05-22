@@ -21,6 +21,7 @@ interface InputFieldProps {
     name?: string;
     autoComplete?: string;
     disabled?: boolean;
+    passwordToggleClassName?: string;
 }
 
     export const InputField: React.FC<InputFieldProps> = ({
@@ -42,7 +43,8 @@ interface InputFieldProps {
         maxLength,
         name,
         autoComplete,
-        disabled
+        disabled,
+        passwordToggleClassName
     }) => {
     
     const [showPassword, setShowPassword] = useState(false);
@@ -106,7 +108,7 @@ interface InputFieldProps {
             <button
                 type="button" 
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-bluvi-purple/60 hover:text-bluvi-purple transition-all duration-300 p-1.5 rounded-full hover:bg-bluvi-purple/5 active:scale-90 dark:text-white/65 dark:hover:text-white dark:hover:bg-white/10"
+                className={passwordToggleClassName ?? "absolute right-4 top-1/2 -translate-y-1/2 text-bluvi-purple/60 hover:text-bluvi-purple transition-all duration-300 p-1.5 rounded-full hover:bg-bluvi-purple/5 active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bluvi-purple/30 dark:text-white/65 dark:hover:text-white dark:hover:bg-white/10"}
                 aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} 
             >
                 {showPassword ? (

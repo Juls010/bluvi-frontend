@@ -269,7 +269,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
               ref={closeButtonRef}
               onClick={handleClose}
               aria-label="Cerrar panel de filtros"
-              className="w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20 mt-0.5 md:mt-1"
+              className="w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 mt-0.5 md:mt-1"
               style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
             >
               <XIcon size={20} weight="bold" aria-hidden="true" />
@@ -308,7 +308,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                     onKeyDown={handleCityKeyDown}
                     onFocus={() => { if (!isConfirmed) setShowSuggestions(true); }}
                     placeholder="Escribe una ciudad..."
-                    className="w-full px-5 py-4 pl-12 pr-10 rounded-2xl border text-app-primary text-sm placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-app-accent/10 focus:border-app-accent transition-all font-medium"
+                    className="w-full px-5 py-4 pl-12 pr-10 rounded-2xl border text-app-primary text-sm placeholder:text-app-muted focus:outline-none focus:ring-4 focus:ring-app-focus/80 focus:ring-offset-2 focus:border-app-focus transition-all font-medium"
                     style={{ backgroundColor: 'var(--filter-unselected-bg)', borderColor: 'var(--filter-unselected-border)', borderWidth: '1px' }}
                     role="combobox"
                     aria-autocomplete="list"
@@ -321,7 +321,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                     <button
                       type="button"
                       onMouseDown={(e) => { e.preventDefault(); handleCityClear(); }}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-app-muted hover:text-app-primary transition-colors p-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent/40"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-app-muted hover:text-app-primary transition-colors p-0.5 rounded focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                       aria-label="Limpiar ciudad"
                     >
                       <XIcon size={16} weight="bold" aria-hidden="true" />
@@ -376,7 +376,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                   </label>
                   <span
                     className="text-xs font-bold px-3 py-1 rounded-full transition-colors"
-                    style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-slider-thumb)' }}
+                    style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                     aria-hidden="true"
                   >
                     {distance === 0 ? 'Toda España' : `${distance} km`}
@@ -550,7 +550,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 borderColor: 'var(--filter-unselected-border)'
               }}
             >
-              Reset
+              Limpiar
             </button>
 
             <button
@@ -565,7 +565,6 @@ export const DiscoveryFilter: React.FC<Props> = ({
               style={{
                 backgroundColor: 'var(--app-accent)',
                 color: 'var(--app-on-accent)',
-                boxShadow: '0 20px 25px -5px color-mix(in srgb, var(--app-accent) 20%, transparent)'
               }}
             >
               Aplicar filtros
@@ -584,7 +583,7 @@ export const FilterTriggerButton: React.FC<{
   <button
     onClick={onClick}
     aria-label={activeCount > 0 ? `Abrir filtros, ${activeCount} activos` : 'Abrir filtros'}
-    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all shadow-sm hover:shadow bg-app-filter-trigger backdrop-blur-sm text-app-primary border-app-soft hover:bg-app-filter-trigger-hover hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
+    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all shadow-sm hover:shadow bg-app-filter-trigger backdrop-blur-sm text-app-primary border-app-soft hover:bg-app-filter-trigger-hover hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
   >
     <FunnelIcon size={16} weight="bold" className="text-app-filter-icon shrink-0" aria-hidden="true" />
     <span>Filtros</span>

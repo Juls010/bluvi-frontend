@@ -19,6 +19,7 @@ import {
 } from '../types/User.types';
 import api from '../services/api';
 import { VerifiedIdentityIcon } from '../components/VerifiedIdentityIcon';
+import { Tooltip, TooltipTrigger, Button as AriaButton } from '../components/Tooltip';
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
   <div className={`bg-app-surface backdrop-blur-md p-6 rounded-3xl border border-app-soft shadow-sm ${className}`}>
@@ -118,16 +119,18 @@ export const ChatUserProfile: React.FC = () => {
     return (
         <article className="w-full max-w-5xl mx-auto p-4 md:p-0 pt-6 md:pt-10 animate-fade-in motion-reduce:animate-none">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8 pl-2">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => navigate(-1)}
-                        aria-label="Volver"
-                        className="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/20"
-                        style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
-                    >
-                        <ArrowLeftIcon size={22} weight="bold" />
-                    </button>
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                    <TooltipTrigger delay={300}>
+                        <AriaButton
+                            onPress={() => navigate(-1)}
+                            aria-label="Volver a mensajes"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-app-soft bg-app-surface-strong text-app-accent-strong shadow-sm transition-all hover:-translate-y-0.5 hover:border-app-accent/35 hover:bg-app-surface hover:text-app-accent hover:shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/25"
+                        >
+                            <ArrowLeftIcon size={19} weight="bold" />
+                        </AriaButton>
+                        <Tooltip>Volver a mensajes</Tooltip>
+                    </TooltipTrigger>
                     <div className="flex flex-wrap items-center gap-2.5">
                         <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
                             {user.first_name} {user.last_name}
@@ -138,13 +141,19 @@ export const ChatUserProfile: React.FC = () => {
                     </div>
                 </div>
 
-                <button
-                    onClick={() => navigate(`/app/chat/${user.id_user}`)}
-                    className="flex items-center gap-2 px-6 py-3 bg-app-accent text-app-on-accent rounded-2xl font-bold text-sm shadow-xl hover:opacity-90 hover:scale-105 active:scale-95 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
-                >
-                    <ChatCircleIcon size={18} weight="bold" className="transition-transform group-hover:rotate-12" />
-                    <span>Ir al chat</span>
-                </button>
+                {user.can_chat ? (
+                    <button
+                        onClick={() => navigate(`/app/chat/${user.id_user}`)}
+                        className="flex items-center gap-2 px-6 py-3 bg-app-accent text-app-on-accent rounded-2xl font-bold text-sm shadow-xl hover:opacity-90 hover:scale-105 active:scale-95 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
+                    >
+                        <ChatCircleIcon size={18} weight="bold" className="transition-transform group-hover:rotate-12" />
+                        <span>Ir al chat</span>
+                    </button>
+                ) : (
+                    <span className="rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-2 text-sm font-bold text-app-secondary">
+                        Solicitud pendiente
+                    </span>
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">

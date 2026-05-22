@@ -1,6 +1,8 @@
 import api from './api';
 import type { User } from '../types/User.types';
 
+export type Atmosphere = 'normal' | 'tranquilo' | 'bajo';
+
 export type UserProfileUpdatePayload = Omit<Partial<User>, 'interests' | 'features' | 'communication_style' | 'photos'> & {
     interests?: number[];
     features?: number[];
@@ -80,6 +82,11 @@ export const updateAccessibilityPreferences = async (
 ): Promise<AccessibilityPreferences> => {
     const response = await api.patch<{ accessibility: AccessibilityPreferences }>('/users/accessibility', accessibility);
     return response.data.accessibility;
+};
+
+export const updateAtmosphere = async (atmosphere: Atmosphere): Promise<Atmosphere> => {
+    const response = await api.put<{ atmosphere: Atmosphere }>('/users/atmosphere', { atmosphere });
+    return response.data.atmosphere;
 };
 
 export const reportUser = async (userId: number, reason: string): Promise<void> => {

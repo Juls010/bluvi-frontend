@@ -60,7 +60,7 @@
         --app-border-strong: rgba(127, 119, 221, 0.26);
         --app-accent: #7F77DD;
         --app-accent-strong: #534AB7;
-        --app-focus-ring: #3f4292;
+        --app-focus-ring: #2f2b83;
         --app-accent-gradient: linear-gradient(135deg, #7F77DD 0%, #F2A65A 100%);
         --app-on-accent: #ffffff;
         --app-pill-bg: rgba(229, 232, 255, 0.44);
@@ -141,7 +141,7 @@
         --app-border-strong: rgba(171, 176, 255, 0.38);
         --app-accent: #B8B2FF;
         --app-accent-strong: #D0CCFF;
-        --app-focus-ring: #D8D1FF;
+        --app-focus-ring: #F4F1FF;
         --app-accent-gradient: linear-gradient(135deg, #B8B2FF 0%, #FFB16A 100%);
         --app-on-accent: #ffffff;
         --app-pill-bg: rgba(86, 92, 172, 0.45);
@@ -335,6 +335,44 @@
         color: #ffffff;
     }
 
+    html.high-contrast .discovery-empty-action {
+        background-color: #ffffff !important;
+        border-color: #111111 !important;
+        color: #111111 !important;
+        box-shadow: none !important;
+    }
+
+    html.high-contrast .discovery-empty-action:hover {
+        background-color: #f2f2f2 !important;
+    }
+
+    html.dark.high-contrast .discovery-empty-action {
+        background-color: #000000 !important;
+        border-color: #d9d9d9 !important;
+        color: #ffffff !important;
+        box-shadow: none !important;
+    }
+
+    html.dark.high-contrast .discovery-empty-action:hover {
+        background-color: #111111 !important;
+    }
+
+    .bluvi-tooltip .bluvi-tooltip-arrow {
+        transform-origin: center;
+    }
+
+    .bluvi-tooltip[data-placement^='bottom'] .bluvi-tooltip-arrow {
+        transform: rotate(180deg);
+    }
+
+    .bluvi-tooltip[data-placement^='left'] .bluvi-tooltip-arrow {
+        transform: rotate(-90deg);
+    }
+
+    .bluvi-tooltip[data-placement^='right'] .bluvi-tooltip-arrow {
+        transform: rotate(90deg);
+    }
+
     html.reduce-motion {
         scroll-behavior: auto;
     }
@@ -343,38 +381,94 @@
     html.reduce-motion *::before,
     html.reduce-motion *::after {
         animation: none !important;
+        animation-duration: 0.01ms !important;
+        animation-delay: 0s !important;
+        animation-iteration-count: 1 !important;
+        transition-delay: 0s !important;
         scroll-behavior: auto !important;
     }
 
     html.reduce-motion button,
     html.reduce-motion a,
+    html.reduce-motion input,
+    html.reduce-motion textarea,
+    html.reduce-motion select,
     html.reduce-motion [role='button'],
-    html.reduce-motion [role='menuitem'] {
-        transition-property: background-color, border-color, color, opacity !important;
-        transition-duration: 80ms !important;
-        transition-timing-function: linear !important;
+    html.reduce-motion [role='menuitem'],
+    html.reduce-motion [tabindex] {
+        transition-property: background-color, border-color, color, box-shadow, opacity, filter !important;
+        transition-duration: 120ms !important;
+        transition-timing-function: ease-out !important;
     }
 
     html.reduce-motion button:hover,
     html.reduce-motion a:hover,
     html.reduce-motion [role='button']:hover,
     html.reduce-motion [role='menuitem']:hover,
+    html.reduce-motion [class*="hover:scale"]:hover,
+    html.reduce-motion [class*="hover:-translate"]:hover,
+    html.reduce-motion [class*="group-hover:scale"],
+    html.reduce-motion [class*="group-hover:-translate"],
+    html.reduce-motion [class*="group-hover:rotate"],
     html.reduce-motion button:active,
     html.reduce-motion a:active,
     html.reduce-motion [role='button']:active,
-    html.reduce-motion [role='menuitem']:active {
+    html.reduce-motion [role='menuitem']:active,
+    html.reduce-motion [class*="active:scale"]:active,
+    html.reduce-motion [class*="active:-translate"]:active {
         transform: none !important;
     }
 
     html.low-transparency {
-        --app-surface-nav: var(--app-surface-card-strong);
-        --app-surface-soft: var(--app-surface-card-strong);
-        --app-pill-bg: var(--app-surface-card-strong);
+        --app-surface-nav: #ffffff;
+        --app-surface-card: #f8f7ff;
+        --app-surface-card-strong: #ffffff;
+        --app-surface-soft: #f2f1ff;
+        --app-pill-bg: #eceeff;
+        --app-filter-trigger-bg: #ffffff;
+        --app-filter-trigger-hover: #f7f7ff;
     }
 
-    html.low-transparency .backdrop-blur-md,
-    html.low-transparency .backdrop-blur-xl {
+    html.dark.low-transparency {
+        --app-surface-nav: #1f2450;
+        --app-surface-card: #202454;
+        --app-surface-card-strong: #252a5f;
+        --app-surface-soft: #252a5f;
+        --app-pill-bg: #303574;
+        --app-filter-trigger-bg: #252a5f;
+        --app-filter-trigger-hover: #303574;
+    }
+
+    html.low-transparency [class*="backdrop-blur"],
+    html.low-transparency [style*="backdrop-filter"],
+    html.low-transparency [style*="backdropFilter"] {
+        -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
+    }
+
+    html.low-transparency [class*=" blur-"],
+    html.low-transparency [class^="blur-"],
+    html.low-transparency [class*="blur-3xl"],
+    html.low-transparency [class*="blur-xl"],
+    html.low-transparency [class*="blur-md"],
+    html.low-transparency [class*="blur-sm"] {
+        filter: none !important;
+    }
+
+    html.low-transparency .home-solid-panel {
+        background-color: var(--app-surface-card) !important;
+        border-color: var(--app-border-soft) !important;
+    }
+
+    html.low-transparency .home-solid-surface {
+        background-color: var(--app-surface-soft) !important;
+        border-color: var(--app-border-soft) !important;
+    }
+
+    html.low-transparency .home-events-carousel {
+        --home-events-control-surface: var(--app-surface-card-strong);
+        --home-events-control-surface-hover: var(--app-surface-card-strong);
+        --home-events-control-border: var(--app-border-strong);
     }
 
     html.low-transparency .shadow-sm,
@@ -439,6 +533,11 @@
     @keyframes navbar-menu-pop {
         0% {
             opacity: 0;
+
+    :where(button, a, input, textarea, select, [role="button"], [role="menuitem"], [role="radio"], [role="checkbox"], [tabindex]:not([tabindex="-1"])):focus-visible {
+        outline: 3px solid var(--app-focus-ring);
+        outline-offset: 3px;
+    }
             transform: translateY(-8px) scale(0.97);
         }
         100% {

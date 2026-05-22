@@ -1,10 +1,13 @@
 import api from './api';
 
+export type Atmosphere = 'normal' | 'tranquilo' | 'bajo';
+
 export interface ConversationItem {
     chat_id: number;
     id_user: number;
     first_name: string;
     last_name: string;
+    atmosphere?: Atmosphere;
     is_face_verified?: boolean;
     main_photo: string | null;
     last_message_id: number | null;
@@ -21,6 +24,7 @@ export interface ChatCounterpart {
     id_user: number;
     first_name: string;
     last_name: string;
+    atmosphere?: Atmosphere;
     is_face_verified?: boolean;
     main_photo: string | null;
 }

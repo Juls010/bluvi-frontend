@@ -126,10 +126,18 @@ export const Home: React.FC = () => {
                     type="button"
                     onClick={() => navigate('/app/messages')}
                     aria-label={`Actividad: ${activityMessage}. Pulsa para ir a mensajes.`}
-                    className="mt-6 flex items-center gap-3 px-5 py-3 rounded-2xl bg-app-surface-soft/40 backdrop-blur-md border border-app-soft/60 dark:border-app-accent/20 hover:bg-app-surface-soft/60 hover:border-app-accent/30 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
+                    className={`home-solid-surface mt-6 flex items-center gap-3 rounded-2xl border px-5 py-3 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 ${
+                        hasNotifications || pendingMatchRequests > 0
+                            ? 'border-emerald-300/45 bg-emerald-100/35 text-app-primary hover:border-emerald-400/60 hover:bg-emerald-100/50'
+                            : 'border-app-soft/60 bg-app-surface-soft/40 text-app-secondary hover:border-app-accent/30 hover:bg-app-surface-soft/60 dark:border-app-accent/20'
+                    }`}
                 >
-                    <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-app-pill/50 group-hover:bg-app-pill transition-colors" aria-hidden="true">
-                        <BellIcon size={22} weight="bold" className={`${hasNotifications || pendingMatchRequests > 0 ? 'text-app-accent' : 'text-app-muted'} transition-transform group-hover:scale-110`} />
+                    <div className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
+                        hasNotifications || pendingMatchRequests > 0
+                            ? 'bg-emerald-100/70 text-emerald-600'
+                            : 'bg-app-pill/50 text-app-muted group-hover:bg-app-pill'
+                    }`} aria-hidden="true">
+                        <BellIcon size={22} weight="bold" className="transition-transform group-hover:scale-110" />
                         {(hasNotifications || pendingMatchRequests > 0) && (
                             <span className="absolute top-1.5 right-1.5 w-3 h-3 bg-green-500 rounded-full ring-2 ring-app-surface-solid animate-pulse" />
                         )}
@@ -146,7 +154,7 @@ export const Home: React.FC = () => {
             <div className="max-w-4xl mx-auto">
                 <div className="space-y-6">
                     <section
-                        className="bg-app-surface backdrop-blur-md border border-app-soft rounded-[22px] p-6"
+                        className="home-solid-panel bg-app-surface backdrop-blur-md border border-app-soft rounded-[22px] p-6"
                         aria-labelledby="actions-title"
                     >
                         <h2
@@ -160,7 +168,7 @@ export const Home: React.FC = () => {
                             type="button"
                             onClick={() => navigate('/app/discovery')}
                             aria-label="Ir a Descubrir personas. Explorar perfiles nuevos."
-                            className="w-full flex items-center justify-between gap-4 bg-app-pill hover:bg-app-surface-strong border border-app-strong rounded-[20px] px-6 py-5 mb-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/40"
+                            className="home-solid-surface w-full flex items-center justify-between gap-4 bg-app-pill hover:bg-app-surface-strong border border-app-strong rounded-[20px] px-6 py-5 mb-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                         >
                             <div className="flex items-center gap-6">
                                 <div className="w-16 h-16 rounded-[22px] bg-app-accent flex items-center justify-center shrink-0 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-app-accent/20" aria-hidden="true">
@@ -186,7 +194,7 @@ export const Home: React.FC = () => {
                                 type="button"
                                 onClick={() => navigate('/app/messages')}
                                 aria-label="Ir a Mensajes. Revisar tus conversaciones."
-                                className="bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-[20px] px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/40"
+                                className="home-solid-surface bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-[20px] px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                             >
                                 <div className="w-14 h-14 rounded-2xl bg-app-pill flex items-center justify-center text-app-accent mb-5 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-app-accent group-hover:text-app-on-accent" aria-hidden="true">
                                     <ChatsIcon size={26} weight="bold" />
@@ -203,7 +211,7 @@ export const Home: React.FC = () => {
                                 type="button"
                                 onClick={() => navigate('/app/profile')}
                                 aria-label="Ir a mi Perfil. Ajustar mi espacio."
-                                className="bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-[20px] px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/40"
+                                className="home-solid-surface bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-[20px] px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                             >
                                 <div className="w-14 h-14 rounded-2xl bg-app-pill flex items-center justify-center text-app-accent mb-5 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-app-accent group-hover:text-app-on-accent" aria-hidden="true">
                                     <UserIcon size={26} weight="bold" />
@@ -219,7 +227,7 @@ export const Home: React.FC = () => {
                     </section>
 
                     <section
-                        className="home-events-carousel relative rounded-[28px] border border-app-soft bg-app-surface-soft backdrop-blur-md overflow-hidden group"
+                        className="home-events-carousel home-solid-panel relative rounded-[28px] border border-app-soft bg-app-surface-soft backdrop-blur-md overflow-hidden group"
                         aria-roledescription="carrusel"
                         aria-label="Novedades de Bluvi"
                     >
@@ -241,7 +249,7 @@ export const Home: React.FC = () => {
                                     type="button"
                                     onClick={() => scrollTo(currentEventIndex === 0 ? HOME_EVENTS.length - 1 : currentEventIndex - 1)}
                                     aria-label="Ver novedad anterior"
-                                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-gray-500/30 motion-reduce:transition-none"
+                                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 motion-reduce:transition-none"
                                     style={{
                                         backgroundColor: 'var(--app-control-surface)',
                                         borderColor: 'var(--app-control-border)',
@@ -275,7 +283,7 @@ export const Home: React.FC = () => {
                                     type="button"
                                     onClick={() => scrollTo(currentEventIndex === HOME_EVENTS.length - 1 ? 0 : currentEventIndex + 1)}
                                     aria-label="Ver siguiente novedad"
-                                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-gray-500/30 motion-reduce:transition-none"
+                                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 motion-reduce:transition-none"
                                     style={{
                                         backgroundColor: 'var(--app-control-surface)',
                                         borderColor: 'var(--app-control-border)',
@@ -308,7 +316,7 @@ export const Home: React.FC = () => {
                                     <div key={item.id} className="w-full flex-shrink-0 snap-center px-6 pt-2">
                                         <article
                                             aria-labelledby={`home-event-title-${item.id}`}
-                                            className="bg-app-surface/80 dark:bg-app-surface-strong/60 border border-app-soft/60 dark:border-app-accent/15 rounded-2xl p-6 transition-all shadow-sm"
+                                            className="home-solid-surface bg-app-surface/80 dark:bg-app-surface-strong/60 border border-app-soft/60 dark:border-app-accent/15 rounded-2xl p-6 transition-all shadow-sm"
                                         >
                                             <div className="flex items-center gap-2 mb-3">
                                                 <span className="text-[10.5px] font-black uppercase tracking-[0.2em] text-app-accent bg-app-accent/15 px-2.5 py-1 rounded">
@@ -380,10 +388,10 @@ export const Home: React.FC = () => {
                     © {new Date().getFullYear()} Bluvi. Proyecto académico sin ánimo de lucro.
                 </p>
                 <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-                    <button type="button" onClick={() => navigate('/privacidad')} className="text-[12px] font-bold hover:text-app-accent transition-colors">Privacidad</button>
-                    <button type="button" onClick={() => navigate('/terminos')} className="text-[12px] font-bold hover:text-app-accent transition-colors">Términos</button>
-                    <button type="button" onClick={() => navigate('/cookies')} className="text-[12px] font-bold hover:text-app-accent transition-colors">Cookies</button>
-                    <button type="button" onClick={() => navigate('/accesibilidad')} className="text-[12px] font-bold hover:text-app-accent transition-colors">Accesibilidad</button>
+                    <button type="button" onClick={() => navigate('/privacidad')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Privacidad</button>
+                    <button type="button" onClick={() => navigate('/terminos')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Términos</button>
+                    <button type="button" onClick={() => navigate('/cookies')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Cookies</button>
+                    <button type="button" onClick={() => navigate('/accesibilidad')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Accesibilidad</button>
                 </nav>
             </footer>
 

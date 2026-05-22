@@ -16,7 +16,8 @@ import { useScrollToTop } from '../../hooks/useScrollToTop';
 import logo from '../../assets/logo.svg';
 
 const NAV_LINKS = [
-    { href: '#conexiones', label: 'Conexiones reales' },
+    { href: '#conexiones', label: 'Conectar' },
+    { href: '#compatibilidad', label: 'Afinidad' },
     { href: '#cuidado', label: 'Seguridad' },
     { href: '#accesibilidad', label: 'Accesibilidad' },
 ] as const;
@@ -179,11 +180,11 @@ const ConnectionMuralSection: React.FC = () => {
             aria-describedby="conexiones-desc"
             className={`relative scroll-mt-24 overflow-hidden pb-16 pt-14 sm:scroll-mt-28 sm:pb-28 sm:pt-20 ${SECTION_FOCUS_CLASS}`}
         >
-            <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 sm:gap-12 sm:px-8 xl:grid-cols-[0.88fr_1.12fr] xl:items-center">
-                <div className="mx-auto max-w-xl text-center xl:mx-0 xl:text-left">
+            <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 sm:gap-12 sm:px-8 lg:gap-16 xl:grid-cols-[0.9fr_1.1fr] xl:items-center">
+                <div className="mx-auto max-w-2xl text-center xl:mx-0 xl:max-w-xl xl:text-left">
                     <h2
                         id="conexiones-title"
-                        className="overflow-visible text-balance text-[2.45rem] font-black leading-[1.04] tracking-[-0.055em] text-[#221B5F] dark:text-white sm:text-5xl xl:text-6xl"
+                        className="overflow-visible text-balance text-[clamp(2.1rem,9vw,3.35rem)] font-black leading-[1.04] tracking-[-0.045em] text-[#221B5F] dark:text-white sm:text-5xl xl:text-6xl"
                     >
                             Mereces sentirte querido
                         <span className="mt-3 block pb-3 leading-[1.12] text-[#221B5F] dark:bg-gradient-to-r dark:from-[#D8D1FF] dark:via-[#ECEBFF] dark:to-[#D8D1FF] dark:bg-clip-text dark:text-transparent">
@@ -198,14 +199,14 @@ const ConnectionMuralSection: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="relative mx-auto w-full max-w-[18rem] sm:max-w-[34rem] xl:mx-0 xl:max-w-none">
-                    <div className="columns-3 gap-2 sm:columns-3 sm:gap-3 2xl:columns-4 2xl:gap-4">
+                <div className="relative mx-auto w-full max-w-[22rem] sm:max-w-[40rem] lg:max-w-[48rem] xl:mx-0 xl:max-w-none">
+                    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 2xl:grid-cols-4 2xl:gap-4">
                         {COUPLE_CARDS.map((card, index) => (
                             <article
                                 key={card.id}
-                                className={`relative mb-2 break-inside-avoid overflow-hidden rounded-[0.9rem] bg-transparent p-0 shadow-lg shadow-[#7F77DD]/10 [content-visibility:auto] [contain-intrinsic-size:160px] sm:mb-3 sm:rounded-[1.35rem] sm:[contain-intrinsic-size:300px] 2xl:mb-4 2xl:rounded-[1.7rem] 2xl:[contain-intrinsic-size:360px] ${
-                                    index > 5 ? 'hidden xl:block' : ''
-                                } ${index % 5 === 0 ? 'sm:mt-8' : ''} ${
+                                className={`relative aspect-[4/5] overflow-hidden rounded-[0.9rem] bg-transparent p-0 shadow-lg shadow-[#7F77DD]/10 sm:rounded-[1.35rem] 2xl:rounded-[1.7rem] ${
+                                    index > 3 ? 'hidden sm:block' : ''
+                                } ${index > 8 ? 'sm:hidden xl:block' : ''} ${
                                     index % 7 === 0
                                         ? 'sm:rotate-[-1deg]'
                                         : index % 4 === 0
@@ -213,13 +214,13 @@ const ConnectionMuralSection: React.FC = () => {
                                             : ''
                                 }`}
                             >
-                                <div className="relative overflow-hidden rounded-[0.8rem] sm:rounded-[1.15rem] 2xl:rounded-[1.45rem]">
+                                <div className="relative h-full overflow-hidden rounded-[0.8rem] sm:rounded-[1.15rem] 2xl:rounded-[1.45rem]">
                                     <img
                                         src={getOptimizedImageSrc(card.src)}
                                         alt={card.alt}
                                         loading="lazy"
                                         decoding="async"
-                                        className="h-auto w-full object-cover"
+                                        className="h-full w-full object-cover"
                                     />
 
                                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#26215C]/20 via-transparent to-transparent opacity-70" />
@@ -244,6 +245,8 @@ export const Welcome: React.FC = () => {
         visible: boolean;
     } | null>(null);
     const careSectionRef = React.useRef<HTMLElement | null>(null);
+    const mobileMenuButtonRef = React.useRef<HTMLButtonElement | null>(null);
+    const mobileMenuItemRefs = React.useRef<Array<HTMLAnchorElement | HTMLButtonElement | null>>([]);
     const [isCareArrowVisible, setIsCareArrowVisible] = React.useState(false);
 
     const isDarkTheme = isThemeMounted && resolvedTheme === 'dark';
@@ -308,6 +311,80 @@ export const Welcome: React.FC = () => {
         window.setTimeout(() => setThemeFusion(null), 760);
     };
 
+    const handleSectionNavigation = (
+        event: React.MouseEvent<HTMLAnchorElement>,
+        href: string
+    ) => {
+        event.preventDefault();
+
+        const target = document.querySelector<HTMLElement>(href);
+        if (!target) return;
+
+        const reduceMotion =
+            document.documentElement.classList.contains('reduce-motion') ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        target.scrollIntoView({
+            behavior: reduceMotion ? 'auto' : 'smooth',
+            block: 'start',
+        });
+
+        window.history.pushState(null, '', href);
+    };
+
+    const focusMobileMenuItem = (index: number) => {
+        const items = mobileMenuItemRefs.current.filter(Boolean);
+        if (items.length === 0) return;
+
+        const nextIndex = (index + items.length) % items.length;
+        items[nextIndex]?.focus();
+    };
+
+    const getFocusedMobileMenuItemIndex = () =>
+        mobileMenuItemRefs.current.findIndex((item) => item === document.activeElement);
+
+    const handleMobileMenuButtonKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+
+        event.preventDefault();
+        setIsMobileMenuOpen(true);
+
+        window.requestAnimationFrame(() => {
+            focusMobileMenuItem(event.key === 'ArrowUp' ? -1 : 0);
+        });
+    };
+
+    const handleMobileMenuKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (!isMobileMenuOpen) return;
+
+        const currentIndex = getFocusedMobileMenuItemIndex();
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            setIsMobileMenuOpen(false);
+            mobileMenuButtonRef.current?.focus();
+            return;
+        }
+
+        if (event.key === 'Home') {
+            event.preventDefault();
+            focusMobileMenuItem(0);
+            return;
+        }
+
+        if (event.key === 'End') {
+            event.preventDefault();
+            focusMobileMenuItem(mobileMenuItemRefs.current.length - 1);
+            return;
+        }
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            const direction = event.key === 'ArrowDown' ? 1 : -1;
+            focusMobileMenuItem(currentIndex === -1 ? 0 : currentIndex + direction);
+        }
+    };
+
     return (
         <>
             <div
@@ -350,6 +427,7 @@ export const Welcome: React.FC = () => {
                             <a
                                 key={link.href}
                                 href={link.href}
+                                onClick={(event) => handleSectionNavigation(event, link.href)}
                                 className={DESKTOP_NAV_LINK_CLASS}
                             >
                                 {link.label}
@@ -396,8 +474,10 @@ export const Welcome: React.FC = () => {
                         </button>
 
                         <button
+                            ref={mobileMenuButtonRef}
                             type="button"
                             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                            onKeyDown={handleMobileMenuButtonKeyDown}
                             className="inline-flex h-11 items-center justify-center rounded-full bg-white/95 px-4 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-white dark:text-[#221B5F] xl:hidden"
                             aria-expanded={isMobileMenuOpen}
                             aria-controls="mobile-menu"
@@ -408,6 +488,8 @@ export const Welcome: React.FC = () => {
 
                     <div
                         id="mobile-menu"
+                        aria-hidden={!isMobileMenuOpen}
+                        onKeyDown={handleMobileMenuKeyDown}
                         className={`absolute right-4 top-[5.3rem] z-50 w-[min(320px,calc(100vw-2rem))] overflow-hidden rounded-[1.6rem] border border-white/40 bg-white/95 shadow-2xl shadow-[#383296]/18 backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/10 dark:bg-[#221B5F]/95 xl:hidden ${
                             isMobileMenuOpen
                                 ? 'translate-y-0 opacity-100'
@@ -418,8 +500,15 @@ export const Welcome: React.FC = () => {
                             {NAV_LINKS.map((link) => (
                                 <a
                                     key={link.href}
+                                    ref={(node) => {
+                                        mobileMenuItemRefs.current[NAV_LINKS.findIndex((item) => item.href === link.href)] = node;
+                                    }}
                                     href={link.href}
-                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    tabIndex={isMobileMenuOpen ? 0 : -1}
+                                    onClick={(event) => {
+                                        setIsMobileMenuOpen(false);
+                                        handleSectionNavigation(event, link.href);
+                                    }}
                                     className={MOBILE_MENU_ITEM_CLASS}
                                 >
                                     {link.label}
@@ -427,7 +516,11 @@ export const Welcome: React.FC = () => {
                             ))}
 
                             <button
+                                ref={(node) => {
+                                    mobileMenuItemRefs.current[NAV_LINKS.length] = node;
+                                }}
                                 type="button"
+                                tabIndex={isMobileMenuOpen ? 0 : -1}
                                 onClick={() => {
                                     handleThemeToggle();
                                     setIsMobileMenuOpen(false);
@@ -446,7 +539,11 @@ export const Welcome: React.FC = () => {
                             </button>
 
                             <button
+                                ref={(node) => {
+                                    mobileMenuItemRefs.current[NAV_LINKS.length + 1] = node;
+                                }}
                                 type="button"
+                                tabIndex={isMobileMenuOpen ? 0 : -1}
                                 onClick={() => {
                                     setIsMobileMenuOpen(false);
                                     navigate('/login');
@@ -465,7 +562,7 @@ export const Welcome: React.FC = () => {
                         tabIndex={0}
                         aria-labelledby="welcome-title"
                         aria-describedby="welcome-desc"
-                        className={`mx-auto flex min-h-[clamp(36rem,88vh,48rem)] w-full max-w-7xl scroll-mt-24 items-center justify-center px-5 pb-14 pt-32 sm:scroll-mt-28 sm:px-8 sm:pt-36 lg:pb-20 xl:pt-36 ${SECTION_FOCUS_CLASS}`}
+                        className={`mx-auto flex min-h-[clamp(39rem,94vh,54rem)] w-full max-w-7xl scroll-mt-24 items-center justify-center px-5 pb-24 pt-32 sm:scroll-mt-28 sm:px-8 sm:pb-28 sm:pt-36 lg:pb-32 xl:pt-36 ${SECTION_FOCUS_CLASS}`}
                     >
                         <div className="mx-auto max-w-3xl text-center">
                             <p className="mb-7 text-xs font-black uppercase tracking-[0.18em] text-[#221B5F] dark:text-[#D8D1FF] sm:mb-8 sm:tracking-[0.22em] sm:text-sm">
@@ -526,7 +623,7 @@ export const Welcome: React.FC = () => {
                             <div className="flex max-w-4xl flex-wrap justify-center gap-x-4 gap-y-8">
                                 {[
                                     'Autismo',
-                                    'TDAH',
+                                    'TOC',
                                     'Dislexia',
                                     'Discalculia',
                                     'Tartamudez',

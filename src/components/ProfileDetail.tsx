@@ -75,7 +75,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                         <AriaButton 
                             onPress={onPass}
                             aria-label={`Pasar perfil de ${user.first_name}`}
-                            className="w-16 h-16 rounded-[22px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 dark:hover:bg-red-500/10 dark:hover:border-red-500/30 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
+                            className="w-16 h-16 rounded-[22px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 dark:hover:bg-red-500/10 dark:hover:border-red-500/30 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                         >
                             <XIcon size={32} weight="bold" className="transition-transform group-hover:scale-110" />
                         </AriaButton>
@@ -86,7 +86,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                         <AriaButton 
                             onPress={onLike}
                             aria-label={`Me gusta ${user.first_name}`}
-                            className="w-16 h-16 relative overflow-visible rounded-[22px] text-white shadow-xl shadow-red-500/20 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-400/30"
+                            className="w-16 h-16 relative overflow-visible rounded-[22px] text-white shadow-xl shadow-red-500/20 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                             style={{ backgroundColor: '#d3435dff' }}
                         >
                             <ClickSpark 
@@ -183,7 +183,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                 <div className="flex justify-end mt-1">
                     <button 
                         onClick={onReportAndBlock}
-                        className="text-xs font-medium text-app-secondary hover:text-red-600 bg-app-surface-soft hover:bg-red-50 px-4 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-red-200 outline-none"
+                        className="text-xs font-medium text-app-secondary hover:text-red-600 bg-app-surface-soft hover:bg-red-50 px-4 py-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                     >
                         Denunciar y bloquear usuario
                     </button>
@@ -196,7 +196,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                 <AriaButton 
                     onPress={onPass}
                     aria-label={`Pasar perfil de ${user.first_name}`}
-                    className="w-16 h-16 rounded-[28px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
+                    className="w-16 h-16 rounded-[28px] border-2 border-app-soft/30 bg-app-surface-soft text-app-muted hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                 >
                     <XIcon size={32} weight="bold" className="transition-transform group-hover:scale-110" />
                 </AriaButton>
@@ -204,7 +204,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                 <AriaButton 
                     onPress={onLike}
                     aria-label={`Me gusta ${user.first_name}`}
-                    className="w-16 h-16 relative overflow-visible rounded-[28px] text-white shadow-xl shadow-red-500/20 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-400/30"
+                    className="w-16 h-16 relative overflow-visible rounded-[28px] text-white shadow-xl shadow-red-500/20 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                     style={{ backgroundColor: '#d3435dff' }}
                 >
                     <ClickSpark 

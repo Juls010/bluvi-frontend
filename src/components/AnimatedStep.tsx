@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
 interface AnimatedStepProps {
     children: ReactNode;
@@ -9,6 +10,7 @@ interface AnimatedStepProps {
 
 export const AnimatedStep = ({ children, className = "justify-between" }: AnimatedStepProps) => {
     const { pathname } = useLocation();
+    const reduceMotion = useReducedMotion();
     const isRegisterRoute = pathname.startsWith('/register/');
     const minHeightClass = isRegisterRoute ? 'h-full min-h-full' : 'min-h-screen';
     const spacingClass = isRegisterRoute
@@ -20,12 +22,12 @@ export const AnimatedStep = ({ children, className = "justify-between" }: Animat
 
     return (
         <motion.div
-            initial={initialAnimation}
-            animate={animateAnimation}
-            exit={exitAnimation}
-            transition={{ 
-                type: "spring", 
-                stiffness: 20, 
+            initial={reduceMotion ? false : initialAnimation}
+            animate={reduceMotion ? undefined : animateAnimation}
+            exit={reduceMotion ? undefined : exitAnimation}
+            transition={reduceMotion ? { duration: 0 } : {
+                type: "spring",
+                stiffness: 20,
                 damping: 8,
                 mass: 0.9,
                 duration: 1.7

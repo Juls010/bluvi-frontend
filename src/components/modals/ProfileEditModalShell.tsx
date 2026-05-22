@@ -41,7 +41,7 @@ export const ProfileEditModalShell: React.FC<ProfileEditModalShellProps> = ({
                             type="button"
                             onClick={onClose}
                             disabled={isSaving}
-                            className="grid h-9 w-9 place-items-center rounded-full text-app-muted transition-colors hover:bg-app-surface-soft hover:text-app-primary disabled:opacity-50"
+                            className="grid h-9 w-9 place-items-center rounded-full text-app-muted transition-colors hover:bg-app-surface-soft hover:text-app-primary disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                             aria-label="Cerrar"
                         >
                             <XIcon className="h-5 w-5" weight="bold" aria-hidden="true" />

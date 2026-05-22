@@ -68,7 +68,7 @@ export const Button: React.FC<ButtonProps> = ({ className = '', children, ...pro
             active:scale-95
             focus:outline-none 
             focus-visible:ring-4 
-            focus-visible:ring-bluvi-purple/25
+            focus-visible:ring-app-focus/80
             focus-visible:ring-offset-2
             !cursor-pointer
             disabled:opacity-50

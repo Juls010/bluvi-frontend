@@ -2,7 +2,7 @@ import type React from 'react';
 import { ShieldStarIcon } from '@phosphor-icons/react';
 import { Tooltip, TooltipTrigger, Button as AriaButton } from './Tooltip';
 
-const tooltipText = 'Perfil real con verificación de identidad';
+const tooltipText = 'Perfil real con verificacion de identidad';
 
 interface VerifiedIdentityIconProps {
     className?: string;
@@ -20,7 +20,6 @@ export const VerifiedIdentityIcon: React.FC<VerifiedIdentityIconProps> = ({
             <span
                 className={`inline-flex items-center justify-center text-app-accent-strong dark:text-app-orange ${className}`}
                 aria-label={tooltipText}
-                title={tooltipText}
             >
                 <ShieldStarIcon className={iconClassName} aria-hidden="true" weight="bold" />
             </span>

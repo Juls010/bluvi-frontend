@@ -55,7 +55,7 @@ export const ProfileSelect = ({
         {label}
       </Label>
 
-      <Button className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border border-app-strong bg-app-surface-solid px-4 py-3 text-left text-sm font-medium text-app-primary outline-none transition-all hover:bg-app-surface-soft focus-visible:border-bluvi-purple/60 focus-visible:ring-2 focus-visible:ring-bluvi-purple/25 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 data-[pressed]:bg-app-surface-strong">
+      <Button className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border border-app-strong bg-app-surface-solid px-4 py-3 text-left text-sm font-medium text-app-primary outline-none transition-all hover:bg-app-surface-soft focus-visible:border-app-focus focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 data-[pressed]:bg-app-surface-strong">
         <SelectValue className="truncate text-app-primary data-[placeholder]:text-app-muted" />
         <CaretDownIcon
           className="h-4 w-4 shrink-0 text-app-muted transition-transform group-data-[pressed]:rotate-180"

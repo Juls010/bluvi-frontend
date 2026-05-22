@@ -34,7 +34,7 @@ const SectionTitle: React.FC<{ title: string; description?: string }> = ({ title
         <h2 className="text-xl md:text-2xl font-heading font-bold tracking-tight text-app-primary">
             {title}
         </h2>
-        {description && <p className="text-sm text-app-muted mt-1">{description}</p>}
+        {description && <p className="text-[15px] leading-relaxed text-app-muted mt-1">{description}</p>}
     </div>
 );
 
@@ -89,11 +89,11 @@ const SettingRow: React.FC<{
     return (
     <div className="flex items-start justify-between gap-4 py-4">
         <div className="flex-1 pr-2">
-            <p id={titleId} className="text-sm font-semibold text-app-primary flex items-center gap-2">
+            <p id={titleId} className="text-base font-semibold text-app-primary flex items-center gap-2">
                 <span aria-hidden="true" className="text-app-accent">{icon}</span>
                 {title}
             </p>
-            <p id={descId} className="text-xs text-app-muted mt-0.5 leading-relaxed">{description}</p>
+            <p id={descId} className="text-sm text-app-muted mt-1 leading-relaxed">{description}</p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
             <Toggle
@@ -373,9 +373,9 @@ export const Settings: React.FC = () => {
     ) => {
         let nextIndex: number | null = null;
 
-        if (event.key === 'ArrowRightIcon' || event.key === 'ArrowDown') {
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
             nextIndex = (currentIndex + 1) % total;
-        } else if (event.key === 'ArrowLeftIcon' || event.key === 'ArrowUp') {
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
             nextIndex = (currentIndex - 1 + total) % total;
         } else if (event.key === 'Home') {
             nextIndex = 0;
@@ -402,8 +402,8 @@ export const Settings: React.FC = () => {
             <article className="w-full max-w-5xl mx-auto p-4 md:p-0 pb-16 animate-fade-in motion-reduce:animate-none space-y-7">
 
                 <div className="space-y-3 md:space-y-5">
-                    <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">Ajustes</h1>
-                    <p className="max-w-2xl text-sm text-app-secondary/90">Personaliza tu experiencia en Bluvi sin perder claridad.</p>
+                    <h1 className="text-4xl md:text-5xl font-heading font-bold text-app-primary">Ajustes</h1>
+                    <p className="max-w-2xl text-base leading-relaxed text-app-secondary/90">Personaliza tu experiencia en Bluvi sin perder claridad.</p>
                 </div>
 
                 <p className="sr-only" aria-live="polite">{statusMessage ?? ''}</p>
@@ -416,11 +416,11 @@ export const Settings: React.FC = () => {
 
                     {privacyError && (
                         <div className="mb-3 rounded-2xl border border-red-100 bg-red-50/70 px-4 py-3">
-                            <p className="text-sm text-red-600">{privacyError}</p>
+                            <p className="text-[15px] text-red-600">{privacyError}</p>
                             <button
                                 type="button"
                                 onClick={handleRetryPrivacy}
-                                className="mt-2 inline-flex items-center gap-1.5 rounded-xl border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
+                                className="mt-2 inline-flex items-center gap-1.5 rounded-xl border border-red-200 px-3 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
                             >
                                 <ArrowClockwiseIcon size={14} weight="bold" aria-hidden="true" />
                                 Reintentar
@@ -460,11 +460,11 @@ export const Settings: React.FC = () => {
                     />
                     <Card ariaLabel="Ajustes de apariencia">
                         <div className="py-4">
-                            <p className="text-sm font-semibold text-app-primary mb-1 flex items-center gap-2">
+                            <p className="text-base font-semibold text-app-primary mb-1 flex items-center gap-2">
                                 <PaletteIcon size={15} weight="bold" aria-hidden="true" />
                                 Tema de la interfaz
                             </p>
-                            <p className="text-xs text-app-muted mb-3">Puedes cambiarlo cuando quieras desde aquí.</p>
+                            <p className="text-sm text-app-muted mb-3">Puedes cambiarlo cuando quieras desde aquí.</p>
                             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Tema visual de la aplicación">
                                 {THEME_OPTIONS.map(({ value, label, icon }) => {
                                     const optionIndex = THEME_OPTIONS.findIndex((option) => option.value === value);
@@ -475,7 +475,7 @@ export const Settings: React.FC = () => {
                                             type="button"
                                             role="radio"
                                             aria-checked={isActive}
-                                            tabIndex={isActive ? 0 : -1}
+                                            tabIndex={0}
                                             data-radio-group="theme"
                                             data-radio-index={optionIndex}
                                             onClick={() => handleThemeSelect(value)}
@@ -486,7 +486,7 @@ export const Settings: React.FC = () => {
                                             }
                                             disabled={!mounted}
                                             className={`
-                                                min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55
+                                                min-w-[110px] flex-1 py-2.5 rounded-xl text-[15px] font-medium border transition-all inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55
                                                 ${isActive
                                                     ? 'bg-app-accent text-app-on-accent border-app-accent shadow-sm'
                                                     : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-app-strong'
@@ -514,11 +514,11 @@ export const Settings: React.FC = () => {
                         busy={savingAccessibility}
                     >
                         <div className="py-4">
-                            <p className="text-sm font-semibold text-app-primary mb-1 flex items-center gap-2">
+                            <p className="text-base font-semibold text-app-primary mb-1 flex items-center gap-2">
                                 <TextTIcon size={15} weight="bold" aria-hidden="true" />
                                 Tamaño del texto
                             </p>
-                            <p className="text-xs text-app-muted mb-3">Cambia el tamaño de todo el texto de la app.</p>
+                            <p className="text-sm text-app-muted mb-3">Cambia el tamaño de todo el texto de la app.</p>
                             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Tamaño del texto">
                                 {FONT_SIZES.map(({ value, label }, optionIndex) => {
                                     const isActive = fontSize === value;
@@ -528,7 +528,7 @@ export const Settings: React.FC = () => {
                                             type="button"
                                             role="radio"
                                             aria-checked={isActive}
-                                            tabIndex={isActive ? 0 : -1}
+                                            tabIndex={0}
                                             data-radio-group="font-size"
                                             data-radio-index={optionIndex}
                                             onClick={() => handleFontSizeSelect(value)}
@@ -539,7 +539,7 @@ export const Settings: React.FC = () => {
                                             }
                                             disabled={savingAccessibility}
                                             className={`
-                                                min-w-[110px] flex-1 py-2 rounded-xl text-sm font-medium border transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55
+                                                min-w-[110px] flex-1 py-2.5 rounded-xl text-[15px] font-medium border transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55
                                                 ${isActive
                                                     ? 'bg-app-accent text-app-on-accent border-app-accent shadow-sm'
                                                     : 'bg-app-surface-soft text-app-primary border-app-soft hover:border-app-strong'
@@ -590,7 +590,7 @@ export const Settings: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleResetAccessibility}
-                                className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-xs font-semibold text-app-primary hover:bg-app-surface-strong hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
+                                className="inline-flex items-center gap-2 rounded-xl border border-app-soft bg-app-surface-soft px-3 py-2 text-sm font-semibold text-app-primary hover:bg-app-surface-strong hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
                             >
                                 <ArrowClockwiseIcon size={14} weight="bold" aria-hidden="true" />
                                 Restablecer accesibilidad
@@ -610,14 +610,14 @@ export const Settings: React.FC = () => {
                                 type="button"
                                 data-account-action="true"
                                 onClick={() => navigate('/app/settings/reports-blocks')}
-                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
+                                className="w-full py-3.5 rounded-2xl border border-app-soft text-app-primary text-base font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
                             >
                                 <span className="mt-0.5 inline-flex items-center gap-1 text-app-accent" aria-hidden="true">
                                     <FlagIcon size={16} weight="bold" />
                                 </span>
                                 <div>
                                     <p className="font-semibold">Reportes y bloqueos</p>
-                                    <p className="text-xs text-app-muted font-normal">Revisa reportes enviados y gestiona perfiles bloqueados.</p>
+                                    <p className="text-sm text-app-muted font-normal leading-relaxed">Revisa reportes enviados y gestiona perfiles bloqueados.</p>
                                 </div>
                             </button>
                         </div>
@@ -626,12 +626,12 @@ export const Settings: React.FC = () => {
                                 type="button"
                                 data-account-action="true"
                                 onClick={handleLogout}
-                                className="w-full py-3 rounded-2xl border border-app-soft text-app-primary text-sm font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
+                                className="w-full py-3.5 rounded-2xl border border-app-soft text-app-primary text-base font-semibold hover:bg-app-surface-soft hover:border-app-strong transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/55"
                             >
                                 <SignOutIcon size={18} weight="bold" aria-hidden="true" className="mt-0.5" />
                                 <div>
                                     <p className="font-semibold">Cerrar sesión</p>
-                                    <p className="text-xs text-app-muted font-normal">Sal de tu cuenta en este dispositivo.</p>
+                                    <p className="text-sm text-app-muted font-normal leading-relaxed">Sal de tu cuenta en este dispositivo.</p>
                                 </div>
                             </button>
                         </div>
@@ -640,12 +640,12 @@ export const Settings: React.FC = () => {
                                 type="button"
                                 data-account-action="true"
                                 onClick={() => setShowDeleteModal(true)}
-                                className="w-full py-3 rounded-2xl border border-red-100 text-red-500 text-sm font-semibold hover:bg-red-50 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
+                                className="w-full py-3.5 rounded-2xl border border-red-100 text-red-500 text-base font-semibold hover:bg-red-50 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm text-left px-4 flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-200"
                             >
                                 <TrashIcon size={18} weight="bold" aria-hidden="true" className="mt-0.5" />
                                 <div>
                                     <p className="font-semibold">Eliminar cuenta</p>
-                                    <p className="text-xs text-red-400 font-normal">Borra todos tus datos de forma permanente.</p>
+                                    <p className="text-sm text-red-400 font-normal leading-relaxed">Borra todos tus datos de forma permanente.</p>
                                 </div>
                             </button>
                         </div>

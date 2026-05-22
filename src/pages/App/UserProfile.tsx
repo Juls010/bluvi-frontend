@@ -19,12 +19,14 @@ import { XIcon,
     HeartIcon,
     PlantIcon,
     BrainIcon,
+    CloudIcon,
     GearIcon,
     ShieldCheckIcon
 } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
 import { type User, GENDER_LABELS,SEXUALITY_LABELS } from '../../types/User.types';
 import { VerifiedIdentityIcon } from '../../components/VerifiedIdentityIcon';
+import { AtmosphereSelector } from '../../components/AtmosphereSelector';
 
 type ProfileUser = User;
 
@@ -120,7 +122,7 @@ export const UserProfile: React.FC = () => {
   if (error) return (
     <div className="w-full max-w-5xl mx-auto p-8 text-center">
       <p className="text-red-500 font-medium mb-4">{error}</p>
-      <button onClick={() => window.location.reload()} className="px-4 py-2 bg-bluvi-purple text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
+      <button onClick={() => window.location.reload()} className="px-4 py-2 bg-bluvi-purple text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2">
         Reintentar
       </button>
     </div>
@@ -145,16 +147,6 @@ export const UserProfile: React.FC = () => {
     ? Math.floor((Date.now() - new Date(user.birth_date).getTime()) / (1000 * 60 * 60 * 24 * 365.25))
     : 'â€”';
 
-  const completeness = Math.round(
-    ([
-      carouselPhotos.length > 0,
-      !!user.description,
-      interestNames.length > 0,
-      features.length > 0,
-      communication.length > 0,
-    ].filter(Boolean).length / 5) * 100
-  );
-
   return (
     <>
       <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none">
@@ -171,7 +163,7 @@ export const UserProfile: React.FC = () => {
                 </div>
                 <button
                     onClick={() => setShowInfoModal(true)}
-                    className="p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple"
+                  className="p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                     title="Editar informaciÃ³n bÃ¡sica"
                 >
                     <PencilSimpleIcon className="w-5 h-5" weight="bold" />
@@ -182,7 +174,7 @@ export const UserProfile: React.FC = () => {
               {!user.is_face_verified && (
                 <button
                   onClick={() => setShowVerificationModal(true)}
-                  className="flex items-center gap-2 px-3.5 py-2 bg-bluvi-purple text-white rounded-2xl text-sm font-semibold hover:opacity-90 transition-all hover:scale-105 active:scale-95"
+                  className="flex items-center gap-2 px-3.5 py-2 bg-bluvi-purple text-white rounded-2xl text-sm font-semibold hover:opacity-90 transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                   title="Verificar identidad"
                 >
                   <ShieldCheckIcon className="w-4.5 h-4.5" weight="bold" aria-hidden="true" />
@@ -192,7 +184,7 @@ export const UserProfile: React.FC = () => {
 
                 <button
                     onClick={() => navigate('/app/settings')}
-                    className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95 group"
+                  className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                     title="Ajustes de cuenta"
                 >
                     <GearIcon className="w-4.5 h-4.5 group-hover:rotate-45 transition-transform duration-500" weight="bold" />
@@ -207,7 +199,7 @@ export const UserProfile: React.FC = () => {
 
             <button
               onClick={() => setSaveError(null)}
-              className="p-1.5 hover:bg-red-100 rounded-full transition-colors text-red-400 hover:text-red-600"
+              className="p-1.5 hover:bg-red-100 rounded-full transition-colors text-red-400 hover:text-red-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
               title="Cerrar aviso"
             >
               <XIcon className="w-4 h-4" weight="bold" />
@@ -225,25 +217,20 @@ export const UserProfile: React.FC = () => {
 
               <button
                 onClick={() => setShowPhotosModal(true)}
-                className="absolute bottom-4 right-4 p-3 bg-app-surface-strong backdrop-blur-md text-app-accent rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all border border-app-soft z-10"
+                className="absolute bottom-4 right-4 p-3 bg-app-surface-strong backdrop-blur-md text-app-accent rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all border border-app-soft z-10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                 title="Gestionar fotos"
               >
                 <CameraIcon className="w-5 h-5" weight="bold" />
               </button>
             </div>
 
-            <div className="bg-app-surface backdrop-blur-md p-4 rounded-2xl border border-app-soft shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold text-app-secondary">Perfil completado</p>
-                <p className="text-xs font-bold text-app-accent-strong">{completeness}%</p>
-              </div>
-              <div className="w-full h-1.5 bg-app-surface-soft rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{ width: `${completeness}%`, backgroundImage: 'var(--app-accent-gradient)' }}
-                />
-              </div>
-            </div>
+            <Card className="min-h-[11rem] rounded-3xl px-6 py-5">
+              <SectionLabel icon={<CloudIcon className="w-4.5 h-4.5" weight="bold" />} label="Atmósfera" />
+              <AtmosphereSelector
+                initialAtmosphere={user.atmosphere ?? 'normal'}
+                onChange={(atmosphere) => setUser({ ...user, atmosphere })}
+              />
+            </Card>
           </div>
 
           <div className="md:col-span-8 flex flex-col gap-4">
@@ -273,7 +260,7 @@ export const UserProfile: React.FC = () => {
                 <SectionLabel icon={<PlantIcon className="w-4.5 h-4.5" weight="bold" />} label="Mis intereses" />
                 <button
                   onClick={() => setShowInterestsModal(true)}
-                  className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"
+                  className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-lg"
                 >
                   Editar
                 </button>
@@ -292,7 +279,7 @@ export const UserProfile: React.FC = () => {
                 <SectionLabel icon={<BrainIcon className="w-4.5 h-4.5" weight="bold" />} label="Mente y Comunicación" />
                 <button
                   onClick={() => setShowMindModal(true)}
-                  className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 outline-none dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient"
+                  className="text-xs font-semibold text-app-accent-strong hover:text-app-accent hover:underline underline-offset-2 outline-none dark:text-transparent dark:bg-clip-text dark:bg-app-accent-gradient focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-lg"
                 >
                   Editar
                 </button>

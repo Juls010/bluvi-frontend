@@ -8,7 +8,7 @@ import { ChatCircleIcon,
     MagnifyingGlassIcon,
     UserIcon
 } from '@phosphor-icons/react';
-import logo from '../assets/icon.svg';
+import logo from '../assets/logo.svg';
 import { DropdownMenu, DropdownMenuButton, DropdownMenuLink } from './DropdownMenu';
 import { useNotifications } from '../context/NotificationContext';
 import { useAuth } from '../context/AuthContext';
@@ -59,7 +59,7 @@ const NavItem: React.FC<{
         to={path}
         aria-label={label}
         className={`
-        flex items-center transition-all duration-200
+        flex items-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2
         ${mobile
             ? 'flex-1 gap-1.5 py-2.5'
             : `gap-2 px-3.5 py-2 rounded-xl ${active ? 'bg-app-surface-soft ring-2 ring-[var(--navbar-active-ring)]' : 'hover:bg-app-surface-soft'}`
@@ -344,9 +344,8 @@ export const Navbar: React.FC = () => {
         <>
         <nav className="hidden md:grid w-full max-w-5xl mx-auto px-4 py-2.5 bg-app-surface-nav backdrop-blur-xl rounded-3xl items-center shadow-lg border-2 border-app-soft grid-cols-[minmax(7rem,1fr)_auto_minmax(7rem,1fr)] gap-3">
             <div className="justify-self-start">
-                <Link to="/app/home" className="inline-flex items-center gap-2.5 hover:opacity-85 transition-opacity" aria-label="Ir a inicio">
-                    <img src={logo} alt="bluvi" className="w-8 h-8 object-contain" />
-                    <span className="text-sm font-semibold tracking-wide text-app-secondary">bluvi</span>
+                <Link to="/app/home" className="inline-flex items-center gap-2.5 hover:opacity-85 transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-xl" aria-label="Ir a inicio">
+                    <img src={logo} alt="bluvi" className="w-32 h-8 object-contain" />
                 </Link>
             </div>
 
@@ -376,7 +375,7 @@ export const Navbar: React.FC = () => {
                     onClick={toggleUserMenu}
                     className={`
                         relative w-10 h-10 rounded-xl overflow-visible border shadow-sm transition-all duration-200
-                        bg-app-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-light-purple/50
+                        bg-app-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2
                         ${isUserSectionActive 
                             ? 'border-white/80 shadow-md ring-1 ring-white/20' 
                             : 'border-white/40 hover:border-white/60'

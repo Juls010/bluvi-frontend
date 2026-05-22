@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useCallback, useState } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
 interface ClickSparkProps {
     sparkColor?: string;
@@ -34,17 +35,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     const sparksRef = useRef<Spark[]>([]);
     const startTimeRef = useRef<number | null>(null);
     
-    // ESTADO: Detectar si el usuario prefiere movimiento reducido
-    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-        setPrefersReducedMotion(mediaQuery.matches);
-
-        const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
-        mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
-    }, []);
+    const prefersReducedMotion = useReducedMotion();
 
     useEffect(() => {
         // Si prefiere movimiento reducido, no inicializamos el canvas

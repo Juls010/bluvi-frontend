@@ -41,7 +41,7 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
             type="button"
             onClick={onClose}
             disabled={isSaving}
-            className="flex-1 rounded-full border border-app-soft bg-app-surface px-6 py-2.5 font-semibold text-app-secondary shadow-sm transition-all hover:-translate-y-0.5 hover:bg-app-surface-strong hover:text-app-primary active:translate-y-0 disabled:opacity-50"
+            className="flex-1 rounded-full border border-app-soft bg-app-surface px-6 py-2.5 font-semibold text-app-secondary shadow-sm transition-all hover:-translate-y-0.5 hover:bg-app-surface-strong hover:text-app-primary active:translate-y-0 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
           >
             Cancelar
           </button>
@@ -49,7 +49,7 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
             type="button"
             onClick={() => onSave(selected)}
             disabled={isSaving}
-            className="flex-1 rounded-full border-b-2 border-black/10 bg-bluvi-purple px-6 py-2.5 font-semibold text-white shadow-md shadow-bluvi-purple/20 transition-all hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-50"
+            className="flex-1 rounded-full border-b-2 border-black/10 bg-bluvi-purple px-6 py-2.5 font-semibold text-white shadow-md shadow-bluvi-purple/20 transition-all hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
           >
             {isSaving ? 'Guardando...' : 'Guardar'}
           </button>
@@ -60,7 +60,7 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
         <input
           type="text"
           placeholder="Buscar intereses..."
-          className="w-full rounded-2xl border border-app-strong bg-app-surface px-4 py-3 text-sm font-medium text-app-primary outline-none transition-all placeholder:text-app-muted focus:border-bluvi-purple/45 focus:ring-2 focus:ring-bluvi-purple/20"
+          className="w-full rounded-2xl border border-app-strong bg-app-surface px-4 py-3 text-sm font-medium text-app-primary outline-none transition-all placeholder:text-app-muted focus:border-app-focus focus:ring-4 focus:ring-app-focus/80 focus:ring-offset-2"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
@@ -73,7 +73,7 @@ export const EditInterestsModal: React.FC<EditInterestsModalProps> = ({
                 key={id}
                 type="button"
                 onClick={() => toggleInterest(Number(id))}
-                className={`rounded-full px-3 py-1.5 text-sm font-medium transition-all ${
+                className={`rounded-full px-3 py-1.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 ${
                   isSelected
                     ? 'bg-bluvi-purple text-white shadow-md'
                     : 'border border-app-soft bg-app-surface-soft text-app-secondary shadow-sm hover:bg-app-surface-strong hover:text-app-primary'

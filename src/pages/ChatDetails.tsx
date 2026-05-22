@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     createPortal } from 'react-dom';
 import { useNavigate,
-    useParams,
-    Link } from 'react-router-dom';
+    useParams } from 'react-router-dom';
 import { ShieldSlashIcon,
     TrashIcon,
     FlagIcon,
@@ -39,7 +38,9 @@ import { AudioMessage } from '../components/AudioMessage';
 import { DropdownMenu, DropdownMenuButton, DropdownMenuSeparator } from '../components/DropdownMenu';
 import { VerifiedIdentityIcon } from '../components/VerifiedIdentityIcon';
 import { Tooltip, TooltipTrigger, Button as AriaButton } from '../components/Tooltip';
+import { useNotifications } from '../context/NotificationContext';
 import { getMyProfile } from '../services/user.service';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
 interface RealtimeChatPayload {
     fromUserId: number;
@@ -102,6 +103,9 @@ export const ChatDetail: React.FC = () => {
     const [isReporting, setIsReporting] = useState(false);
     const [isDeletingMessage, setIsDeletingMessage] = useState(false);
     const [deleteMessageError, setDeleteMessageError] = useState('');
+    const [showDeleteConversationModal, setShowDeleteConversationModal] = useState(false);
+    const [isDeletingConversation, setIsDeletingConversation] = useState(false);
+    const [deleteConversationError, setDeleteConversationError] = useState('');
     const [isRecordingAudio, setIsRecordingAudio] = useState(false);
     const [hasRecordedAudio, setHasRecordedAudio] = useState(false);
     const [lightboxImageUrl, setLightboxImageUrl] = useState<string | null>(null);
@@ -128,8 +132,11 @@ export const ChatDetail: React.FC = () => {
     const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) as { id?: number; is_face_verified?: boolean } : null;
     const currentUserId = Number(currentUser?.id);
     const [isCurrentUserFaceVerified, setIsCurrentUserFaceVerified] = useState(Boolean(currentUser?.is_face_verified));
-    const reduceMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const { refreshNotifications } = useNotifications();
+    const reduceMotion = useReducedMotion();
     const prevIsRecordingRef = useRef(isRecordingAudio);
+    const isCounterpartLowEnergy = counterpart?.atmosphere === 'bajo';
+    const isCounterpartQuiet = counterpart?.atmosphere === 'tranquilo';
 
     const getMessageElementId = useCallback((messageId: number) => `chat-message-${messageId}`, []);
 
@@ -254,6 +261,7 @@ export const ChatDetail: React.FC = () => {
             setCanShowOnlineStatus(onlineStatus.canShowOnlineStatus);
             
             await markConversationRead(chatUserId);
+            await refreshNotifications();
         } catch (error) {
             console.error('Error cargando conversación:', error);
         } finally {
@@ -455,7 +463,7 @@ export const ChatDetail: React.FC = () => {
             });
         } catch (error) {
             console.error('Error eliminando mensaje:', error);
-            setDeleteMessageError('No se pudo eliminar el mensaje. Intentalo de nuevo.');
+            setDeleteMessageError('No se pudo eliminar el mensaje. Inténtalo de nuevo.');
         } finally {
             setIsDeletingMessage(false);
         }
@@ -596,24 +604,30 @@ export const ChatDetail: React.FC = () => {
         }
     };
 
-    const handleDeleteConversation = async () => {
-        const shouldBlock = window.confirm('¿Quieres borrar la conversación y BLOQUEAR a este usuario?');
-        const confirmDelete = shouldBlock || window.confirm('¿Estás seguro de que quieres borrar toda la conversación?');
-        
-        if (!confirmDelete) return;
-
-        try {
-            await deleteConversation(chatUserId, shouldBlock);
-            navigate('/app/messages');
-        } catch (error) {
-            console.error('Error borrando conversación:', error);
-            alert('No se pudo procesar la solicitud.');
-        }
+    const handleDeleteConversation = () => {
+        setDeleteConversationError('');
+        setShowDeleteConversationModal(true);
     };
 
     const handleBlockUser = () => {
         setShowOptions(false);
         setShowBlockModal(true);
+    };
+
+    const confirmDeleteConversation = async () => {
+        setIsDeletingConversation(true);
+        setDeleteConversationError('');
+
+        try {
+            await deleteConversation(chatUserId, false);
+            setShowDeleteConversationModal(false);
+            navigate('/app/messages');
+        } catch (error) {
+            console.error('Error borrando conversación:', error);
+            setDeleteConversationError('No se pudo borrar la conversación. Inténtalo de nuevo.');
+        } finally {
+            setIsDeletingConversation(false);
+        }
     };
 
     const confirmBlock = async () => {
@@ -939,10 +953,12 @@ export const ChatDetail: React.FC = () => {
                             <ArrowLeftIcon size={22} weight="bold" />
                         </button>
 
-                        <Link 
-                            to={`/app/user/${chatUserId}`}
-                            className="flex items-center gap-3 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg rounded-2xl px-1 py-1"
-                        >
+                        <TooltipTrigger delay={250}>
+                            <AriaButton
+                                onPress={() => navigate(`/app/user/${chatUserId}`)}
+                                aria-label={`Ver perfil de ${counterpart ? `${counterpart.first_name} ${counterpart.last_name}` : 'esta persona'}`}
+                                className="flex items-center gap-3 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg rounded-2xl px-1 py-1 text-left"
+                            >
                             <div className="relative">
                                 <img
                                     src={(isBlockedByMe || isBlockedByOther) ? 'https://via.placeholder.com/120?text=?' : (counterpart?.main_photo || 'https://via.placeholder.com/120')}
@@ -965,7 +981,7 @@ export const ChatDetail: React.FC = () => {
                                     )}
                                 </div>
                                 <span className="text-[11px] font-medium" aria-live="polite" role="status">
-                                    {isTypingRemote && !isBlockedByMe && !isBlockedByOther ? (
+                                    {isTypingRemote && !isCounterpartLowEnergy && !isBlockedByMe && !isBlockedByOther ? (
                                         <span className="text-app-secondary">escribiendo…</span>
                                     ) : (isBlockedByMe || isBlockedByOther || !canShowOnlineStatus) ? (
                                         <span className="text-app-muted">Estado no disponible</span>
@@ -976,7 +992,10 @@ export const ChatDetail: React.FC = () => {
                                     )}
                                 </span>
                             </div>
-                        </Link>
+                            </AriaButton>
+
+                            <Tooltip placement="bottom">Ver perfil</Tooltip>
+                        </TooltipTrigger>
                     </div>
 
                     <div className="relative">
@@ -1086,6 +1105,18 @@ export const ChatDetail: React.FC = () => {
                         <span className="text-[11px] text-app-muted font-medium tracking-wide uppercase">Hoy</span>
                         <div className="flex-1 h-px border-t border-app-soft" />
                     </div>
+
+                    {(isCounterpartLowEnergy || isCounterpartQuiet) && counterpart && !isBlockedByMe && !isBlockedByOther && (
+                        <div
+                            className="sticky top-0.5 z-20 mx-auto mb-1 w-full max-w-lg rounded-xl border border-sky-100 bg-sky-50/95 px-2.5 py-1.5 text-center text-[12px] leading-4 text-slate-700 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-app-surface-strong dark:text-app-primary dark:shadow-black/20 sm:px-3 sm:py-2 sm:text-[13px]"
+                            role="status"
+                            aria-live="polite"
+                        >
+                            {isCounterpartLowEnergy
+                                ? `${counterpart.first_name} tiene la energía social baja justo ahora. Puede tardar más en responder, pero sigue teniendo interes en hablar contigo!`
+                                : `${counterpart.first_name} está en modo tranquilo justo ahora. Quizá prefiera una conversación más pausada y sin presión.`}
+                        </div>
+                    )}
 
                     {messages.map((msg, index) => {
                         const isMe = msg.sender_id === currentUserId;
@@ -1249,7 +1280,7 @@ export const ChatDetail: React.FC = () => {
                         );
                     })}
 
-                    {isTypingRemote && (
+                    {isTypingRemote && !isCounterpartLowEnergy && (
                         <div className="flex items-end gap-2.5 mt-4 animate-fade-in">
                             <div className="w-7 flex-none">
                                 <img
@@ -1275,7 +1306,7 @@ export const ChatDetail: React.FC = () => {
                     {(isBlockedByMe || isBlockedByOther) ? (
                         <div className="flex items-center justify-center py-4 px-6 bg-app-surface rounded-2xl border border-app-soft border-dashed">
                             <p className="text-sm text-app-muted font-medium italic">
-                                {isBlockedByMe ? 'Has bloqueado a este usuario. Desbloquéalo para enviar mensajes.' : 'Ya no puedes enviar mensajes a este usuario.'}
+                            {isBlockedByMe ? 'Has bloqueado a este usuario. Desbloquéalo para enviar mensajes.' : 'Ya no puedes enviar mensajes a este usuario.'}
                             </p>
                         </div>
                     ) : (
@@ -1455,9 +1486,9 @@ export const ChatDetail: React.FC = () => {
                             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500 shadow-sm border border-red-100">
                                 <TrashIcon size={30} weight="bold" />
                             </div>
-                            <h3 id={deleteMessageTitleId} className="text-xl font-bold text-app-primary mb-3">Eliminar mensaje?</h3>
+                            <h3 id={deleteMessageTitleId} className="text-xl font-bold text-app-primary mb-3">¿Eliminar mensaje?</h3>
                             <p id={deleteMessageDescriptionId} className="text-sm text-app-muted leading-relaxed mb-6">
-                                Se eliminara del chat para ambos, aunque la otra persona podria haberlo visto antes. No podras deshacer esta accion.
+                                Se eliminará del chat para ambos, aunque la otra persona podría haberlo visto antes. No podrás deshacer esta acción.
                             </p>
                             {deleteMessageError && (
                                 <div className="mb-5 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
@@ -1482,6 +1513,52 @@ export const ChatDetail: React.FC = () => {
                                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                     ) : (
                                         'Eliminar'
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de borrar conversación */}
+            {showDeleteConversationModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+                    <div
+                        className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                        onClick={() => !isDeletingConversation && setShowDeleteConversationModal(false)}
+                    />
+                    <div className="relative bg-app-surface w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-app-soft">
+                        <div className="p-8 text-center">
+                            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500 shadow-sm border border-red-100">
+                                <TrashIcon size={30} weight="bold" />
+                            </div>
+                            <h3 className="text-xl font-bold text-app-primary mb-3">¿Borrar conversación?</h3>
+                            <p className="text-sm text-app-muted leading-relaxed mb-6">
+                                Se eliminará esta conversación de tu bandeja. Esta acción no bloqueará a {counterpart?.first_name || 'esta persona'}.
+                            </p>
+                            {deleteConversationError && (
+                                <div className="mb-5 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                                    {deleteConversationError}
+                                </div>
+                            )}
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => setShowDeleteConversationModal(false)}
+                                    disabled={isDeletingConversation}
+                                    className="px-6 py-3.5 text-sm font-semibold text-app-primary bg-app-surface-soft hover:bg-app-soft rounded-2xl transition-all active:scale-95 disabled:opacity-50"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={() => void confirmDeleteConversation()}
+                                    disabled={isDeletingConversation}
+                                    className="px-6 py-3.5 text-sm font-bold text-white bg-red-500 hover:bg-red-600 rounded-2xl transition-all active:scale-95 shadow-md shadow-red-200 flex items-center justify-center gap-2 disabled:opacity-70"
+                                >
+                                    {isDeletingConversation ? (
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        'Borrar'
                                     )}
                                 </button>
                             </div>
@@ -1644,3 +1721,4 @@ export const ChatDetail: React.FC = () => {
         </div>
     );
 };
+
