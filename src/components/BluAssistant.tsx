@@ -1,5 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { PaperPlaneRightIcon, SparkleIcon, XIcon } from '@phosphor-icons/react';
+import React, { useEffect, useId, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
+import { PaperPlaneRightIcon, XIcon } from '@phosphor-icons/react';
+import { BluMascot } from './BluMascot';
+import { assistantService, type AssistantHistoryMessage } from '../services/assistant.service';
 
 type Message = {
     id: number;
@@ -8,226 +11,327 @@ type Message = {
 };
 
 const SUGGESTIONS = [
-    "¿Cómo rompo el hielo?",
-    "Revisa mi perfil",
-    "¿Con quién hablo primero?",
+    'Quiero conocer gente afín a mí',
+    'La app se siente intensa, ayúdame',
+    'No sé cómo empezar una charla',
+    'Quiero dejar mi perfil más yo',
 ];
 
-const BLU_RESPONSES: Record<string, string> = {
-    "¿Cómo rompo el hielo?": "¡Pregunta algo sobre una foto de su perfil! Las preguntas específicas generan 3x más respuestas que un simple 'hola' 💬",
-    "Revisa mi perfil": "Tu perfil tiene buena energía ✨ Te sugiero añadir una foto al aire libre y mencionar un hobby concreto en tu bio.",
-    "¿Con quién hablo primero?": "Empieza con alguien con quien compartas al menos 2 intereses. La compatibilidad de hobbies predice mejor la conexión real 🎯",
-};
+const MAX_MESSAGE_LENGTH = 280;
 
-const BLU_ANIMATION_URL = 'https://davvcdn.lon1.cdn.digitaloceanspaces.com/70ae84aa209da8b5d745696d86da9236/5203ea00a53efb1f23c6.html';
+const PROFANITY_PATTERNS = [
+    /\bput[ao]s?\b/giu,
+    /\bputisima\b/giu,
+    /\bmierd[ao]s?\b/giu,
+    /\bjod(?:er|ete|ido|ida|idos|idas)\b/giu,
+    /\bco\u00f1[ao]\b/giu,
+    /\bcabr[o\u00f3]n(?:es)?\b/giu,
+    /\bgilipollas\b/giu,
+    /\bimb[e\u00e9]cil(?:es)?\b/giu,
+    /\bidiot[ao]s?\b/giu,
+    /\best[u\u00fa]pid[ao]s?\b/giu,
+    /\bsubnormal(?:es)?\b/giu,
+    /\bpayas[ao]s?\b/giu,
+    /\bcapull[ao]s?\b/giu,
+    /\bmalparid[ao]s?\b/giu,
+];
 
 const BluAssistantAnimation: React.FC<{ size?: 'sm' | 'md' }> = ({ size = 'md' }) => {
-    const [failed, setFailed] = useState(false);
-    const dimensions = size === 'sm' ? 'w-9 h-9' : 'w-14 h-14';
-    const iconSize = size === 'sm' ? 16 : 22;
-
-    if (failed) {
-        return (
-            <div
-                className={`${dimensions} rounded-full flex items-center justify-center shadow-md`}
-                style={{ background: 'linear-gradient(135deg, #9160e4, #3b2b97)' }}
-                aria-hidden="true"
-            >
-                <SparkleIcon size={iconSize} weight="bold" className="text-white" />
-            </div>
-        );
-    }
-
-    return (
-        <iframe
-            src={BLU_ANIMATION_URL}
-            title="Animación de Blu"
-            frameBorder="0"
-            allow="accelerometer; gyroscope; magnetometer"
-            sandbox="allow-scripts"
-            loading="lazy"
-            onError={() => setFailed(true)}
-            className={`${dimensions} block rounded-full border-0 pointer-events-none overflow-hidden bg-transparent`}
-            aria-hidden="true"
-        />
-    );
+    return <BluMascot size={size} />;
 };
 
+const toAssistantHistory = (items: Message[]): AssistantHistoryMessage[] =>
+    items
+        .filter(msg => msg.id !== 0)
+        .slice(-8)
+        .map(msg => ({
+            role: msg.from === 'user' ? 'user' : 'assistant',
+            content: msg.text,
+        }));
+
+const sanitizeProfanity = (text: string) =>
+    PROFANITY_PATTERNS.reduce((current, pattern) => current.replace(pattern, '***'), text);
+
 export const BluAssistant: React.FC = () => {
+    const panelId = useId();
+    const titleId = useId();
+    const descriptionId = useId();
+    const logId = useId();
+    const inputId = useId();
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState('');
     const [typing, setTyping] = useState(false);
+    const [error, setError] = useState('');
+    const nextMessageId = useRef(1);
     const [messages, setMessages] = useState<Message[]>([
-        { id: 0, text: '¡Hola! Soy Blu, tu asistente de citas 💜 ¿En qué te ayudo?', from: 'blu' },
+        {
+            id: 0,
+            text: 'Ey, estoy aquí contigo. Podemos ir despacio: me cuentas qué necesitas y lo vemos paso a paso, sin presión.',
+            from: 'blu',
+        },
     ]);
     const bottomRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }, [messages, typing]);
 
     useEffect(() => {
-        if (open) setTimeout(() => inputRef.current?.focus(), 300);
+        if (!open) return;
+
+        const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 120);
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setOpen(false);
+                window.requestAnimationFrame(() => triggerRef.current?.focus());
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.clearTimeout(focusTimer);
+            window.removeEventListener('keydown', handleKeyDown);
+        };
     }, [open]);
 
-    const sendMessage = (text: string) => {
-        if (!text.trim()) return;
-        const userMsg: Message = { id: Date.now(), text, from: 'user' };
+    const closeAssistant = () => {
+        setOpen(false);
+        window.requestAnimationFrame(() => triggerRef.current?.focus());
+    };
+
+    const sendMessage = async (text: string) => {
+        const cleanText = text.trim().slice(0, MAX_MESSAGE_LENGTH);
+        if (!cleanText || typing) return;
+
+        const currentMessages = messages;
+        const sanitizedText = sanitizeProfanity(cleanText);
+        const userMsg: Message = { id: nextMessageId.current++, text: sanitizedText, from: 'user' };
+
         setMessages(prev => [...prev, userMsg]);
         setInput('');
+        setError('');
         setTyping(true);
 
-        setTimeout(() => {
-            const reply = BLU_RESPONSES[text] ?? "Interesante... déjame pensarlo 🤔 Aún estoy aprendiendo de ti.";
+        try {
+            const response = await assistantService.sendMessage({
+                message: sanitizedText,
+                screen: 'home',
+                history: toAssistantHistory(currentMessages),
+            });
+
+            setMessages(prev => [
+                ...prev,
+                { id: nextMessageId.current++, text: sanitizeProfanity(response.reply), from: 'blu' },
+            ]);
+        } catch (requestError: unknown) {
+            const retryAfter = typeof requestError === 'object' && requestError !== null && 'response' in requestError
+                ? (requestError as { response?: { data?: { retryAfterSeconds?: number } } }).response?.data?.retryAfterSeconds
+                : undefined;
+            const fallback = retryAfter
+                ? `Ahora mismo estoy un pelín saturado. Dame ${retryAfter} segundos y lo volvemos a intentar.`
+                : 'Ahora mismo me está costando responder. Prueba otra vez en un momentito, ¿vale?';
+
+            setError(fallback);
+            setMessages(prev => [...prev, { id: nextMessageId.current++, text: fallback, from: 'blu' }]);
+        } finally {
             setTyping(false);
-            setMessages(prev => [...prev, { id: Date.now() + 1, text: reply, from: 'blu' }]);
-        }, 1400);
+        }
+    };
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        void sendMessage(input);
     };
 
     return (
-        <div className="fixed bottom-24 md:bottom-6 right-6 z-50 flex flex-col items-end gap-3 animate-fade-in">
-
-            {/* ── PANEL ── */}
-            <div
-                className="flex flex-col overflow-hidden rounded-3xl shadow-2xl border border-white/40"
-                style={{
-                    width: '320px',
-                    maxHeight: open ? '480px' : '0px',
-                    opacity: open ? 1 : 0,
-                    transition: 'max-height 0.55s ease-in-out, opacity 0.45s ease-in-out',
-                    pointerEvents: open ? 'auto' : 'none',
-                    background: 'rgba(255,255,255,0.85)',
-                    backdropFilter: 'blur(20px)',
-                }}
+        <aside className="fixed bottom-24 right-4 z-50 flex max-w-[calc(100vw-2rem)] flex-col items-end gap-3 md:bottom-6 md:right-6">
+            <section
+                id={panelId}
+                role="dialog"
+                aria-modal="false"
+                aria-labelledby={titleId}
+                aria-describedby={descriptionId}
+                className={`
+                    flex w-[min(25rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-[1.75rem]
+                    border border-[#D8CFFF] bg-[#F7F2FF] text-app-primary
+                    shadow-[0_24px_70px_rgba(76,65,140,0.22)] dark:border-app-strong dark:bg-app-surface-solid
+                    transition-[opacity,transform] duration-200 motion-reduce:transition-none
+                    ${open ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-2 opacity-0'}
+                `}
+                hidden={!open}
             >
-                {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-purple-50"
-                    style={{ background: 'linear-gradient(135deg, #f3f0ff 0%, #fce7f3 100%)' }}
-                >
-                    <div className="flex items-center gap-2.5">
-                        <div className="relative">
+                <header className="flex items-center justify-between gap-3 border-b border-[#D8CFFF] bg-[linear-gradient(135deg,#F0EAFF_0%,#E5F3FF_100%)] px-4 py-3.5 dark:border-app-soft dark:bg-none dark:bg-app-surface-strong">
+                    <div className="flex min-w-0 items-center gap-3">
+                        <span className="relative -m-1 flex h-14 w-14 shrink-0 items-center justify-center">
                             <BluAssistantAnimation size="sm" />
-                            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full ring-2 ring-white" />
-                        </div>
-                        <div>
-                            <p className="text-[13px] font-bold text-bluvi-purple leading-none">Blu</p>
-                            <p className="text-[10px] text-green-500 font-medium mt-0.5">Asistente activo</p>
+                            <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#F7F2FF] bg-green-500 dark:border-app-surface-solid" aria-hidden="true" />
+                        </span>
+                        <div className="min-w-0">
+                            <div className="mb-1 flex items-center gap-2">
+                                <h2 id={titleId} className="text-sm font-black leading-tight text-app-primary">
+                                    Soy Blu
+                                </h2>
+                                <span className="rounded-full border border-green-300/70 bg-green-100/80 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-green-700 dark:border-green-400/30 dark:bg-green-400/10 dark:text-green-300">
+                                    online
+                                </span>
+                            </div>
+                            <p id={descriptionId} className="text-xs font-semibold text-app-secondary">
+                                Voy contigo, sin prisas
+                            </p>
                         </div>
                     </div>
                     <button
-                        onClick={() => setOpen(false)}
-                        className="w-7 h-7 flex items-center justify-center rounded-full text-bluvi-purple/40 hover:text-bluvi-purple hover:bg-purple-100 transition-all"
+                        type="button"
+                        onClick={closeAssistant}
+                        aria-label="Cerrar asistente Blu"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#D5CBFF] bg-white/55 text-app-primary shadow-sm transition-colors hover:bg-white/80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/40 dark:border-app-soft dark:bg-app-surface-soft dark:hover:bg-app-surface-strong"
                     >
-                        <XIcon size={15} weight="bold" />
+                        <XIcon size={18} weight="bold" aria-hidden="true" />
                     </button>
-                </div>
+                </header>
 
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2" style={{ maxHeight: '280px' }}>
+                {messages.length <= 1 && (
+                    <div className="border-b border-[#D8CFFF] bg-[#F7F2FF] px-4 py-3.5 dark:border-app-soft dark:bg-app-surface-solid">
+                        <p className="mb-2 text-xs font-black uppercase tracking-[0.12em] text-app-muted">
+                            ¿Por dónde empezamos?
+                        </p>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                            {SUGGESTIONS.map(s => (
+                                <button
+                                    key={s}
+                                    type="button"
+                                    onClick={() => sendMessage(s)}
+                                    disabled={typing}
+                                    className="min-h-11 rounded-2xl border border-[#D5CBFF] bg-[#EFE8FF] px-3 py-2 text-left text-xs font-bold leading-snug text-app-primary shadow-sm transition-colors hover:bg-[#E8DFFF] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/40 disabled:cursor-not-allowed disabled:opacity-60 dark:border-app-strong dark:bg-app-surface-soft dark:hover:bg-app-surface-strong"
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                <div
+                    id={logId}
+                    role="log"
+                    aria-live="polite"
+                    aria-relevant="additions text"
+                    className="max-h-[min(23rem,48vh)] flex-1 space-y-3 overflow-y-auto bg-[#F1EBFF] px-4 py-4 dark:bg-app-surface"
+                >
                     {messages.map(msg => (
                         <div key={msg.id} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`
-                                px-3.5 py-2 rounded-2xl text-[13px] leading-relaxed max-w-[82%]
-                                ${msg.from === 'user'
-                                    ? 'text-white rounded-br-sm'
-                                    : 'bg-white/90 text-gray-700 border border-purple-50 shadow-sm rounded-bl-sm'
-                                }
-                            `}
-                                style={msg.from === 'user' ? {
-                                    background: 'linear-gradient(135deg, #7c3aed, #9333ea)'
-                                } : {}}
+                            <p
+                                className={`
+                                    max-w-[86%] rounded-[1.15rem] px-3.5 py-2.5 text-sm leading-relaxed shadow-sm
+                                    ${msg.from === 'user'
+                                        ? 'rounded-br-md bg-[#746CE0] text-white shadow-[#746CE0]/20 dark:bg-app-accent dark:text-app-on-accent'
+                                        : 'rounded-bl-md border border-[#D6CCFF] bg-[#FFFDF8] text-app-primary dark:border-app-soft dark:bg-app-surface-solid'
+                                    }
+                                `}
                             >
+                                <span className="sr-only">{msg.from === 'user' ? 'Tu mensaje: ' : 'Blu dice: '}</span>
                                 {msg.text}
-                            </div>
+                            </p>
                         </div>
                     ))}
 
-                    {/* Typing indicator — fade suave, sin rebote */}
                     {typing && (
                         <div className="flex justify-start">
-                            <div className="bg-white/90 border border-purple-50 shadow-sm px-4 py-3 rounded-2xl rounded-bl-sm flex gap-1.5 items-center">
-                                {[0, 1, 2].map(i => (
-                                    <span key={i} className="w-1.5 h-1.5 bg-bluvi-purple/40 rounded-full"
-                                        style={{
-                                            animation: 'gentleFade 1.8s ease-in-out infinite',
-                                            animationDelay: `${i * 0.35}s`
-                                        }}
-                                    />
-                                ))}
-                            </div>
+                            <p className="rounded-[1.15rem] rounded-bl-md border border-[#D6CCFF] bg-[#FFFDF8] px-4 py-3 text-sm text-app-secondary shadow-sm dark:border-app-soft dark:bg-app-surface-solid">
+                                <span className="sr-only">Blu está escribiendo</span>
+                                <span aria-hidden="true" className="inline-flex items-center gap-1.5">
+                                    {[0, 1, 2].map(i => (
+                                        <span
+                                            key={i}
+                                            className="h-1.5 w-1.5 rounded-full bg-[#746CE0] dark:bg-app-accent"
+                                            style={{
+                                                animation: 'bluAssistantPulse 1.4s ease-in-out infinite',
+                                                animationDelay: `${i * 0.18}s`,
+                                            }}
+                                        />
+                                    ))}
+                                </span>
+                            </p>
                         </div>
                     )}
                     <div ref={bottomRef} />
                 </div>
 
-                {/* Suggestions */}
-                {messages.length <= 1 && (
-                    <div className="px-4 pb-2 flex flex-wrap gap-1.5">
-                        {SUGGESTIONS.map(s => (
-                            <button key={s}
-                                onClick={() => sendMessage(s)}
-                                className="text-[11px] px-3 py-1.5 rounded-full border border-purple-200 text-bluvi-purple/70 hover:bg-purple-50 hover:text-bluvi-purple hover:border-purple-300 transition-all"
-                            >
-                                {s}
-                            </button>
-                        ))}
-                    </div>
+                {error && (
+                    <p className="border-t border-[#D8CFFF] bg-[#F7F2FF] px-4 py-2 text-xs font-semibold text-red-600 dark:border-app-soft dark:bg-app-surface-solid" role="status">
+                        {error}
+                    </p>
                 )}
 
-                {/* Input */}
-                <div className="px-3 pb-3 pt-1 border-t border-purple-50/60">
-                    <div className="flex items-center gap-2 bg-white/80 border border-purple-100 rounded-2xl px-3 py-2">
+                <form onSubmit={handleSubmit} className="border-t border-[#D8CFFF] bg-[#F7F2FF] p-3 dark:border-app-soft dark:bg-app-surface-solid">
+                    <label htmlFor={inputId} className="sr-only">
+                        Cuéntale a Blu qué necesitas
+                    </label>
+                    <div className="flex items-center gap-2 rounded-2xl border border-[#D5CBFF] bg-[#EFE8FF] px-3 py-2 shadow-inner shadow-white/50 focus-within:ring-4 focus-within:ring-app-focus/30 dark:border-app-strong dark:bg-app-surface-soft dark:shadow-none">
                         <input
+                            id={inputId}
                             ref={inputRef}
                             type="text"
                             value={input}
-                            onChange={e => setInput(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && sendMessage(input)}
-                            placeholder="Pregúntale a Blu..."
-                            className="flex-1 bg-transparent text-[13px] text-bluvi-purple placeholder:text-bluvi-purple/30 outline-none"
+                            onChange={event => setInput(event.target.value.slice(0, MAX_MESSAGE_LENGTH))}
+                            placeholder="Cuéntame qué necesitas..."
+                            disabled={typing}
+                            maxLength={MAX_MESSAGE_LENGTH}
+                            aria-controls={logId}
+                            className="min-h-9 flex-1 bg-transparent text-sm font-medium text-app-primary placeholder:text-app-muted focus:outline-none disabled:opacity-70"
                         />
                         <button
-                            onClick={() => sendMessage(input)}
-                            disabled={!input.trim()}
-                            className={`w-7 h-7 flex items-center justify-center rounded-full transition-all ${input.trim() ? 'text-white shadow-sm' : 'text-bluvi-purple/20'}`}
-                            style={input.trim() ? { background: 'linear-gradient(135deg, #7c3aed, #9333ea)' } : {}}
+                            type="submit"
+                            disabled={!input.trim() || typing}
+                            aria-label="Enviar mensaje a Blu"
+                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#746CE0] text-white shadow-md shadow-[#746CE0]/20 transition-colors hover:brightness-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/40 disabled:cursor-not-allowed disabled:bg-app-muted disabled:text-app-surface-solid dark:bg-app-accent dark:text-app-on-accent"
                         >
-                            <PaperPlaneRightIcon size={13} weight="bold" />
+                            <PaperPlaneRightIcon size={16} weight="bold" aria-hidden="true" />
                         </button>
                     </div>
-                </div>
-            </div>
+                </form>
+            </section>
 
-            {/* ── FAB BUTTON ── */}
             <button
-                onClick={() => setOpen(o => !o)}
-                className="relative w-14 h-14 rounded-full shadow-xl flex items-center justify-center"
-                style={{
-                    background: open ? 'linear-gradient(135deg, #9160e4, #3b2b97)' : 'rgba(255,255,255,0.01)',
-                    boxShadow: open ? '0 6px 24px rgba(124, 58, 237, 0.3)' : '0 6px 24px rgba(124, 58, 237, 0.18)',
-                    // Transición suave solo de opacidad — sin escala, sin rebote
-                    transition: 'opacity 0.3s ease, box-shadow 0.3s ease',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                ref={triggerRef}
+                type="button"
+                onClick={() => setOpen(current => !current)}
+                aria-label={open ? 'Cerrar asistente Blu' : 'Abrir asistente Blu'}
+                aria-expanded={open}
+                aria-controls={panelId}
+                className="relative flex h-24 w-24 items-center justify-center overflow-visible bg-transparent p-0 text-app-primary transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/50 motion-reduce:transition-none"
             >
-                {/* Icono: fade cruzado en lugar de rotación */}
-                <div style={{ transition: 'opacity 0.3s ease', opacity: open ? 0 : 1, position: 'absolute' }}>
+                <span className={`${open ? 'opacity-0' : 'opacity-100'} absolute transition-opacity motion-reduce:transition-none`}>
                     <BluAssistantAnimation />
-                </div>
-                <div style={{ transition: 'opacity 0.3s ease', opacity: open ? 1 : 0, position: 'absolute' }}>
-                    <XIcon size={22} weight="bold" className="text-white" />
-                </div>
-
+                </span>
+                <span className={`${open ? 'opacity-100' : 'opacity-0'} absolute flex h-14 w-14 items-center justify-center rounded-full bg-[#746CE0] text-white shadow-xl transition-opacity motion-reduce:transition-none dark:bg-app-accent dark:text-app-on-accent`}>
+                    <XIcon size={22} weight="bold" aria-hidden="true" />
+                </span>
             </button>
 
             <style>{`
-                @keyframes gentleFade {
-                    0%, 100% { opacity: 0.25; }
-                    50%       { opacity: 0.75; }
+                @keyframes bluAssistantPulse {
+                    0%, 100% { opacity: 0.3; transform: translateY(0); }
+                    50% { opacity: 0.9; transform: translateY(-1px); }
+                }
+
+                .blu-mascot-antenna {
+                    animation: bluMascotAntennaIdle 3.2s ease-in-out infinite;
+                }
+
+                @keyframes bluMascotAntennaIdle {
+                    0%, 100% { transform: rotate(calc(var(--blu-antenna-rotation, 0deg) - 2deg)); }
+                    50% { transform: rotate(calc(var(--blu-antenna-rotation, 0deg) + 2deg)); }
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    .blu-mascot-antenna {
+                        animation: none;
+                    }
                 }
             `}</style>
-        </div>
+        </aside>
     );
 };
