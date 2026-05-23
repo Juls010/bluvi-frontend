@@ -9,7 +9,6 @@ import { CheckCircleIcon,
 } from '@phosphor-icons/react';
 import type { ToastContentProps } from './GlobalToast';
 
-// @ts-ignore
 export function Toast({ toast }: { toast: { content: ToastContentProps } }) {
   const isError = toast.content.type === 'error';
 

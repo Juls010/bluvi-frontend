@@ -14,11 +14,11 @@ interface UploadResponse {
  */
 export const uploadUserPhoto = async (file: File): Promise<UploadResponse> => {
   try {
-    // Sanitizamos el nombre del archivo para evitar caracteres no permitidos (acentos, espacios, etc.)
+    
     const sanitizedName = file.name
-      .normalize('NFD') // Descompone caracteres con acentos
-      .replace(/[\u0300-\u036f]/g, '') // Elimina los acentos
-      .replace(/[^a-zA-Z0-9.\-_]/g, '_'); // Reemplaza lo que no sea seguro por guiones bajos
+      .normalize('NFD') 
+      .replace(/[\u0300-\u036f]/g, '') 
+      .replace(/[^a-zA-Z0-9.\-_]/g, '_'); 
 
     const fileName = `${Date.now()}_${sanitizedName}`;
     const filePath = `registration/${fileName}`;

@@ -8,10 +8,7 @@ export interface CitySuggestion {
     lng?: number;
 }
 
-/**
- * Lista de ciudades comunes para asegurar resultados rápidos en búsquedas cortas (ej: "SE").
- * Estas coordenadas son aproximadas (centros de ciudad).
- */
+
 const COMMON_CITIES = [
     { label: 'Madrid, Comunidad de Madrid, España', lat: 40.4168, lng: -3.7038 },
     { label: 'Barcelona, Cataluña, España', lat: 41.3851, lng: 2.1734 },
@@ -92,7 +89,7 @@ const toSuggestion = (label: string, value?: string, lat?: number, lng?: number)
 });
 
 const formatOpenMeteoLabel = (result: OpenMeteoCityResult) => {
-    // Priorizamos admin3 (municipio) sobre name (que a veces es la comarca)
+    
     const parts = [result.admin3, result.name, result.admin2, result.admin1, result.country]
         .map((part) => (typeof part === 'string' ? part.trim() : ''))
         .filter((part, index, self) => part.length > 0 && self.indexOf(part) === index);
@@ -110,14 +107,12 @@ export const searchCities = async (
         return [];
     }
 
-    // 1. Buscar primero en la lista local de ciudades comunes (para rapidez y prefijos cortos)
+    
     const localMatches = COMMON_CITIES
         .filter(city => city.label.toLowerCase().includes(normalizedQuery))
         .slice(0, limit)
         .map(city => toSuggestion(city.label, undefined, city.lat, city.lng));
 
-    // Si ya tenemos suficientes resultados locales exactos, podemos devolverlos directamente 
-    // o continuar para completarlos con la API.
     
     try {
         const url = `${OPEN_METEO_GEOCODING_URL}?name=${encodeURIComponent(normalizedQuery)}&count=50&language=es&format=json`;
@@ -132,7 +127,6 @@ export const searchCities = async (
 
         const unique = new Map<string, CitySuggestion>();
         
-        // Añadir primero los locales para que tengan prioridad
         localMatches.forEach(s => unique.set(s.label, s));
 
         for (const result of results) {
@@ -155,7 +149,7 @@ export const searchCities = async (
             return [];
         }
         console.error('Error searching cities:', error);
-        // En caso de error de red, devolvemos al menos lo que encontramos localmente
+        
         return localMatches;
     }
 };

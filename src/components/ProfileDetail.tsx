@@ -168,7 +168,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ user, onLike, onPa
                             {communicationLabels.length > 0 ? (
                                 communicationLabels.map((label, index) => (
                                     <li 
-                                        key={`${label}-${index}`} // Usamos el index por si hay labels repetidos
+                                        key={`${label}-${index}`} 
                                         className="px-3 py-1.5 bg-app-pill text-app-primary border border-app-soft rounded-lg text-sm font-medium"
                                     >
                                         {label}

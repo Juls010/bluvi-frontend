@@ -23,7 +23,6 @@ export const GenderStep: React.FC = () => {
             try {
                 const response = await authService.getMetadata();
                 if (response.success) {
-                    // DEBUG: Mira qué llega exactamente del Back
                     console.log("Datos recibidos de géneros:", response.data.genders);
                     setGenderOptions(response.data.genders);
                 }

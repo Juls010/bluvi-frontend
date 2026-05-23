@@ -52,7 +52,6 @@ export const NameStep: React.FC = () => {
     const firstNameHasError = firstNameError.length > 0;
     const lastNameHasError = lastNameError.length > 0;
 
-    // IDs para mensajes de error
     const firstNameErrorId = firstNameHasError ? 'firstName-error' : undefined;
     const lastNameErrorId = lastNameHasError ? 'lastName-error' : undefined;
 

@@ -88,7 +88,6 @@ export const BluAssistant: React.FC = () => {
     return (
         <div className="fixed bottom-24 md:bottom-6 right-6 z-50 flex flex-col items-end gap-3 animate-fade-in">
 
-            {/* ── PANEL ── */}
             <div
                 className="flex flex-col overflow-hidden rounded-3xl shadow-2xl border border-white/40"
                 style={{
@@ -101,7 +100,6 @@ export const BluAssistant: React.FC = () => {
                     backdropFilter: 'blur(20px)',
                 }}
             >
-                {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-purple-50"
                     style={{ background: 'linear-gradient(135deg, #f3f0ff 0%, #fce7f3 100%)' }}
                 >
@@ -123,7 +121,6 @@ export const BluAssistant: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Messages */}
                 <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2" style={{ maxHeight: '280px' }}>
                     {messages.map(msg => (
                         <div key={msg.id} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -143,7 +140,6 @@ export const BluAssistant: React.FC = () => {
                         </div>
                     ))}
 
-                    {/* Typing indicator — fade suave, sin rebote */}
                     {typing && (
                         <div className="flex justify-start">
                             <div className="bg-white/90 border border-purple-50 shadow-sm px-4 py-3 rounded-2xl rounded-bl-sm flex gap-1.5 items-center">
@@ -161,7 +157,6 @@ export const BluAssistant: React.FC = () => {
                     <div ref={bottomRef} />
                 </div>
 
-                {/* Suggestions */}
                 {messages.length <= 1 && (
                     <div className="px-4 pb-2 flex flex-wrap gap-1.5">
                         {SUGGESTIONS.map(s => (
@@ -175,7 +170,6 @@ export const BluAssistant: React.FC = () => {
                     </div>
                 )}
 
-                {/* Input */}
                 <div className="px-3 pb-3 pt-1 border-t border-purple-50/60">
                     <div className="flex items-center gap-2 bg-white/80 border border-purple-100 rounded-2xl px-3 py-2">
                         <input
@@ -199,20 +193,17 @@ export const BluAssistant: React.FC = () => {
                 </div>
             </div>
 
-            {/* ── FAB BUTTON ── */}
             <button
                 onClick={() => setOpen(o => !o)}
                 className="relative w-14 h-14 rounded-full shadow-xl flex items-center justify-center"
                 style={{
                     background: open ? 'linear-gradient(135deg, #9160e4, #3b2b97)' : 'rgba(255,255,255,0.01)',
                     boxShadow: open ? '0 6px 24px rgba(124, 58, 237, 0.3)' : '0 6px 24px rgba(124, 58, 237, 0.18)',
-                    // Transición suave solo de opacidad — sin escala, sin rebote
                     transition: 'opacity 0.3s ease, box-shadow 0.3s ease',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
                 onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
-                {/* Icono: fade cruzado en lugar de rotación */}
                 <div style={{ transition: 'opacity 0.3s ease', opacity: open ? 0 : 1, position: 'absolute' }}>
                     <BluAssistantAnimation />
                 </div>

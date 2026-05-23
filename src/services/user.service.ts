@@ -20,7 +20,7 @@ export interface ExploreUsersResponse {
     limit: number;
 }
 
-// --- FUNCIONES DEL SERVICIO ---
+
 
 export const getMyProfile = async (): Promise<User> => {
     const response = await api.get<{ user: User }>('/users/profile'); 

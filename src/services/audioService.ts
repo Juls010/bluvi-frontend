@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
 
-const AUDIO_BUCKET = 'Bluvi_photos'; // Reutilizamos el bucket existente
+const AUDIO_BUCKET = 'Bluvi_photos'; 
 const AUDIO_FOLDER = 'chat_audio';
 
 interface UploadAudioResponse {
@@ -47,7 +47,6 @@ export const uploadAudioMessage = async (audioBlob: Blob, userId: number): Promi
  */
 export const deleteAudioMessage = async (audioUrl: string): Promise<void> => {
     try {
-        // Extraer la ruta del archivo de la URL
         const url = new URL(audioUrl);
         const pathParts = url.pathname.split('/');
         const filePath = pathParts.slice(pathParts.indexOf(AUDIO_FOLDER)).join('/');

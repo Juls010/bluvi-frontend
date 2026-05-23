@@ -1,7 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
-// Layouts
+
 import { WelcomeLayout } from '../layouts/WelcomeLayout';
 import { RegisterLayout } from '../layouts/RegisterLayout';
 import { AppLayout } from '../layouts/AppLayout';
@@ -9,7 +9,7 @@ import { ChatLayout } from '../layouts/ChatLayout';
 import { PublicThemeScope, PrivateThemeScope } from '../layouts/ThemeScopes';
 import LegalLayout from '../layouts/LegalLayout';
 
-// Contexts
+
 import { RegisterProvider } from '../context/RegisterContext';
 
 import PrivateRoute from '../components/PrivateRoute';

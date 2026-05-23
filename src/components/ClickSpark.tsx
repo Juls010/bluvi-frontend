@@ -38,7 +38,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     const prefersReducedMotion = useReducedMotion();
 
     useEffect(() => {
-        // Si prefiere movimiento reducido, no inicializamos el canvas
+        
         if (prefersReducedMotion) return;
 
         const canvas = canvasRef.current;
@@ -175,7 +175,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                pointerEvents: 'none', // IMPORTANTE: deja pasar el clic al botón de abajo si hiciera falta
+                pointerEvents: 'none', 
                 zIndex: 10
             }}
             />

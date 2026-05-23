@@ -847,7 +847,6 @@ export const ChatDetail: React.FC = () => {
                 closeOptionsMenu();
             }
             
-            // Focus trap: mantener el foco dentro del menú cuando está abierto
             if (e.key === 'Tab' && showOptions && optionsMenuRef.current) {
                 const buttons = Array.from(optionsMenuRef.current.querySelectorAll('button')) as HTMLButtonElement[];
                 if (buttons.length === 0) return;
@@ -857,13 +856,13 @@ export const ChatDetail: React.FC = () => {
                 const lastButton = buttons[buttons.length - 1];
                 
                 if (e.shiftKey) {
-                    // Shift+Tab
+                    
                     if (activeElement === firstButton) {
                         e.preventDefault();
                         lastButton.focus();
                     }
                 } else {
-                    // Tab
+                    
                     if (activeElement === lastButton) {
                         e.preventDefault();
                         firstButton.focus();
@@ -875,7 +874,7 @@ export const ChatDetail: React.FC = () => {
         if (showOptions) {
             document.addEventListener('pointerdown', handlePointerDownOutside, true);
             document.addEventListener('keydown', handleKeyDown);
-            // Dar focus al primer botón cuando se abre el menú
+            
             setTimeout(() => {
                 const firstButton = optionsMenuRef.current?.querySelector('button');
                 (firstButton as HTMLButtonElement)?.focus();

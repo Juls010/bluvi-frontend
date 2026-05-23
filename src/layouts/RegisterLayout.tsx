@@ -35,7 +35,7 @@ interface HeaderIconButtonProps {
 }
 
 const HeaderIconButton: React.FC<HeaderIconButtonProps> = ({ onClick, ariaLabel, tooltip, align, children, className = "" }) => {
-    // Solo mostrar tooltip y aria-label en móvil, donde no hay texto visible
+    
     const tooltipPositionClass = align === 'left' ? 'left-0' : 'right-0';
     return (
         <div className="relative inline-flex group">
@@ -51,10 +51,9 @@ const HeaderIconButton: React.FC<HeaderIconButtonProps> = ({ onClick, ariaLabel,
                 `}
                 aria-label={ariaLabel}
             >
-                {/* En móvil solo icono, aria-label y tooltip útiles; en md+ hay texto visible */}
                 {children}
             </button>
-            {/* Tooltip solo visible en móvil, oculto en md+ */}
+            
             <span
                 role="tooltip"
                 aria-hidden="true"
@@ -103,7 +102,7 @@ export const RegisterLayout: React.FC = () => {
                 const preload = REGISTER_STEP_PRELOADERS[path as string];
                 if (preload) {
                     preload().catch(() => {
-                        // Ignore prefetch errors; navigation still loads lazily on demand.
+                        
                     });
                 }
             });

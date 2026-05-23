@@ -34,7 +34,6 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
         }
     };
 
-    // Keyboard support for Lightbox
     useEffect(() => {
         if (!showLightbox) return;
 
@@ -48,7 +47,6 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [showLightbox, photos.length]);
 
-    // Keyboard support for main carousel (when focused)
     const handleKeyDownMain = (e: React.KeyboardEvent) => {
         if (e.key === 'ArrowRight') {
             e.preventDefault();

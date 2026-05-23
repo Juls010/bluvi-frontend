@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 
-// ── ARIA id constants ──────────────────────────────────────────────────────────
 const DIALOG_TITLE_ID      = 'filter-dialog-title';
 const CITY_INPUT_ID        = 'filter-city-input';
 const CITY_LISTBOX_ID      = 'filter-city-listbox';
@@ -80,7 +79,6 @@ export const DiscoveryFilter: React.FC<Props> = ({
 
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
-      // Move focus into dialog
       requestAnimationFrame(() => closeButtonRef.current?.focus());
     } else {
       document.documentElement.style.overflow = '';
@@ -128,7 +126,6 @@ export const DiscoveryFilter: React.FC<Props> = ({
     };
   }, [cityQuery]);
 
-  // ── Focus trap + Escape closes dialog ──────────────────────────────────────
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -151,7 +148,6 @@ export const DiscoveryFilter: React.FC<Props> = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, handleClose]);
 
-  // ── Close suggestions on outside pointer ────────────────────────────────────
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
       if (comboboxRef.current && !comboboxRef.current.contains(event.target as Node)) {
@@ -167,7 +163,6 @@ export const DiscoveryFilter: React.FC<Props> = ({
     setList(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
   };
 
-  // Derived combobox state
   const normalizedQuery    = cityQuery.trim().toLowerCase();
   const normalizedSelected = selectedCity.trim().toLowerCase();
   const isConfirmed        = normalizedSelected.length > 0 && normalizedQuery === normalizedSelected;
