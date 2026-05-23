@@ -110,11 +110,19 @@ const getOptimizedImageSrc = (src: string) =>
 const SECTION_FOCUS_CLASS =
     'outline-none transition-[box-shadow] duration-300 ease-in-out focus-visible:ring-4 focus-visible:ring-[#5146C6]/25 focus-visible:ring-inset';
 
-const DESKTOP_NAV_LINK_CLASS =
-    'border-b-2 border-current px-1 py-1 text-base font-black text-[#221B5F] transition hover:text-[#383296] focus:outline-none focus-visible:rounded-md focus-visible:ring-4 focus-visible:ring-[#5146C6]/25 dark:text-[#D8D1FF] dark:hover:text-white lg:text-lg';
+const DESKTOP_NAV_LINK_CLASS = (isDarkTheme: boolean) =>
+    `border-b-2 border-current px-1 py-1 text-base font-black transition-colors focus:outline-none focus-visible:rounded-md focus-visible:ring-4 focus-visible:ring-[#5146C6]/25 lg:text-lg ${
+        isDarkTheme
+            ? 'text-[#D8D1FF] hover:text-white'
+            : 'text-[#221B5F] hover:text-[#7F77DD]'
+    }`;
 
-const MOBILE_MENU_ITEM_CLASS =
-    'rounded-2xl px-4 py-3 text-sm font-black text-[#221B5F] transition hover:bg-[#F8F7FF] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/25 dark:text-white dark:hover:bg-white/10';
+const MOBILE_MENU_ITEM_CLASS = (isDarkTheme: boolean) =>
+    `rounded-2xl px-4 py-3 text-sm font-black transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/25 ${
+        isDarkTheme
+            ? 'text-[#D8D1FF] hover:text-white'
+            : 'text-[#221B5F] hover:text-[#7F77DD]'
+    }`;
 
 type WelcomeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     children: React.ReactNode;
@@ -256,6 +264,9 @@ export const Welcome: React.FC = () => {
             ? 'bg-[linear-gradient(to_bottom_right,#1d214f,#2b2961_52%,#4c3850_78%,#8A4F38_100%)]'
             : 'bg-[linear-gradient(to_bottom_right,#A5C9FF,#D8D1FF_48%,#B8B2FF_100%)]';
 
+    const desktopNavLinkClass = DESKTOP_NAV_LINK_CLASS(isDarkTheme);
+    const mobileMenuItemClass = MOBILE_MENU_ITEM_CLASS(isDarkTheme);
+
     useScrollToTop();
 
     React.useEffect(() => {
@@ -304,11 +315,28 @@ export const Welcome: React.FC = () => {
     const handleThemeToggle = () => {
         const nextTheme = isDarkTheme ? 'light' : 'dark';
 
+        const reduceMotion =
+            document.documentElement.classList.contains('reduce-motion') ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (reduceMotion) {
+            // Respect reduced motion preferences: switch immediately
+            setTheme(nextTheme);
+            return;
+        }
+
+        // Add a temporary class that enables smooth transitions via CSS
+        document.documentElement.classList.add('theme-transitioning');
+
         setThemeFusion({ target: nextTheme, visible: false });
         window.setTimeout(() => setThemeFusion({ target: nextTheme, visible: true }), 20);
         window.setTimeout(() => setTheme(nextTheme), 320);
         window.setTimeout(() => setThemeFusion({ target: nextTheme, visible: false }), 360);
         window.setTimeout(() => setThemeFusion(null), 760);
+        // Remove the helper class shortly after the visual transition completes
+        window.setTimeout(() => {
+            document.documentElement.classList.remove('theme-transitioning');
+        }, 820);
     };
 
     const handleSectionNavigation = (
@@ -330,6 +358,10 @@ export const Welcome: React.FC = () => {
         });
 
         window.history.pushState(null, '', href);
+    };
+
+    const handleLogoNavigation = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        handleSectionNavigation(event, '#main-content');
     };
 
     const focusMobileMenuItem = (index: number) => {
@@ -390,7 +422,7 @@ export const Welcome: React.FC = () => {
             <div
                 className={`welcome-page-enter min-h-screen w-full scroll-smooth overflow-x-hidden bg-app-gradient font-sans text-[#221B5F] motion-reduce:scroll-auto motion-reduce:[&_*]:!animate-none motion-reduce:[&_*]:!transition-none dark:text-[#ECEBFF] ${
                     !isDarkTheme
-                        ? '[&_a]:!text-[#221B5F] [&_button]:!text-[#221B5F] [&_h1]:!text-[#221B5F] [&_h2]:!text-[#221B5F] [&_h3]:!text-[#221B5F] [&_p]:!text-[#221B5F] [&_span]:!text-[#221B5F] [&_strong]:!text-[#221B5F] [&_svg]:!text-[#221B5F] [&_.welcome-primary-button]:!text-white [&_.welcome-primary-button_*]:!text-white [&_.welcome-dark-section]:!text-white [&_.welcome-dark-section_*]:!text-white [&_.welcome-accessibility-card]:!text-white [&_.welcome-accessibility-card_*]:!text-white'
+                        ? '[&_button]:!text-[#221B5F] [&_h1]:!text-[#221B5F] [&_h2]:!text-[#221B5F] [&_h3]:!text-[#221B5F] [&_p]:!text-[#221B5F] [&_span]:!text-[#221B5F] [&_strong]:!text-[#221B5F] [&_svg]:!text-[#221B5F] [&_.welcome-primary-button]:!text-white [&_.welcome-primary-button_*]:!text-white [&_.welcome-dark-section]:!text-white [&_.welcome-dark-section_*]:!text-white [&_.welcome-accessibility-card]:!text-white [&_.welcome-accessibility-card_*]:!text-white'
                         : ''
                 } ${
                     themeFusion
@@ -414,9 +446,15 @@ export const Welcome: React.FC = () => {
                     Saltar al contenido principal
                 </a>
 
-                <header className="absolute inset-x-0 top-0 z-50">
+                <header
+                    className={`fixed inset-x-0 top-0 z-50 ${
+                        isDarkTheme
+                            ? 'border-b border-white/10 bg-[#3f4292]/40 shadow-sm shadow-black/10 backdrop-blur-md'
+                            : 'border-b border-white/60 bg-white/30 shadow-sm shadow-[#383296]/10 backdrop-blur-md'
+                    }`}
+                >
                     <nav
-                    className="relative grid w-full grid-cols-[1fr_auto_1fr] items-center px-4 py-4 sm:px-8 sm:py-5 xl:px-10"
+                    className="relative grid w-full grid-cols-[1fr_auto_1fr] items-center px-4 py-1.5 sm:px-8 sm:py-2 xl:px-10"
                     aria-label="Navegación principal"
                 >
                     <div
@@ -428,7 +466,7 @@ export const Welcome: React.FC = () => {
                                 key={link.href}
                                 href={link.href}
                                 onClick={(event) => handleSectionNavigation(event, link.href)}
-                                className={DESKTOP_NAV_LINK_CLASS}
+                                className={desktopNavLinkClass}
                             >
                                 {link.label}
                             </a>
@@ -436,11 +474,18 @@ export const Welcome: React.FC = () => {
                     </div>
 
                     <div className="col-start-2 justify-self-center">
-                        <img
-                            src={logo}
-                            alt="Bluvi"
-                            className="h-auto w-44 sm:w-52 xl:w-60 2xl:w-64"
-                        />
+                        <a
+                            href="#main-content"
+                            onClick={handleLogoNavigation}
+                            aria-label="Ir al inicio de la página"
+                            className="inline-flex rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30"
+                        >
+                            <img
+                                src={logo}
+                                alt="Bluvi"
+                                className="h-auto w-32 sm:w-40 xl:w-48 2xl:w-52"
+                            />
+                        </a>
                     </div>
                     <div className="col-start-3 flex items-center justify-end gap-3">
                         <button
@@ -509,7 +554,7 @@ export const Welcome: React.FC = () => {
                                         setIsMobileMenuOpen(false);
                                         handleSectionNavigation(event, link.href);
                                     }}
-                                    className={MOBILE_MENU_ITEM_CLASS}
+                                    className={mobileMenuItemClass}
                                 >
                                     {link.label}
                                 </a>
@@ -525,7 +570,7 @@ export const Welcome: React.FC = () => {
                                     handleThemeToggle();
                                     setIsMobileMenuOpen(false);
                                 }}
-                                className={`flex items-center justify-between text-left ${MOBILE_MENU_ITEM_CLASS}`}
+                                className={`flex items-center justify-between text-left ${mobileMenuItemClass}`}
                             >
                                 <span>
                                     {isDarkTheme ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
