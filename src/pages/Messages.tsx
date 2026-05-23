@@ -197,8 +197,7 @@ const ContactsDrawer: React.FC<{ isOpen: boolean; onClose: () => void; matches: 
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="contacts-drawer-title"
-                className={`relative z-10 w-full md:w-[420px] text-app-primary shadow-2xl overflow-hidden border-r border-app-soft flex flex-col ${isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'} rounded-t-[40px] md:rounded-t-none md:rounded-r-[48px]`}
-                style={{ backgroundColor: 'var(--app-surface-card)' }}
+                className={`relative z-10 w-full bg-app-surface-solid text-app-primary shadow-2xl overflow-hidden border-r border-app-soft flex flex-col md:w-[420px] md:bg-app-surface ${isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'} rounded-t-[40px] md:rounded-t-none md:rounded-r-[48px]`}
             >
                 <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-1 bg-app-accent/70" aria-hidden="true" />
                 <div className="flex justify-center pt-3 pb-1 md:hidden" aria-hidden="true">

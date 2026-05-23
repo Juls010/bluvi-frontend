@@ -160,7 +160,7 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
 
     return (
         <div
-            className={`w-full min-w-[280px] flex flex-col gap-2 px-4 py-3 rounded-2xl transition-all duration-300 ${
+            className={`w-full min-w-[230px] flex flex-col gap-2 rounded-2xl px-3 py-3 transition-all duration-300 sm:min-w-[280px] sm:px-4 ${
                 isOwn ? 'shadow-md backdrop-blur-sm' : 'bg-app-surface shadow-sm border-2 border-app-strong'
             }`}
             style={isOwn ? { background: 'var(--app-own-message-bg)' } : undefined}
@@ -168,7 +168,7 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
             aria-label="Reproductor de mensaje de audio"
             aria-live="polite"
         >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3">
                 <audio ref={audioElementRef} src={audioUrl} preload="metadata" crossOrigin="anonymous" />
 
                 <button
@@ -179,7 +179,7 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                     aria-pressed={isPlaying}
                     tabIndex={isInteractive ? 0 : -1}
                     data-own-audio-control={isOwn ? 'true' : undefined}
-                    className={`flex-shrink-0 w-10 h-10 rounded-full transition-all duration-300 flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-3 focus-visible:shadow-lg ${
+                    className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-3 focus-visible:shadow-lg sm:h-10 sm:w-10 ${
                         isOwn
                             ? 'focus-visible:ring-app-accent disabled:opacity-50'
                             : 'bg-app-accent/15 hover:bg-app-accent/25 focus-visible:ring-app-accent disabled:opacity-50'
@@ -187,9 +187,9 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                     style={isOwn ? { backgroundColor: 'var(--app-own-message-control-bg)' } : undefined}
                 >
                     {isPlaying ? (
-                        <PauseIcon size={24} weight="bold" className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
+                        <PauseIcon size={22} weight="bold" className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
                     ) : (
-                        <PlayIcon size={24} weight="bold" className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
+                        <PlayIcon size={22} weight="bold" className={isOwn ? 'text-app-on-accent' : 'text-app-accent'} style={isOwn ? { color: 'var(--app-own-message-control-text)' } : undefined} aria-hidden="true" />
                     )}
                 </button>
 
@@ -213,7 +213,7 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                         return (
                             <span
                                 key={`${barHeight}-${index}`}
-                                className={`w-2.5 rounded-full transition-all duration-150 ${
+                                className={`w-2 rounded-full transition-all duration-150 sm:w-2.5 ${
                                     !isOwn
                                         ? isFilled
                                             ? 'bg-app-accent'
@@ -231,7 +231,7 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audioUrl, duration =
                 </div>
 
                 <span
-                    className={`w-11 text-right text-[14px] font-mono font-semibold flex-shrink-0 ${isOwn ? '' : 'text-app-secondary'}`}
+                    className={`w-10 flex-shrink-0 text-right font-mono text-[13px] font-semibold sm:w-11 sm:text-[14px] ${isOwn ? '' : 'text-app-secondary'}`}
                     style={isOwn ? { color: 'var(--app-own-message-muted)' } : undefined}
                     aria-label={`Duración total: ${isLoading ? 'cargando' : formatTime(totalDuration)}`}
                 >

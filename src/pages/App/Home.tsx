@@ -121,7 +121,7 @@ export const Home: React.FC = () => {
                     {welcomeMessage}, <span className="text-app-accent">{displayName}</span>
                 </h1>
                 <p className="text-app-secondary text-base md:text-lg mt-4 max-w-2xl leading-relaxed">
-                    ¿Qué te pide el cuerpo hoy? Navega a tu ritmo, sin presiones. Todo está pensado para ser tu refugio sensorial.
+                    ¿Qué te pide el cuerpo hoy? Navega a tu ritmo, sin presiones. 
                 </p>
 
                 <button

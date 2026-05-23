@@ -8,7 +8,7 @@ const SEC_LOCATION_ID      = 'filter-sec-location';
 const SEC_INTERESTS_ID     = 'filter-sec-interests';
 const SEC_COMMUNICATION_ID = 'filter-sec-communication';
 const SEC_SENSORY_ID       = 'filter-sec-sensory';
-import { CaretRightIcon, ChatCircleIcon, CheckCircleIcon, FunnelIcon, MagnifyingGlassIcon, MapPinIcon, SparkleIcon, XIcon } from '@phosphor-icons/react';
+import { BrainIcon, CaretRightIcon, ChatCircleIcon, CheckCircleIcon, FunnelIcon, MagnifyingGlassIcon, MapPinIcon, XIcon } from '@phosphor-icons/react';
 import { searchCities, type CitySuggestion } from '../services/cities.service';
 
 export interface FilterData {
@@ -249,7 +249,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
           rounded-t-[40px] md:rounded-t-none md:rounded-r-[48px]
         `}
       >
-        {/* Drag handle — only visible on mobile */}
+
         <div className="flex justify-center pt-3 pb-1 md:hidden" aria-hidden="true">
           <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-white/20" />
         </div>
@@ -326,7 +326,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin w-4 h-4 border-2 border-app-accent border-t-transparent rounded-full" aria-hidden="true" />
                   )}
                 </div>
-                {/* Live region for screen readers */}
+                
                 <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{cityLiveMsg}</p>
 
                 {hasSuggestions && (
@@ -412,7 +412,7 @@ export const DiscoveryFilter: React.FC<Props> = ({
               >
                 <FunnelIcon size={20} weight="bold" />
               </div>
-              <h3 id={SEC_INTERESTS_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Intereses y Hyperfocus</h3>
+              <h3 id={SEC_INTERESTS_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Intereses</h3>
             </div>
 
             <div className="flex flex-wrap gap-2 pl-1">
@@ -486,9 +486,9 @@ export const DiscoveryFilter: React.FC<Props> = ({
                 style={{ backgroundColor: 'var(--filter-icon-bg)', color: 'var(--filter-icon-text)' }}
                 aria-hidden="true"
               >
-                <SparkleIcon size={20} weight="bold" />
+                <BrainIcon size={20} weight="bold" />
               </div>
-              <h3 id={SEC_SENSORY_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Sensibilidad y Entorno</h3>
+              <h3 id={SEC_SENSORY_ID} className="text-xs font-bold text-app-secondary uppercase tracking-[0.2em]">Rasgos</h3>
             </div>
 
             <div className="flex flex-wrap gap-2 pl-1">

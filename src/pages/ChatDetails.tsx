@@ -1080,7 +1080,7 @@ export const ChatDetail: React.FC = () => {
                         }
                     }}
                     onKeyDown={handleMessagesKeyDown}
-                    className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-6 space-y-2 focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/15 scrollbar-hide"
+                    className="flex-1 min-h-0 overflow-y-auto px-2.5 py-4 space-y-1.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/15 scrollbar-hide sm:px-4 sm:py-6 sm:space-y-2 md:px-6"
                     tabIndex={0}
                 >
                     <p id={chatHistoryInstructionsId} className="sr-only">
@@ -1142,14 +1142,14 @@ export const ChatDetail: React.FC = () => {
                                 aria-current={isKeyboardActive ? 'true' : undefined}
                                 aria-label={`${senderLabel}, ${contentLabel}, ${formatHour(msg.created_at)}`}
                                 onMouseDown={() => setActiveMessageId(msg.id_message)}
-                                className={`group/message flex items-end gap-2.5 rounded-3xl transition-shadow duration-200 ${isMe ? 'justify-end' : 'justify-start'} ${isSameSender ? 'mt-1' : 'mt-3'} ${isKeyboardActive ? 'ring-2 ring-app-accent/25 ring-offset-2 ring-offset-transparent' : ''}`}
+                                className={`group/message flex items-end gap-1.5 rounded-3xl transition-shadow duration-200 sm:gap-2.5 ${isMe ? 'justify-end' : 'justify-start'} ${isSameSender ? 'mt-1' : 'mt-2.5 sm:mt-3'} ${isKeyboardActive ? 'ring-2 ring-app-accent/25 ring-offset-2 ring-offset-transparent' : ''}`}
                             >
                                 {!isMe && (
-                                    <div className="w-7 flex-none self-end">
+                                    <div className="w-6 flex-none self-end sm:w-7">
                                         {(!messages[index + 1] || messages[index + 1].sender_id === currentUserId) && (
                                             <img
                                                 src={counterpart?.main_photo || 'https://via.placeholder.com/120'}
-                                                className="w-7 h-7 rounded-full object-cover ring-1 ring-app-soft"
+                                                className="h-6 w-6 rounded-full object-cover ring-1 ring-app-soft sm:h-7 sm:w-7"
                                                 alt={counterpart?.first_name || 'Usuario'}
                                             />
                                         )}
@@ -1161,7 +1161,7 @@ export const ChatDetail: React.FC = () => {
                                         <AriaButton
                                             onPress={() => openDeleteMessageModal(msg)}
                                             excludeFromTabOrder={!isKeyboardActive}
-                                            className={`mb-6 inline-flex h-8 w-8 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-500 hover:shadow-md focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-500/15 group-hover/message:scale-100 group-hover/message:opacity-100 ${isKeyboardActive ? 'scale-100 opacity-100' : ''}`}
+                                            className={`mb-6 hidden h-8 w-8 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-500 hover:shadow-md focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-500/15 group-hover/message:scale-100 group-hover/message:opacity-100 sm:inline-flex ${isKeyboardActive ? 'scale-100 opacity-100' : ''}`}
                                             aria-label="Eliminar mensaje para todos"
                                         >
                                             <TrashIcon size={14} weight="bold" />
@@ -1175,7 +1175,7 @@ export const ChatDetail: React.FC = () => {
                                         <AriaButton
                                             onPress={() => handleReportMessage(msg)}
                                             excludeFromTabOrder={!isKeyboardActive}
-                                            className={`mb-6 inline-flex h-8 w-8 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-500 hover:shadow-md focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-500/15 group-hover/message:scale-100 group-hover/message:opacity-100 ${isKeyboardActive ? 'scale-100 opacity-100' : ''}`}
+                                            className={`mb-6 hidden h-8 w-8 scale-90 items-center justify-center rounded-full border border-app-soft bg-app-surface text-app-muted opacity-0 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-500 hover:shadow-md focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-500/15 group-hover/message:scale-100 group-hover/message:opacity-100 sm:inline-flex ${isKeyboardActive ? 'scale-100 opacity-100' : ''}`}
                                             aria-label="Reportar mensaje"
                                         >
                                             <FlagIcon size={14} weight="bold" />
@@ -1184,7 +1184,7 @@ export const ChatDetail: React.FC = () => {
                                     </TooltipTrigger>
                                 )}
 
-                                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} ${msg.message_type === 'audio' && !isDeleted ? (isMe ? 'max-w-[24rem]' : 'w-full max-w-[24rem]') : 'max-w-[75%]'}`}>
+                                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} ${msg.message_type === 'audio' && !isDeleted ? (isMe ? 'max-w-[86%] sm:max-w-[24rem]' : 'w-full max-w-[calc(100%-2rem)] sm:max-w-[24rem]') : 'max-w-[82%] sm:max-w-[75%]'}`}>
                                     {isDeleted ? (
                                         <div
                                             className={`
@@ -1241,7 +1241,7 @@ export const ChatDetail: React.FC = () => {
                                     ) : (
                                         <div
                                             className={`
-                                                px-4 py-2.5 text-[15px] leading-7 shadow-sm
+                                                px-3.5 py-2.5 text-[15px] leading-7 shadow-sm sm:px-4
                                             ${isMe
                                                     ? 'text-app-on-accent rounded-[22px] rounded-br-md shadow-md'
                                                     : 'bg-app-surface text-app-primary rounded-[22px] rounded-bl-md border-2 border-app-strong'
@@ -1301,7 +1301,7 @@ export const ChatDetail: React.FC = () => {
                     <div ref={messagesEndRef} />
                 </main>
 
-                <div className="flex-none px-3 md:px-4 pb-4 pt-3 bg-app-surface-soft border-t-2 border-app-soft">
+                <div className="flex-none bg-app-surface-soft border-t-2 border-app-soft px-2 pb-3 pt-2.5 sm:px-3 sm:pb-4 sm:pt-3 md:px-4">
                     {(isBlockedByMe || isBlockedByOther) ? (
                         <div className="flex items-center justify-center py-4 px-6 bg-app-surface rounded-2xl border border-app-soft border-dashed">
                             <p className="text-sm text-app-muted font-medium italic">
@@ -1309,15 +1309,15 @@ export const ChatDetail: React.FC = () => {
                             </p>
                         </div>
                     ) : (
-                        <div className="flex items-end gap-2 rounded-[24px] bg-app-surface-strong border-2 border-app-soft px-2.5 py-2 shadow-md">
+                        <div className="flex items-end gap-1.5 rounded-[22px] bg-app-surface-strong border-2 border-app-soft px-2 py-1.5 shadow-md sm:gap-2 sm:rounded-[24px] sm:px-2.5 sm:py-2">
                             {!isRecordingAudio && (
-                                <div className="flex gap-1 pb-1">
+                                <div className="flex gap-0.5 pb-1 sm:gap-1">
                                     {isCurrentUserFaceVerified ? (
                                         <TooltipTrigger delay={300}>
                                             <AriaButton
                                                 onPress={() => imageInputRef.current?.click()}
                                                 isDisabled={sending}
-                                                className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="flex h-9 w-9 items-center justify-center rounded-2xl text-app-muted transition-all hover:bg-app-surface-soft hover:text-app-primary active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-10"
                                                 aria-label="Adjuntar imagen"
                                             >
                                                 <ImageIcon size={20} weight="bold" />
@@ -1327,7 +1327,7 @@ export const ChatDetail: React.FC = () => {
                                     ) : (
                                         <TooltipTrigger delay={300}>
                                             <AriaButton
-                                                className="w-10 h-10 flex items-center justify-center text-app-muted/60 rounded-2xl transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/40 focus-visible:ring-offset-2 cursor-not-allowed"
+                                                className="flex h-9 w-9 cursor-not-allowed items-center justify-center rounded-2xl text-app-muted/60 transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/40 focus-visible:ring-offset-2 sm:h-10 sm:w-10"
                                                 aria-label="Solo pueden enviar fotos los perfiles verificados"
                                             >
                                                 <ImageIcon size={20} weight="bold" />
@@ -1350,7 +1350,7 @@ export const ChatDetail: React.FC = () => {
                                                 aria-controls={typingPickerId}
                                                 aria-expanded={showPicker}
                                                 aria-label="Abrir selector de emoji"
-                                                className="w-10 h-10 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-surface-soft rounded-2xl transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg"
+                                                className="flex h-9 w-9 items-center justify-center rounded-2xl text-app-muted transition-all hover:bg-app-surface-soft hover:text-app-primary active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-lg sm:h-10 sm:w-10"
                                             >
                                                 <SmileyIcon size={20} weight="bold" />
                                             </AriaButton>
@@ -1371,7 +1371,7 @@ export const ChatDetail: React.FC = () => {
                             )}
 
                             {!isRecordingAudio && !hasRecordedAudio && (
-                                <div className="flex-1 bg-transparent px-2 py-2 flex items-end gap-2">
+                                <div className="flex-1 bg-transparent px-1.5 py-1.5 flex items-end gap-2 sm:px-2 sm:py-2">
                                     <textarea
                                         rows={1}
                                         placeholder="Escribe un mensaje..."
@@ -1395,7 +1395,7 @@ export const ChatDetail: React.FC = () => {
                                 <button
                                     onClick={() => void handleSendMessage()}
                                     aria-label="Enviar mensaje"
-                                    className="w-11 h-11 flex items-center justify-center rounded-2xl shadow-md transition-all hover:scale-105 active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-xl text-app-on-accent"
+                                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-app-on-accent shadow-md transition-all hover:scale-105 active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/70 focus-visible:ring-offset-2 focus-visible:shadow-xl sm:h-11 sm:w-11"
                                     style={{ backgroundColor: 'var(--app-accent)' }}
                                     disabled={sending}
                                 >
