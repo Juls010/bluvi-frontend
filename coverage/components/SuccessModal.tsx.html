@@ -137,7 +137,13 @@
 <a name='L72'></a><a href='#L72'>72</a>
 <a name='L73'></a><a href='#L73'>73</a>
 <a name='L74'></a><a href='#L74'>74</a>
-<a name='L75'></a><a href='#L75'>75</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -211,15 +217,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
 import {
     Dialog,
     Heading,
     Modal,
-    ModalOverlay } from 'react-aria-components';
-import { ArrowRightIcon,
+    ModalOverlay,
+} from 'react-aria-components';
+import {
+    ArrowRightIcon,
     ConfettiIcon,
-    EnvelopeSimpleIcon
+    EnvelopeSimpleIcon,
 } from '@phosphor-icons/react';
 import { Button } from './Button';
 &nbsp;
@@ -236,39 +246,41 @@ export const SuccessModal: React.FC&lt;SuccessModalProps&gt; = ({ isOpen, onClos
                 <span class="missing-if-branch" title="else path not taken" >E</span>if (!open) onClose();
             }}
             isDismissable
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4 animate-fade-in motion-reduce:animate-none"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-[#221B5F]/55 p-4 animate-fade-in motion-reduce:animate-none"
         &gt;
             &lt;Modal className="w-full max-w-md outline-none"&gt;
                 &lt;Dialog
                     role="alertdialog"
                     aria-describedby="email-sent-modal-desc"
-                    className="w-full rounded-[2rem] border-2 border-app-strong bg-app-surface-solid p-6 text-center text-app-primary shadow-2xl outline-none sm:p-8"
+                    className="w-full rounded-[2rem] border-2 border-[#D8D1FF] bg-white p-6 text-center text-[#221B5F] shadow-2xl outline-none sm:p-8"
                 &gt;
                     &lt;div
-                        className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-app-accent/10 text-app-accent-strong"
+                        className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#D8D1FF]/55 text-[#3f4a9b]"
                         aria-hidden="true"
                     &gt;
                         &lt;ConfettiIcon size={34} weight="bold" /&gt;
                     &lt;/div&gt;
 &nbsp;
-                    &lt;Heading slot="title" className="font-heading text-2xl font-bold text-app-primary"&gt;
+                    &lt;Heading slot="title" className="font-heading text-2xl font-bold text-[#221B5F]"&gt;
                         ¡Revisa tu bandeja!
                     &lt;/Heading&gt;
 &nbsp;
-                    &lt;p id="email-sent-modal-desc" className="mt-3 text-sm font-medium leading-relaxed text-app-secondary"&gt;
+                    &lt;p id="email-sent-modal-desc" className="mt-3 text-sm font-medium leading-relaxed text-[#4f5685]"&gt;
                         Te hemos enviado un &lt;strong&gt;código de 6 dígitos&lt;/strong&gt; a tu correo electrónico. Escríbelo en la siguiente pantalla para continuar.
                     &lt;/p&gt;
 &nbsp;
-                    &lt;div className="my-6 rounded-2xl border border-app-soft bg-app-surface p-4" aria-hidden="true"&gt;
+                    &lt;div className="my-6 rounded-2xl border border-[#D8D1FF] bg-[#F8F7FF] p-4" aria-hidden="true"&gt;
                         &lt;div className="flex items-center justify-around"&gt;
                             &lt;div className="flex flex-col items-center gap-1"&gt;
-                                &lt;EnvelopeSimpleIcon size={20} weight="bold" className="text-app-accent-strong" /&gt;
-                                &lt;span className="text-[10px] font-bold uppercase tracking-[0.12em] text-app-muted"&gt;Verifica&lt;/span&gt;
+                                &lt;EnvelopeSimpleIcon size={20} weight="bold" className="text-[#3f4a9b]" /&gt;
+                                &lt;span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6f6aa6]"&gt;Verifica&lt;/span&gt;
                             &lt;/div&gt;
-                            &lt;ArrowRightIcon size={16} weight="bold" className="text-app-muted" /&gt;
+&nbsp;
+                            &lt;ArrowRightIcon size={16} weight="bold" className="text-[#6f6aa6]" /&gt;
+&nbsp;
                             &lt;div className="flex flex-col items-center gap-1 opacity-70"&gt;
-                                &lt;ConfettiIcon size={20} weight="bold" className="text-app-accent-strong" /&gt;
-                                &lt;span className="text-[10px] font-bold uppercase tracking-[0.12em] text-app-muted"&gt;Bluvi&lt;/span&gt;
+                                &lt;ConfettiIcon size={20} weight="bold" className="text-[#3f4a9b]" /&gt;
+                                &lt;span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6f6aa6]"&gt;Bluvi&lt;/span&gt;
                             &lt;/div&gt;
                         &lt;/div&gt;
                     &lt;/div&gt;
@@ -292,7 +304,7 @@ export const SuccessModal: React.FC&lt;SuccessModalProps&gt; = ({ isOpen, onClos
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-14T15:21:09.184Z
+                at 2026-05-23T07:33:37.515Z
             </div>
         <script src="../prettify.js"></script>
         <script>
