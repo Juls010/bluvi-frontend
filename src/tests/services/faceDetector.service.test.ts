@@ -54,7 +54,7 @@ describe('face detector service', () => {
 
     it('returns NINGUNO when there are no blendshapes', () => {
         expect(detectarGesto({ faceLandmarks: [], faceBlendshapes: [], facialTransformationMatrixes: [] })).toBe('NINGUNO');
-        expect(detectarGesto({ faceLandmarks: [], facialTransformationMatrixes: [] } as FaceLandmarkerResult)).toBe('NINGUNO');
+        expect(detectarGesto({ faceLandmarks: [], facialTransformationMatrixes: [] } as unknown as FaceLandmarkerResult)).toBe('NINGUNO');
     });
 
     it('detects a smile when both smile scores are high', () => {

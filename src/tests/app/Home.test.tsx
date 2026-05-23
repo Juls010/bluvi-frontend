@@ -115,9 +115,9 @@ describe('Home page', () => {
         fireEvent.click(screen.getByRole('button', { name: /cookies/i }));
         fireEvent.click(screen.getByRole('button', { name: /accesibilidad/i }));
 
-        expect(mockNavigate).toHaveBeenCalledWith('/privacidad');
-        expect(mockNavigate).toHaveBeenCalledWith('/terminos');
-        expect(mockNavigate).toHaveBeenCalledWith('/cookies');
-        expect(mockNavigate).toHaveBeenCalledWith('/accesibilidad');
+        expect(mockNavigate).toHaveBeenCalledWith('/privacidad', { state: { fromFooter: true, returnTo: '/app/home' } });
+        expect(mockNavigate).toHaveBeenCalledWith('/terminos', { state: { fromFooter: true, returnTo: '/app/home' } });
+        expect(mockNavigate).toHaveBeenCalledWith('/cookies', { state: { fromFooter: true, returnTo: '/app/home' } });
+        expect(mockNavigate).toHaveBeenCalledWith('/accesibilidad', { state: { fromFooter: true, returnTo: '/app/home' } });
     });
 });

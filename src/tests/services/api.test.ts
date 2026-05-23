@@ -99,7 +99,7 @@ describe('api client', () => {
     it('refreshes the access token and retries a protected request after a 401', async () => {
         const { state } = await loadApi();
         state.post.mockResolvedValueOnce({ data: { accessToken: 'fresh-token' } });
-        const originalRequest = { url: '/users/me', headers: {} };
+        const originalRequest = { url: '/users/me', headers: {} as Record<string, string>, _retry: undefined as boolean | undefined };
 
         await expect(state.responseRejected?.({
             response: { status: 401 },
@@ -134,7 +134,7 @@ describe('api client', () => {
         }));
 
         const firstRequest = { url: '/users/me', headers: {} };
-        const secondRequest = { url: '/matches', headers: {} };
+        const secondRequest = { url: '/matches', headers: {} as Record<string, string> };
         const firstResult = state.responseRejected?.({
             response: { status: 401 },
             config: firstRequest,

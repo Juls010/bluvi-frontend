@@ -1,56 +1,59 @@
+import { LegalDocument, LegalSection } from '../../components/LegalDocument';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 
 const CookiePolicy = () => {
     useScrollToTop();
+
     return (
-        <div className="max-w-4xl mx-auto p-8 text-bluvi-purple leading-relaxed bg-white/90 shadow-sm mt-10 rounded-lg font-sans">
-        <h1 className="text-3xl font-bold mb-6 border-b pb-4 text-bluvi-purple">Política de Cookies</h1>
-        
-        <p className="mb-6">
-            En Bluvi utilizamos cookies propias y de terceros para garantizar el funcionamiento técnico de la plataforma 
-            y mejorar su experiencia de usuario.
-        </p>
+        <LegalDocument
+            title="Politica de Cookies"
+            intro="En Bluvi utilizamos cookies propias y de terceros para garantizar el funcionamiento tecnico de la plataforma y mejorar su experiencia de usuario."
+        >
+            <LegalSection title="1. Que es una cookie">
+                <p>
+                    Una cookie es un pequeno archivo de texto que se almacena en su navegador cuando visita casi cualquier pagina web.
+                    Su utilidad es que la web sea capaz de recordar su visita cuando vuelva a navegar por esa pagina.
+                </p>
+            </LegalSection>
 
-        <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-3">1. ¿Qué es una cookie?</h2>
-            <p>Una cookie es un pequeño archivo de texto que se almacena en su navegador cuando visita casi cualquier página web. Su utilidad es que la web sea capaz de recordar su visita cuando vuelva a navegar por esa página.</p>
-        </section>
+            <LegalSection title="2. Cookies utilizadas en Bluvi">
+                <p>Bluvi utiliza unicamente <strong>cookies tecnicas esenciales</strong>:</p>
+                <div className="overflow-x-auto rounded-lg border border-app-strong/30">
+                    <table className="w-full min-w-[620px] border-collapse text-left text-sm">
+                        <thead>
+                            <tr className="bg-app-surface-soft text-app-primary">
+                                <th className="border-b border-app-strong/30 p-3 font-semibold">Nombre</th>
+                                <th className="border-b border-app-strong/30 p-3 font-semibold">Proveedor</th>
+                                <th className="border-b border-app-strong/30 p-3 font-semibold">Finalidad</th>
+                                <th className="border-b border-app-strong/30 p-3 font-semibold">Duracion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="border-b border-app-strong/20">
+                                <td className="p-3 font-medium text-app-primary">sb-access-token</td>
+                                <td className="p-3">Supabase</td>
+                                <td className="p-3">Mantener la sesion del usuario iniciada de forma segura.</td>
+                                <td className="p-3">Sesion</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3 font-medium text-app-primary">sb-refresh-token</td>
+                                <td className="p-3">Supabase</td>
+                                <td className="p-3">Renovar la sesion automaticamente.</td>
+                                <td className="p-3">Persistente</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </LegalSection>
 
-        <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-3">2. Cookies utilizadas en Bluvi</h2>
-            <p className="mb-3">Bluvi utiliza únicamente <strong>Cookies Técnicas (Esenciales)</strong>:</p>
-            <table className="w-full text-left border-collapse border border-slate-200">
-            <thead>
-                <tr className="bg-slate-100">
-                <th className="p-2 border border-slate-200 font-semibold text-sm">Nombre</th>
-                <th className="p-2 border border-slate-200 font-semibold text-sm">Proveedor</th>
-                <th className="p-2 border border-slate-200 font-semibold text-sm">Finalidad</th>
-                <th className="p-2 border border-slate-200 font-semibold text-sm">Duración</th>
-                </tr>
-            </thead>
-            <tbody className="text-sm">
-                <tr>
-                <td className="p-2 border border-slate-200">sb-access-token</td>
-                <td className="p-2 border border-slate-200">Supabase</td>
-                <td className="p-2 border border-slate-200">Mantener la sesión del usuario iniciada de forma segura.</td>
-                <td className="p-2 border border-slate-200">Sesión</td>
-                </tr>
-                <tr>
-                <td className="p-2 border border-slate-200">sb-refresh-token</td>
-                <td className="p-2 border border-slate-200">Supabase</td>
-                <td className="p-2 border border-slate-200">Renovar la sesión automáticamente.</td>
-                <td className="p-2 border border-slate-200">Persistente</td>
-                </tr>
-            </tbody>
-            </table>
-        </section>
-
-        <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-3">3. Desactivación de cookies</h2>
-            <p>Usted puede restringir, bloquear o borrar las cookies de Bluvi utilizando la configuración de su navegador. Cada navegador tiene una operativa diferente, pero puede encontrar las instrucciones en su menú de ayuda.</p>
-        </section>
-        </div>
+            <LegalSection title="3. Desactivacion de cookies">
+                <p>
+                    Usted puede restringir, bloquear o borrar las cookies de Bluvi utilizando la configuracion de su navegador.
+                    Cada navegador tiene una operativa diferente, pero puede encontrar las instrucciones en su menu de ayuda.
+                </p>
+            </LegalSection>
+        </LegalDocument>
     );
-    };
+};
 
 export default CookiePolicy;

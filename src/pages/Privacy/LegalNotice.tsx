@@ -1,49 +1,50 @@
+import { LegalCallout, LegalDocument, LegalSection } from '../../components/LegalDocument';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 
 const LegalNotice = () => {
     useScrollToTop();
+
     return (
-        <div className="max-w-4xl mx-auto p-8 text-bluvi-purple leading-relaxed bg-white/90 shadow-sm mt-10 rounded-lg">
-        <h1 className="text-3xl font-bold mb-6 border-b pb-4 text-bluvi-purple">Aviso Legal</h1>
-        
-        <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-3">1. Datos Identificativos</h2>
-            <p>En cumplimiento con el deber de información recogido en el artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y del Comercio Electrónico (LSSI-CE), se facilitan los siguientes datos:</p>
-            <ul className="mt-3 space-y-1">
-            <li><strong>Titular:</strong> Proyecto Académico Bluvi</li>
-            <li><strong>NIF:</strong> 54221932F</li>
-            <li><strong>Domicilio:</strong> Sevilla, España</li>
-            <li><strong>Email de contacto:</strong> hola@bluvi.io</li>
-            </ul>
-        </section>
+        <LegalDocument title="Aviso Legal">
+            <LegalSection title="1. Datos Identificativos">
+                <p>
+                    En cumplimiento con el deber de informacion recogido en el articulo 10 de la Ley 34/2002, de 11 de julio,
+                    de Servicios de la Sociedad de la Informacion y del Comercio Electronico (LSSI-CE), se facilitan los siguientes datos:
+                </p>
+                <LegalCallout>
+                    <ul className="space-y-1">
+                        <li><strong>Titular:</strong> Proyecto Academico Bluvi</li>
+                        <li><strong>NIF:</strong> 54221932F</li>
+                        <li><strong>Domicilio:</strong> Sevilla, Espana</li>
+                        <li><strong>Email de contacto:</strong> hola@bluvi.io</li>
+                    </ul>
+                </LegalCallout>
+            </LegalSection>
 
-        <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-3">2. Condiciones de Uso</h2>
-            <p>
-            El acceso y uso de Bluvi atribuye la condición de USUARIO, que acepta las condiciones aquí reflejadas. 
-            El usuario se compromete a hacer un uso adecuado de los contenidos y servicios (como chats y foros), 
-            evitando conductas ilícitas, acoso o la difusión de contenidos de carácter racista o xenófobo.
-            </p>
-        </section>
+            <LegalSection title="2. Condiciones de Uso">
+                <p>
+                    El acceso y uso de Bluvi atribuye la condicion de usuario, que acepta las condiciones aqui reflejadas.
+                    El usuario se compromete a hacer un uso adecuado de los contenidos y servicios, como chats y foros,
+                    evitando conductas ilicitas, acoso o la difusion de contenidos de caracter racista o xenofobo.
+                </p>
+            </LegalSection>
 
-        <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-3">3. Propiedad Intelectual</h2>
-            <p>
-            Bluvi es titular de todos los derechos de propiedad intelectual e industrial de su página web, 
-            así como de los elementos contenidos en la misma (imágenes, sonido, audio, vídeo, software o textos). 
-            Queda prohibida la reproducción, distribución y comunicación pública sin la autorización del titular.
-            </p>
-        </section>
+            <LegalSection title="3. Propiedad Intelectual">
+                <p>
+                    Bluvi es titular de todos los derechos de propiedad intelectual e industrial de su pagina web,
+                    asi como de los elementos contenidos en la misma, incluyendo imagenes, sonido, audio, video, software o textos.
+                    Queda prohibida la reproduccion, distribucion y comunicacion publica sin la autorizacion del titular.
+                </p>
+            </LegalSection>
 
-        <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-3">4. Exclusión de Garantías y Responsabilidad</h2>
-            <p>
-            Bluvi no se hace responsable, en ningún caso, de los daños y perjuicios de cualquier naturaleza que pudieran ocasionar, 
-            a título enunciativo: errores u omisiones en los contenidos, falta de disponibilidad del portal o la transmisión de virus o programas maliciosos.
-            </p>
-        </section>
-        </div>
+            <LegalSection title="4. Exclusion de Garantias y Responsabilidad">
+                <p>
+                    Bluvi no se hace responsable, en ningun caso, de los danos y perjuicios de cualquier naturaleza que pudieran ocasionar,
+                    a titulo enunciativo: errores u omisiones en los contenidos, falta de disponibilidad del portal o la transmision de virus o programas maliciosos.
+                </p>
+            </LegalSection>
+        </LegalDocument>
     );
-    };
+};
 
 export default LegalNotice;

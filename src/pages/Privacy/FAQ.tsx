@@ -4,6 +4,7 @@ import {
 import { CaretDownIcon,
     CaretUpIcon
 } from '@phosphor-icons/react';
+import { LegalDocument } from '../../components/LegalDocument';
 
 interface FAQItemProps {
   question: string;
@@ -45,22 +46,22 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
   };
 
   return (
-    <div className="border-b border-slate-200 last:border-0">
+    <div className="border-b border-app-strong/20 last:border-0">
       <h3 className="m-0 p-0 text-base font-normal">
         <button
           id={headerId}
           data-faq-button
           onClick={() => setIsOpen(!isOpen)}
           onKeyDown={handleKeyDown}
-          className="w-full py-5 flex justify-between items-center text-left hover:bg-slate-50/50 transition-colors px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-bluvi-purple/20 group"
+          className="w-full py-5 flex justify-between items-center text-left hover:bg-app-surface-soft transition-colors px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-app-focus/20 group"
           aria-expanded={isOpen}
           aria-controls={panelId}
         >
-          <span className="text-lg font-semibold text-bluvi-purple pr-8 group-hover:text-bluvi-purple/80 transition-colors">{question}</span>
+          <span className="text-lg font-semibold text-app-primary pr-8 group-hover:text-app-accent transition-colors">{question}</span>
           {isOpen ? (
-            <CaretUpIcon className="text-bluvi-purple shrink-0" size={20} weight="bold" />
+            <CaretUpIcon className="text-app-accent shrink-0" size={20} weight="bold" />
           ) : (
-            <CaretDownIcon className="text-slate-400 shrink-0" size={20} weight="bold" />
+            <CaretDownIcon className="text-app-muted shrink-0" size={20} weight="bold" />
           )}
         </button>
       </h3>
@@ -72,7 +73,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
           isOpen ? 'max-h-[500px] opacity-100 mb-5' : 'max-h-0 opacity-0 invisible'
         } ${isOpen ? 'visible' : ''}`}
       >
-        <div className="px-4 text-bluvi-purple/90 leading-relaxed text-[15px]">
+        <div className="px-4 text-app-secondary leading-relaxed text-[15px]">
           {answer}
         </div>
       </div>
@@ -166,28 +167,26 @@ const FAQ = () => {
     },
     {
       question: "Tengo más preguntas que no se han respondido aquí.",
-      answer: <p>¡No hay problema! Estamos aquí para ayudarte. Envía un correo electrónico al equipo a <span className="text-bluvi-purple font-semibold italic underline">hola@bluvi.io</span>, normalmente respondemos en un plazo de 1 a 3 días laborables.</p>
+      answer: <p>¡No hay problema! Estamos aquí para ayudarte. Envía un correo electrónico al equipo a <span className="font-semibold italic text-app-accent underline">hola@bluvi.io</span>, normalmente respondemos en un plazo de 1 a 3 días laborables.</p>
     }
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-6 sm:p-10 text-bluvi-purple leading-relaxed bg-white/95 shadow-sm mt-4 sm:mt-10 mb-20 rounded-lg font-sans border border-white/60">
-      <header className="mb-10 text-center">
-        <h1 className="text-4xl font-bold mb-4 text-bluvi-purple">Preguntas Frecuentes (FAQ)</h1>
-        <p className="text-bluvi-purple/70 font-medium">Todo lo que necesitas saber sobre Bluvi y nuestra comunidad.</p>
-      </header>
-      
+    <LegalDocument
+      title="Preguntas Frecuentes"
+      intro="Todo lo que necesitas saber sobre Bluvi y nuestra comunidad."
+    >
       <div className="faq-container space-y-2">
         {faqs.map((faq, index) => (
           <FAQItem key={index} question={faq.question} answer={faq.answer} />
         ))}
       </div>
 
-      <footer className="mt-16 pt-10 border-t border-slate-100 text-center">
-        <p className="text-xl font-semibold text-bluvi-purple mb-2">¡Únete a nuestra comunidad neurodivergente!</p>
-        <p className="text-bluvi-purple/70">Estamos deseando conocerte :)</p>
+      <footer className="mt-10 rounded-lg border border-app-strong/20 bg-app-surface-soft p-5 text-center">
+        <p className="mb-2 text-xl font-semibold text-app-primary">Únete a nuestra comunidad neurodivergente</p>
+        <p className="text-app-secondary">Estamos deseando conocerte.</p>
       </footer>
-    </div>
+    </LegalDocument>
   );
 };
 

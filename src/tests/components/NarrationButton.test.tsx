@@ -28,6 +28,7 @@ const synth = {
 };
 
 class MockSpeechSynthesisUtterance {
+    text: string;
     lang = '';
     rate = 1;
     pitch = 1;
@@ -37,10 +38,13 @@ class MockSpeechSynthesisUtterance {
     onend: (() => void) | null = null;
     onerror: (() => void) | null = null;
 
-    constructor(public text: string) {}
+    constructor(text: string) {
+        this.text = text;
+    }
 }
 
 class MockAudio {
+    audioUrl: string;
     ended = false;
     onplay: (() => void) | null = null;
     onpause: (() => void) | null = null;
@@ -55,7 +59,8 @@ class MockAudio {
     });
     src = '';
 
-    constructor(public audioUrl: string) {
+    constructor(audioUrl: string) {
+        this.audioUrl = audioUrl;
         audioInstances.push(this);
     }
 }
@@ -78,7 +83,7 @@ describe('NarrationButton', () => {
     afterEach(() => {
         vi.restoreAllMocks();
         vi.unstubAllGlobals();
-        delete (window as Partial<Window>).speechSynthesis;
+        Reflect.deleteProperty(window, 'speechSynthesis');
     });
 
     it('renders the idle label, status, custom class, and hover styles', () => {
@@ -205,7 +210,7 @@ describe('NarrationButton', () => {
         const user = userEvent.setup();
         vi.spyOn(console, 'error').mockImplementation(() => undefined);
         vi.mocked(getNarrationAudio).mockRejectedValueOnce(new Error('network'));
-        delete (window as Partial<Window>).speechSynthesis;
+        Reflect.deleteProperty(window, 'speechSynthesis');
 
         render(<NarrationButton text="Texto narrado" allowBrowserFallback />);
 

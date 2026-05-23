@@ -14,6 +14,11 @@ import { RegisterProvider } from '../context/RegisterContext';
 
 import PrivateRoute from '../components/PrivateRoute';
 import AdminRoute from '../components/AdminRoute';
+import PrivacyPolicy from '../pages/Privacy/PrivacyPolicy';
+import CookiePolicy from '../pages/Privacy/CookiesPolicy';
+import Accessibility from '../pages/Privacy/Accessibility';
+import LegalNotice from '../pages/Privacy/LegalNotice';
+import FAQ from '../pages/Privacy/FAQ';
 
 const WelcomePage = lazy(() => import('../pages/Welcome/Welcome').then((m) => ({ default: m.Welcome })));
 const LoginPage = lazy(() => import('../pages/Auth/Login').then((m) => ({ default: m.Login })));
@@ -41,15 +46,8 @@ const SettingsPage = lazy(() => import('../pages/Settings/Settings').then((m) =>
 const AdminDashboardPage = lazy(() => import('../pages/Admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard })));
 
 const ReportsAndBlocksPage = lazy(() => import('../pages/Settings/ReportsAndBlocks').then(m => ({ default: m.ReportsAndBlocks })));
-const PrivacyPolicy = lazy(() => import('../pages/Privacy/PrivacyPolicy'));
-const CookiePolicy = lazy(() => import('../pages/Privacy/CookiesPolicy'));
-const Accessibility = lazy(() => import('../pages/Privacy/Accessibility'));
-const LegalNotice = lazy(() => import('../pages/Privacy/LegalNotice'));
-const FAQ = lazy(() => import('../pages/Privacy/FAQ'));
-
-
 const withSuspense = (element: React.ReactNode) => (
-    <Suspense fallback={<div className="min-h-screen w-full bg-app-surface" />}>
+    <Suspense fallback={<div className="min-h-screen w-full bg-app-gradient" />}>
         {element}
     </Suspense>
 );
@@ -60,54 +58,38 @@ const withRegisterSuspense = (element: React.ReactNode) => (
     </Suspense>
 );
 
+const withLegalLayout = (element: React.ReactNode) => (
+    <PublicThemeScope>
+        <LegalLayout>
+            {element}
+        </LegalLayout>
+    </PublicThemeScope>
+);
+
 export const router = createBrowserRouter([
     {
         path: "/privacidad",
-        element: (
-            <LegalLayout>
-                {withSuspense(<PrivacyPolicy />)}
-            </LegalLayout>
-        )
+        element: withLegalLayout(<PrivacyPolicy />)
     },
     {
         path: "/faq",
-        element: (
-            <LegalLayout>
-                {withSuspense(<FAQ />)}
-            </LegalLayout>
-        )
+        element: withLegalLayout(<FAQ />)
     },
     {
         path: "/cookies",
-        element: (
-            <LegalLayout>
-                {withSuspense(<CookiePolicy />)}
-            </LegalLayout>
-        )
+        element: withLegalLayout(<CookiePolicy />)
     },
     {
         path: "/accesibilidad",
-        element: (
-            <LegalLayout>
-                {withSuspense(<Accessibility />)}
-            </LegalLayout>
-        )
+        element: withLegalLayout(<Accessibility />)
     },
     {
         path: "/legal",
-        element: (
-            <LegalLayout>
-                {withSuspense(<LegalNotice />)}
-            </LegalLayout>
-        )
+        element: withLegalLayout(<LegalNotice />)
     },
     {
         path: "/terminos",
-        element: (
-            <LegalLayout>
-                {withSuspense(<LegalNotice />)}
-            </LegalLayout>
-        )
+        element: withLegalLayout(<LegalNotice />)
     },
     {
         path: "/",

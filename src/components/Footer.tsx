@@ -1,15 +1,21 @@
 import React from 'react';
 import { InstagramLogoIcon, EnvelopeSimpleIcon } from '@phosphor-icons/react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.svg';
 import { Tooltip, TooltipTrigger, Button as AriaButton } from './Tooltip';
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = `${location.pathname}${location.search}`;
+  const navigateToLegal = (to: string) => {
+    navigate(to, { state: { fromFooter: true, returnTo: currentPath } });
+  };
 
   return (
     <footer
+      id="footer"
       className="w-full bg-[#221B5F] rounded-t-[2.5rem] md:rounded-t-[3.5rem] shadow-[0_-12px_40px_-15px_rgba(34,27,95,0.15)] overflow-hidden"
       role="contentinfo"
     >
@@ -59,7 +65,7 @@ export const Footer: React.FC = () => {
                 <li key={link.label}>
                   <button
                     type="button"
-                    onClick={() => navigate(link.to)}
+                    onClick={() => navigateToLegal(link.to)}
                     className="
                       text-[14px] font-bold text-white/75
                       hover:text-white hover:translate-x-0.5 lg:hover:-translate-x-0.5
@@ -87,7 +93,7 @@ export const Footer: React.FC = () => {
           <div className="flex items-center justify-center sm:justify-end gap-8">
             <button
               type="button"
-              onClick={() => navigate('/faq')}
+              onClick={() => navigateToLegal('/faq')}
               className="
                 text-[14px] font-bold text-white/75
                 hover:text-white transition-colors duration-200

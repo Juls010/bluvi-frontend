@@ -22,6 +22,9 @@ export const Home: React.FC = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
     const { unreadMessages, pendingMatchRequests, hasNotifications } = useNotifications();
+    const navigateToLegal = (to: string) => {
+        navigate(to, { state: { fromFooter: true, returnTo: '/app/home' } });
+    };
 
     const [currentEventIndex, setCurrentEventIndex] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -383,15 +386,15 @@ export const Home: React.FC = () => {
                 </div>
             </div>
 
-            <footer className="mt-16 pt-8 border-t border-app-soft/10 dark:border-app-accent/10 flex flex-col md:flex-row justify-between items-center gap-4 text-app-muted">
+            <footer id="footer" className="mt-16 pt-8 border-t border-app-soft/10 dark:border-app-accent/10 flex flex-col md:flex-row justify-between items-center gap-4 text-app-muted">
                 <p className="text-[12px] font-medium">
                     © {new Date().getFullYear()} Bluvi. Proyecto académico sin ánimo de lucro.
                 </p>
                 <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-                    <button type="button" onClick={() => navigate('/privacidad')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Privacidad</button>
-                    <button type="button" onClick={() => navigate('/terminos')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Términos</button>
-                    <button type="button" onClick={() => navigate('/cookies')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Cookies</button>
-                    <button type="button" onClick={() => navigate('/accesibilidad')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Accesibilidad</button>
+                    <button type="button" onClick={() => navigateToLegal('/privacidad')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Privacidad</button>
+                    <button type="button" onClick={() => navigateToLegal('/terminos')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Términos</button>
+                    <button type="button" onClick={() => navigateToLegal('/cookies')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Cookies</button>
+                    <button type="button" onClick={() => navigateToLegal('/accesibilidad')} className="text-[12px] font-bold hover:text-app-accent transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 rounded-md">Accesibilidad</button>
                 </nav>
             </footer>
 
