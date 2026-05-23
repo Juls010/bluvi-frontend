@@ -407,6 +407,7 @@
     html.reduce-motion [role='menuitem']:hover,
     html.reduce-motion [class*="hover:scale"]:hover,
     html.reduce-motion [class*="hover:-translate"]:hover,
+    html.reduce-motion [class*="hover:rotate"]:hover,
     html.reduce-motion [class*="group-hover:scale"],
     html.reduce-motion [class*="group-hover:-translate"],
     html.reduce-motion [class*="group-hover:rotate"],
@@ -415,8 +416,12 @@
     html.reduce-motion [role='button']:active,
     html.reduce-motion [role='menuitem']:active,
     html.reduce-motion [class*="active:scale"]:active,
-    html.reduce-motion [class*="active:-translate"]:active {
+    html.reduce-motion [class*="active:-translate"]:active,
+    html.reduce-motion [class*="active:rotate"]:active {
         transform: none !important;
+        translate: none !important;
+        rotate: none !important;
+        scale: none !important;
     }
 
     html.low-transparency {

@@ -187,7 +187,7 @@ export const UserProfile: React.FC = () => {
                   className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                     title="Ajustes de cuenta"
                 >
-                    <GearIcon className="w-4.5 h-4.5 group-hover:rotate-45 transition-transform duration-500" weight="bold" />
+                    <GearIcon className="w-4.5 h-4.5 group-hover:rotate-45 transition-transform duration-500 motion-reduce:transform-none motion-reduce:transition-none" weight="bold" />
                     <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Ajustes</span>
                 </button>
             </div>

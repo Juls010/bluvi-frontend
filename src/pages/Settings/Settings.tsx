@@ -195,7 +195,6 @@ const useContrast = () => {
     return { contrast, apply };
 };
 
-// Main page
 
 export const Settings: React.FC = () => {
     const { logout } = useAuth();
@@ -403,7 +402,6 @@ export const Settings: React.FC = () => {
 
                 <div className="space-y-3 md:space-y-5">
                     <h1 className="text-4xl md:text-5xl font-heading font-bold text-app-primary">Ajustes</h1>
-                    <p className="max-w-2xl text-base leading-relaxed text-app-secondary/90">Personaliza tu experiencia en Bluvi sin perder claridad.</p>
                 </div>
 
                 <p className="sr-only" aria-live="polite">{statusMessage ?? ''}</p>

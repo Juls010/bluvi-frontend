@@ -21,6 +21,8 @@ export const SettingsButton: React.FC<SettingsButtonProps> = ({ onClick }) => {
                 duration-300
                 hover:rotate-45
                 active:scale-90
+                motion-reduce:transform-none
+                motion-reduce:transition-colors
                 focus:outline-none
                 focus:ring-4
                 focus:ring-bluvi-light-purple/50
@@ -30,7 +32,7 @@ export const SettingsButton: React.FC<SettingsButtonProps> = ({ onClick }) => {
             <GearIcon
                 size={28}
                 weight="bold"
-                className="transition-all"
+                className="transition-all motion-reduce:transition-none"
             />
         </button>
     );
