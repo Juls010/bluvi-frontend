@@ -56,7 +56,7 @@ export const SafetyTipsStep = () => {
                         />
                         <NarrationButton
                             text={SAFETY_TIPS_NARRATION}
-                            className="shrink-0 sm:pt-1"
+                            className="shrink-0 [--app-control-border:rgb(63_66_146_/_0.22)] [--app-control-neutral-muted:rgb(63_66_146_/_0.62)] [--app-control-neutral:rgb(63_66_146)] [--app-control-surface-hover:rgb(255_255_255_/_0.9)] [--app-control-surface:rgb(255_255_255_/_0.68)] sm:pt-1"
                         />
                     </div>
 

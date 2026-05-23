@@ -78,7 +78,7 @@ interface InputFieldProps {
                 onChange={onChange}
                 placeholder={placeholder}
                 className={`
-                    w-full px-4 py-3 rounded-xl bg-white/50 text-bluvi-purple placeholder:text-bluvi-purple/40 font-sans text-lg
+                    bluvi-input w-full px-4 py-3 rounded-xl bg-white/50 text-bluvi-purple placeholder:text-bluvi-purple/40 font-sans text-lg
                     border-2 transition-all duration-300 focus:outline-none focus:ring-4
                     ${getBorderColor()}
                     ${isPasswordType || shouldShowClearButton ? 'pr-12' : ''}

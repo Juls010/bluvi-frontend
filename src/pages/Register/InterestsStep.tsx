@@ -11,9 +11,9 @@ import {
     BookOpenIcon,
     CompassIcon,
     HeartIcon,
+    MusicNotesIcon,
     PaletteIcon,
     QuestionIcon,
-    SparkleIcon
 } from '@phosphor-icons/react';
 
 interface Interest {
@@ -37,7 +37,7 @@ export const InterestsStep = () => {
     };
 
     const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-        'Cultura y Ocio': <SparkleIcon size={16} weight="bold" />,
+        'Cultura y Ocio': <MusicNotesIcon size={16} weight="bold" />,
         'Creatividad': <PaletteIcon size={16} weight="bold" />,
         'Naturaleza y Viajes': <CompassIcon size={16} weight="bold" />,
         'Conocimiento': <BookOpenIcon size={16} weight="bold" />,
@@ -77,14 +77,12 @@ export const InterestsStep = () => {
         }
     };
 
-    // 2. Agrupar intereses por categoría
     const groupedInterests = Object.keys(CATEGORIES_MAPPING).reduce((acc, catName) => {
         const catInterests = interests.filter(i => CATEGORIES_MAPPING[catName].includes(i.name));
         if (catInterests.length > 0) acc[catName] = catInterests;
         return acc;
     }, {} as Record<string, Interest[]>);
 
-    // Añadir intereses que no estén mapeados a una categoría "Otros"
     const mappedIds = new Set(Object.values(groupedInterests).flat().map(i => i.id));
     const others = interests.filter(i => !mappedIds.has(i.id));
     if (others.length > 0) groupedInterests['Otros'] = others;
@@ -133,7 +131,7 @@ export const InterestsStep = () => {
                                                     onClick={() => toggleInterest(interest.id)}
                                                     disabled={isDisabled}
                                                     className={`
-                                                        px-4 md:px-6 py-3 rounded-xl border-2 text-sm md:text-base font-medium transition-all duration-300 text-left md:text-center
+                                                        px-4 md:px-6 py-3 rounded-full border-2 text-sm md:text-base font-medium transition-all duration-300 text-left md:text-center
                                                         focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-bluvi-purple/40
                                                         ${isLongName ? 'col-span-2' : 'col-span-1'}
                                                         ${isSelected 

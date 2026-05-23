@@ -43,7 +43,7 @@
     }
 
     :root {
-        --app-bg-gradient: linear-gradient(to bottom right, #A5C9FF, #D8D1FF 48%, #B8B2FF 100%);
+        --app-bg-gradient: linear-gradient(to bottom right, #A5C9FF 0%, #D8D1FF 50%, #FFD5E5 100%);
         --app-text-primary: #26215C;
         --app-text-secondary: rgba(38, 33, 92, 0.78);
         --app-text-muted: rgba(75, 69, 120, 0.68);
@@ -658,6 +658,17 @@
 
     .bg-app-gradient {
         background-image: var(--app-bg-gradient);
+    }
+
+    .bluvi-input:-webkit-autofill,
+    .bluvi-input:-webkit-autofill:hover,
+    .bluvi-input:-webkit-autofill:focus,
+    .bluvi-input:-webkit-autofill:active {
+        box-shadow: 0 0 0 1000px rgb(255 255 255 / 0.5) inset !important;
+        -webkit-box-shadow: 0 0 0 1000px rgb(255 255 255 / 0.5) inset !important;
+        -webkit-text-fill-color: #383296 !important;
+        caret-color: #383296;
+        transition: background-color 9999s ease-out;
     }
 
     @keyframes welcome-page-enter {

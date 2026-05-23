@@ -15,7 +15,6 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
 import { HOME_EVENTS } from '../../data/events';
-import { BluAssistant } from '../../components/BluAssistant';
 import { NarrationButton } from '../../components/NarrationButton';
 
 export const Home: React.FC = () => {
@@ -398,7 +397,6 @@ export const Home: React.FC = () => {
                 </nav>
             </footer>
 
-            <BluAssistant />
         </div>
     );
 };
