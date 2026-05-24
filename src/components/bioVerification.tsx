@@ -39,18 +39,18 @@ const GESTURE_CONTENT: Record<VerificationGesture, {
     Icon: Icon;
 }> = {
     SONRISA: {
-        title: 'Sonr�e',
-        hint: 'Mira a c�mara y muestra una sonrisa natural.',
+        title: 'Sonríe',
+        hint: 'Mira a cámara y muestra una sonrisa natural.',
         Icon: SmileyIcon
     },
     GUINO_DERECHO: {
-        title: 'Gui�a el ojo derecho',
-        hint: 'Mantente dentro del c�rculo y haz un gui�o claro.',
+        title: 'Guiña el ojo derecho',
+        hint: 'Mantente dentro del círculo y haz un guiño claro.',
         Icon: EyeIcon
     },
     BOCA_ABIERTA: {
         title: 'Abre la boca',
-        hint: 'Mantente dentro del c�rculo y abre la boca de forma clara.',
+        hint: 'Mantente dentro del círculo y abre la boca de forma clara.',
         Icon: SmileyIcon
     }
 };
@@ -62,19 +62,19 @@ const getAlternativeGesture = (gesture: SecondStepGesture): SecondStepGesture =>
 const getCameraErrorMessage = (err: unknown) => {
     if (err instanceof DOMException) {
         if (err.name === 'NotFoundError') {
-            return 'No hemos encontrado una c�mara conectada a este dispositivo.';
+            return 'No hemos encontrado una cámara conectada a este dispositivo.';
         }
 
         if (err.name === 'NotAllowedError') {
-            return 'Necesitamos permiso para usar la c�mara durante esta verificaci�n.';
+            return 'Necesitamos permiso para usar la cámara durante esta verificación.';
         }
 
         if (err.name === 'NotReadableError') {
-            return 'La c�mara parece estar siendo usada por otra aplicaci�n.';
+            return 'La cámara parece estar siendo usada por otra aplicación.';
         }
     }
 
-    return 'No se ha podido iniciar la verificaci�n facial.';
+    return 'No se ha podido iniciar la verificación facial.';
 };
 
 const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, onVerified }) => {
@@ -145,8 +145,8 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
             await onVerified?.();
             setVerificado(true);
         } catch (err) {
-            console.error('Error guardando verificaci�n facial', err);
-            setCameraError('Hemos detectado el gesto, pero no se pudo guardar la verificaci�n. Int�ntalo de nuevo.');
+            console.error('Error guardando verificación facial', err);
+            setCameraError('Hemos detectado el gesto, pero no se pudo guardar la verificación. Inténtalo de nuevo.');
             verificationInProgressRef.current = false;
         } finally {
             setGuardando(false);
@@ -216,7 +216,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                     };
                 }
             } catch (err) {
-                console.error('Error inicializando detector o c�mara', err);
+                console.error('Error inicializando detector o cámara', err);
 
                 if (mounted) {
                     setCameraError(getCameraErrorMessage(err));
@@ -264,7 +264,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                         onClick={onClose}
                         disabled={guardando}
                         className="absolute right-4 top-4 z-20 rounded-full p-2 text-app-muted transition-all hover:bg-app-surface-soft hover:text-app-primary focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
-                        aria-label="Cerrar verificaci�n facial"
+                        aria-label="Cerrar verificación facial"
                     >
                         <XIcon className="h-5 w-5" weight="bold" />
                     </button>
@@ -278,10 +278,10 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                             </div>
                             <div>
                                 <Heading slot="title" className="font-heading text-2xl font-bold text-app-primary">
-                                    Verificaci�n facial
+                                    Verificación facial
                                 </Heading>
                                 <p id="face-verification-description" className="mt-1 text-sm leading-relaxed text-app-secondary">
-                                    Confirma que eres t� con dos gestos r�pidos frente a la c�mara. Puedes cambiar el segundo gesto si el gui�o no te resulta c�modo.
+                                    Confirma que eres tú con dos gestos rápidos frente a la cámara. Puedes cambiar el segundo gesto si el guiño no te resulta cómodo.
                                 </p>
                             </div>
                         </div>
@@ -291,7 +291,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 text-red-500">
                                     <WarningCircleIcon className="h-7 w-7" weight="bold" />
                                 </div>
-                                <h3 className="font-heading text-lg font-bold text-app-primary">No se pudo completar la verificaci�n</h3>
+                                <h3 className="font-heading text-lg font-bold text-app-primary">No se pudo completar la verificación</h3>
                                 <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-app-secondary">{cameraError}</p>
                                 <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                                     <Button
@@ -326,14 +326,14 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                                             {cargando && (
                                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-app-surface-solid/95">
                                                     <div className="mb-3 h-10 w-10 animate-spin rounded-full border-4 border-app-accent/20 border-t-app-accent motion-reduce:animate-none" />
-                                                    <p className="text-sm font-bold text-app-secondary">Preparando c�mara</p>
+                                                    <p className="text-sm font-bold text-app-secondary">Preparando cámara</p>
                                                 </div>
                                             )}
 
                                             {guardando && (
                                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-app-surface-solid/95" role="status" aria-live="polite" aria-atomic="true">
                                                     <div className="mb-3 h-10 w-10 animate-spin rounded-full border-4 border-app-accent/20 border-t-app-accent motion-reduce:animate-none" />
-                                                    <p className="text-sm font-bold text-app-secondary">Guardando verificaci�n</p>
+                                                    <p className="text-sm font-bold text-app-secondary">Guardando verificación</p>
                                                 </div>
                                             )}
 
@@ -384,7 +384,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                                                 </div>
                                                 <div>
                                                     <h3 className="font-heading text-lg font-bold text-app-primary">
-                                                        {guardando ? 'Guardando verificaci�n' : currentStep.title}
+                                                        {guardando ? 'Guardando verificación' : currentStep.title}
                                                     </h3>
                                                     <p className="mt-1 text-sm leading-relaxed text-app-secondary">
                                                         {guardando ? 'Hemos detectado el gesto. Espera un momento mientras guardamos el resultado.' : currentStep.hint}

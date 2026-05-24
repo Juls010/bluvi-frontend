@@ -449,8 +449,8 @@ export const Welcome: React.FC = () => {
                 <header
                     className={`fixed inset-x-0 top-0 z-50 ${
                         isDarkTheme
-                            ? 'border-b border-white/10 bg-[#3f4292]/40 shadow-sm shadow-black/10 backdrop-blur-md'
-                            : 'border-b border-white/60 bg-white/30 shadow-sm shadow-[#383296]/10 backdrop-blur-md'
+                            ? 'border-b border-transparent bg-transparent shadow-none backdrop-blur-0 xl:border-white/10 xl:bg-[#3f4292]/40 xl:shadow-sm xl:shadow-black/10 xl:backdrop-blur-md'
+                            : 'border-b border-transparent bg-transparent shadow-none backdrop-blur-0 xl:border-white/60 xl:bg-white/30 xl:shadow-sm xl:shadow-[#383296]/10 xl:backdrop-blur-md'
                     }`}
                 >
                     <nav
@@ -523,7 +523,7 @@ export const Welcome: React.FC = () => {
                             type="button"
                             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
                             onKeyDown={handleMobileMenuButtonKeyDown}
-                            className="inline-flex h-11 items-center justify-center rounded-full bg-white/95 px-4 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-white dark:text-[#221B5F] xl:hidden"
+                            className="welcome-mobile-menu-button inline-flex h-11 items-center justify-center rounded-full bg-white/95 px-4 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-white dark:text-[#221B5F] xl:hidden"
                             aria-expanded={isMobileMenuOpen}
                             aria-controls="mobile-menu"
                         >
@@ -535,7 +535,7 @@ export const Welcome: React.FC = () => {
                         id="mobile-menu"
                         aria-hidden={!isMobileMenuOpen}
                         onKeyDown={handleMobileMenuKeyDown}
-                        className={`absolute right-4 top-[5.3rem] z-50 w-[min(320px,calc(100vw-2rem))] overflow-hidden rounded-[1.6rem] border border-white/40 bg-white/95 shadow-2xl shadow-[#383296]/18 backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/10 dark:bg-[#221B5F]/95 xl:hidden ${
+                        className={`welcome-mobile-menu absolute right-4 top-[5.3rem] z-50 w-[min(320px,calc(100vw-2rem))] overflow-hidden rounded-[1.6rem] border border-white/40 bg-white/95 shadow-2xl shadow-[#383296]/18 backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/10 dark:bg-[#221B5F]/95 xl:hidden ${
                             isMobileMenuOpen
                                 ? 'translate-y-0 opacity-100'
                                 : 'pointer-events-none -translate-y-2 opacity-0'
@@ -554,7 +554,7 @@ export const Welcome: React.FC = () => {
                                         setIsMobileMenuOpen(false);
                                         handleSectionNavigation(event, link.href);
                                     }}
-                                    className={mobileMenuItemClass}
+                                    className={`welcome-mobile-menu-item ${mobileMenuItemClass}`}
                                 >
                                     {link.label}
                                 </a>
@@ -570,7 +570,7 @@ export const Welcome: React.FC = () => {
                                     handleThemeToggle();
                                     setIsMobileMenuOpen(false);
                                 }}
-                                className={`flex items-center justify-between text-left ${mobileMenuItemClass}`}
+                                className={`welcome-mobile-menu-item flex items-center justify-between text-left ${mobileMenuItemClass}`}
                             >
                                 <span>
                                     {isDarkTheme ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
@@ -593,7 +593,7 @@ export const Welcome: React.FC = () => {
                                     setIsMobileMenuOpen(false);
                                     navigate('/login');
                                 }}
-                                className="mt-1 rounded-2xl bg-[#221B5F] px-4 py-3 text-left text-sm font-black text-white transition hover:brightness-110 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-[#D8D1FF] dark:text-[#221B5F]"
+                                className="welcome-mobile-login-button mt-1 rounded-2xl bg-[#221B5F] px-4 py-3 text-left text-sm font-black text-white transition hover:brightness-110 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 dark:bg-[#D8D1FF] dark:text-[#221B5F]"
                             >
                                 Iniciar sesión
                             </button>

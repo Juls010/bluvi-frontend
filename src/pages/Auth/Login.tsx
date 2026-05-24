@@ -72,11 +72,11 @@ export const Login: React.FC = () => {
 
     return (
         <AnimatedStep className="!pt-4 sm:!pt-6 h-full flex flex-col">
-                <header className="w-full px-6 sm:px-12 flex items-center relative z-10 shrink-0 min-h-[60px]">
-                    <nav className="flex justify-start relative z-20" aria-label="Navegación de acceso">
+                <header className="grid min-h-[72px] w-full grid-cols-[auto_1fr_auto] items-center gap-3 px-4 sm:min-h-[76px] sm:px-12 relative z-10 shrink-0">
+                    <nav className="relative z-20 justify-self-start" aria-label="Navegación de acceso">
                         <button 
                             onClick={() => navigate('/welcome')}
-                            className="inline-flex items-center gap-2 rounded-full bg-white/95 px-5 py-2.5 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 active:scale-95 dark:bg-[#D8D1FF] dark:text-[#221B5F] dark:hover:bg-white cursor-pointer"
+                            className="inline-flex items-center gap-2 rounded-full bg-white/95 px-4 py-2.5 text-sm font-black text-[#221B5F] shadow-lg shadow-[#383296]/12 transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5146C6]/30 active:scale-95 dark:bg-[#D8D1FF] dark:text-[#221B5F] dark:hover:bg-white sm:px-5 cursor-pointer"
                             aria-label="Volver al inicio"
                         >
                             <ArrowLeft size={18} strokeWidth={3} />
@@ -84,14 +84,15 @@ export const Login: React.FC = () => {
                         </button>
                     </nav>
 
-                    <div className="absolute left-0 right-0 flex justify-center pointer-events-none">
+                    <div className="pointer-events-none justify-self-center">
                         <img 
                             src={logo} 
                             alt="Bluvi" 
-                            className="w-48 sm:w-56 lg:w-64 h-auto drop-shadow-md select-none" 
+                            className="w-36 min-[390px]:w-40 sm:w-56 lg:w-64 h-auto drop-shadow-md select-none" 
                             draggable={false}
                         />
                     </div>
+                    <div className="w-[6.25rem] sm:w-[7rem]" aria-hidden="true" />
                 </header>
 
                 <div className="flex-1 flex flex-col justify-center items-center w-full px-4 sm:px-0 my-4 overflow-y-auto no-scrollbar">

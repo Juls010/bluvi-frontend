@@ -716,6 +716,60 @@
         color: #ffffff !important;
     }
 
+    .welcome-mobile-menu-button {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        color: #221B5F !important;
+    }
+
+    .welcome-mobile-menu {
+        background-color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.4) !important;
+    }
+
+    .welcome-mobile-menu-item,
+    .welcome-mobile-menu-item * {
+        color: #221B5F !important;
+    }
+
+    .welcome-mobile-login-button,
+    .welcome-mobile-login-button * {
+        background-color: #221B5F !important;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+    }
+
+    .welcome-page-enter .welcome-mobile-login-button {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+    }
+
+    html.dark .welcome-mobile-menu {
+        background-color: #221B5F !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    html.dark .welcome-mobile-menu-item,
+    html.dark .welcome-mobile-menu-item * {
+        color: #D8D1FF !important;
+    }
+
+    html.dark .welcome-mobile-menu-item:hover,
+    html.dark .welcome-mobile-menu-item:hover * {
+        color: #ffffff !important;
+    }
+
+    html.dark .welcome-mobile-login-button,
+    html.dark .welcome-mobile-login-button * {
+        background-color: #D8D1FF !important;
+        color: #221B5F !important;
+        -webkit-text-fill-color: #221B5F !important;
+    }
+
+    html.dark .welcome-page-enter .welcome-mobile-login-button {
+        color: #221B5F !important;
+        -webkit-text-fill-color: #221B5F !important;
+    }
+
     .bg-app-surface-nav {
         background-color: var(--app-surface-nav);
     }
