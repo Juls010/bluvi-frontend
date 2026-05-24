@@ -690,6 +690,32 @@
         animation: welcome-page-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
+    html.dark .welcome-page-enter {
+        color: #ECEBFF !important;
+    }
+
+    html.dark .welcome-page-enter :where(h1, h2, h3, p, strong) {
+        color: #ECEBFF !important;
+    }
+
+    html.dark .welcome-page-enter :where(h1, h2) > span {
+        background-image: none !important;
+        color: #D8D1FF !important;
+        -webkit-text-fill-color: #D8D1FF !important;
+    }
+
+    html.dark .welcome-page-enter .welcome-primary-button,
+    html.dark .welcome-page-enter .welcome-primary-button * {
+        color: #241e5b !important;
+    }
+
+    html.dark .welcome-page-enter .welcome-dark-section,
+    html.dark .welcome-page-enter .welcome-dark-section *,
+    html.dark .welcome-page-enter .welcome-accessibility-card,
+    html.dark .welcome-page-enter .welcome-accessibility-card * {
+        color: #ffffff !important;
+    }
+
     .bg-app-surface-nav {
         background-color: var(--app-surface-nav);
     }
