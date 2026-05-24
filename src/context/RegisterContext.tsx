@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { authService, type RegisterPayload } from '../services/auth.service';
+import type { AuthUser } from './AuthContext';
 
 interface RegisterData {
     firstName: string;
@@ -247,10 +248,18 @@ const validateMappedRegisterData = (payload: RegisterPayload): string | null => 
     return null;
 };
 
+const isAuthUser = (value: unknown): value is AuthUser =>
+    !!value &&
+    typeof value === 'object' &&
+    'id' in value &&
+    typeof (value as { id?: unknown }).id === 'number' &&
+    'email' in value &&
+    typeof (value as { email?: unknown }).email === 'string';
+
 interface RegisterContextType {
     formData: RegisterData; 
     updateFormData: (newData: Partial<RegisterData>) => void; 
-    sendToBackend: () => Promise<boolean>;
+    sendToBackend: () => Promise<{ success: boolean; nextPath: string }>;
 }
 
 const RegisterContext = createContext<RegisterContextType | undefined>(undefined);
@@ -304,12 +313,38 @@ export const RegisterProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             const result = await authService.register(mappedData);
             
             if (result.success) {
-                localStorage.setItem('temp_email_verification', formData.email);
+                const emailVerificationRequired = result.emailVerificationRequired !== false;
+
+                if (emailVerificationRequired) {
+                    localStorage.setItem('temp_email_verification', formData.email);
+                } else {
+                    localStorage.removeItem('temp_email_verification');
+                }
+
+                const accessToken = result.accessToken ?? result.token;
+                if (!emailVerificationRequired && accessToken) {
+                    const user = isAuthUser(result.user) ? result.user : null;
+                    localStorage.setItem('accessToken', accessToken);
+
+                    if (user) {
+                        localStorage.setItem('user', JSON.stringify(user));
+                    } else {
+                        localStorage.removeItem('user');
+                    }
+
+                    window.dispatchEvent(new CustomEvent('bluvi-auth-session', {
+                        detail: { accessToken, user },
+                    }));
+                }
+
                 localStorage.removeItem('bluvi_reg_backup');
                 setData((prev) => ({ ...prev, password: '' }));
-                return true;
+                return {
+                    success: true,
+                    nextPath: emailVerificationRequired ? '/register/verificationemail' : '/register/safety-tips',
+                };
             }
-            return false;
+            return { success: false, nextPath: '/register/verificationemail' };
             
         } catch (error: any) {
             console.error("Error en registro:", error);

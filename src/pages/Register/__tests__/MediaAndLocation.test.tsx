@@ -151,7 +151,7 @@ describe('Media and Location Registration Steps', () => {
             (useRegister as any).mockReturnValue({
                 formData: { description: 'Hola, soy una descripción' },
                 updateFormData: mockUpdateFormData,
-                sendToBackend: mockSendToBackend.mockResolvedValue(true),
+                sendToBackend: mockSendToBackend.mockResolvedValue({ success: true, nextPath: '/register/verificationemail' }),
             });
 
             render(

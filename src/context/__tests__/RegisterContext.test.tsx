@@ -92,12 +92,12 @@ describe('RegisterContext', () => {
 
             (authService.register as any).mockResolvedValue({ success: true });
 
-            let success;
+            let response;
             await act(async () => {
-                success = await result.current.sendToBackend();
+                response = await result.current.sendToBackend();
             });
 
-            expect(success).toBe(true);
+            expect(response).toEqual({ success: true, nextPath: '/register/verificationemail' });
             expect(authService.register).toHaveBeenCalledWith(expect.objectContaining({
                 first_name: 'Aurora',
                 email: 'aurora@example.com',

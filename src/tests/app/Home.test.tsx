@@ -40,6 +40,7 @@ describe('Home page', () => {
             isAuthenticated: true,
             isLoading: false,
             login: vi.fn(),
+            setAuthenticatedSession: vi.fn(),
             logout: vi.fn(),
         });
         vi.mocked(useNotifications).mockReturnValue({

@@ -26,6 +26,10 @@ interface ApiResponse {
     success?: boolean;
     message?: string;
     exists?: boolean;
+    emailVerificationRequired?: boolean;
+    accessToken?: string;
+    token?: string;
+    user?: unknown;
 }
 
 export const authService = {

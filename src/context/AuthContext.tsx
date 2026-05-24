@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/auth.service';
 import api from '../services/api';
 
-interface AuthUser {
+export interface AuthUser {
     id: number;
     email: string;
     first_name?: string;
@@ -18,6 +18,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
     login: (credentials: { email: string; password: string }) => Promise<boolean>;
+    setAuthenticatedSession: (accessToken: string, userData?: AuthUser | null) => void;
     logout: () => void;
 }
 
@@ -75,6 +76,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const setAuthenticatedSession = (accessToken: string, userData?: AuthUser | null) => {
+        setToken(accessToken);
+        setUser(userData ?? null);
+        localStorage.setItem('accessToken', accessToken);
+
+        if (userData) {
+            localStorage.setItem('user', JSON.stringify(userData));
+        } else {
+            localStorage.removeItem('user');
+        }
+    };
+
+    useEffect(() => {
+        const handleAuthSession = (event: Event) => {
+            const { accessToken, user: userData } = (event as CustomEvent<{ accessToken?: string; user?: AuthUser | null }>).detail ?? {};
+
+            if (accessToken) {
+                setAuthenticatedSession(accessToken, userData ?? null);
+            }
+        };
+
+        window.addEventListener('bluvi-auth-session', handleAuthSession);
+        return () => window.removeEventListener('bluvi-auth-session', handleAuthSession);
+    }, []);
+
     const logout = async () => {
         try {
             await authService.logout(); 
@@ -94,6 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isAuthenticated: !!token,
             isLoading,
             login,
+            setAuthenticatedSession,
             logout,
         }}>
             {children}

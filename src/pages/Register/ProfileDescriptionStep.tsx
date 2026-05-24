@@ -19,10 +19,10 @@ export const ProfileDescriptionStep = () => {
         setIsLoading(true);
         setErrorMessage('');
         try {
-            const success = await sendToBackend();
+            const result = await sendToBackend();
             
-            if (success) {
-                navigate('/register/verificationemail');
+            if (result.success) {
+                navigate(result.nextPath);
             }
         } catch (error: any) {
             console.error("Error en el paso de descripción:", error);
