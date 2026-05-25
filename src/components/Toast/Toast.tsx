@@ -15,7 +15,7 @@ export function Toast({ toast }: { toast: { content: ToastContentProps } }) {
   return (
     <AriaToast 
       toast={toast as any} 
-      className={`flex items-center justify-between gap-4 text-white px-4 py-3 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border animate-in fade-in slide-in-from-bottom-5 w-80
+      className={`flex w-full max-w-[min(calc(100vw-1.5rem),20rem)] items-center justify-between gap-4 rounded-xl border px-4 py-3 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] animate-in fade-in slide-in-from-bottom-5 sm:w-80 sm:max-w-none
         ${isError 
           ? 'bg-red-500 shadow-red-500/30 border-red-400' 
           : 'bg-bluvi-purple shadow-bluvi-purple/30 border-white/10'}`}

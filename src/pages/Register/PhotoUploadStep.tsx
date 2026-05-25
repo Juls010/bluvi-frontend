@@ -39,7 +39,7 @@ export const PhotoUploadStep = () => {
                     const newPhotos = [...photos];
                     newPhotos[selectingIndex] = url;
                     updateFormData({ photos: newPhotos });
-                    toastQueue.add({ message: 'Foto subida correctamente', type: 'success' }, { timeout: 5000 });
+                    toastQueue.add({ message: 'Foto subida correctamente', type: 'success' }, { timeout: 1600 });
                 }
             } finally {
                 setLoadingIndices(prev => {

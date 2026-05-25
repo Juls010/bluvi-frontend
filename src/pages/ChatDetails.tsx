@@ -267,7 +267,7 @@ export const ChatDetail: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [chatUserId]);
+    }, [chatUserId, refreshNotifications]);
 
     const loadOlderMessages = async () => {
         if (!hasMore || loadingOlder || messages.length === 0) {
@@ -940,8 +940,8 @@ export const ChatDetail: React.FC = () => {
     }
 
     return (
-        <div className="flex h-[100svh]">
-            <div className="flex flex-col w-full min-w-0 bg-app-surface/45">
+        <div className="flex h-full min-h-0 overflow-hidden overscroll-none">
+            <div className="flex min-h-0 w-full min-w-0 flex-col overflow-hidden bg-app-surface/45">
                 <header className="flex-none z-50 bg-app-surface-soft border-b-2 border-app-soft px-4 md:px-5 py-3 flex items-center justify-between shadow-sm">
                     <div className="flex items-center gap-4">
                         <button
@@ -1061,7 +1061,6 @@ export const ChatDetail: React.FC = () => {
                     aria-relevant="additions text"
                     aria-label={`Mensajes con ${counterpart ? `${counterpart.first_name} ${counterpart.last_name}` : 'usuario'}`}
                     aria-describedby={chatHistoryInstructionsId}
-                    aria-activedescendant={activeMessageId ? getMessageElementId(activeMessageId) : undefined}
                     onScroll={(event) => {
                         const element = event.currentTarget;
                         if (element.scrollTop < 120 && hasMore && !loadingOlder) {
@@ -1080,7 +1079,7 @@ export const ChatDetail: React.FC = () => {
                         }
                     }}
                     onKeyDown={handleMessagesKeyDown}
-                    className="flex-1 min-h-0 overflow-y-auto px-2.5 py-4 space-y-1.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/15 scrollbar-hide sm:px-4 sm:py-6 sm:space-y-2 md:px-6"
+                    className="flex-1 min-h-0 overscroll-contain overflow-y-auto px-2.5 py-4 space-y-1.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/15 scrollbar-hide sm:px-4 sm:py-6 sm:space-y-2 md:px-6"
                     tabIndex={0}
                 >
                     <p id={chatHistoryInstructionsId} className="sr-only">
@@ -1260,17 +1259,19 @@ export const ChatDetail: React.FC = () => {
                                         <span className="text-[10.5px] text-app-muted mr-1 font-medium">{formatHour(msg.created_at)}</span>
                                         {isMe && (
                                             isRead ? (
-                                                <span className="flex" aria-label="Leído">
-                                                    <CheckIcon size={13} weight="bold" style={{ color: 'var(--app-message-read-check)' }} />
-                                                    <CheckIcon size={13} weight="bold" style={{ color: 'var(--app-message-read-check)', marginLeft: '-8px' }} />
+                                                <span className="flex" role="img" aria-label="Leído">
+                                                    <CheckIcon size={13} weight="bold" style={{ color: 'var(--app-message-read-check)' }} aria-hidden="true" />
+                                                    <CheckIcon size={13} weight="bold" style={{ color: 'var(--app-message-read-check)', marginLeft: '-8px' }} aria-hidden="true" />
                                                 </span>
                                             ) : msg.is_delivered ? (
-                                                <span className="flex" aria-label="Entregado">
-                                                    <CheckIcon size={13} weight="bold" className="text-app-muted" />
-                                                    <CheckIcon size={13} weight="bold" className="text-app-muted" style={{ marginLeft: '-8px' }} />
+                                                <span className="flex" role="img" aria-label="Entregado">
+                                                    <CheckIcon size={13} weight="bold" className="text-app-muted" aria-hidden="true" />
+                                                    <CheckIcon size={13} weight="bold" className="text-app-muted" style={{ marginLeft: '-8px' }} aria-hidden="true" />
                                                 </span>
                                             ) : (
-                                                <CheckIcon size={13} weight="bold" className="text-app-muted" aria-label="Enviado" />
+                                                <span className="flex" role="img" aria-label="Enviado">
+                                                    <CheckIcon size={13} weight="bold" className="text-app-muted" aria-hidden="true" />
+                                                </span>
                                             )
                                         )}
                                     </div>
@@ -1339,6 +1340,7 @@ export const ChatDetail: React.FC = () => {
                                         ref={imageInputRef}
                                         type="file"
                                         accept="image/jpeg,image/png,image/webp,image/gif"
+                                        aria-label="Adjuntar imagen al chat"
                                         className="sr-only"
                                         onChange={(event) => void handleImageSelected(event)}
                                     />

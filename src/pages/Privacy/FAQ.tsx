@@ -86,16 +86,16 @@ const FAQ = () => {
 
   const faqs = [
     {
-      question: "Soy nuevo en Bluvi. ¿Para que sirve cada botón?",
+      question: "Soy nuevo en Bluvi. ¿Para qué sirve cada botón?",
       answer: (
         <p>
-          El botón <strong>«Corazón»</strong> que aparece junto a cada sección del perfil de un usuario te permiten expresar tu interés y enviar una solicitud de emparejamiento a ese usuario. El botón <strong>«XIcon»</strong> sirve para saltarse o descartar a un usuario. Si le das a «XIcon» a un usuario, volverá a aparecer en tu lista de parejas compatibles en unos días. Si pulsas «XIcon» por error, el botón <strong>«Retroceder»</strong> te permite volver atrás y volver a ver inmediatamente el perfil anterior.
+          El botón <strong>«Corazón»</strong> que aparece junto a cada sección del perfil de un usuario te permite expresar tu interés y enviar una solicitud de emparejamiento a ese usuario. El botón <strong>«X»</strong> sirve para saltarse o descartar a un usuario. Si le das a «X» a un usuario, volverá a aparecer en tu lista de parejas compatibles en unos días.
         </p>
       )
     },
     {
       question: "¿Bluvi es solo para gente que busca pareja?",
-      answer: <p>¡Si! Sabemos que las relaciones románticas pueden ser complicadas de iniciar, y queremos ayudarte a dar ese paso.</p>
+      answer: <p>¡Sí! Sabemos que las relaciones románticas pueden ser complicadas de iniciar, y queremos ayudarte a dar ese paso.</p>
     },
     {
       question: "¿Dónde puedo cambiar mi configuración y mis preferencias de emparejamiento?",
@@ -107,7 +107,7 @@ const FAQ = () => {
     },
     {
       question: "¿Cómo puedo enviar un mensaje directo a alguien que me interesa?",
-      answer: <p>Bluvi es una app que requiere el consentimiento mutuo de ambas partes. El chat privado se activa cuando ambos habéis mostrado interés mutuo. Todos los usuarios pueden enviar un primer mensaje personalizado en su <strong>«Me gusta»</strong>.</p>
+      answer: <p>Bluvi es una app que requiere el consentimiento mutuo de ambas partes. El chat privado se activa cuando ambos habéis mostrado interés mutuo. Todos los usuarios pueden enviar un primer mensaje personalizado en su <strong>«Corazón»</strong>, que tendrá que ser aceptado por la persona que lo recibe.</p>
     },
     {
       question: "¿Cómo puedo denunciar y bloquear a un usuario?",
@@ -127,7 +127,7 @@ const FAQ = () => {
     },
     {
       question: "¿Cómo me uno a Bluvi?",
-      answer: <p>Bluvi nació como app social en formato web, aunque pronto contaremos con app disponible en PlayStore para que puedas disfrutar de él desde tu dispositivo movil.</p>
+      answer: <p>Bluvi nació como app social en formato web, aunque pronto contaremos con app disponible en las principales Stores para que puedas disfrutar de él desde tu dispositivo móvil.</p>
     },
     {
       question: "¿Quién puede unirse a Bluvi?",
@@ -135,7 +135,7 @@ const FAQ = () => {
     },
     {
       question: "¿A qué te refieres cuando dices «neurodivergente»?",
-      answer: <p>Cuando alguien es neurodivergente, sus pensamientos y comportamientos no se ajustan a las expectativas habituales sobre cómo funciona el cerebro de las personas en un mundo neuronormativo. La neurodiversidad es única en cada persona, por lo que no hay dos personas neurodivergentes que tengan exactamente la misma experiencia. Esto significa que no hay una única forma «correcta» de ser neurodivergente. Todas los tipos de personas neurodivergentes son bienvenidas en Bluvi.</p>
+      answer: <p>Cuando alguien es neurodivergente, sus pensamientos y comportamientos no se ajustan a las expectativas habituales sobre cómo funciona el cerebro de las personas en un mundo neuronormativo. La neurodiversidad es única en cada persona, por lo que no hay dos personas neurodivergentes que tengan exactamente la misma experiencia. Esto significa que no hay una única forma correcta de ser neurodivergente. Todas los tipos de personas neurodivergentes son bienvenidas en Bluvi.</p>
     },
     {
       question: "¿Necesito un diagnóstico oficial para unirme a la comunidad?",
@@ -143,11 +143,11 @@ const FAQ = () => {
     },
     {
       question: "¿Qué edad hay que tener para registrarse en Bluvi?",
-      answer: <p>18+</p>
+      answer: <p>Se requiere la mayoría de edad (18 años)</p>
     },
     {
       question: "¿Bluvi es un lugar inclusivo para la comunidad LGBTQ+?",
-      answer: <p>Si, por supuesto :)</p>
+      answer: <p>Sí, por supuesto :)</p>
     },
     {
       question: "¿Cómo puedo eliminar mi cuenta y mis datos?",
@@ -156,7 +156,7 @@ const FAQ = () => {
           <li>Ve a la pestaña <strong>«Perfil»</strong></li>
           <li>Haz click en <strong>«Ajustes de cuenta»</strong></li>
           <li>Desplázate hasta la parte inferior de la pantalla.</li>
-          <li>Haz clic en <strong>«Eliminar cuenta»</strong> y sigue las instrucciones.</li>
+          <li>Haz click en <strong>«Eliminar cuenta»</strong> y sigue las instrucciones.</li>
           <li>Al eliminar tu cuenta, tus datos se borrarán automáticamente.</li>
         </ul>
       )
@@ -167,7 +167,7 @@ const FAQ = () => {
     },
     {
       question: "Tengo más preguntas que no se han respondido aquí.",
-      answer: <p>¡No hay problema! Estamos aquí para ayudarte. Envía un correo electrónico al equipo a <span className="font-semibold italic text-app-accent underline">hola@bluvi.io</span>, normalmente respondemos en un plazo de 1 a 3 días laborables.</p>
+      answer: <p>¡No hay problema! Estamos aquí para ayudarte. Envía un correo electrónico al equipo a <span className="font-semibold italic text-app-accent underline">hola@bluvi.io</span> y te responderemos lo antes posible.</p>
     }
   ];
 

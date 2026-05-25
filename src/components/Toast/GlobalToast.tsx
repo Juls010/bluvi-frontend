@@ -14,7 +14,7 @@ export function GlobalToastRegion() {
   return (
     <ToastRegion 
         queue={toastQueue} 
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] flex flex-col gap-2 outline-none"
+        className="fixed inset-x-3 top-4 z-[100] flex flex-col items-center gap-2 outline-none sm:inset-x-auto sm:bottom-6 sm:right-6 sm:top-auto sm:items-stretch"
     >
       {({ toast }) => <Toast toast={toast} />}
     </ToastRegion>

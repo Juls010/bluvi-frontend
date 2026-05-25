@@ -70,7 +70,7 @@ export const ChatUserProfile: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-pulse pt-20">
+            <div className="w-full max-w-5xl mx-auto p-4 pb-28 pt-2 md:px-0 md:pb-0 md:pt-20 animate-pulse">
                 <div className="h-10 w-48 bg-app-surface-soft rounded-xl mb-8" />
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                     <div className="md:col-span-4"><div className="aspect-[4/5] rounded-3xl bg-app-surface-soft" /></div>
@@ -117,10 +117,10 @@ export const ChatUserProfile: React.FC = () => {
         : [user.main_photo || '/assets/images/default-avatar.png'];
 
     return (
-        <article className="w-full max-w-5xl mx-auto p-4 md:p-0 pt-6 md:pt-10 animate-fade-in motion-reduce:animate-none">
+        <article className="w-full max-w-5xl mx-auto p-4 pb-28 pt-2 md:px-0 md:pb-0 md:pt-10 animate-fade-in motion-reduce:animate-none">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
+            <div className="mb-6 flex flex-col items-start gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex w-full min-w-0 items-start gap-3 sm:w-auto sm:items-center">
                     <TooltipTrigger delay={300}>
                         <AriaButton
                             onPress={() => navigate(-1)}
@@ -131,8 +131,8 @@ export const ChatUserProfile: React.FC = () => {
                         </AriaButton>
                         <Tooltip>Volver a mensajes</Tooltip>
                     </TooltipTrigger>
-                    <div className="flex flex-wrap items-center gap-2.5">
-                        <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
+                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
+                        <h1 className="min-w-0 text-2xl font-heading font-bold leading-tight text-app-primary md:text-4xl">
                             {user.first_name} {user.last_name}
                         </h1>
                         {user.is_face_verified && (
@@ -144,13 +144,13 @@ export const ChatUserProfile: React.FC = () => {
                 {user.can_chat ? (
                     <button
                         onClick={() => navigate(`/app/chat/${user.id_user}`)}
-                        className="flex items-center gap-2 px-6 py-3 bg-app-accent text-app-on-accent rounded-2xl font-bold text-sm shadow-xl hover:opacity-90 hover:scale-105 active:scale-95 transition-all group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30"
+                        className="self-end flex items-center gap-2 rounded-2xl bg-app-accent px-4 py-2.5 text-sm font-bold text-app-on-accent shadow-xl transition-all hover:scale-105 hover:opacity-90 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-accent/30 sm:self-auto sm:px-6 sm:py-3"
                     >
                         <ChatCircleIcon size={18} weight="bold" className="transition-transform group-hover:rotate-12" />
                         <span>Ir al chat</span>
                     </button>
                 ) : (
-                    <span className="rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-2 text-sm font-bold text-app-secondary">
+                    <span className="self-end rounded-2xl border border-app-soft bg-app-surface-soft px-4 py-2 text-sm font-bold text-app-secondary sm:self-auto">
                         Solicitud pendiente
                     </span>
                 )}

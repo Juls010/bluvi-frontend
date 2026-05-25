@@ -4,10 +4,11 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Navbar } from '../components/Navbar';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
-type TopOffset = 'compact' | 'normal' | 'loose';
+type TopOffset = 'compact' | 'compactMobileLooseDesktop' | 'normal' | 'loose';
 
 const TOP_OFFSET_CLASS: Record<TopOffset, string> = {
   compact: 'pt-6 md:pt-20',
+  compactMobileLooseDesktop: 'pt-6 md:pt-28',
   normal: 'pt-10 md:pt-24',
   loose: 'pt-14 md:pt-28',
 };

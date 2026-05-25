@@ -123,6 +123,14 @@
         overflow-x: hidden;
     }
 
+    html.chat-scroll-lock,
+    body.chat-scroll-lock,
+    body.chat-scroll-lock #root {
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
+
     html.dark {
         --app-bg-gradient: linear-gradient(to bottom right, #1d214f, #2b2961 52%, #4c3850 78%, #8A4F38 100%);
         --app-text-primary: #ECEBFF;

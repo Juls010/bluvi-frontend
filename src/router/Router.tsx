@@ -143,7 +143,7 @@ export const router = createBrowserRouter([
             { path: "events/:eventId", element: withSuspense(<EventFlyerPage />), handle: { topOffset: 'normal' } },
             { path: "discovery", element: withSuspense(<DiscoveryPage />), handle: { topOffset: 'compact' } },
             { path: "messages", element: withSuspense(<MessagesPage />), handle: { topOffset: 'normal' } },
-            { path: "profile", element: withSuspense(<UserProfilePage />), handle: { topOffset: 'loose' } },
+            { path: "profile", element: withSuspense(<UserProfilePage />), handle: { topOffset: 'compactMobileLooseDesktop' } },
             { path: "settings", element: withSuspense(<SettingsPage />), handle: { topOffset: 'normal' } },
             { path: "settings/reports-blocks", element: withSuspense(<ReportsAndBlocksPage />), handle: { topOffset: 'normal' } },
             { path: "user/:userId", element: withSuspense(<ChatUserProfilePage />), handle: { topOffset: 'compact' } },

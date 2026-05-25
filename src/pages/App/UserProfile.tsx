@@ -53,7 +53,7 @@ const SectionLabel: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon
 );
 
 const ProfileSkeleton = () => (
-  <div className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-pulse">
+  <div className="w-full max-w-5xl mx-auto p-4 pb-28 md:p-0 animate-pulse">
     <div className="h-10 w-48 bg-gray-200 rounded-xl mb-6" />
     <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
       <div className="md:col-span-4"><div className="aspect-square rounded-3xl bg-gray-200" /></div>
@@ -149,12 +149,12 @@ export const UserProfile: React.FC = () => {
 
   return (
     <>
-      <article className="w-full max-w-5xl mx-auto p-4 md:p-0 animate-fade-in motion-reduce:animate-none">
+      <article className="w-full max-w-5xl mx-auto p-4 pb-28 md:p-0 animate-fade-in motion-reduce:animate-none">
 
-        <div className="flex items-center justify-between mb-8 pl-2">
-            <div className="flex items-center gap-3">
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="text-3xl md:text-4xl font-heading font-bold text-app-primary">
+        <div className="mb-6 flex flex-col items-start gap-4 pl-1 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:pl-2">
+            <div className="flex min-w-0 items-start gap-2.5 sm:items-center sm:gap-3">
+                <div className="flex min-w-0 flex-wrap items-center gap-2.5">
+                  <h1 className="min-w-0 text-2xl font-heading font-bold leading-tight text-app-primary md:text-4xl">
                   {user.first_name} {user.last_name}
                   </h1>
                   {user.is_face_verified && (
@@ -163,22 +163,27 @@ export const UserProfile: React.FC = () => {
                 </div>
                 <button
                     onClick={() => setShowInfoModal(true)}
-                  className="p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
+                  className="mt-0.5 p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 sm:mt-0"
                     title="Editar informaciÃ³n bÃ¡sica"
                 >
                     <PencilSimpleIcon className="w-5 h-5" weight="bold" />
                 </button>
             </div>
 
-            <div className="flex items-center gap-2">
-              {!user.is_face_verified && (
+            <div className="flex self-end items-center gap-2 sm:self-auto">
+              {user.is_face_verified ? (
+                <span className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft text-app-secondary border border-app-soft rounded-2xl text-sm font-semibold">
+                  <ShieldCheckIcon className="w-4.5 h-4.5 text-app-accent dark:text-app-orange" weight="bold" aria-hidden="true" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Verificado</span>
+                </span>
+              ) : (
                 <button
                   onClick={() => setShowVerificationModal(true)}
                   className="flex items-center gap-2 px-3.5 py-2 bg-bluvi-purple text-white rounded-2xl text-sm font-semibold hover:opacity-90 transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                   title="Verificar identidad"
                 >
                   <ShieldCheckIcon className="w-4.5 h-4.5" weight="bold" aria-hidden="true" />
-                  <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Verificar</span>
+                  <span className="text-xs font-bold uppercase tracking-wider">Verificar</span>
                 </button>
               )}
 
@@ -188,7 +193,7 @@ export const UserProfile: React.FC = () => {
                     title="Ajustes de cuenta"
                 >
                     <GearIcon className="w-4.5 h-4.5 group-hover:rotate-45 transition-transform duration-500 motion-reduce:transform-none motion-reduce:transition-none" weight="bold" />
-                    <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Ajustes</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">Ajustes</span>
                 </button>
             </div>
         </div>
