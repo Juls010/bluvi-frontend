@@ -126,7 +126,7 @@ export const RegisterLayout: React.FC = () => {
     }, [currentStepIndex, steps]);
 
     return (
-        <main className="min-h-screen w-full bg-bluvi-gradient flex flex-col items-center font-sans overflow-hidden relative">
+        <main className="h-[100dvh] min-h-[100svh] w-full bg-bluvi-gradient flex flex-col items-center font-sans overflow-hidden overscroll-none relative">
                 
             {progressLevel > 0 && (
                 <div className="absolute top-0 left-0 w-full h-1.5 md:h-2 bg-white/35 rounded-br-sm overflow-hidden z-50">
@@ -187,7 +187,7 @@ export const RegisterLayout: React.FC = () => {
             )}
 
 
-            <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center -mt-10 md:-mt-2 [@media(max-height:1000px)]:-mt-6 [@media(max-height:760px)]:-mt-4 overflow-y-auto">
+            <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center -mt-10 md:-mt-2 [@media(max-height:1000px)]:-mt-6 [@media(max-height:760px)]:-mt-4 overflow-y-auto overscroll-contain">
                 <AnimatePresence mode="wait">
                     <div key={location.pathname} className="w-full h-full flex justify-center">
                         <Outlet />

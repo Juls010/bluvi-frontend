@@ -53,7 +53,7 @@ const withSuspense = (element: React.ReactNode) => (
 );
 
 const withRegisterSuspense = (element: React.ReactNode) => (
-    <Suspense fallback={<div className="min-h-screen w-full bg-bluvi-gradient" />}>
+    <Suspense fallback={<div className="h-[100dvh] min-h-[100svh] w-full bg-bluvi-gradient" />}>
         {element}
     </Suspense>
 );

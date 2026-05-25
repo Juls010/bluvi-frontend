@@ -674,7 +674,7 @@ export const Welcome: React.FC = () => {
                                     'Tartamudez',
                                     'Altas capacidades',
                                     'Síndrome de Down',
-                                    'TEA',
+                                    'TDA',
                                     'Disfasia',
                                     'Ansiedad social',
                                 ].map((tag) => (
