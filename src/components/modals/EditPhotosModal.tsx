@@ -66,14 +66,14 @@ const SortablePhoto: React.FC<SortablePhotoProps> = ({
       style={style}
       {...attributes} 
       {...listeners} 
-      className={`relative aspect-square group animate-fade-in cursor-grab active:cursor-grabbing rounded-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 ${
-        index === 0 ? 'ring-4 ring-bluvi-purple rounded-2xl' : ''
+        className={`relative aspect-square group animate-fade-in cursor-grab active:cursor-grabbing rounded-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 ${
+        index === 0 ? 'ring-4 ring-app-accent rounded-2xl' : ''
       }`}
     >
       <img src={url} alt="" className="w-full h-full object-cover rounded-2xl shadow-sm border border-app-soft" />
       
       <div className={`absolute top-2 left-2 w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-bold shadow-lg border border-white/50 ${
-        index === 0 ? 'bg-bluvi-purple text-white' : 'bg-app-surface-strong text-app-secondary border-app-soft'
+        index === 0 ? 'bg-app-accent text-app-on-accent' : 'bg-app-surface-strong text-app-secondary border-app-soft'
       }`}>
         {index + 1}
       </div>
@@ -263,8 +263,8 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
           <div className="p-6 flex-1 overflow-y-auto space-y-4 bg-app-surface-strong">
             <div className="grid grid-cols-3 gap-3">
               <button onClick={() => fileInputRef.current?.click()} className="aspect-square rounded-2xl border-2 border-dashed border-app-strong flex flex-col items-center justify-center gap-2 hover:border-bluvi-purple hover:bg-app-surface-soft transition-all group bg-app-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2">
-                <PlusIcon className="w-6 h-6 text-app-muted group-hover:text-bluvi-purple" weight="bold" />
-                <span className="text-[10px] font-bold text-app-secondary group-hover:text-bluvi-purple uppercase">Añadir</span>
+                <PlusIcon className="w-6 h-6 text-app-muted group-hover:text-app-accent" weight="bold" />
+                <span className="text-[10px] font-bold text-app-secondary group-hover:text-app-accent uppercase">Añadir</span>
               </button>
 
               <SortableContext items={photos} strategy={rectSortingStrategy}>
@@ -282,7 +282,7 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
 
             <DragOverlay dropAnimation={{ sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.5' } } }) }}>
               {activeUrl ? (
-                <div className="aspect-square rounded-2xl ring-4 ring-bluvi-purple/50 shadow-2xl overflow-hidden cursor-grabbing">
+                <div className="aspect-square rounded-2xl ring-4 ring-app-accent/50 shadow-2xl overflow-hidden cursor-grabbing">
                   <img src={activeUrl} alt="" className="w-full h-full object-cover" />
                 </div>
               ) : null}
@@ -299,7 +299,7 @@ export const EditPhotosModal: React.FC<EditPhotosModalProps> = ({
           <button 
             onClick={() => onSave(photos)}
             disabled={isSaving || photos.length === 0}
-            className="flex-1 py-2.5 px-6 bg-bluvi-purple text-white rounded-full font-semibold shadow-md shadow-bluvi-purple/20 border-b-2 border-black/10 disabled:opacity-50 transition-all hover:brightness-105 hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
+            className="flex-1 py-2.5 px-6 bg-app-accent text-app-on-accent rounded-full font-semibold shadow-md shadow-black/10 border-b-2 border-black/10 disabled:opacity-50 transition-all hover:brightness-105 hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
           >
             {isSaving ? 'Subiendo...' : 'Guardar Cambios'}
           </button>

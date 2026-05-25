@@ -13,6 +13,7 @@
     --color-app-muted: var(--app-text-muted);
     --color-app-surface-soft: var(--app-surface-soft);
     --color-app-primary: var(--app-text-primary);
+    --color-app-on-accent: var(--app-on-accent);
     --filter-selected-bg: var(--filter-selected-bg);
     --filter-selected-text: var(--filter-selected-text);
     --filter-selected-border: var(--filter-selected-border);
@@ -352,6 +353,68 @@
 
     html.high-contrast .discovery-empty-action:hover {
         background-color: #f2f2f2 !important;
+    }
+    
+    html.high-contrast .narration-button,
+    html.high-contrast .narration-button {
+        background-color: var(--app-accent) !important;
+        border-color: var(--app-accent) !important;
+        color: var(--app-on-accent) !important;
+        box-shadow: none;
+        font-weight: 900;
+    }
+    
+    html.high-contrast .narration-button:hover,
+    html.high-contrast .narration-button:focus-visible,
+    html.high-contrast .narration-button:focus-visible {
+        background-color: var(--app-accent) !important;
+        border-color: var(--app-accent) !important;
+        color: var(--app-on-accent) !important;
+    }
+
+    /* In dark high-contrast the accent token is white; invert for a black button */
+    html.dark.high-contrast .narration-button {
+        background-color: var(--app-on-accent) !important;
+        border-color: var(--app-on-accent) !important;
+        color: var(--app-accent) !important;
+    }
+
+    html.dark.high-contrast .narration-button:hover,
+    html.dark.high-contrast .narration-button:focus-visible {
+        background-color: var(--app-on-accent) !important;
+        border-color: var(--app-on-accent) !important;
+        color: var(--app-accent) !important;
+    }
+
+    /* Stronger focus ring for narration button across themes */
+    .narration-button:focus-visible {
+        outline: none !important;
+        box-shadow: 0 0 0 6px var(--app-focus-ring) !important;
+        border-color: var(--app-accent) !important;
+    }
+
+    html.dark .narration-button:focus-visible {
+        box-shadow: 0 0 0 6px var(--app-focus-ring) !important;
+        border-color: var(--app-on-accent) !important;
+    }
+
+    html.high-contrast .narration-button:focus-visible,
+    html.dark.high-contrast .narration-button:focus-visible {
+        box-shadow: 0 0 0 6px var(--app-focus-ring) !important;
+        border-color: var(--app-accent) !important;
+    }
+
+    .home-carousel-nav-button:focus-visible {
+        outline: none !important;
+        box-shadow: inset 0 0 0 3px var(--app-focus-ring) !important;
+        border-color: var(--app-focus-ring) !important;
+    }
+
+    html.high-contrast .home-carousel-nav-button:focus-visible,
+    html.dark.high-contrast .home-carousel-nav-button:focus-visible {
+        outline: none !important;
+        box-shadow: inset 0 0 0 4px var(--app-focus-ring) !important;
+        border-color: var(--app-focus-ring) !important;
     }
 
     html.dark.high-contrast .discovery-empty-action {
@@ -796,6 +859,50 @@
 
     .bg-app-surface-solid {
         background-color: var(--app-surface-solid);
+    }
+
+    .conversation-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.7);
+        background-color: rgba(255,255,255,0.45);
+        box-shadow: 0 6px 12px rgba(31, 24, 70, 0.06);
+        transition: box-shadow 200ms ease, transform 200ms ease;
+    }
+
+    @supports ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
+        .conversation-card {
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+            background-color: rgba(255,255,255,0.72);
+        }
+    }
+    
+    html.dark .conversation-card {
+        border: 1px solid rgba(255,255,255,0.10);
+        background-color: rgba(255,255,255,0.12);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+    }
+
+    /* Match app-wide focus: bluvi thick border/ring without layout shift */
+    .conversation-card:focus-visible {
+        outline: none;
+        border-color: var(--app-focus-ring);
+        outline: 3px solid var(--app-focus-ring);
+        outline-offset: 3px;
+        -webkit-box-shadow: 0 0 0 2px var(--app-focus-ring), 0 6px 12px rgba(31, 24, 70, 0.06);
+        box-shadow: 0 0 0 2px var(--app-focus-ring), 0 6px 12px rgba(31, 24, 70, 0.06);
+    }
+
+    html.high-contrast .conversation-card:focus-visible,
+    html.dark.high-contrast .conversation-card:focus-visible {
+        outline-width: 4px;
+        outline-offset: 4px;
+        -webkit-box-shadow: none;
+        box-shadow: none;
     }
 
     .bg-app-pill {

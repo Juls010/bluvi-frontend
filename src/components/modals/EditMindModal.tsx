@@ -35,7 +35,7 @@ export const EditMindModal: React.FC<EditMindModalProps> = ({
 
   const optionClass = (isSelected: boolean) => `rounded-xl px-3 py-1.5 text-sm transition-all ${
     isSelected
-      ? 'bg-bluvi-purple text-white shadow-md'
+      ? 'bg-app-accent text-app-on-accent shadow-md'
       : 'border border-app-soft bg-app-surface-soft text-app-secondary shadow-sm hover:bg-app-surface-strong hover:text-app-primary'
   } focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2`;
 
@@ -59,7 +59,7 @@ export const EditMindModal: React.FC<EditMindModalProps> = ({
             type="button"
             onClick={() => onSave(features, communication)}
             disabled={isSaving}
-            className="flex-1 rounded-full border-b-2 border-black/10 bg-bluvi-purple px-6 py-2.5 font-semibold text-white shadow-md shadow-bluvi-purple/20 transition-all hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
+            className="flex-1 rounded-full border-b-2 border-black/10 bg-app-accent px-6 py-2.5 font-semibold text-app-on-accent shadow-md shadow-black/10 transition-all hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
           >
             {isSaving ? 'Guardando...' : 'Guardar'}
           </button>

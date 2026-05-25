@@ -365,7 +365,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, disab
                 onClick={handleSend}
                 disabled={isSending}
                 aria-label={`Enviar audio de ${formatTime(duration)}`}
-                className="p-2 rounded-lg bg-app-accent hover:opacity-90 text-white transition-all disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent/50"
+                className="p-2 rounded-lg bg-app-accent hover:opacity-90 text-app-on-accent transition-all disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent/50"
             >
                 <PaperPlaneRightIcon size={18} weight="bold" aria-hidden="true" />
             </button>

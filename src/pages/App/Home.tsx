@@ -251,7 +251,7 @@ export const Home: React.FC = () => {
                                     type="button"
                                     onClick={() => scrollTo(currentEventIndex === 0 ? HOME_EVENTS.length - 1 : currentEventIndex - 1)}
                                     aria-label="Ver novedad anterior"
-                                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 motion-reduce:transition-none"
+                                    className="home-carousel-nav-button inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none motion-reduce:transition-none"
                                     style={{
                                         backgroundColor: 'var(--app-control-surface)',
                                         borderColor: 'var(--app-control-border)',
@@ -285,7 +285,7 @@ export const Home: React.FC = () => {
                                     type="button"
                                     onClick={() => scrollTo(currentEventIndex === HOME_EVENTS.length - 1 ? 0 : currentEventIndex + 1)}
                                     aria-label="Ver siguiente novedad"
-                                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 motion-reduce:transition-none"
+                                    className="home-carousel-nav-button inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none motion-reduce:transition-none"
                                     style={{
                                         backgroundColor: 'var(--app-control-surface)',
                                         borderColor: 'var(--app-control-border)',
@@ -309,7 +309,7 @@ export const Home: React.FC = () => {
                         <div
                             ref={scrollRef}
                             onScroll={handleScroll}
-                            className="w-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-6"
+                            className="w-full flex overflow-hidden snap-x snap-mandatory pb-6"
                         >
                             {HOME_EVENTS.map((item) => {
                                 const detailsId = `home-event-details-${item.id}`;

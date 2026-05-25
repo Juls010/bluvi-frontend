@@ -287,7 +287,7 @@ const FaceVerification: React.FC<FaceVerificationProps> = ({ isOpen, onClose, on
                         </div>
 
                         {cameraError ? (
-                            <div className="rounded-3xl border-2 border-red-300 bg-red-50 p-5 text-center dark:border-red-300 dark:bg-red-950">
+                            <div className="rounded-3xl border-2 border-red-300 bg-red-50 p-5 text-center dark:border-red-500 dark:bg-red-800/30">
                                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 text-red-500">
                                     <WarningCircleIcon className="h-7 w-7" weight="bold" />
                                 </div>

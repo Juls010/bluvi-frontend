@@ -9,6 +9,8 @@ export interface User {
   atmosphere?: 'normal' | 'tranquilo' | 'bajo';
   birth_date: string;       
   city: string;
+  city_lat?: number | null;
+  city_lng?: number | null;
   description: string;
   id_gender: number;
   sexuality: number[];      

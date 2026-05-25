@@ -1416,7 +1416,6 @@ export const ChatDetail: React.FC = () => {
                     )}
                 </div>
             </div>
-            {/* Lightbox de imagen */}
             {lightboxImageUrl && createPortal(
                 <div
                     className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-xl animate-fade-in"
@@ -1466,7 +1465,6 @@ export const ChatDetail: React.FC = () => {
                 document.body
             )}
 
-            {/* Modal de eliminar mensaje */}
             {messageToDelete && (
                 <div
                     className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300"
@@ -1522,7 +1520,6 @@ export const ChatDetail: React.FC = () => {
                 </div>
             )}
 
-            {/* Modal de borrar conversación */}
             {showDeleteConversationModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
                     <div
@@ -1568,7 +1565,6 @@ export const ChatDetail: React.FC = () => {
                 </div>
             )}
 
-            {/* Modal de Bloqueo */}
             {showBlockModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
                     <div 
@@ -1609,7 +1605,6 @@ export const ChatDetail: React.FC = () => {
                 </div>
             )}
 
-            {/* Modal de Reporte */}
             {showReportModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
                     <div 

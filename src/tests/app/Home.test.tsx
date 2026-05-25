@@ -97,8 +97,8 @@ describe('Home page', () => {
         const scrollTo = vi.fn();
         render(<Home />);
 
-        const carouselScroller = screen.getByRole('region', { name: /novedades de bluvi/i })
-            .querySelector('.overflow-x-auto') as HTMLDivElement;
+        const carousel = screen.getByRole('region', { name: /novedades de bluvi/i });
+        const carouselScroller = carousel.querySelector('.snap-x') as HTMLDivElement;
         Object.defineProperty(carouselScroller, 'offsetWidth', { configurable: true, value: 320 });
         carouselScroller.scrollTo = scrollTo;
 
@@ -110,6 +110,11 @@ describe('Home page', () => {
 
         expect(scrollTo).toHaveBeenCalledWith({ left: 320 * (HOME_EVENTS.length - 1), behavior: 'smooth' });
         expect(scrollTo).toHaveBeenCalledWith({ left: 320, behavior: 'smooth' });
+
+        fireEvent.keyDown(carousel, { key: 'ArrowDown' });
+        fireEvent.keyDown(carousel, { key: 'ArrowUp' });
+
+        expect(scrollTo).toHaveBeenCalledTimes(2);
 
         fireEvent.click(screen.getByRole('button', { name: /privacidad/i }));
         fireEvent.click(screen.getByRole('button', { name: /t.rminos/i }));

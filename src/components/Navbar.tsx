@@ -89,7 +89,7 @@ const NavItem: React.FC<{
 
         <span
         className={`
-            font-bold leading-none tracking-wide transition-all duration-300 overflow-hidden
+            font-bold leading-none tracking-wide transition-all duration-300 overflow-visible
             ${mobile
             ? `text-[10px] ${active ? 'text-app-accent opacity-100' : 'text-app-muted opacity-60'}`
             : `text-[13px] ${active ? 'text-app-accent opacity-100' : 'text-app-secondary opacity-70'}`

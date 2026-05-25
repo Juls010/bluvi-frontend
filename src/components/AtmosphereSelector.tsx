@@ -73,7 +73,7 @@ export const AtmosphereSelector: FC<AtmosphereSelectorProps> = ({
             </div>
             <p
                 id={descriptionId}
-                className="mx-auto mt-1 flex min-h-[2.75rem] w-full max-w-[16rem] items-center justify-center text-center text-[13px] font-semibold leading-relaxed text-app-secondary"
+                className="mx-auto mt-1 flex min-h-[3.5rem] w-full max-w-[16rem] items-center justify-center text-center text-[13px] font-semibold leading-relaxed text-app-secondary"
             >
                 {atmosphereCopy[selected]}
             </p>

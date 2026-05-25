@@ -68,7 +68,7 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
 
     return (
         <div 
-            className="relative w-full h-full max-h-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden shadow-lg bg-app-surface-soft border border-app-soft group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
+            className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-lg bg-app-surface-soft border border-app-soft group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
             role="region"
             aria-roledescription="carrusel"
             aria-label={`Galería de fotos de ${firstName}`}
@@ -95,7 +95,10 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                             onClick={() => setShowLightbox(true)}
                         />
                         <button 
+                            type="button"
                             onClick={(e) => { e.stopPropagation(); setShowLightbox(true); }}
+                            tabIndex={index === currentIndex ? 0 : -1}
+                            aria-hidden={index !== currentIndex}
                             className="absolute top-4 right-4 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                             aria-label="Ver en grande"
                         >
@@ -111,6 +114,8 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                         {photos.map((_, index) => (
                             <button
                                 key={index}
+                                type="button"
+                                tabIndex={-1}
                                 onClick={() => scrollTo(index)} 
                                 onFocus={() => scrollTo(index)}
                                 aria-label={`Ir a la foto ${index + 1}`}
@@ -124,7 +129,9 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                     <div className="absolute inset-y-0 left-2 flex items-center pointer-events-none">
                         {currentIndex > 0 && (
                             <button 
+                                type="button"
                                 onClick={() => scrollTo(currentIndex - 1)} 
+                                tabIndex={-1}
                                 className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                                 aria-label="Foto anterior"
                             >
@@ -135,7 +142,9 @@ export const SimpleCarousel: React.FC<SimpleCarouselProps> = ({ photos, firstNam
                     <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                         {currentIndex < photos.length - 1 && (
                             <button 
+                                type="button"
                                 onClick={() => scrollTo(currentIndex + 1)} 
+                                tabIndex={-1}
                                 className="pointer-events-auto p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
                                 aria-label="Siguiente foto"
                             >

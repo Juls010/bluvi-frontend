@@ -192,7 +192,7 @@ export const NarrationButton: React.FC<NarrationButtonProps> = ({
                 disabled={state === 'loading'}
                 aria-describedby={statusId}
                 aria-pressed={state === 'playing'}
-                className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/40 disabled:cursor-wait disabled:opacity-75 motion-reduce:transition-none"
+                className="narration-button inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-4 disabled:cursor-wait disabled:opacity-75 motion-reduce:transition-none"
                 style={{
                     backgroundColor: 'var(--app-control-surface)',
                     borderColor: 'var(--app-control-border)',
@@ -214,7 +214,7 @@ export const NarrationButton: React.FC<NarrationButtonProps> = ({
                     type="button"
                     onClick={stopNarration}
                     aria-label="Detener narracion"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/40 motion-reduce:transition-none"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-4 motion-reduce:transition-none"
                     style={{
                         backgroundColor: 'var(--app-control-surface)',
                         borderColor: 'var(--app-control-border)',
@@ -237,5 +237,3 @@ export const NarrationButton: React.FC<NarrationButtonProps> = ({
         </div>
     );
 };
-
-export default NarrationButton;

@@ -9,6 +9,8 @@ export type UserProfileUpdatePayload = Omit<Partial<User>, 'interests' | 'featur
     neurodivergences?: number[];
     communication_style?: number[];
     photos?: string[];
+    city_lat?: number | null;
+    city_lng?: number | null;
 };
 
 export interface ExploreUsersResponse {

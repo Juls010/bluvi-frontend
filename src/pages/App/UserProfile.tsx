@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import { type User, GENDER_LABELS,SEXUALITY_LABELS } from '../../types/User.types';
 import { VerifiedIdentityIcon } from '../../components/VerifiedIdentityIcon';
 import { AtmosphereSelector } from '../../components/AtmosphereSelector';
+import { Tooltip, TooltipTrigger, Button as AriaButton } from '../../components/Tooltip';
 
 type ProfileUser = User;
 
@@ -145,7 +146,7 @@ export const UserProfile: React.FC = () => {
 
   const age = user.birth_date
     ? Math.floor((Date.now() - new Date(user.birth_date).getTime()) / (1000 * 60 * 60 * 24 * 365.25))
-    : 'â€”';
+    : '—';
 
   return (
     <>
@@ -161,40 +162,49 @@ export const UserProfile: React.FC = () => {
                     <VerifiedIdentityIcon />
                   )}
                 </div>
-                <button
-                    onClick={() => setShowInfoModal(true)}
-                  className="mt-0.5 p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 sm:mt-0"
-                    title="Editar informaciÃ³n bÃ¡sica"
-                >
-                    <PencilSimpleIcon className="w-5 h-5" weight="bold" />
-                </button>
+                <TooltipTrigger delay={250}>
+                  <AriaButton
+                    onPress={() => setShowInfoModal(true)}
+                    aria-label="Editar información básica"
+                    className="mt-0.5 p-2 hover:bg-app-surface-soft rounded-full transition-all text-app-muted hover:text-bluvi-purple focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 sm:mt-0"
+                  >
+                    <PencilSimpleIcon className="w-5 h-5" weight="bold" aria-hidden="true" />
+                  </AriaButton>
+                  <Tooltip>Editar información</Tooltip>
+                </TooltipTrigger>
             </div>
 
             <div className="flex self-end items-center gap-2 sm:self-auto">
               {user.is_face_verified ? (
-                <span className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft text-app-secondary border border-app-soft rounded-2xl text-sm font-semibold">
-                  <ShieldCheckIcon className="w-4.5 h-4.5 text-app-accent dark:text-app-orange" weight="bold" aria-hidden="true" />
+                <span className="flex items-center gap-2 px-3.5 py-2 bg-app-accent text-app-on-accent border border-app-accent rounded-2xl text-sm font-semibold shadow-sm">
+                  <ShieldCheckIcon className="w-4.5 h-4.5 text-current" weight="bold" aria-hidden="true" />
                   <span className="text-xs font-bold uppercase tracking-wider">Verificado</span>
                 </span>
               ) : (
-                <button
-                  onClick={() => setShowVerificationModal(true)}
-                  className="flex items-center gap-2 px-3.5 py-2 bg-bluvi-purple text-white rounded-2xl text-sm font-semibold hover:opacity-90 transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
-                  title="Verificar identidad"
-                >
-                  <ShieldCheckIcon className="w-4.5 h-4.5" weight="bold" aria-hidden="true" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Verificar</span>
-                </button>
+                <TooltipTrigger delay={250}>
+                  <AriaButton
+                    onPress={() => setShowVerificationModal(true)}
+                    aria-label="Verificar identidad"
+                    className="flex items-center gap-2 px-3.5 py-2 bg-app-accent text-app-on-accent rounded-2xl text-sm font-semibold hover:opacity-90 transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2 shadow-sm"
+                  >
+                    <ShieldCheckIcon className="w-4.5 h-4.5 text-current" weight="bold" aria-hidden="true" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Verificar</span>
+                  </AriaButton>
+                  <Tooltip>Verificar identidad</Tooltip>
+                </TooltipTrigger>
               )}
 
-                <button
-                    onClick={() => navigate('/app/settings')}
-                  className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
-                    title="Ajustes de cuenta"
-                >
-                    <GearIcon className="w-4.5 h-4.5 group-hover:rotate-45 transition-transform duration-500 motion-reduce:transform-none motion-reduce:transition-none" weight="bold" />
+                <TooltipTrigger delay={250}>
+                  <AriaButton
+                    onPress={() => navigate('/app/settings')}
+                    aria-label="Ajustes de cuenta"
+                    className="flex items-center gap-2 px-3.5 py-2 bg-app-surface-soft hover:bg-app-surface-strong border border-app-soft rounded-2xl text-app-secondary transition-all hover:scale-105 active:scale-95 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
+                  >
+                    <GearIcon className="w-4.5 h-4.5 group-hover:rotate-45 transition-transform duration-500 motion-reduce:transform-none motion-reduce:transition-none" weight="bold" aria-hidden="true" />
                     <span className="text-xs font-bold uppercase tracking-wider">Ajustes</span>
-                </button>
+                  </AriaButton>
+                  <Tooltip>Ajustes</Tooltip>
+                </TooltipTrigger>
             </div>
         </div>
 
@@ -216,17 +226,20 @@ export const UserProfile: React.FC = () => {
 
           <div className="md:col-span-4 flex flex-col gap-6">
 
-            <div className="relative group rounded-3xl overflow-hidden shadow-sm">
+            <div className="relative group rounded-[2rem] overflow-hidden border-2 border-app-accent/20 bg-app-accent/5 shadow-lg shadow-black/5 transition-all duration-300 focus-within:border-app-accent/45 focus-within:ring-4 focus-within:ring-app-focus/80 focus-within:ring-offset-2 dark:border-app-accent/25 dark:bg-app-surface/90 dark:shadow-black/20">
 
               <SimpleCarousel photos={carouselPhotos} firstName={user.first_name} />
 
-              <button
-                onClick={() => setShowPhotosModal(true)}
-                className="absolute bottom-4 right-4 p-3 bg-app-surface-strong backdrop-blur-md text-app-accent rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all border border-app-soft z-10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
-                title="Gestionar fotos"
-              >
-                <CameraIcon className="w-5 h-5" weight="bold" />
-              </button>
+              <TooltipTrigger delay={250}>
+                <AriaButton
+                  onPress={() => setShowPhotosModal(true)}
+                  aria-label="Gestionar fotos"
+                  className="absolute bottom-4 right-4 p-3 bg-app-surface-strong backdrop-blur-md text-app-accent rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all border border-app-soft z-10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/80 focus-visible:ring-offset-2"
+                >
+                  <CameraIcon className="w-5 h-5" weight="bold" aria-hidden="true" />
+                </AriaButton>
+                <Tooltip>Gestionar fotos</Tooltip>
+              </TooltipTrigger>
             </div>
 
             <Card className="min-h-[11rem] rounded-3xl px-6 py-5">
@@ -245,7 +258,7 @@ export const UserProfile: React.FC = () => {
                   <CakeIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {age} años
                 </li>
                 <li className="flex items-center gap-2">
-                  <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {GENDER_LABELS[user.id_gender] ?? 'â€”'}
+                  <UserIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {GENDER_LABELS[user.id_gender] ?? '—'}
                 </li>
                 <li className="flex items-center gap-2">
                   <MapPinIcon className="w-4 h-4 text-app-accent dark:text-app-orange" weight="bold" /> {user.city}

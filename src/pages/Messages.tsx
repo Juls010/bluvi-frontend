@@ -327,7 +327,7 @@ const ChatsSection: React.FC<{ conversations: ConversationItem[]; typingUsers: R
                             Chat con ${conversation.first_name} ${conversation.last_name}.
                             Último mensaje: ${conversation.last_message_type === 'audio' ? 'Nota de audio' : conversation.last_message_type === 'image' ? 'Foto' : conversation.last_message || 'Sin mensajes todavía'}
                         `}
-                        className="flex items-center gap-4 p-4 rounded-[22px] bg-app-surface/80 dark:bg-app-surface-strong/60 border border-white dark:border-white/10 transition-all duration-300 shadow-sm hover:shadow-md group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-app-focus/70 focus-visible:ring-offset-2"
+                        className="conversation-card group"
                     >
                         <div className="relative flex-shrink-0">
                             <div className="relative overflow-hidden rounded-[18px] shadow-inner">
