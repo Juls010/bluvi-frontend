@@ -194,9 +194,9 @@ const ConnectionMuralSection: React.FC = () => {
                         id="conexiones-title"
                         className="overflow-visible text-balance text-[clamp(2.1rem,9vw,3.35rem)] font-black leading-[1.04] tracking-[-0.045em] text-[#221B5F] dark:text-white sm:text-5xl xl:text-6xl"
                     >
-                            Mereces sentirte querido
+                            Mereces sentirte querida
                         <span className="mt-3 block pb-3 leading-[1.12] text-[#221B5F] dark:bg-gradient-to-r dark:from-[#D8D1FF] dark:via-[#ECEBFF] dark:to-[#D8D1FF] dark:bg-clip-text dark:text-transparent">
-                            siendo tú mismo.
+                            siendo tú misma.
                         </span>
                     </h2>
 
@@ -320,12 +320,12 @@ export const Welcome: React.FC = () => {
             window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         if (reduceMotion) {
-            // Respect reduced motion preferences: switch immediately
+            
             setTheme(nextTheme);
             return;
         }
 
-        // Add a temporary class that enables smooth transitions via CSS
+        
         document.documentElement.classList.add('theme-transitioning');
 
         setThemeFusion({ target: nextTheme, visible: false });
@@ -333,7 +333,6 @@ export const Welcome: React.FC = () => {
         window.setTimeout(() => setTheme(nextTheme), 320);
         window.setTimeout(() => setThemeFusion({ target: nextTheme, visible: false }), 360);
         window.setTimeout(() => setThemeFusion(null), 760);
-        // Remove the helper class shortly after the visual transition completes
         window.setTimeout(() => {
             document.documentElement.classList.remove('theme-transitioning');
         }, 820);
@@ -707,7 +706,7 @@ export const Welcome: React.FC = () => {
                                     id="cuidado-title"
                                     className="mt-4 text-balance text-[2.1rem] font-black leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl"
                                 >
-                                    Un espacio donde sentirte más seguro.
+                                    Un espacio donde sentirte más segura.
                                 </h2>
 
                                 <p id="cuidado-desc" className="sr-only">
@@ -847,7 +846,7 @@ export const Welcome: React.FC = () => {
             id="empieza-desc"
             className="max-w-2xl text-base font-bold leading-7 text-[#221B5F] dark:text-[#ECEBFF] sm:text-lg sm:leading-8"
         >
-            Crea tu espacio con calma, ajusta la experiencia a tu manera y empieza a conectar solo cuando te sientas preparado.
+            Crea tu espacio con calma, ajusta la experiencia a tu manera y empieza a conectar solo cuando te sientas preparada.
         </p>
 
         <div className="flex w-full flex-col justify-center gap-4 sm:w-auto sm:flex-row">

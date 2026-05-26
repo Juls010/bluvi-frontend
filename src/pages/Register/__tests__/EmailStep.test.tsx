@@ -63,7 +63,6 @@ describe('EmailStep Component', () => {
         const continueButton = screen.getByRole('button', { name: /continuar/i });
         fireEvent.click(continueButton);
 
-        // Verify that the text color changes or the error state is triggered
         const consentText = screen.getByText(/He leído y acepto la/i);
         expect(consentText.className).toContain('text-red-400');
     });

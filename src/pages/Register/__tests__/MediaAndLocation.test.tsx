@@ -83,7 +83,6 @@ describe('Media and Location Registration Steps', () => {
             
             fireEvent.click(screen.getByLabelText(/Subir foto principal/i));
             
-            // Simular el cambio en el input de archivo
             fireEvent.change(input, { target: { files: [file] } });
             
             await waitFor(() => {

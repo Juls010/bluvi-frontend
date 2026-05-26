@@ -19,7 +19,6 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { MemoryRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 
-// 1. Agressive Mocks for environment-incompatible components
 vi.mock('framer-motion', async (importOriginal) => {
     const actual = await importOriginal() as any;
     return {
@@ -32,7 +31,6 @@ vi.mock('framer-motion', async (importOriginal) => {
     };
 });
 
-// Mock PhotoUploadStep to avoid FileReader jsdom issues in a long integration test
 vi.mock('../PhotoUploadStep', () => ({
     PhotoUploadStep: () => {
         const { updateFormData } = useRegister();
@@ -111,19 +109,16 @@ describe('Full Registration Integration Flow', () => {
             await waitFor(() => expect(screen.getByTestId('location-display').textContent).toBe(route), { timeout: 4000 });
         };
 
-        // 1. Name
         await user.type(screen.getByLabelText(/^Nombre$/i), 'Aurora');
         await user.type(screen.getByLabelText(/^Apellidos$/i), 'Montenegro');
         await user.click(screen.getByRole('button', { name: /siguiente/i }));
         await expectRoute('/register/age');
 
-        // 2. Age - Setting hidden input directly for reliability
         const hiddenDateInput = document.querySelector('input[type="date"]') as HTMLInputElement;
         fireEvent.change(hiddenDateInput, { target: { value: '1990-01-01' } });
         await user.click(screen.getByRole('button', { name: /ir al siguiente paso/i }));
         await expectRoute('/register/gender');
 
-        // 3-6 Selection Steps
         await user.click(await screen.findByText('Hombre'));
         await user.click(screen.getByRole('button', { name: /siguiente paso/i }));
         await expectRoute('/register/sexuality');
@@ -140,35 +135,29 @@ describe('Full Registration Integration Flow', () => {
         await user.click(screen.getByRole('button', { name: /siguiente paso/i }));
         await expectRoute('/register/email');
 
-        // 7. Email
         await user.type(screen.getByLabelText(/^Correo Electrónico$/i), 'aurora@example.com');
         await user.type(screen.getByLabelText(/^Contraseña$/i), 'Password123!');
         await user.click(screen.getByRole('checkbox'));
         await user.click(screen.getByRole('button', { name: /continuar/i }));
         await expectRoute('/register/photos');
 
-        // 8. Photos (Mocked component)
         await user.click(screen.getByRole('button', { name: /continuar/i }));
         await expectRoute('/register/location');
 
-        // 9. Location
         await user.type(screen.getByLabelText(/Buscar ciudad/i), 'Mad');
         await user.click(await screen.findByText('Madrid, España'));
         await user.click(screen.getByRole('button', { name: /confirmar ciudad y continuar/i }));
         await expectRoute('/register/interests');
 
-        // 10. Interests
         await user.click(await screen.findByText('Cine'));
         await user.click(await screen.findByText('Música'));
         await user.click(screen.getByRole('button', { name: /confirmar intereses y continuar/i }));
         await expectRoute('/register/description');
 
-        // 11. Description
         await user.type(screen.getByLabelText(/Tu descripción personal/i), 'Descripción de prueba.');
         await user.click(screen.getByRole('button', { name: /^siguiente$/i }));
         await expectRoute('/register/verificationemail');
 
-        // 12. Verification
         await user.click(screen.getByRole('button', { name: /entendido/i }));
         const codeInputs = screen.getAllByLabelText(/Dígito \d del código/i);
         codeInputs.forEach((input, index) => {
@@ -177,7 +166,6 @@ describe('Full Registration Integration Flow', () => {
         fireEvent.click(screen.getByRole('button', { name: /verificar y continuar/i }));
         await expectRoute('/register/safety-tips');
 
-        // 13. Safety
         await user.click(screen.getByRole('button', { name: /entendido/i }));
         await expectRoute('/app/home');
 

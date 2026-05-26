@@ -1,67 +1,156 @@
 # Bluvi - Frontend
 
-Bienvenido al repositorio del frontend de **Bluvi**. Esta es una aplicacion disenada para facilitar conexiones seguras y autenticas, con un enfoque especial en la neurodivergencia y la accesibilidad cognitiva.
+Bluvi is an inclusive social network designed to help people build safe, authentic and accessible connections. The frontend is built as a React SPA and pays particular attention to the experience of neurodivergent users through predictable flows, clear microcopy, accessibility, reduced cognitive load and a calm visual interface.
 
-## Requisitos previos
+The project includes a public landing page, guided registration, login, a private area for discovering profiles, real-time messaging, profile management, settings, legal documents and an administration panel.
 
-Antes de empezar, asegurate de tener instalado:
+## Technologies Used
 
-- **Node.js** version 18 o superior
-- **npm** o **yarn**
+- **React 19**: component-based interface development.
+- **TypeScript**: static typing across components, services and models.
+- **Vite**: development environment, build pipeline and asset optimisation.
+- **React Router DOM**: management of public, private, legal and administration routes.
+- **Tailwind CSS**: utility-first styling and responsive visual system.
+- **Framer Motion**: smooth transitions and animations.
+- **React Aria Components**: accessible components compatible with keyboard navigation and screen readers.
+- **TanStack Query**: asynchronous data handling and API cache management.
+- **Axios**: HTTP client for communication with the backend.
+- **Socket.IO Client**: real-time messaging and events.
+- **Supabase**: integration for image storage and user assets.
+- **Cloudflare Workers / Wrangler**: frontend deployment and SPA behaviour in production.
+- **Vitest + Testing Library**: unit and component testing.
 
-## Instalacion
+## Website Flow
 
-Sigue estos pasos para configurar el proyecto en tu maquina local:
+1. **Public Entry Point**
 
-1. Clona el repositorio:
+   Users arrive at `/`, where they find the Bluvi landing page with product information, the accessibility approach, registration calls to action and legal links.
 
-   ```bash
-   git clone https://github.com/Juls010/bluvi-frontend.git
-   cd bluvi-frontend
-   ```
+2. **Authentication**
 
-2. Instala las dependencias:
+   Users can log in from `/login`. If they already have an active session, the application can redirect them to the private area.
 
-   ```bash
-   npm install
-   ```
+3. **Guided Registration**
 
-3. Levanta el servidor:
+   Sign-up is completed step by step under `/register`: name, age, gender, sexuality, neurodivergences, communication style, email, photos, location, interests, description, email verification and safety tips.
 
-   ```bash
-   npm run dev
-   ```
+4. **Private Area**
 
-   La aplicacion estara disponible en http://localhost:5173.
+   After authentication, the application enters `/app`, protected by `PrivateRoute`. From there, users can access the home page, profile discovery, messages, their own profile, settings, reports and blocks.
 
-## Librerias principales instaladas
+5. **Chat and Connections**
 
-- **react-router-dom**: gestion de rutas.
-- **framer-motion**: animaciones y transiciones suaves.
-- **react-aria-components**: componentes UI con accesibilidad de alto nivel.
-- **lucide-react**: iconografia profesional.
+   Conversations are available under `/app/messages` and `/app/chat/:id`. The chat supports text messages, images, audio messages, manual audio transcription and real-time events through Socket.IO.
 
-## Transcripcion de audios
+6. **Legal Pages and SEO**
 
-Los audios del chat no se transcriben automaticamente. El flujo es manual para ahorrar coste y respetar la intencion del usuario:
+   The routes `/privacidad`, `/cookies`, `/legal`, `/terminos`, `/faq` and `/accesibilidad` are public. The project includes `sitemap.xml`, `robots.txt`, a canonical URL and a meta description to improve visibility in Google Search Console.
 
-1. El usuario graba y envia el audio con normalidad.
-2. El mensaje de audio muestra un boton **Transcribir**.
-3. Al pulsarlo, el frontend llama al backend y el servidor usa OpenAI Whisper para guardar y devolver el texto.
-4. La transcripcion aparece debajo del reproductor de audio en el mismo mensaje.
+7. **Administration**
 
-Para que funcione, el backend necesita `OPENAI_API_KEY` en su `.env`.
+   The `/admin` route is protected by `AdminRoute` and includes user management, reports, metrics and administrator creation.
 
-## Enfoque en neurodiversidad
+## Screenshots
 
-Bluvi ha sido desarrollado siguiendo principios de diseno universal, priorizando la reduccion de la carga cognitiva y el estres visual para usuarios dentro del espectro autista y otras neurodivergencias:
+These screenshots show the main screens of the Bluvi experience.
 
-- **Previsibilidad del flujo**: implementacion de una barra de progreso dinamica y segmentada para reducir la ansiedad ante procesos largos.
-- **Interfaces de calma**: uso de una paleta de colores suaves y tipografias legibles para evitar la sobreestimulacion sensorial.
-- **Navegacion fluida**: transiciones suavizadas mediante `Framer Motion` para evitar cambios de contexto bruscos.
-- **Componentes accesibles**: uso de `React Aria` en elementos complejos como el calendario, garantizando compatibilidad con lectores de pantalla y navegacion por teclado.
-- **Microcopy empatico**: mensajes de apoyo y validacion durante el registro para fomentar un entorno seguro y de confianza.
+| Screen | Screenshot |
+| --- | --- |
+| Public landing page | ![Bluvi public landing page](https://res.cloudinary.com/dc4u0bzgh/image/upload/v1779788418/fcd8b17b-4d50-409f-8bcf-bed09e0bd2dd.png) |
+| Guided registration | ![Bluvi guided registration](https://res.cloudinary.com/dc4u0bzgh/image/upload/v1779788489/a979f1a0-d737-4581-a9ea-97808c9d8cca.png) |
+| Profile discovery | ![Bluvi profile discovery](https://res.cloudinary.com/dc4u0bzgh/image/upload/v1779788271/578051bd-f4f4-459b-980a-91c48f9cdd73.png) |
+| Chat | ![Bluvi chat](https://res.cloudinary.com/dc4u0bzgh/image/upload/v1779788147/16b84b51-1d09-48d8-a9c6-e1846f13951c.png) |
+| User profile | ![Bluvi user profile](https://res.cloudinary.com/dc4u0bzgh/image/upload/v1779788300/ee4c4970-8a08-462e-b43e-1dbceaa6ea56.png) |
+| Administration panel | ![Bluvi administration panel](https://res.cloudinary.com/dc4u0bzgh/image/upload/v1779788381/03ea4956-1be6-4bbe-a87b-dedc8858a526.png) |
 
-Actualmente en construccion.
+## Accessibility
 
-Julia N.G
+Bluvi has been developed with particular attention to cognitive, visual and navigational accessibility. The interface prioritises predictable flows, clear text, careful contrast, keyboard compatibility and accessible components in forms, modals, calendars, tooltips and error messages.
+
+This section includes audit evidence from external tools.
+
+| Tool | Screenshot |
+| --- | --- |
+| Lighthouse - Chrome DevTools | ![Bluvi Lighthouse accessibility report](https://res.cloudinary.com/dc4u0bzgh/image/upload/v1779789518/Captura_de_pantalla_2026-05-26_111920_s6hyu9.png) |
+| WAVE - Web Accessibility Evaluation Tool | ![Bluvi WAVE accessibility analysis](https://res.cloudinary.com/dc4u0bzgh/image/upload/v1779789523/Captura_de_pantalla_2026-05-26_112117_s0e8p7.png) |
+
+## Main Code-Level Features
+
+- **Centralised router**: `src/router/Router.tsx` defines public, private, legal, registration, chat and administration routes.
+- **Route protection**: `PrivateRoute` controls access to the authenticated area, while `AdminRoute` restricts access to the administration panel.
+- **Authentication context**: `AuthContext` keeps track of the session state, current user, login and logout.
+- **Registration context**: `RegisterContext` stores multi-step form data, temporarily persists it and sends the completed registration to the backend.
+- **API services**: `src/services` centralises HTTP calls for authentication, users, matches, chats, administration, narration, file uploads and transcription.
+- **Real-time messaging**: `realtime.service.ts` and `chat.service.ts` coordinate events, conversations and messages.
+- **Image uploads**: `uploadService.ts` manages profile photo uploads and related user assets.
+- **Audio and transcription**: `AudioRecorder`, `AudioMessage` and `transcription.service.ts` allow users to record, play and manually transcribe audio messages.
+- **Accessibility and narration**: components such as `NarrationButton`, `AccessibleErrorTooltip`, `DatePicker` and themed layouts strengthen the accessible experience.
+- **Global notifications**: `GlobalToast` and `toastQueue` provide success and error feedback for key actions.
+- **Basic SEO**: `public/sitemap.xml`, `public/robots.txt` and `index.html` include search engine signals without exposing private routes.
+- **Tests**: `src/tests` and `src/pages/Register/__tests__` cover services, context, components and the registration flow.
+
+## Installation and Running Locally
+
+Requirements:
+
+- Node.js 18 or above.
+- npm.
+- The Bluvi backend running locally, or a configured backend URL.
+
+Installation:
+
+```bash
+npm install
+```
+
+Required environment variables:
+
+```env
+VITE_BACKEND_URL=http://localhost:3000
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```
+
+Development:
+
+```bash
+npm run dev
+```
+
+The application will be available at:
+
+```text
+http://localhost:5173
+```
+
+Production build:
+
+```bash
+npm run build
+```
+
+Tests:
+
+```bash
+npm test
+```
+
+## Test Evidence
+
+The project includes automated tests for services, shared context, UI components and the registration flow. This section is reserved for a test execution screenshot, useful for project presentation and technical review.
+
+| Evidence | Screenshot |
+| --- | --- |
+| Automated test run | ![Bluvi automated test run](https://res.cloudinary.com/dc4u0bzgh/image/upload/v1779791509/c8fd4838-365c-4901-83fe-f0ebc432359a.png) |
+
+## Next Steps
+
+- **Email verification during registration**: implement a complete email confirmation system within the sign-up flow. This feature was temporarily set aside due to limitations in the current deployment platform.
+- **Individual chat atmospheres**: allow each conversation to have its own atmosphere state, adapting tone, rhythm and interface according to the context of the relationship between users.
+- **Adaptive virtual assistant**: evolve the assistant so it can support the user and adjust the experience autonomously according to their needs, reducing friction and cognitive load.
+- **Mutual consent for multimedia**: introduce an explicit authorisation system between both users before sensitive multimedia content can be shared in the chat.
+
+
+---
+
+Lovingly crafted by Julia 💞

@@ -28,7 +28,7 @@ describe('AgeStep Component', () => {
         });
 
         vi.useFakeTimers();
-        const date = new Date(2024, 3, 20); // 2024-04-20
+        const date = new Date(2024, 3, 20); 
         vi.setSystemTime(date);
     });
 

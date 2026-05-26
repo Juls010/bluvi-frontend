@@ -135,12 +135,11 @@ describe('Selection Registration Steps', () => {
                 expect(screen.getByText('TDAH')).toBeDefined();
             });
 
-            // Toggle off
+            
             fireEvent.click(screen.getByText('Autismo'));
             expect(mockUpdateFormData).toHaveBeenCalledWith({ neurodivergences: [] });
 
-            // Toggle on TDAH (since it's a new render in reality we'd need to mock state updates, 
-            // but here we check if toggleTrait logic calls updateFormData correctly)
+            
         });
 
         it('should allow skipping (omitir) if none selected', () => {
